@@ -123,7 +123,7 @@
   const TOK={};
   window.fetch = async function(url, opts={}) {
     if(typeof url==='string' && url.includes('/api/')) {
-      const u=new URL(url,'http://localhost'), path=u.pathname, q=Object.fromEntries(u.searchParams);
+      const u=new URL(url,'https://ims-qhse-production.up.railway.app'), path=u.pathname, q=Object.fromEntries(u.searchParams);
       const auth=(opts.headers?.Authorization||opts.headers?.['Authorization']||'');
       if(auth) window._mLastAuth=auth;
       let body=null; try{if(opts.body)body=JSON.parse(opts.body);}catch(e){}
