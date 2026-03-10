@@ -19,15 +19,3 @@
     "pg": "^8.20.0"
   }
 }
-```
-
-**احفظ: Ctrl + S** ✅
-
----
-
-ثم في Command Prompt:
-```
-cd C:\ims-qhse
-git add package.json
-git commit -m "fix start script"
-git push
