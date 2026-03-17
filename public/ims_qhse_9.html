@@ -556,6 +556,17 @@
       var sid = path.split('/')[4];
       return MOCK_DB.iso_standards.find(function(s){return s.id===sid||s.code===sid;}) || {};
     }
+    if (path.startsWith('/api/iso/standards/') && method === 'PUT' && !path.includes('/procedures')) {
+      var sid2 = path.split('/')[4];
+      var std2 = MOCK_DB.iso_standards.find(function(s){return s.id===sid2;});
+      if (std2) Object.assign(std2, body);
+      return std2 || {};
+    }
+    if (path.startsWith('/api/iso/standards/') && method === 'DELETE' && !path.includes('/procedures')) {
+      var sid3 = path.split('/')[4];
+      MOCK_DB.iso_standards = MOCK_DB.iso_standards.filter(function(s){return s.id!==sid3;});
+      return {success:true};
+    }
     if (path.startsWith('/api/iso/standards/') && path.endsWith('/procedures') && method === 'POST') {
       var sc = path.split('/')[4];
       var std = MOCK_DB.iso_standards.find(function(s){return s.id===sc||s.code===sc;});
@@ -3262,17 +3273,22 @@ async function loadOrganization() {
   const isoNames  = {ISO_9001:'ISO 9001',ISO_45001:'ISO 45001',ISO_14001:'ISO 14001',ISO_27001:'ISO 27001'};
 
   // Build comparison matrix (all clauses 4-10 common, show unique elements per standard)
-  const comparisonRows = [
-    {aspect:'نوع نظام الإدارة',vals:{ISO_9001:'الجودة',ISO_45001:'الصحة والسلامة المهنية',ISO_14001:'البيئة',ISO_27001:'أمن المعلومات'}},
-    {aspect:'الهدف الجوهري',vals:{ISO_9001:'رضا العميل وجودة المنتج',ISO_45001:'السلامة والصحة المهنية للعمال',ISO_14001:'تحسين الأداء البيئي',ISO_27001:'حماية المعلومات وأمنها'}},
-    {aspect:'المستفيد الأساسي',vals:{ISO_9001:'العميل',ISO_45001:'العامل / الموظف',ISO_14001:'المجتمع والبيئة',ISO_27001:'أصحاب المعلومات والبيانات'}},
-    {aspect:'تحليل المخاطر',vals:{ISO_9001:'مخاطر الجودة والعمليات',ISO_45001:'أخطار ومخاطر السلامة المهنية',ISO_14001:'جوانب وتأثيرات بيئية',ISO_27001:'مخاطر أمن المعلومات وضوابط Annex A'}},
-    {aspect:'المشاركة والتشاور',vals:{ISO_9001:'❌ غير مطلوب صراحةً',ISO_45001:'✅ مشاركة العمال والتشاور معهم إلزامي',ISO_14001:'⚠️ تواصل مع الأطراف الخارجية',ISO_27001:'⚠️ الوعي الأمني للموظفين'}},
-    {aspect:'التحقيق في الحوادث',vals:{ISO_9001:'❌ ليس متطلباً محدداً',ISO_45001:'✅ التحقيق في الحوادث وعدم المطابقة OH&S',ISO_14001:'⚠️ الطوارئ البيئية',ISO_27001:'✅ إدارة الحوادث الأمنية'}},
-    {aspect:'التواصل الخارجي',vals:{ISO_9001:'⚠️ مع العملاء والموردين',ISO_45001:'⚠️ مع الجهات التنظيمية',ISO_14001:'✅ إلزامي مع الجهات البيئية والمجتمع',ISO_27001:'⚠️ عند الحوادث الأمنية'}},
-    {aspect:'متطلبات التوثيق الخاصة',vals:{ISO_9001:'ضبط الجودة، مراجعة العميل، التصميم',ISO_45001:'تقييم المخاطر، إذن العمل، التحقيق',ISO_14001:'الجوانب البيئية، الامتثال القانوني',ISO_27001:'SOA، سياسة ISMS، سجل الأصول'}},
-    {aspect:'الهيكل العالي Level (HLS)',vals:{ISO_9001:'✅ البنى المشتركة للبنود 4-10',ISO_45001:'✅ البنى المشتركة للبنود 4-10',ISO_14001:'✅ البنى المشتركة للبنود 4-10',ISO_27001:'✅ البنى المشتركة للبنود 4-10'}},
-  ];
+  // Use MOCK_DB as persistent store — only initialize if not already saved
+  if (!window.MOCK_DB.comparisonRows) {
+    window.MOCK_DB.comparisonRows = [
+      {aspect:'نوع نظام الإدارة',vals:{ISO_9001:'الجودة',ISO_45001:'الصحة والسلامة المهنية',ISO_14001:'البيئة',ISO_27001:'أمن المعلومات'}},
+      {aspect:'الهدف الجوهري',vals:{ISO_9001:'رضا العميل وجودة المنتج',ISO_45001:'السلامة والصحة المهنية للعمال',ISO_14001:'تحسين الأداء البيئي',ISO_27001:'حماية المعلومات وأمنها'}},
+      {aspect:'المستفيد الأساسي',vals:{ISO_9001:'العميل',ISO_45001:'العامل / الموظف',ISO_14001:'المجتمع والبيئة',ISO_27001:'أصحاب المعلومات والبيانات'}},
+      {aspect:'تحليل المخاطر',vals:{ISO_9001:'مخاطر الجودة والعمليات',ISO_45001:'أخطار ومخاطر السلامة المهنية',ISO_14001:'جوانب وتأثيرات بيئية',ISO_27001:'مخاطر أمن المعلومات وضوابط Annex A'}},
+      {aspect:'المشاركة والتشاور',vals:{ISO_9001:'❌ غير مطلوب صراحةً',ISO_45001:'✅ مشاركة العمال والتشاور معهم إلزامي',ISO_14001:'⚠️ تواصل مع الأطراف الخارجية',ISO_27001:'⚠️ الوعي الأمني للموظفين'}},
+      {aspect:'التحقيق في الحوادث',vals:{ISO_9001:'❌ ليس متطلباً محدداً',ISO_45001:'✅ التحقيق في الحوادث وعدم المطابقة OH&S',ISO_14001:'⚠️ الطوارئ البيئية',ISO_27001:'✅ إدارة الحوادث الأمنية'}},
+      {aspect:'التواصل الخارجي',vals:{ISO_9001:'⚠️ مع العملاء والموردين',ISO_45001:'⚠️ مع الجهات التنظيمية',ISO_14001:'✅ إلزامي مع الجهات البيئية والمجتمع',ISO_27001:'⚠️ عند الحوادث الأمنية'}},
+      {aspect:'متطلبات التوثيق الخاصة',vals:{ISO_9001:'ضبط الجودة، مراجعة العميل، التصميم',ISO_45001:'تقييم المخاطر، إذن العمل، التحقيق',ISO_14001:'الجوانب البيئية، الامتثال القانوني',ISO_27001:'SOA، سياسة ISMS، سجل الأصول'}},
+      {aspect:'الهيكل العالي Level (HLS)',vals:{ISO_9001:'✅ البنى المشتركة للبنود 4-10',ISO_45001:'✅ البنى المشتركة للبنود 4-10',ISO_14001:'✅ البنى المشتركة للبنود 4-10',ISO_27001:'✅ البنى المشتركة للبنود 4-10'}},
+    ];
+  }
+  const comparisonRows = window.MOCK_DB.comparisonRows;
+  window._comparisonRows = comparisonRows;
 
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-6">
@@ -3297,7 +3313,11 @@ async function loadOrganization() {
               <h2 class="text-xl font-black text-slate-800">${org.name}</h2>
               <p class="text-sm text-slate-500">${org.name_en}</p>
               <div class="flex gap-2 mt-1 flex-wrap">
-                ${(org.certified_standards||[]).map(s => `<span class="badge text-xs" style="background:${stdColors[s]}18;color:${stdColors[s]}">${isoNames[s]||s}</span>`).join('')}
+                ${(org.certified_standards||[]).map(s => {
+                  const std = standards.find(x=>x.code===s);
+                  const c = (std&&std.color) || stdColors[s] || '#64748b';
+                  return `<span class="badge text-xs" style="background:${c}18;color:${c}">${s.replace('_',' ')}</span>`;
+                }).join('')}
               </div>
             </div>
           </div>
@@ -3361,8 +3381,8 @@ async function loadOrganization() {
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           ${standards.map(std => {
-            const color = stdColors[std.code] || '#64748b';
-            const icon  = stdIcons[std.code]  || 'certificate';
+            const color = std.color || stdColors[std.code] || '#64748b';
+            const icon  = std.icon  || stdIcons[std.code]  || 'certificate';
             return `
             <div class="border border-slate-100 rounded-xl overflow-hidden" id="std-card-${std.id}">
               <div class="p-4 flex items-center justify-between" style="background:${color}12">
@@ -3375,12 +3395,29 @@ async function loadOrganization() {
                     <div class="text-sm" style="color:${color}">${std.name}</div>
                   </div>
                 </div>
-                <span class="badge text-xs" style="background:${color}22;color:${color}">
-                  ${(org.certified_standards||[]).includes(std.code) ? '✅ معتمد' : '⏳ غير معتمد'}
-                </span>
+                <div class="flex items-center gap-2">
+                  <button onclick="toggleStdCertified('${std.code}')"
+                    id="std-cert-btn-${std.code}"
+                    class="badge text-xs cursor-pointer transition-all hover:opacity-80"
+                    style="background:${(org.certified_standards||[]).includes(std.code)?'#d1fae5':'#f1f5f9'};color:${(org.certified_standards||[]).includes(std.code)?'#059669':'#64748b'};border:none"
+                    title="انقر لتغيير حالة الاعتماد">
+                    ${(org.certified_standards||[]).includes(std.code) ? '✅ معتمد' : '⏳ غير معتمد'}
+                  </button>
+                  <button onclick="openEditStandardModal('${std.id}')"
+                    class="p-1.5 rounded-lg text-amber-500 hover:bg-amber-50 transition-all"
+                    title="تعديل المعيار">
+                    <i class="fas fa-edit text-xs"></i>
+                  </button>
+                </div>
               </div>
               <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-600 leading-relaxed">${std.scope}</p>
+                ${std.scope ? `<div class="space-y-1">
+                  ${std.scope.split('\n').filter(s=>s.trim()).map(s=>`
+                  <div class="flex gap-2 text-xs text-slate-600">
+                    <span style="color:${color}" class="flex-shrink-0">◆</span>
+                    <span>${s.trim()}</span>
+                  </div>`).join('')}
+                </div>` : ''}
                 <div>
                   <div class="text-xs font-bold text-slate-700 mb-2">البنود الرئيسية (4-10)</div>
                   <div class="space-y-1">
@@ -3444,9 +3481,14 @@ async function loadOrganization() {
 
       <!-- TAB: Compare -->
       <div id="org-section-compare" class="p-6 hidden">
-        <div class="mb-4">
-          <h3 class="font-bold text-slate-800 mb-1"><i class="fas fa-balance-scale text-purple-500 ml-2"></i>مصفوفة مقارنة معايير ISO</h3>
-          <p class="text-sm text-slate-500">أوجه الاتفاق والاختلاف بين المعايير الأربعة — البنية العالية HLS مشتركة للجميع (البنود 4–10)</p>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-bold text-slate-800 mb-1"><i class="fas fa-balance-scale text-purple-500 ml-2"></i>مصفوفة مقارنة معايير ISO</h3>
+            <p class="text-sm text-slate-500">أوجه الاتفاق والاختلاف بين المعايير — البنية العالية HLS مشتركة للجميع</p>
+          </div>
+          <button onclick="openEditComparisonModal()" class="btn btn-primary text-sm">
+            <i class="fas fa-edit ml-1"></i>تعديل المقارنة
+          </button>
         </div>
 
         <!-- HLS Shared banner -->
@@ -3484,11 +3526,11 @@ async function loadOrganization() {
         <!-- Unique elements per standard -->
         <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
           ${standards.map(std => {
-            const color = stdColors[std.code] || '#64748b';
+            const color = std.color || stdColors[std.code] || '#64748b';
             return `
             <div class="p-4 rounded-xl border-2" style="border-color:${color}30;background:${color}06">
               <div class="flex items-center gap-2 mb-3">
-                <i class="fas fa-${stdIcons[std.code]||'certificate'}" style="color:${color}"></i>
+                <i class="fas fa-${std.icon||stdIcons[std.code]||'certificate'}" style="color:${color}"></i>
                 <span class="font-bold text-sm" style="color:${color}">${std.code.replace('_',' ')} — ما يختص به وحده</span>
               </div>
               <ul class="space-y-1">
@@ -3517,11 +3559,11 @@ async function loadOrganization() {
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-slate-700 block mb-1">معايير ISO المرتبطة</label>
-            <div class="space-y-1">
-              ${['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(s => `
+            <div class="space-y-1" id="obj-iso-list">
+              ${(window.MOCK_DB?.iso_standards||[{code:'ISO_9001',name:'إدارة الجودة',color:'#3b82f6'},{code:'ISO_45001',name:'السلامة',color:'#059669'},{code:'ISO_14001',name:'البيئة',color:'#d97706'},{code:'ISO_27001',name:'أمن المعلومات',color:'#7c3aed'}]).map(s => `
               <label class="flex items-center gap-2 text-sm cursor-pointer">
-                <input type="checkbox" class="obj-iso-cb" value="${s}" />
-                <span class="badge text-xs" style="background:${stdColors[s]}18;color:${stdColors[s]}">${isoNames[s]}</span>
+                <input type="checkbox" class="obj-iso-cb" value="${s.code}" />
+                <span class="badge text-xs" style="background:${(s.color||stdColors[s.code]||'#64748b')}18;color:${s.color||stdColors[s.code]||'#64748b'}">${s.code.replace('_',' ')}</span>
               </label>`).join('')}
             </div>
           </div>
@@ -3551,6 +3593,10 @@ async function loadOrganization() {
 
 function renderObjectiveCard(o, stdColors, isoNames, objStatus, objStatusAr) {
   const kpi = (window.MOCK_DB?.kpis||[]).find(k => k.id === o.kpi_ref);
+  // Build color map dynamically from MOCK_DB to support new standards
+  const allStds = window.MOCK_DB?.iso_standards || [];
+  const dynColors = {};
+  allStds.forEach(function(s){ dynColors[s.code] = s.color || stdColors[s.code] || '#64748b'; });
   return `<div class="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white transition-colors" id="obj-card-${o.id}">
     <div class="flex items-start gap-3">
       <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -3559,7 +3605,7 @@ function renderObjectiveCard(o, stdColors, isoNames, objStatus, objStatusAr) {
       <div class="flex-1">
         <p class="text-sm font-medium text-slate-800 mb-2">${o.text}</p>
         <div class="flex flex-wrap gap-2 items-center">
-          ${(o.iso||[]).map(s => `<span class="badge text-xs" style="background:${stdColors[s]}18;color:${stdColors[s]}">${isoNames[s]||s}</span>`).join('')}
+          ${(o.iso||[]).map(s => `<span class="badge text-xs" style="background:${dynColors[s]||'#64748b'}18;color:${dynColors[s]||'#64748b'}">${s.replace('_',' ')}</span>`).join('')}
           <span class="badge ${objStatus[o.status]||'badge-gray'} text-xs">${objStatusAr[o.status]||o.status}</span>
           ${kpi ? `<span class="text-xs text-slate-400"><i class="fas fa-chart-line ml-1"></i>${kpi.name}: <b>${kpi.latest_value}${kpi.unit||''}</b></span>` : ''}
         </div>
@@ -3793,6 +3839,24 @@ function openAddStandardModal() {
           '</div>' +
         '</div>' +
 
+        '<div>' +
+          '<div class="flex items-center justify-between mb-2">' +
+            '<label class="text-sm font-medium text-slate-700">البنود الرئيسية <span class="text-slate-400 font-normal text-xs">(اختياري)</span></label>' +
+            '<button onclick="addNewStdClause()" class="btn btn-primary text-xs" style="padding:4px 8px;font-size:11px"><i class="fas fa-plus ml-1"></i>إضافة بند</button>' +
+          '</div>' +
+          '<div id="new-std-clauses" class="space-y-2"></div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div class="flex items-center justify-between mb-2">' +
+            '<label class="text-sm font-medium text-slate-700">ما يميز هذا المعيار</label>' +
+            '<button onclick="addPointRow(\'new-std-unique\',\'نقطة مميزة...\')" class="btn btn-primary text-xs" style="padding:4px 8px;font-size:11px"><i class="fas fa-plus ml-1"></i>إضافة نقطة</button>' +
+          '</div>' +
+          '<div id="new-std-unique" class="space-y-2">' +
+            '<div class="text-xs text-slate-400 text-center py-2" id="new-std-unique-empty">لا توجد نقاط بعد — اضغط إضافة نقطة</div>' +
+          '</div>' +
+        '</div>' +
+
         '<div class="flex gap-3 pt-3 border-t border-slate-100">' +
           '<button onclick="submitNewStandard()" class="btn btn-primary flex-1">' +
             '<i class="fas fa-plus ml-1"></i>إضافة المعيار</button>' +
@@ -3814,11 +3878,67 @@ function selectStdColor(color) {
   });
 }
 
+// ── Shared: add a single point row to any container ──
+function addPointRow(containerId, placeholder) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  // Remove empty placeholder
+  var empty = container.querySelector('[id$="-empty"]');
+  if (empty) empty.remove();
+  var div = document.createElement('div');
+  div.className = 'flex gap-2 items-center';
+  div.innerHTML =
+    '<span class="text-slate-400 flex-shrink-0 text-xs">◆</span>' +
+    '<input class="form-input text-xs flex-1 point-row-input" placeholder="'+(placeholder||'نقطة...')+'" />' +
+    '<button onclick="this.closest(\'div\').remove()" class="text-red-400 hover:text-red-600 p-1 flex-shrink-0">' +
+      '<i class="fas fa-times text-xs"></i></button>';
+  container.appendChild(div);
+  div.querySelector('input')?.focus();
+}
+
+// ── Helper: collect all input values from a point-list container ──
+function collectPoints(containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('input.point-row-input, input.estd-scope-item, input.estd-unique-item'))
+    .map(function(el){ return el.value.trim(); })
+    .filter(Boolean);
+}
+
+function addNewStdClause() {
+  var container = document.getElementById('new-std-clauses');
+  if (!container) return;
+  var idx = container.children.length;
+  var div = document.createElement('div');
+  div.className = 'flex gap-2 items-center';
+  div.innerHTML =
+    '<input class="form-input text-xs font-mono" style="width:50px" id="nsc-num-'+idx+'" placeholder="4.1"/>' +
+    '<input class="form-input text-xs flex-1" id="nsc-title-'+idx+'" placeholder="عنوان البند"/>' +
+    '<input class="form-input text-xs flex-1" id="nsc-desc-'+idx+'" placeholder="وصف مختصر"/>' +
+    '<button onclick="this.closest(\'div\').remove()" class="text-red-400 hover:text-red-600 p-1"><i class="fas fa-times text-xs"></i></button>';
+  container.appendChild(div);
+}
+
 async function submitNewStandard() {
   var code = (document.getElementById('std-code')?.value||'').trim().toUpperCase().replace(/\s+/g,'_');
   var name = (document.getElementById('std-name')?.value||'').trim();
   if (!code) { showToast('❌ يرجى إدخال كود المعيار', 'error'); return; }
   if (!name) { showToast('❌ يرجى إدخال اسم المعيار', 'error'); return; }
+
+  // Collect clauses
+  var clauses = [];
+  var container = document.getElementById('new-std-clauses');
+  if (container) {
+    Array.from(container.children).forEach(function(row, idx){
+      var num   = row.querySelector('[id^="nsc-num"]')?.value?.trim();
+      var title = row.querySelector('[id^="nsc-title"]')?.value?.trim();
+      var desc  = row.querySelector('[id^="nsc-desc"]')?.value?.trim();
+      if (num && title) clauses.push({num, title, desc:desc||''});
+    });
+  }
+
+  // Collect unique elements from point rows
+  var unique = collectPoints('new-std-unique');
 
   var body = {
     code, name,
@@ -3827,8 +3947,8 @@ async function submitNewStandard() {
     color:           document.getElementById('std-color')?.value || '#3b82f6',
     icon:            document.getElementById('std-icon')?.value || 'certificate',
     procedures:      [],
-    key_clauses:     [],
-    unique_elements: [],
+    key_clauses:     clauses,
+    unique_elements: unique,
   };
 
   try {
@@ -3838,6 +3958,348 @@ async function submitNewStandard() {
     loadOrganization();
     setTimeout(function(){ switchOrgTab('standards'); }, 100);
   } catch(e) { showToast('❌ خطأ في الإضافة', 'error'); }
+}
+
+// ── Edit Standard Modal ──────────────────────
+function openEditStandardModal(stdId) {
+  var std = (window.MOCK_DB?.iso_standards||[]).find(function(s){ return s.id === stdId; });
+  if (!std) return;
+  document.getElementById('modal-edit-standard')?.remove();
+
+  var color = std.color || '#64748b';
+  var colorOptions = ['#3b82f6','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#db2777'];
+  var colorPills = colorOptions.map(function(c){
+    return '<button type="button" onclick="selectEditStdColor(\''+c+'\')" id="estd-col-'+c.replace('#','')+'" '+
+      'class="w-8 h-8 rounded-lg border-2 transition-all" '+
+      'style="background:'+c+';border-color:'+(c===color?'#1e293b':'transparent')+';transform:'+(c===color?'scale(1.2)':'scale(1)')+'" title="'+c+'"></button>';
+  }).join('');
+
+  // Build key_clauses rows
+  var clausesRows = (std.key_clauses||[]).map(function(c, i){
+    return '<div class="flex gap-2 items-center" id="clause-row-'+i+'">' +
+      '<input class="form-input text-xs font-mono" style="width:50px" id="cl-num-'+i+'" value="'+(c.num||'').replace(/"/g,'&quot;')+'" placeholder="4.1"/>' +
+      '<input class="form-input text-xs flex-1" id="cl-title-'+i+'" value="'+(c.title||'').replace(/"/g,'&quot;')+'" placeholder="عنوان البند"/>' +
+      '<input class="form-input text-xs flex-1" id="cl-desc-'+i+'" value="'+(c.desc||'').replace(/"/g,'&quot;')+'" placeholder="وصف مختصر"/>' +
+      '<button onclick="this.closest(\'[id^=clause-row]\').remove()" class="text-red-400 hover:text-red-600 flex-shrink-0 p-1"><i class="fas fa-times text-xs"></i></button>' +
+    '</div>';
+  }).join('');
+
+  // Build unique_elements chips
+  var uniqueVal = (std.unique_elements||[]).join('، ');
+
+  var html =
+    '<div class="modal open" id="modal-edit-standard">' +
+    '<div class="bg-white rounded-2xl w-full max-w-2xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:92vh;overflow-y:auto">' +
+
+      '<div class="px-6 py-4 flex items-center justify-between sticky top-0 z-10" style="background:'+color+'">' +
+        '<div>' +
+          '<div class="text-white text-xs opacity-70">تعديل معيار ISO</div>' +
+          '<h3 class="text-white font-bold text-lg">'+std.code.replace('_',' ')+' — '+std.name+'</h3>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'modal-edit-standard\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+      '</div>' +
+
+      '<div class="p-6 space-y-5">' +
+
+        // المعلومات الأساسية
+        '<div>' +
+          '<div class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">المعلومات الأساسية</div>' +
+          '<div class="grid grid-cols-2 gap-3">' +
+            '<div><label class="text-xs font-medium text-slate-600 block mb-1">كود المعيار</label>' +
+            '<input class="form-input font-mono" type="text" id="estd-code" value="'+(std.code||'').replace(/"/g,'&quot;')+'"/></div>' +
+            '<div><label class="text-xs font-medium text-slate-600 block mb-1">الإصدار</label>' +
+            '<input class="form-input" type="text" id="estd-version" value="'+(std.version||'').replace(/"/g,'&quot;')+'"/></div>' +
+          '</div>' +
+          '<div class="mt-3"><label class="text-xs font-medium text-slate-600 block mb-1">اسم المعيار *</label>' +
+          '<input class="form-input" type="text" id="estd-name" value="'+(std.name||'').replace(/"/g,'&quot;')+'"/></div>' +
+        '</div>' +
+
+        // نطاق التطبيق - نقاط
+        '<div>' +
+          '<div class="flex items-center justify-between mb-2">' +
+            '<div class="text-xs font-bold text-slate-500 uppercase tracking-wide">نطاق التطبيق</div>' +
+            '<button onclick="addPointRow(\'estd-scope-list\',\'نقطة نطاق...\')" class="btn btn-primary text-xs" style="padding:4px 8px;font-size:11px"><i class="fas fa-plus ml-1"></i>إضافة نقطة</button>' +
+          '</div>' +
+          '<div id="estd-scope-list" class="space-y-2">' +
+            (std.scope ? std.scope.split(/\n|·|•/).map(function(s){
+              s = s.trim();
+              return s ? '<div class="flex gap-2 items-center">' +
+                '<span class="text-slate-400 flex-shrink-0 text-xs">◆</span>' +
+                '<input class="form-input text-xs flex-1 estd-scope-item" value="'+s.replace(/"/g,'&quot;')+'" placeholder="نقطة نطاق..."/>' +
+                '<button onclick="this.closest(\'div\').remove()" class="text-red-400 hover:text-red-600 p-1 flex-shrink-0"><i class="fas fa-times text-xs"></i></button>' +
+              '</div>' : '';
+            }).join('') :
+            '<div class="text-xs text-slate-400 text-center py-2" id="estd-scope-empty">اضغط إضافة نقطة</div>') +
+          '</div>' +
+        '</div>' +
+
+        // اللون والأيقونة
+        '<div>' +
+          '<div class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">المظهر</div>' +
+          '<div class="grid grid-cols-2 gap-4">' +
+            '<div><label class="text-xs font-medium text-slate-600 block mb-2">اللون</label>' +
+            '<div class="flex gap-2 flex-wrap">' + colorPills + '</div>' +
+            '<input type="hidden" id="estd-color" value="'+color+'"></div>' +
+            '<div><label class="text-xs font-medium text-slate-600 block mb-1">الأيقونة</label>' +
+            '<select class="form-input" id="estd-icon">' +
+              ['certificate','award','hard-hat','leaf','shield-alt','cogs','chart-line'].map(function(ic){
+                return '<option value="'+ic+'"'+(ic===std.icon?' selected':'')+'>'+ic+'</option>';
+              }).join('') +
+            '</select></div>' +
+          '</div>' +
+        '</div>' +
+
+        // البنود الرئيسية
+        '<div>' +
+          '<div class="flex items-center justify-between mb-2">' +
+            '<div class="text-xs font-bold text-slate-500 uppercase tracking-wide">البنود الرئيسية</div>' +
+            '<button onclick="addClauseRow()" class="text-xs px-2 py-1 rounded-lg btn btn-primary" style="font-size:11px;padding:4px 8px">' +
+              '<i class="fas fa-plus ml-1"></i>إضافة بند</button>' +
+          '</div>' +
+          '<div class="space-y-2 text-xs text-slate-500 mb-1 hidden" id="clause-header">' +
+            '<div class="flex gap-2 px-1"><span style="width:50px">رقم</span><span class="flex-1">العنوان</span><span class="flex-1">الوصف</span></div>' +
+          '</div>' +
+          '<div class="space-y-2" id="clauses-container">' + (clausesRows || '<div class="text-xs text-slate-400 text-center py-3">لا توجد بنود — أضف أول بند</div>') + '</div>' +
+        '</div>' +
+
+        // ما يميز هذا المعيار - نقاط
+        '<div>' +
+          '<div class="flex items-center justify-between mb-2">' +
+            '<div class="text-xs font-bold text-slate-500 uppercase tracking-wide">ما يميز هذا المعيار</div>' +
+            '<button onclick="addPointRow(\'estd-unique-list\',\'نقطة مميزة...\')" class="btn btn-primary text-xs" style="padding:4px 8px;font-size:11px"><i class="fas fa-plus ml-1"></i>إضافة نقطة</button>' +
+          '</div>' +
+          '<div id="estd-unique-list" class="space-y-2">' +
+            ((std.unique_elements||[]).length ? (std.unique_elements||[]).map(function(e){
+              return '<div class="flex gap-2 items-center">' +
+                '<span class="text-slate-400 flex-shrink-0 text-xs">◆</span>' +
+                '<input class="form-input text-xs flex-1 estd-unique-item" value="'+e.replace(/"/g,'&quot;')+'" placeholder="نقطة مميزة..."/>' +
+                '<button onclick="this.closest(\'div\').remove()" class="text-red-400 hover:text-red-600 p-1 flex-shrink-0"><i class="fas fa-times text-xs"></i></button>' +
+              '</div>';
+            }).join('') :
+            '<div class="text-xs text-slate-400 text-center py-2" id="estd-unique-empty">اضغط إضافة نقطة</div>') +
+          '</div>' +
+        '</div>' +
+
+        // حذف المعيار
+        '<div class="p-3 bg-red-50 rounded-xl flex items-center justify-between border border-red-100">' +
+          '<div>' +
+            '<div class="text-sm font-bold text-red-700">حذف هذا المعيار</div>' +
+            '<div class="text-xs text-red-400">سيتم حذف المعيار وجميع إجراءاته بشكل نهائي</div>' +
+          '</div>' +
+          '<button onclick="deleteStandard(\''+stdId+'\')" class="btn btn-danger text-xs px-3 py-1.5">' +
+            '<i class="fas fa-trash ml-1"></i>حذف</button>' +
+        '</div>' +
+
+        '<div class="flex gap-3 pt-3 border-t border-slate-100">' +
+          '<button onclick="submitEditStandard(\''+stdId+'\')" class="btn btn-primary flex-1" style="background:'+color+'">' +
+            '<i class="fas fa-save ml-1"></i>حفظ التعديلات</button>' +
+          '<button onclick="document.getElementById(\'modal-edit-standard\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
+        '</div>' +
+      '</div>' +
+    '</div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', html);
+  if (clausesRows) document.getElementById('clause-header')?.classList.remove('hidden');
+}
+
+function selectEditStdColor(color) {
+  var el = document.getElementById('estd-color');
+  if (el) el.value = color;
+  // Update header bg
+  var header = document.querySelector('#modal-edit-standard > div > div:first-child');
+  if (header) header.style.background = color;
+  document.querySelectorAll('[id^="estd-col-"]').forEach(function(btn){
+    var isSelected = btn.getAttribute('title') === color;
+    btn.style.borderColor = isSelected ? '#1e293b' : 'transparent';
+    btn.style.transform   = isSelected ? 'scale(1.2)' : 'scale(1)';
+  });
+}
+
+function addClauseRow() {
+  var container = document.getElementById('clauses-container');
+  if (!container) return;
+  // Remove empty placeholder
+  var empty = container.querySelector('.text-slate-400');
+  if (empty) empty.remove();
+  var idx = container.children.length;
+  var div = document.createElement('div');
+  div.id = 'clause-row-new-' + Date.now();
+  div.className = 'flex gap-2 items-center';
+  div.innerHTML =
+    '<input class="form-input text-xs font-mono" style="width:50px" id="cl-num-'+idx+'" placeholder="4.1"/>' +
+    '<input class="form-input text-xs flex-1" id="cl-title-'+idx+'" placeholder="عنوان البند"/>' +
+    '<input class="form-input text-xs flex-1" id="cl-desc-'+idx+'" placeholder="وصف مختصر"/>' +
+    '<button onclick="this.closest(\'div\').remove()" class="text-red-400 hover:text-red-600 flex-shrink-0 p-1"><i class="fas fa-times text-xs"></i></button>';
+  container.appendChild(div);
+  document.getElementById('clause-header')?.classList.remove('hidden');
+}
+
+async function submitEditStandard(stdId) {
+  var name = (document.getElementById('estd-name')?.value||'').trim();
+  if (!name) { showToast('❌ يرجى إدخال اسم المعيار', 'error'); return; }
+
+  // Collect clauses
+  var clauses = [];
+  document.querySelectorAll('#clauses-container [id^="clause-row"]').forEach(function(row){
+    var idx = row.id.replace('clause-row-','').replace('new-','');
+    var num   = (document.getElementById('cl-num-'+idx)  ||row.querySelector('[id^="cl-num"]'))?.value?.trim();
+    var title = (document.getElementById('cl-title-'+idx)||row.querySelector('[id^="cl-title"]'))?.value?.trim();
+    var desc  = (document.getElementById('cl-desc-'+idx) ||row.querySelector('[id^="cl-desc"]'))?.value?.trim();
+    if (num && title) clauses.push({num, title, desc:desc||''});
+  });
+
+  // Collect scope points
+  var scopePoints = collectPoints('estd-scope-list');
+  var scopeStr = scopePoints.join('\n');
+
+  // Collect unique elements from point rows
+  var unique = collectPoints('estd-unique-list');
+
+  var body = {
+    code:             (document.getElementById('estd-code')?.value||'').trim().toUpperCase().replace(/\s+/g,'_'),
+    name,
+    version:          (document.getElementById('estd-version')?.value||'').trim(),
+    scope:            scopeStr,
+    color:            document.getElementById('estd-color')?.value || '#64748b',
+    icon:             document.getElementById('estd-icon')?.value || 'certificate',
+    key_clauses:      clauses,
+    unique_elements:  unique,
+  };
+
+  try {
+    await apiFetch('/api/iso/standards/'+stdId, 'PUT', body);
+    document.getElementById('modal-edit-standard')?.remove();
+    showToast('✅ تم تحديث المعيار بنجاح', 'success');
+    loadOrganization();
+    setTimeout(function(){ switchOrgTab('standards'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
+}
+
+async function deleteStandard(stdId) {
+  if (!confirm('هل أنت متأكد من حذف هذا المعيار وجميع إجراءاته؟')) return;
+  await apiFetch('/api/iso/standards/'+stdId, 'DELETE');
+  document.getElementById('modal-edit-standard')?.remove();
+  showToast('🗑️ تم حذف المعيار', 'info');
+  loadOrganization();
+  setTimeout(function(){ switchOrgTab('standards'); }, 100);
+}
+
+// ── Toggle certified status ──────────────────
+function toggleStdCertified(code) {
+  var org = window.MOCK_DB?.org_profile;
+  if (!org) return;
+  if (!org.certified_standards) org.certified_standards = [];
+
+  var isCert = org.certified_standards.includes(code);
+  if (isCert) {
+    org.certified_standards = org.certified_standards.filter(function(s){ return s !== code; });
+  } else {
+    org.certified_standards.push(code);
+  }
+
+  // Update button in DOM instantly
+  var btn = document.getElementById('std-cert-btn-' + code);
+  if (btn) {
+    if (!isCert) {
+      btn.textContent = '✅ معتمد';
+      btn.style.background = '#d1fae5';
+      btn.style.color = '#059669';
+    } else {
+      btn.textContent = '⏳ غير معتمد';
+      btn.style.background = '#f1f5f9';
+      btn.style.color = '#64748b';
+    }
+  }
+
+  // Persist
+  apiFetch('/api/org/profile', 'PUT', {certified_standards: org.certified_standards})
+    .then(function(){ showToast(!isCert ? '✅ تم تحديد المعيار كمعتمد' : '⏳ تم إلغاء الاعتماد', 'success'); })
+    .catch(function(){});
+}
+
+// ── Edit Comparison Matrix ───────────────────
+function openEditComparisonModal() {
+  document.getElementById('modal-edit-comparison')?.remove();
+
+  var rows = window._comparisonRows || [];
+  if (!rows.length) {
+    showToast('لا توجد بيانات مقارنة متاحة', 'info');
+    return;
+  }
+
+  var standards = window.MOCK_DB?.iso_standards || [];
+
+  var tableRows = rows.map(function(row, idx) {
+    var cells = standards.map(function(std) {
+      var val = (row.vals && row.vals[std.code]) || '';
+      return '<td class="p-2"><input class="form-input text-xs" style="min-width:140px" ' +
+        'id="cmp-'+idx+'-'+std.code+'" value="'+(val||'').replace(/"/g,'&quot;')+'" /></td>';
+    }).join('');
+    return '<tr class="border-b border-slate-100">' +
+      '<td class="p-2 text-xs font-bold text-slate-700 whitespace-nowrap">'+row.aspect+'</td>' +
+      cells +
+    '</tr>';
+  }).join('');
+
+  var headerCells = standards.map(function(std){
+    var c = std.color || '#64748b';
+    return '<th class="p-2 text-xs font-bold whitespace-nowrap" style="color:'+c+'">'+std.code.replace('_',' ')+'</th>';
+  }).join('');
+
+  var html =
+    '<div class="modal open" id="modal-edit-comparison">' +
+    '<div class="bg-white rounded-2xl w-full max-w-4xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">' +
+
+      '<div class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">' +
+        '<h3 class="text-white font-bold text-lg"><i class="fas fa-table ml-2"></i>تعديل مصفوفة المقارنة</h3>' +
+        '<button onclick="document.getElementById(\'modal-edit-comparison\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+      '</div>' +
+
+      '<div class="p-6">' +
+        '<p class="text-xs text-slate-500 mb-4">عدّل قيم المقارنة لكل معيار في الجدول أدناه</p>' +
+        '<div class="overflow-x-auto rounded-xl border border-slate-200">' +
+          '<table class="w-full text-sm" style="min-width:600px">' +
+            '<thead class="bg-slate-50 border-b border-slate-200">' +
+              '<tr>' +
+                '<th class="p-2 text-right text-xs font-bold text-slate-700">وجه المقارنة</th>' +
+                headerCells +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' + tableRows + '</tbody>' +
+          '</table>' +
+        '</div>' +
+
+        '<div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">' +
+          '<button onclick="submitComparisonEdit()" class="btn btn-primary flex-1">' +
+            '<i class="fas fa-save ml-1"></i>حفظ التعديلات</button>' +
+          '<button onclick="document.getElementById(\'modal-edit-comparison\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
+        '</div>' +
+      '</div>' +
+    '</div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function submitComparisonEdit() {
+  var rows      = window.MOCK_DB?.comparisonRows || window._comparisonRows || [];
+  var standards = window.MOCK_DB?.iso_standards || [];
+
+  rows.forEach(function(row, idx) {
+    if (!row.vals) row.vals = {};
+    standards.forEach(function(std) {
+      var el = document.getElementById('cmp-' + idx + '-' + std.code);
+      if (el) row.vals[std.code] = el.value.trim();
+    });
+  });
+
+  // Save directly to MOCK_DB so it persists across loadOrganization() calls
+  if (window.MOCK_DB) window.MOCK_DB.comparisonRows = rows;
+  window._comparisonRows = rows;
+
+  document.getElementById('modal-edit-comparison')?.remove();
+  showToast('✅ تم حفظ مصفوفة المقارنة', 'success');
+  loadOrganization();
+  setTimeout(function(){ switchOrgTab('compare'); }, 150);
 }
 
 function switchOrgTab(tab) {
@@ -4018,12 +4480,28 @@ async function submitOrgEdit() {
   switchOrgTab('profile');
 }
 
+// ── Refresh ISO checkboxes in objective modal ──
+function refreshIsoCheckboxes(checkedCodes) {
+  var list = document.getElementById('obj-iso-list');
+  if (!list) return;
+  var standards = window.MOCK_DB?.iso_standards || [];
+  var stdColors  = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  list.innerHTML = standards.map(function(s){
+    var color = s.color || stdColors[s.code] || '#64748b';
+    var checked = checkedCodes && checkedCodes.includes(s.code) ? 'checked' : '';
+    return '<label class="flex items-center gap-2 text-sm cursor-pointer">' +
+      '<input type="checkbox" class="obj-iso-cb" value="'+s.code+'" '+checked+'/>' +
+      '<span class="badge text-xs" style="background:'+color+'18;color:'+color+'">'+s.code.replace('_',' ')+'</span>' +
+    '</label>';
+  }).join('');
+}
+
 function openObjectiveModal() {
   document.getElementById('obj-edit-id').value = '';
   document.getElementById('obj-text').value = '';
   document.getElementById('obj-status').value = 'in_progress';
   document.getElementById('obj-kpi').value = '';
-  document.querySelectorAll('.obj-iso-cb').forEach(cb => cb.checked = false);
+  refreshIsoCheckboxes([]);
   document.getElementById('modal-objective').classList.add('open');
 }
 
@@ -4034,7 +4512,7 @@ function openObjectiveEdit(id) {
   document.getElementById('obj-text').value = obj.text || '';
   document.getElementById('obj-status').value = obj.status || 'in_progress';
   document.getElementById('obj-kpi').value = obj.kpi_ref || '';
-  document.querySelectorAll('.obj-iso-cb').forEach(cb => cb.checked = (obj.iso||[]).includes(cb.value));
+  refreshIsoCheckboxes(obj.iso || []);
   document.getElementById('modal-objective').classList.add('open');
 }
 
