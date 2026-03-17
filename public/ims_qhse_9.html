@@ -47,8 +47,33 @@
     .risk-medium { background: #fef9c3; } .risk-low { background: #dcfce7; }
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
     .modal.open { display: flex; }
+    /* ── Task Modal Structure ── */
+    .modal-content {
+      background: white; border-radius: 16px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      overflow: hidden; display: flex; flex-direction: column;
+      max-height: 90vh;
+    }
+    .modal-header {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      padding: 16px 20px; display: flex; align-items: center;
+      justify-content: space-between; flex-shrink: 0;
+    }
+    .modal-title { color: white; font-weight: 700; font-size: 15px; }
+    .modal-body  { padding: 20px; overflow-y: auto; flex: 1; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; justify-content: flex-end; flex-shrink: 0; }
     .progress-ring { transform: rotate(-90deg); }
     .notification-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; position: absolute; top: -2px; right: -2px; }
+
+    /* ── Kanban Drag & Drop ── */
+    .task-card { transition: box-shadow .2s, transform .2s, opacity .2s; }
+    .task-card:active { cursor: grabbing; }
+    .task-card.dragging { opacity: .4; transform: rotate(2deg) scale(.97); box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+    .task-card.drag-ghost { opacity: .15; }
+    .kanban-drop-zone { transition: background .2s, border-radius .2s; }
+    .kanban-drop-zone.drag-over { background: rgba(59,130,246,.08) !important; border-radius: 12px; outline: 2px dashed #3b82f6; outline-offset: -4px; }
+    .drop-placeholder { height: 80px; border: 2px dashed #3b82f6; border-radius: 12px; background: rgba(59,130,246,.05); margin-bottom: 12px; }
+    .drag-handle { cursor: grab; }
     @media (max-width: 768px) {
       .sidebar { transform: translateX(100%); }
       .sidebar.open { transform: translateX(0); }
@@ -4092,7 +4117,8 @@ function openNewNCModal() {
   document.getElementById('modal-nc').classList.add('open');
 }
 function openNewInspectionModal() { document.getElementById('modal-inspection').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) { var el = document.getElementById(id); if (el) el.classList.add('open'); }
+function closeModal(id) { var el = document.getElementById(id); if (el) el.classList.remove('open'); }
 
 async function submitNC(e) {
   e.preventDefault();
@@ -4643,10 +4669,19 @@ async function loadTasks() {
         var commentCount = (t.comments||[]).length;
         var attachCount  = (t.attachments||[]).length;
 
-        cardsHtml += '<div class="task-card bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-3 cursor-pointer hover:shadow-md transition-all" onclick="openTaskDetail(\''+t.id+'\')">'+
+        cardsHtml += '<div class="task-card bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-3 cursor-grab hover:shadow-md hover:-translate-y-0.5 transition-all select-none" ' +
+          'draggable="true" ' +
+          'data-task-id="'+t.id+'" ' +
+          'data-status="'+t.status+'" ' +
+          'ondragstart="onTaskDragStart(event,\''+t.id+'\')" ' +
+          'ondragend="onTaskDragEnd(event)" ' +
+          'onclick="openTaskDetail(\''+t.id+'\')">' +
           '<div class="flex items-start justify-between gap-2 mb-2">' +
             '<div class="text-sm font-bold text-slate-800 leading-snug flex-1">'+t.title+'</div>' +
-            '<div class="w-2 h-2 rounded-full flex-shrink-0 mt-1" style="background:'+prioClr+'" title="'+prioAr+'"></div>' +
+            '<div class="flex items-center gap-1.5 flex-shrink-0">' +
+              '<div class="w-2 h-2 rounded-full" style="background:'+prioClr+'" title="'+prioAr+'"></div>' +
+              '<i class="fas fa-grip-vertical text-slate-300 text-xs drag-handle"></i>' +
+            '</div>' +
           '</div>' +
           (t.description ? '<div class="text-xs text-slate-500 mb-3 line-clamp-2">'+t.description+'</div>' : '') +
           '<div class="flex items-center justify-between mt-2">' +
@@ -4664,17 +4699,24 @@ async function loadTasks() {
       });
     }
 
-    kanbanHtml += '<div class="flex-1 min-w-0" style="min-width:240px">' +
-      '<div class="rounded-2xl p-1" style="background:'+col.bg+';border:2px solid '+col.color+'22">' +
+    kanbanHtml += '<div class="kanban-col flex-1 min-w-0" style="min-width:240px">' +
+      '<div class="rounded-2xl p-1 transition-all" style="background:'+col.bg+';border:2px solid '+col.color+'22" id="col-wrapper-'+col.key+'">' +
         '<div class="flex items-center justify-between px-3 py-2 mb-2">' +
           '<div class="flex items-center gap-2">' +
             '<i class="fas fa-'+col.icon+' text-sm" style="color:'+col.color+'"></i>' +
             '<span class="font-bold text-sm" style="color:'+col.color+'">'+col.label+'</span>' +
-            '<span class="text-xs font-black px-2 py-0.5 rounded-full text-white" style="background:'+col.color+'">'+colTasks.length+'</span>' +
+            '<span class="text-xs font-black px-2 py-0.5 rounded-full text-white col-count" style="background:'+col.color+'">'+colTasks.length+'</span>' +
           '</div>' +
           '<button onclick="openNewTaskModal(\''+col.key+'\')" class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm" style="background:'+col.color+'" title="إضافة مهمة"><i class="fas fa-plus"></i></button>' +
         '</div>' +
-        '<div class="px-1 max-h-screen overflow-y-auto" style="max-height:calc(100vh - 340px)">' +
+        '<div class="kanban-drop-zone px-1 overflow-y-auto transition-all" ' +
+          'style="max-height:calc(100vh - 340px);min-height:80px" ' +
+          'data-col="'+col.key+'" ' +
+          'ondragover="onColDragOver(event)" ' +
+          'ondragenter="onColDragEnter(event,\''+col.key+'\')" ' +
+          'ondragleave="onColDragLeave(event,\''+col.key+'\')" ' +
+          'ondrop="onColDrop(event,\''+col.key+'\')" ' +
+          'id="drop-zone-'+col.key+'">' +
           cardsHtml +
         '</div>' +
       '</div>' +
@@ -4763,18 +4805,72 @@ async function loadTasks() {
     // Kanban board
     '<div id="kanban-board" class="flex gap-4 overflow-x-auto pb-4" style="min-height:400px">' + kanbanHtml + '</div>' +
 
-    // Modals
-    modalHtml +
     '</div>';
+
+  // Inject modal-task into body (persistent, not inside app-content)
+  var existingModal = document.getElementById('modal-task');
+  if (existingModal) existingModal.remove();
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
 function openNewTaskModal(status) {
+  // If modal doesn't exist yet, build it first
+  if (!document.getElementById('modal-task')) {
+    var tasks    = (window.MOCK_DB && window.MOCK_DB.tasks)    || [];
+    var users    = (window.MOCK_DB && window.MOCK_DB.users)    || [];
+    var projects = (window.MOCK_DB && window.MOCK_DB.projects) || [];
+    var projOpts = '<option value="">-- اختر مشروعاً --</option>';
+    projects.forEach(function(p){ projOpts += '<option value="'+p.id+'">'+p.name+'</option>'; });
+    var userOpts = '<option value="">-- المسؤول --</option>';
+    users.filter(function(u){return u.is_active;}).forEach(function(u){
+      userOpts += '<option value="'+u.id+'" data-name="'+u.full_name+'">'+u.full_name+'</option>';
+    });
+    var html =
+      '<div id="modal-task" class="modal" onclick="closeModal(\'modal-task\')">' +
+      '<div class="modal-content" onclick="event.stopPropagation()" style="max-width:520px">' +
+        '<div class="modal-header">' +
+          '<h3 class="modal-title"><i class="fas fa-plus-circle ml-2"></i>مهمة جديدة</h3>' +
+          '<button onclick="closeModal(\'modal-task\')" class="text-white opacity-70 hover:opacity-100"><i class="fas fa-times"></i></button>' +
+        '</div>' +
+        '<div class="modal-body space-y-4">' +
+          '<div><label class="text-sm font-bold text-slate-700 block mb-1">عنوان المهمة *</label>' +
+          '<input class="form-input" id="nt-title" placeholder="عنوان المهمة..."/></div>' +
+          '<div><label class="text-sm font-bold text-slate-700 block mb-1">الوصف</label>' +
+          '<textarea class="form-input" id="nt-desc" rows="3" placeholder="تفاصيل المهمة..."></textarea></div>' +
+          '<div class="grid grid-cols-2 gap-3">' +
+            '<div><label class="text-sm font-bold text-slate-700 block mb-1">المشروع</label>' +
+            '<select class="form-input" id="nt-proj">'+projOpts+'</select></div>' +
+            '<div><label class="text-sm font-bold text-slate-700 block mb-1">المسؤول</label>' +
+            '<select class="form-input" id="nt-user">'+userOpts+'</select></div>' +
+          '</div>' +
+          '<div class="grid grid-cols-2 gap-3">' +
+            '<div><label class="text-sm font-bold text-slate-700 block mb-1">الأولوية</label>' +
+            '<select class="form-input" id="nt-prio">' +
+              '<option value="low">منخفضة</option>' +
+              '<option value="medium" selected>متوسطة</option>' +
+              '<option value="high">عالية</option>' +
+            '</select></div>' +
+            '<div><label class="text-sm font-bold text-slate-700 block mb-1">الموعد النهائي</label>' +
+            '<input class="form-input" type="date" id="nt-date"/></div>' +
+          '</div>' +
+          '<input type="hidden" id="nt-status" value="todo"/>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+          '<button onclick="closeModal(\'modal-task\')" class="btn btn-danger">إلغاء</button>' +
+          '<button onclick="submitNewTask()" class="btn btn-primary"><i class="fas fa-save ml-2"></i>إنشاء المهمة</button>' +
+        '</div>' +
+      '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+  }
+  // Set status and clear fields
   var st = document.getElementById('nt-status');
   if (st) st.value = status || 'todo';
-  var t = document.getElementById('nt-title');
-  var d = document.getElementById('nt-desc');
-  if (t) t.value = '';
-  if (d) d.value = '';
+  var t  = document.getElementById('nt-title');
+  var d  = document.getElementById('nt-desc');
+  var dt = document.getElementById('nt-date');
+  if (t)  t.value  = '';
+  if (d)  d.value  = '';
+  if (dt) dt.value = '';
   openModal('modal-task');
 }
 
@@ -4893,7 +4989,12 @@ function openTaskDetail(id) {
 
     '<div class="modal-header" style="position:sticky;top:0;z-index:10">' +
       '<h3 class="modal-title text-sm font-bold truncate">'+task.title+'</h3>' +
-      '<button onclick="closeModal(\'modal-task-detail\')" class="text-white opacity-70 hover:opacity-100"><i class="fas fa-times"></i></button>' +
+      '<div class="flex items-center gap-2">' +
+        '<button onclick="openTaskEdit(\''+id+'\')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all" title="تعديل المهمة">' +
+          '<i class="fas fa-edit text-xs"></i> تعديل' +
+        '</button>' +
+        '<button onclick="closeModal(\'modal-task-detail\')" class="text-white opacity-70 hover:opacity-100"><i class="fas fa-times"></i></button>' +
+      '</div>' +
     '</div>' +
 
     '<div class="modal-body space-y-5">' +
@@ -5079,8 +5180,406 @@ function moveTask(taskId, newStatus) {
     task.status = newStatus;
     var sAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'}[newStatus]||newStatus;
     showToast('✅ تم نقل المهمة إلى: '+sAr,'success');
+    // Refresh board without closing detail modal
+    refreshKanbanBoard();
     openTaskDetail(taskId);
   }
+}
+
+// ══════════════════════════════════════════════
+//  DRAG & DROP — Kanban Board
+// ══════════════════════════════════════════════
+var _dragTaskId   = null;
+var _dragCard     = null;
+var _placeholder  = null;
+
+function onTaskDragStart(e, taskId) {
+  _dragTaskId = taskId;
+  _dragCard   = e.currentTarget;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', taskId);
+  // slight delay so browser snapshot doesn't show the dimmed card
+  setTimeout(function() {
+    if (_dragCard) _dragCard.classList.add('dragging');
+  }, 0);
+  // Create placeholder
+  _placeholder = document.createElement('div');
+  _placeholder.className = 'drop-placeholder';
+}
+
+function onTaskDragEnd(e) {
+  if (_dragCard) _dragCard.classList.remove('dragging');
+  if (_placeholder && _placeholder.parentNode) _placeholder.parentNode.removeChild(_placeholder);
+  // Remove all drag-over highlights
+  document.querySelectorAll('.kanban-drop-zone').forEach(function(z) {
+    z.classList.remove('drag-over');
+  });
+  _dragTaskId = null;
+  _dragCard   = null;
+  _placeholder = null;
+}
+
+function onColDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  // Move placeholder to cursor position
+  var zone = e.currentTarget;
+  var afterEl = getDragAfterElement(zone, e.clientY);
+  if (_placeholder) {
+    if (afterEl) {
+      zone.insertBefore(_placeholder, afterEl);
+    } else {
+      zone.appendChild(_placeholder);
+    }
+  }
+}
+
+function onColDragEnter(e, colKey) {
+  e.preventDefault();
+  var zone = document.getElementById('drop-zone-' + colKey);
+  if (zone) zone.classList.add('drag-over');
+  if (_placeholder && !zone.contains(_placeholder)) {
+    zone.appendChild(_placeholder);
+  }
+}
+
+function onColDragLeave(e, colKey) {
+  var zone = document.getElementById('drop-zone-' + colKey);
+  // Only remove if leaving the zone entirely (not entering a child)
+  if (zone && !zone.contains(e.relatedTarget)) {
+    zone.classList.remove('drag-over');
+    if (_placeholder && _placeholder.parentNode === zone) {
+      zone.removeChild(_placeholder);
+    }
+  }
+}
+
+function onColDrop(e, colKey) {
+  e.preventDefault();
+  var zone = document.getElementById('drop-zone-' + colKey);
+  if (zone) zone.classList.remove('drag-over');
+  if (_placeholder && _placeholder.parentNode) _placeholder.parentNode.removeChild(_placeholder);
+
+  var taskId = e.dataTransfer.getData('text/plain') || _dragTaskId;
+  if (!taskId) return;
+
+  var tasks = (window.MOCK_DB && window.MOCK_DB.tasks) ? window.MOCK_DB.tasks : [];
+  var task  = tasks.find(function(t){return t.id===taskId;});
+  if (!task || task.status === colKey) return;
+
+  var oldStatus = task.status;
+  task.status   = colKey;
+
+  var labelsAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'};
+  showToast('↕️ ' + labelsAr[oldStatus] + ' → ' + labelsAr[colKey], 'success');
+
+  refreshKanbanBoard();
+}
+
+// Helper — find the element to insert before based on Y position
+function getDragAfterElement(container, y) {
+  var draggableEls = [].slice.call(
+    container.querySelectorAll('.task-card:not(.dragging)')
+  );
+  return draggableEls.reduce(function(closest, child) {
+    var box = child.getBoundingClientRect();
+    var offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    }
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// Refresh only the board cards without full reload
+function refreshKanbanBoard() {
+  var tasks    = (window.MOCK_DB && window.MOCK_DB.tasks)    || [];
+  var users    = (window.MOCK_DB && window.MOCK_DB.users)    || [];
+  var cols     = ['todo','inprogress','review','done'];
+  var labelsAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'};
+  var colColors = {todo:'#64748b',inprogress:'#d97706',review:'#7c3aed',done:'#059669'};
+  var colBg     = {todo:'#f8fafc',inprogress:'#fffbeb',review:'#faf5ff',done:'#f0fdf4'};
+  var colIcons  = {todo:'clock',inprogress:'bolt',review:'eye',done:'check-circle'};
+
+  cols.forEach(function(colKey) {
+    var zone = document.getElementById('drop-zone-' + colKey);
+    if (!zone) return;
+    var colTasks = tasks.filter(function(t){return t.status===colKey;});
+
+    // Update count badge
+    var wrapper = document.getElementById('col-wrapper-' + colKey);
+    if (wrapper) {
+      var badge = wrapper.querySelector('.col-count');
+      if (badge) badge.textContent = colTasks.length;
+    }
+
+    var html = '';
+    if (!colTasks.length) {
+      html = '<div class="text-center py-8 text-slate-300 text-sm"><i class="fas fa-inbox text-2xl block mb-2"></i>لا توجد مهام</div>';
+    } else {
+      colTasks.forEach(function(t) {
+        var isOverdue = t.due_date && new Date(t.due_date) < new Date() && t.status !== 'done';
+        var assignee  = users.find(function(u){return u.id===t.assigned_to;});
+        var aName     = assignee ? assignee.full_name : 'غير محدد';
+        var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
+        var aClr      = assignee ? ({admin:'#7c3aed',manager:'#2563eb',engineer:'#059669',auditor:'#d97706'}[assignee.role]||'#64748b') : '#94a3b8';
+        var prioClr   = {high:'#dc2626',medium:'#d97706',low:'#059669'}[t.priority]||'#94a3b8';
+        var prioAr    = {high:'عالية',medium:'متوسطة',low:'منخفضة'}[t.priority]||'';
+        var commentCount = (t.comments||[]).length;
+        var attachCount  = (t.attachments||[]).length;
+
+        html += '<div class="task-card bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-3 cursor-grab hover:shadow-md hover:-translate-y-0.5 transition-all select-none" ' +
+          'draggable="true" data-task-id="'+t.id+'" data-status="'+t.status+'" ' +
+          'ondragstart="onTaskDragStart(event,\''+t.id+'\')" ' +
+          'ondragend="onTaskDragEnd(event)" ' +
+          'onclick="openTaskDetail(\''+t.id+'\')">' +
+          '<div class="flex items-start justify-between gap-2 mb-2">' +
+            '<div class="text-sm font-bold text-slate-800 leading-snug flex-1">'+t.title+'</div>' +
+            '<div class="flex items-center gap-1.5 flex-shrink-0">' +
+              '<div class="w-2 h-2 rounded-full" style="background:'+prioClr+'" title="'+prioAr+'"></div>' +
+              '<i class="fas fa-grip-vertical text-slate-300 text-xs"></i>' +
+            '</div>' +
+          '</div>' +
+          (t.description ? '<div class="text-xs text-slate-500 mb-3 line-clamp-2">'+t.description+'</div>' : '') +
+          '<div class="flex items-center justify-between mt-2">' +
+            '<div class="flex items-center gap-2">' +
+              '<div class="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-black" style="background:'+aClr+'" title="'+aName+'">'+aInitials+'</div>' +
+              (isOverdue ? '<span class="text-xs text-red-500 font-bold"><i class="fas fa-fire ml-1"></i>متأخر</span>' :
+                (t.due_date ? '<span class="text-xs text-slate-400">'+new Date(t.due_date).toLocaleDateString('ar-SA')+'</span>' : '')) +
+            '</div>' +
+            '<div class="flex items-center gap-3 text-slate-400">' +
+              (commentCount ? '<span class="text-xs"><i class="fas fa-comment-alt ml-1"></i>'+commentCount+'</span>' : '') +
+              (attachCount  ? '<span class="text-xs"><i class="fas fa-paperclip ml-1"></i>'+attachCount+'</span>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+
+    zone.innerHTML = html;
+    // Rebind drag events — already inline so no need
+
+    // Update KPI counters in header
+    var kpiEls = document.querySelectorAll('[data-kpi-status]');
+    kpiEls.forEach(function(el) {
+      var s = el.getAttribute('data-kpi-status');
+      el.textContent = tasks.filter(function(t){return t.status===s;}).length;
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+//  TASK EDIT MODAL
+// ══════════════════════════════════════════════
+function openTaskEdit(id) {
+  var tasks    = (window.MOCK_DB && window.MOCK_DB.tasks)    || [];
+  var users    = (window.MOCK_DB && window.MOCK_DB.users)    || [];
+  var projects = (window.MOCK_DB && window.MOCK_DB.projects) || [];
+  var task     = tasks.find(function(t){ return t.id === id; });
+  if (!task) return;
+
+  // Close detail modal first
+  closeModal('modal-task-detail');
+
+  // Build options
+  var projOpts = '<option value="">-- اختر مشروعاً --</option>';
+  projects.forEach(function(p){
+    projOpts += '<option value="'+p.id+'"'+(p.id===task.project_id?' selected':'')+'>'+p.name+'</option>';
+  });
+
+  var userOpts = '<option value="">-- غير محدد --</option>';
+  users.filter(function(u){return u.is_active;}).forEach(function(u){
+    userOpts += '<option value="'+u.id+'"'+(u.id===task.assigned_to?' selected':'')+'>'+u.full_name+'</option>';
+  });
+
+  var statusOpts = [
+    ['todo','⏳ قيد الانتظار'],
+    ['inprogress','⚡ قيد التنفيذ'],
+    ['review','👁 مراجعة'],
+    ['done','✅ مكتملة']
+  ].map(function(s){
+    return '<option value="'+s[0]+'"'+(s[0]===task.status?' selected':'')+'>'+s[1]+'</option>';
+  }).join('');
+
+  var prioOpts = [
+    ['high','🔴 عالية'],
+    ['medium','🟡 متوسطة'],
+    ['low','🟢 منخفضة']
+  ].map(function(p){
+    return '<option value="'+p[0]+'"'+(p[0]===task.priority?' selected':'')+'>'+p[1]+'</option>';
+  }).join('');
+
+  // Remove old edit modal
+  var old = document.getElementById('modal-task-edit');
+  if (old) old.parentNode.removeChild(old);
+
+  var prioColors = {high:'#dc2626', medium:'#d97706', low:'#059669'};
+  var statColors = {todo:'#64748b', inprogress:'#d97706', review:'#7c3aed', done:'#059669'};
+  var headerColor = statColors[task.status] || '#3b82f6';
+
+  var html =
+    '<div id="modal-task-edit" class="modal open">' +
+    '<div class="modal-content" onclick="event.stopPropagation()" style="max-width:600px;max-height:90vh;overflow-y:auto">' +
+
+      // Header
+      '<div class="modal-header" style="position:sticky;top:0;z-index:10;background:'+headerColor+'">' +
+        '<div>' +
+          '<div class="text-white text-xs opacity-70 mb-0.5">تعديل المهمة</div>' +
+          '<h3 class="text-white font-bold text-sm truncate" style="max-width:380px">'+task.title+'</h3>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'modal-task-edit\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+      '</div>' +
+
+      '<div class="modal-body space-y-4">' +
+
+        // العنوان
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-heading text-slate-400 ml-1"></i>عنوان المهمة *</label>' +
+          '<input class="form-input" id="te-title" type="text" value="'+(task.title||'').replace(/"/g,'&quot;')+'" placeholder="عنوان المهمة..." />' +
+        '</div>' +
+
+        // الوصف
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-align-right text-slate-400 ml-1"></i>الوصف التفصيلي</label>' +
+          '<textarea class="form-input" id="te-desc" rows="3" placeholder="تفاصيل المهمة...">'+( task.description||'')+'</textarea>' +
+        '</div>' +
+
+        // الحالة مع pills بصرية
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-2"><i class="fas fa-exchange-alt text-slate-400 ml-1"></i>الحالة</label>' +
+          '<div class="flex flex-wrap gap-2" id="te-status-pills">' +
+            [['todo','⏳ قيد الانتظار','#64748b'],['inprogress','⚡ قيد التنفيذ','#d97706'],['review','👁 مراجعة','#7c3aed'],['done','✅ مكتملة','#059669']].map(function(s){
+              var active = s[0] === task.status;
+              return '<button type="button" onclick="selectTaskStatus(\''+s[0]+'\')" id="te-pill-'+s[0]+'" '+
+                'class="flex-1 py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all" '+
+                'style="border-color:'+s[2]+';background:'+(active?s[2]:'white')+';color:'+(active?'white':s[2])+'">'+
+                s[1]+'</button>';
+            }).join('') +
+          '</div>' +
+          '<input type="hidden" id="te-status" value="'+(task.status||'todo')+'" />' +
+        '</div>' +
+
+        // الأولوية + الموعد
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-flag text-slate-400 ml-1"></i>الأولوية</label>' +
+            '<select class="form-input" id="te-priority">'+prioOpts+'</select>' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-calendar text-slate-400 ml-1"></i>الموعد النهائي</label>' +
+            '<input class="form-input" type="date" id="te-due" value="'+(task.due_date||'')+'" />' +
+          '</div>' +
+        '</div>' +
+
+        // المشروع + المسؤول
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-building text-slate-400 ml-1"></i>المشروع</label>' +
+            '<select class="form-input" id="te-project">'+projOpts+'</select>' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-user text-slate-400 ml-1"></i>المسؤول</label>' +
+            '<select class="form-input" id="te-assigned">'+userOpts+'</select>' +
+          '</div>' +
+        '</div>' +
+
+        // حذف المهمة
+        '<div class="p-3 bg-red-50 rounded-xl flex items-center justify-between border border-red-100">' +
+          '<div>' +
+            '<div class="text-sm font-bold text-red-700">حذف المهمة</div>' +
+            '<div class="text-xs text-red-400">لا يمكن التراجع عن هذا الإجراء</div>' +
+          '</div>' +
+          '<button onclick="deleteTask(\''+id+'\')" class="btn btn-danger text-xs px-3 py-1.5">' +
+            '<i class="fas fa-trash ml-1"></i>حذف' +
+          '</button>' +
+        '</div>' +
+
+        // أزرار الحفظ
+        '<div class="flex gap-3 pt-2 border-t border-slate-100">' +
+          '<button onclick="submitTaskEdit(\''+id+'\')" class="btn btn-primary flex-1">' +
+            '<i class="fas fa-save ml-1"></i>حفظ التعديلات' +
+          '</button>' +
+          '<button onclick="document.getElementById(\'modal-task-edit\').remove()" class="btn btn-danger px-6">إلغاء</button>' +
+        '</div>' +
+
+      '</div>' +
+    '</div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function selectTaskStatus(val) {
+  var statusInput = document.getElementById('te-status');
+  if (statusInput) statusInput.value = val;
+  var colors = {todo:'#64748b', inprogress:'#d97706', review:'#7c3aed', done:'#059669'};
+  ['todo','inprogress','review','done'].forEach(function(s){
+    var btn = document.getElementById('te-pill-'+s);
+    if (!btn) return;
+    var c = colors[s];
+    if (s === val) {
+      btn.style.background = c;
+      btn.style.borderColor = c;
+      btn.style.color = 'white';
+    } else {
+      btn.style.background = 'white';
+      btn.style.borderColor = c;
+      btn.style.color = c;
+    }
+  });
+  // Update header color
+  var header = document.querySelector('#modal-task-edit .modal-header');
+  if (header) header.style.background = colors[val] || '#3b82f6';
+}
+
+function submitTaskEdit(id) {
+  var titleEl = document.getElementById('te-title');
+  var title   = titleEl ? titleEl.value.trim() : '';
+  if (!title) { showToast('❌ يرجى إدخال عنوان المهمة', 'error'); return; }
+
+  var tasks    = (window.MOCK_DB && window.MOCK_DB.tasks)    || [];
+  var projects = (window.MOCK_DB && window.MOCK_DB.projects) || [];
+  var users    = (window.MOCK_DB && window.MOCK_DB.users)    || [];
+  var task     = tasks.find(function(t){ return t.id === id; });
+  if (!task) return;
+
+  var projSel  = document.getElementById('te-project');
+  var projId   = projSel ? projSel.value : '';
+  var proj     = projects.find(function(p){ return p.id === projId; });
+
+  var userSel  = document.getElementById('te-assigned');
+  var userId   = userSel ? userSel.value : '';
+  var assignee = users.find(function(u){ return u.id === userId; });
+
+  var descEl   = document.getElementById('te-desc');
+  var statusEl = document.getElementById('te-status');
+  var prioEl   = document.getElementById('te-priority');
+  var dueEl    = document.getElementById('te-due');
+
+  task.title        = title;
+  task.description  = descEl   ? descEl.value.trim()   : task.description;
+  task.status       = statusEl ? statusEl.value         : task.status;
+  task.priority     = prioEl   ? prioEl.value           : task.priority;
+  task.due_date     = dueEl    ? (dueEl.value || null)  : task.due_date;
+  task.project_id   = projId;
+  task.project_name = proj     ? proj.name              : task.project_name;
+  task.assigned_to  = userId;
+  task.assigned_name= assignee ? assignee.full_name     : task.assigned_name;
+
+  var editModal = document.getElementById('modal-task-edit');
+  if (editModal) editModal.remove();
+  showToast('✅ تم حفظ التعديلات بنجاح', 'success');
+  refreshKanbanBoard();
+  openTaskDetail(id);
+}
+
+function deleteTask(id) {
+  if (!confirm('هل أنت متأكد من حذف هذه المهمة؟')) return;
+  var tasks = (window.MOCK_DB && window.MOCK_DB.tasks) || [];
+  window.MOCK_DB.tasks = tasks.filter(function(t){ return t.id !== id; });
+  var editModal = document.getElementById('modal-task-edit');
+  if (editModal) editModal.remove();
+  showToast('🗑️ تم حذف المهمة', 'info');
+  refreshKanbanBoard();
 }
 
 function applyTaskFilters() {
