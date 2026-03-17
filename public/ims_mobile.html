@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="IMS QHSE"/>
+  <meta name="theme-color" content="#1e40af"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="apple-touch-icon" href="/icon-192.png"/>
+  <title>IMS QHSE Mobile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap');
+    *{font-family:'Tajawal',sans-serif;-webkit-tap-highlight-color:transparent;}
+    :root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
+    body{background:#f1f5f9;color:#1e293b;overflow-x:hidden;}
+    .topbar{background:linear-gradient(135deg,#1e40af,#3b82f6);padding:calc(var(--safe-top) + 14px) 16px 14px;position:sticky;top:0;z-index:50;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;padding:8px 0 calc(var(--safe-bottom) + 8px);z-index:50;display:flex;justify-content:space-around;}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;cursor:pointer;color:#94a3b8;transition:color .2s;}
+    .bnav-item.active{color:#1e40af;}
+    .bnav-item i{font-size:20px;}
+    .bnav-item span{font-size:10px;font-weight:600;}
+    .page{display:none;padding:16px;padding-bottom:80px;}
+    .page.active{display:block;}
+    .card{background:white;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+    .btn-full{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:none;transition:all .2s;}
+    .btn-primary{background:#1e40af;color:white;}
+    .btn-primary:active{background:#1e3a8a;}
+    .btn-success{background:#059669;color:white;}
+    .btn-danger{background:#dc2626;color:white;}
+    .btn-outline{background:white;color:#1e40af;border:2px solid #1e40af;}
+    .form-input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:15px;background:white;}
+    .form-input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+    .badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;display:inline-block;}
+    .badge-red{background:#fee2e2;color:#dc2626;}
+    .badge-yellow{background:#fef3c7;color:#d97706;}
+    .badge-green{background:#d1fae5;color:#059669;}
+    .badge-blue{background:#dbeafe;color:#1d4ed8;}
+    .badge-gray{background:#f1f5f9;color:#64748b;}
+
+    /* Camera styles */
+    #camera-view{width:100%;border-radius:14px;background:#000;overflow:hidden;position:relative;}
+    #camera-video{width:100%;display:block;border-radius:14px;}
+    #camera-canvas{display:none;}
+    .camera-overlay{position:absolute;inset:0;pointer-events:none;
+      border:2px solid rgba(255,255,255,.4);border-radius:14px;}
+    .camera-corner{position:absolute;width:24px;height:24px;border-color:#fff;border-style:solid;border-width:0;}
+    .camera-corner.tl{top:12px;right:12px;border-top-width:3px;border-right-width:3px;border-radius:0 4px 0 0;}
+    .camera-corner.tr{top:12px;left:12px;border-top-width:3px;border-left-width:3px;border-radius:4px 0 0 0;}
+    .camera-corner.bl{bottom:12px;right:12px;border-bottom-width:3px;border-right-width:3px;border-radius:0 0 0 4px;}
+    .camera-corner.br{bottom:12px;left:12px;border-bottom-width:3px;border-left-width:3px;border-radius:0 0 4px 0;}
+    .shutter-btn{width:70px;height:70px;border-radius:50%;background:white;border:4px solid #3b82f6;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 4px 15px rgba(0,0,0,.3);}
+    .shutter-btn:active{transform:scale(.92);background:#dbeafe;}
+    .photo-thumb{width:70px;height:70px;object-fit:cover;border-radius:10px;border:2px solid #e2e8f0;}
+    .pull-refresh{display:flex;align-items:center;justify-content:center;padding:12px;color:#94a3b8;font-size:13px;}
+
+    /* Inspection checklist styles */
+    .check-item{display:flex;align-items:center;gap:12px;padding:14px;background:white;border-radius:12px;border:1.5px solid #e2e8f0;margin-bottom:10px;transition:border-color .2s;}
+    .check-item.pass{border-color:#059669;background:#f0fdf4;}
+    .check-item.fail{border-color:#dc2626;background:#fef2f2;}
+    .check-item.na{border-color:#94a3b8;background:#f8fafc;opacity:.7;}
+    .result-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:all .15s;}
+    .result-btn.pass-btn{background:#d1fae5;color:#059669;}
+    .result-btn.fail-btn{background:#fee2e2;color:#dc2626;}
+    .result-btn.na-btn{background:#f1f5f9;color:#64748b;}
+    .result-btn.active-pass{background:#059669;color:white;}
+    .result-btn.active-fail{background:#dc2626;color:white;}
+    .result-btn.active-na{background:#94a3b8;color:white;}
+
+    /* Login screen */
+    .login-bg{min-height:100dvh;background:linear-gradient(135deg,#0f172a 0%,#1e40af 60%,#3b82f6 100%);}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    .fade-up{animation:fadeInUp .4s ease;}
+    @keyframes pulse-ring{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.4);opacity:0;}}
+    .pulse::before{content:'';position:absolute;inset:-6px;border-radius:50%;background:rgba(59,130,246,.3);animation:pulse-ring 1.5s ease-out infinite;}
+    /* Offline bar */
+    #offline-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#d97706;color:white;padding:8px 16px;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:600;}
+    /* PWA install prompt */
+    #install-prompt{display:none;position:fixed;bottom:90px;left:16px;right:16px;z-index:9990;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.2);border:1px solid #e2e8f0;}
+  </style>
+<script>
+// ── Mobile Mock API ──
+(function(){
+  const _rf = window.fetch.bind(window);
+  const MDATA = {
+    users:[
+      {id:'usr-admin-001',email:'admin@ims-qhse.com',full_name:'مدير النظام',role:'admin',department:'IT',phone:'+966500000001',is_active:1,last_login:'2026-03-10T08:00:00Z'},
+      {id:'usr-mgr-001',email:'manager@ims-qhse.com',full_name:'أحمد العمري',role:'manager',department:'QHSE',phone:'+966500000002',is_active:1,last_login:'2026-03-09T14:30:00Z'},
+      {id:'usr-eng-001',email:'engineer@ims-qhse.com',full_name:'محمد الزهراني',role:'engineer',department:'Operations',phone:'+966500000003',is_active:1,last_login:'2026-03-10T07:15:00Z'},
+      {id:'usr-aud-001',email:'auditor@ims-qhse.com',full_name:'سارة القحطاني',role:'auditor',department:'Quality',phone:'+966500000004',is_active:1,last_login:'2026-03-08T11:00:00Z'},
+      {id:'usr-eng-002',email:'engineer2@ims-qhse.com',full_name:'فهد الدوسري',role:'engineer',department:'Safety',phone:'+966500000005',is_active:1,last_login:'2026-03-07T09:00:00Z'},
+    ],
+    inspections:[
+      {id:'insp-001',ref_number:'INS-2026-001',title:'تفتيش السلامة الأسبوعي - الوحدة A',type:'routine',status:'completed',result:'pass',compliance_score:94,iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',assigned_name:'محمد الزهراني',location_name:'الوحدة A',scheduled_at:'2026-03-03T08:00:00Z',completed_at:'2026-03-03T10:30:00Z',created_at:'2026-03-01T00:00:00Z'},
+      {id:'insp-002',ref_number:'INS-2026-002',title:'مراجعة جودة ISO 9001 - الربع الأول',type:'audit',status:'completed',result:'pass',compliance_score:88,iso_standard:'ISO_9001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-aud-001',assigned_name:'سارة القحطاني',location_name:'مبنى الإدارة',scheduled_at:'2026-03-05T09:00:00Z',completed_at:'2026-03-05T14:00:00Z',created_at:'2026-03-02T00:00:00Z'},
+      {id:'insp-003',ref_number:'INS-2026-003',title:'تفتيش البيئة - معالجة المياه',type:'scheduled',status:'pending',result:null,compliance_score:null,iso_standard:'ISO_14001',project_id:'proj-002',project_name:'منشأة تحلية مياه الخبر',assigned_to:'usr-eng-001',assigned_name:'محمد الزهراني',location_name:'محطة المعالجة',scheduled_at:'2026-03-12T08:00:00Z',created_at:'2026-03-05T00:00:00Z'},
+      {id:'insp-004',ref_number:'INS-2026-004',title:'تفتيش أمان المعدات الثقيلة',type:'routine',status:'in_progress',result:null,compliance_score:null,iso_standard:'ISO_45001',project_id:'proj-003',project_name:'محطة كهرباء جازان',assigned_to:'usr-eng-002',assigned_name:'فهد الدوسري',location_name:'حديقة المعدات',scheduled_at:'2026-03-10T07:00:00Z',created_at:'2026-03-08T00:00:00Z'},
+      {id:'insp-005',ref_number:'INS-2026-005',title:'تفتيش السلامة الأسبوعي - الوحدة B',type:'routine',status:'overdue',result:null,compliance_score:null,iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',assigned_name:'محمد الزهراني',location_name:'الوحدة B',scheduled_at:'2026-03-01T08:00:00Z',created_at:'2026-02-28T00:00:00Z'},
+    ],
+    nonconformances:[
+      {id:'nc-001',ref_number:'NC-2026-001',title:'عدم ارتداء معدات الحماية الشخصية في منطقة الضغط العالي',type:'major',status:'open',category:'safety',iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',detected_at:'2026-03-08T09:00:00Z',due_date:'2026-03-20T00:00:00Z',rca_ref:'RCA-2026-001',rca_status:'in_progress'},
+      {id:'nc-002',ref_number:'NC-2026-002',title:'وثائق ضبط الجودة غير مكتملة للدفعة #457',type:'minor',status:'in_progress',category:'documentation',iso_standard:'ISO_9001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-aud-001',detected_at:'2026-03-05T11:00:00Z',due_date:'2026-03-25T00:00:00Z',rca_ref:'RCA-2026-002',rca_status:'open'},
+      {id:'nc-003',ref_number:'NC-2026-003',title:'عطل في منظومة رصد الانبعاثات - خزان T-12',type:'critical',status:'open',category:'environmental',iso_standard:'ISO_14001',project_id:'proj-002',project_name:'منشأة تحلية مياه الخبر',assigned_to:'usr-mgr-001',detected_at:'2026-03-07T14:00:00Z',due_date:'2026-03-12T00:00:00Z',rca_ref:'RCA-2026-003',rca_status:'open'},
+      {id:'nc-004',ref_number:'NC-2026-004',title:'انتهاء صلاحية شهادات الكفاءة لـ 3 مشغلين',type:'major',status:'open',category:'process',iso_standard:'ISO_9001',project_id:'proj-003',project_name:'محطة كهرباء جازان',assigned_to:'usr-mgr-001',detected_at:'2026-03-06T10:00:00Z',due_date:'2026-03-18T00:00:00Z',rca_ref:null,rca_status:null},
+      {id:'nc-005',ref_number:'NC-2025-089',title:'تسرب زيت في خط الأنابيب - القسم D',type:'major',status:'closed',category:'equipment',iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',detected_at:'2026-02-15T08:00:00Z',due_date:'2026-02-28T00:00:00Z',rca_ref:'RCA-2025-089',rca_status:'closed'},
+    ],
+    rca:[
+      {id:'rca-001',ref_number:'RCA-2026-001',title:'تحليل سبب عدم ارتداء معدات الحماية',status:'in_progress',methodology:'5_whys',nc_ref:'NC-2026-001',project_name:'مشروع مصفاة الرياض',why_1:'لم يكن العامل يعلم بإلزامية المعدات',why_2:'لا توجد لافتات تحذيرية',root_cause:null,target_date:'2026-03-20T00:00:00Z'},
+      {id:'rca-002',ref_number:'RCA-2026-002',title:'تحليل نقص وثائق ضبط الجودة',status:'open',methodology:'ishikawa',nc_ref:'NC-2026-002',project_name:'مشروع مصفاة الرياض',why_1:null,root_cause:null,target_date:'2026-03-25T00:00:00Z'},
+      {id:'rca-003',ref_number:'RCA-2026-003',title:'تحليل عطل منظومة رصد الانبعاثات',status:'open',methodology:'5_whys',nc_ref:'NC-2026-003',project_name:'منشأة تحلية مياه الخبر',why_1:null,root_cause:null,target_date:'2026-03-12T00:00:00Z'},
+    ],
+    notifications:[
+      {id:'n1',user_id:'usr-eng-001',title:'NC حرجة تتطلب تدخلاً',message:'NC-2026-003 تجاوزت الموعد — عطل منظومة الانبعاثات',priority:'critical',is_read:0,created_at:'2026-03-10T06:00:00Z'},
+      {id:'n2',user_id:'usr-eng-001',title:'تفتيش متأخر',message:'INS-2026-005 تجاوز موعده بـ 9 أيام',priority:'high',is_read:0,created_at:'2026-03-09T08:00:00Z'},
+      {id:'n3',user_id:'usr-eng-001',title:'تم إغلاق NC بنجاح',message:'NC-2025-089 تم إغلاقها وإتمام الإجراءات',priority:'low',is_read:1,created_at:'2026-03-01T11:00:00Z'},
+    ],
+    db_stats:{users:5,projects:4,inspections:6,nonconformances:6,rca_tickets:4,kpi_definitions:10}
+  };
+  const TOK={};
+  window.fetch = async function(url, opts={}) {
+    if(typeof url==='string' && url.includes('/api/')) {
+      const u=new URL(url,'http://localhost'), path=u.pathname, q=Object.fromEntries(u.searchParams);
+      const auth=(opts.headers?.Authorization||opts.headers?.['Authorization']||'');
+      if(auth) window._mLastAuth=auth;
+      let body=null; try{if(opts.body)body=JSON.parse(opts.body);}catch(e){}
+      const method=opts.method||'GET';
+      let result;
+      if(path==='/api/auth/login'&&method==='POST'){
+        const u2=MDATA.users.find(x=>x.email===body?.email);
+        if(!u2){result={error:'بيانات غير صحيحة'};}
+        else{const tk='mob-'+u2.id;TOK[tk]=u2;result={success:true,token:tk,user:{id:u2.id,email:u2.email,full_name:u2.full_name,role:u2.role,department:u2.department}};}
+      } else if(path==='/api/auth/me'){
+        const tk=(window._mLastAuth||'').replace('Bearer ','');
+        const uu=TOK[tk]||MDATA.users[2];
+        result={id:uu.id,email:uu.email,full_name:uu.full_name,role:uu.role,department:uu.department};
+      } else if(path==='/api/auth/logout'){result={success:true};}
+      else if(path==='/api/db-stats'){result=MDATA.db_stats;}
+      else if(path==='/api/dashboard/overview'||path==='/api/dashboard'){
+        result={summary:{
+          projects:{total:4,active:3},
+          inspections:{total:MDATA.inspections.length,completed:2,pending:2,overdue:1,avg_score:91},
+          nonconformances:{total:MDATA.nonconformances.length,open:4,closed:2,critical:1},
+          rca:{total:3,open:2,closed:1,closure_rate:33}
+        },recent_ncs:MDATA.nonconformances.slice(0,4),notifications:MDATA.notifications.filter(n=>!n.is_read)};
+      } else if(path==='/api/inspections'){
+        let d=[...MDATA.inspections];
+        if(q.status)d=d.filter(i=>i.status===q.status);
+        if(q.iso_standard)d=d.filter(i=>i.iso_standard===q.iso_standard);
+        result={data:d,total:d.length};
+      } else if(method==='POST'&&path==='/api/inspections'){
+        const ni={id:'i-'+Date.now(),ref_number:'INS-2026-'+(MDATA.inspections.length+1).toString().padStart(3,'0'),status:'pending',result:null,compliance_score:null,...body,created_at:new Date().toISOString()};
+        MDATA.inspections.unshift(ni);result=ni;
+      } else if(path.startsWith('/api/inspections/')&&method==='PUT'){
+        const iid=path.split('/')[3];
+        const ins=MDATA.inspections.find(x=>x.id===iid);
+        if(ins)Object.assign(ins,body);result=ins||{error:'غير موجود'};
+      } else if(path==='/api/nonconformances'){
+        let d=[...MDATA.nonconformances];
+        if(q.status)d=d.filter(n=>n.status===q.status);
+        result={data:d,total:d.length};
+      } else if(method==='POST'&&path==='/api/nonconformances'){
+        const nn={id:'nc-'+Date.now(),ref_number:'NC-2026-'+(MDATA.nonconformances.length+1).toString().padStart(3,'0'),status:'open',detected_at:new Date().toISOString(),...body};
+        MDATA.nonconformances.unshift(nn);result=nn;
+      } else if(path==='/api/rca'){
+        result={data:MDATA.rca,total:MDATA.rca.length};
+      } else if(path.startsWith('/api/rca/')&&method==='PUT'){
+        const rid=path.split('/')[3];
+        const r=MDATA.rca.find(x=>x.id===rid);
+        if(r)Object.assign(r,body);result=r||{error:'غير موجود'};
+      } else if(path.startsWith('/api/rca/')){
+        result=MDATA.rca.find(x=>x.id===path.split('/')[3])||{error:'غير موجود'};
+      } else if(path==='/api/users'){
+        let d=[...MDATA.users];
+        if(q.role)d=d.filter(u=>u.role===q.role);
+        result={data:d,total:d.length};
+      } else if(path.startsWith('/api/users/')&&path.endsWith('/avatar')&&method==='POST'){
+        result={success:true};
+      } else if(path.startsWith('/api/users/')){
+        result=MDATA.users.find(u=>u.id===path.split('/')[3])||{error:'غير موجود'};
+      } else if(path==='/api/dashboard/notifications'){
+        const uid=q.user_id;
+        result=MDATA.notifications.filter(n=>!uid||n.user_id===uid);
+      } else if(path==='/api/dashboard/notifications/read'&&method==='PUT'){
+        MDATA.notifications.forEach(n=>n.is_read=1);result={success:true};
+      } else {
+        result={error:'mock: not found '+path};
+      }
+      const ok=!result?.error;
+      return {ok,status:ok?200:404,json:async()=>result,text:async()=>JSON.stringify(result)};
+    }
+    return _rf(url,opts);
+  };
+  console.log('[Mobile Mock] ✅ Active');
+})();
+</script>
+</head>
+<body>
+
+<!-- OFFLINE BAR -->
+<div id="offline-bar">
+  <i class="fas fa-wifi-slash"></i>
+  <span>وضع غير متصل — البيانات محفوظة محلياً</span>
+  <span id="pending-sync-count"></span>
+</div>
+
+<!-- PWA INSTALL PROMPT -->
+<div id="install-prompt">
+  <div class="flex items-center gap-3">
+    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+      <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
+    </div>
+    <div class="flex-1">
+      <div class="font-bold text-slate-800 text-sm">ثبّت تطبيق IMS QHSE</div>
+      <div class="text-xs text-slate-500 mt-0.5">وصول سريع + يعمل بدون إنترنت</div>
+    </div>
+  </div>
+  <div class="flex gap-2 mt-3">
+    <button onclick="installPWA()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-bold">تثبيت الآن</button>
+    <button onclick="dismissInstall()" class="px-4 bg-slate-100 text-slate-600 py-2 rounded-lg text-sm">لاحقاً</button>
+  </div>
+</div>
+
+<!-- ══════ LOGIN SCREEN ══════ -->
+<div id="login-screen" class="login-bg flex items-center justify-center p-6">
+  <div class="w-full max-w-sm fade-up">
+    <div class="text-center mb-8">
+      <div class="relative inline-block">
+        <div class="w-20 h-20 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mx-auto mb-4 relative pulse">
+          <i class="fas fa-shield-alt text-white text-3xl"></i>
+        </div>
+      </div>
+      <h1 class="text-2xl font-black text-white">IMS QHSE</h1>
+      <p class="text-blue-200 text-sm mt-1">نظام الامتثال المتكامل</p>
+      <div class="flex justify-center gap-2 mt-3">
+        <span class="px-2 py-0.5 rounded bg-white/10 text-white text-xs">ISO 9001</span>
+        <span class="px-2 py-0.5 rounded bg-white/10 text-white text-xs">45001</span>
+        <span class="px-2 py-0.5 rounded bg-white/10 text-white text-xs">14001</span>
+      </div>
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 space-y-4">
+      <div>
+        <label class="text-blue-200 text-sm block mb-1.5">البريد الإلكتروني</label>
+        <input id="m-email" type="email" class="form-input bg-white/20 border-white/30 text-white placeholder-blue-200"
+               placeholder="user@company.com" value="engineer@ims-qhse.com"/>
+      </div>
+      <div>
+        <label class="text-blue-200 text-sm block mb-1.5">كلمة المرور</label>
+        <input id="m-pass" type="password" class="form-input bg-white/20 border-white/30 text-white placeholder-blue-200"
+               placeholder="••••••••" value="password123"/>
+      </div>
+      <button onclick="mobileLogin()" class="btn-full btn-primary mt-2" id="login-btn">
+        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+      </button>
+    </div>
+    <p class="text-center text-blue-300 text-xs mt-4">للتجربة: أي كلمة مرور تعمل ✓</p>
+  </div>
+</div>
+
+<!-- ══════ MAIN APP ══════ -->
+<div id="main-app" style="display:none">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+          <i class="fas fa-shield-alt text-white"></i>
+        </div>
+        <div>
+          <div class="text-white font-bold text-base leading-tight">IMS QHSE</div>
+          <div class="text-blue-200 text-xs" id="m-user-name">مهندس الميدان</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="m-notif-dot" class="relative">
+          <button onclick="mShowPage('m-notifications')" class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white">
+            <i class="fas fa-bell text-sm"></i>
+          </button>
+          <span class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold" id="notif-count">0</span>
+        </div>
+        <button onclick="mobileLogout()" class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white">
+          <i class="fas fa-sign-out-alt text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES CONTAINER -->
+  <div id="pages-container">
+
+    <!-- ─── HOME ─── -->
+    <div class="page active" id="m-home">
+      <div class="space-y-4">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="card p-4">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="fas fa-clipboard-check text-blue-500"></i>
+              <span class="text-xs text-slate-500">تفتيشاتي</span>
+            </div>
+            <div class="text-2xl font-black text-slate-800" id="m-my-inspections">-</div>
+            <div class="text-xs text-slate-400 mt-0.5">هذا الشهر</div>
+          </div>
+          <div class="card p-4">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="fas fa-exclamation-triangle text-red-500"></i>
+              <span class="text-xs text-slate-500">NC المسندة</span>
+            </div>
+            <div class="text-2xl font-black text-red-600" id="m-my-ncs">-</div>
+            <div class="text-xs text-slate-400 mt-0.5">مفتوحة</div>
+          </div>
+          <div class="card p-4">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="fas fa-chart-line text-green-500"></i>
+              <span class="text-xs text-slate-500">متوسط الامتثال</span>
+            </div>
+            <div class="text-2xl font-black text-green-600" id="m-compliance">-</div>
+            <div class="text-xs text-slate-400 mt-0.5">نسبة مئوية</div>
+          </div>
+          <div class="card p-4">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="fas fa-search text-purple-500"></i>
+              <span class="text-xs text-slate-500">RCA معلّقة</span>
+            </div>
+            <div class="text-2xl font-black text-purple-600" id="m-my-rcas">-</div>
+            <div class="text-xs text-slate-400 mt-0.5">تنتظر تحليل</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card p-4">
+          <h3 class="font-bold text-slate-800 mb-3 text-sm"><i class="fas fa-bolt text-yellow-500 mr-2"></i>إجراءات سريعة</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="startNewInspection()" class="p-3 bg-blue-50 rounded-xl text-center active:bg-blue-100 transition-colors">
+              <i class="fas fa-plus-circle text-blue-600 text-xl block mb-1"></i>
+              <span class="text-xs font-semibold text-blue-800">تفتيش جديد</span>
+            </button>
+            <button onclick="openNCForm()" class="p-3 bg-red-50 rounded-xl text-center active:bg-red-100 transition-colors">
+              <i class="fas fa-exclamation-triangle text-red-600 text-xl block mb-1"></i>
+              <span class="text-xs font-semibold text-red-800">تسجيل NC</span>
+            </button>
+            <button onclick="openCameraPage()" class="p-3 bg-green-50 rounded-xl text-center active:bg-green-100 transition-colors">
+              <i class="fas fa-camera text-green-600 text-xl block mb-1"></i>
+              <span class="text-xs font-semibold text-green-800">التقاط صورة</span>
+            </button>
+            <button onclick="mShowPage('m-rca')" class="p-3 bg-purple-50 rounded-xl text-center active:bg-purple-100 transition-colors">
+              <i class="fas fa-search text-purple-600 text-xl block mb-1"></i>
+              <span class="text-xs font-semibold text-purple-800">تحليل RCA</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card p-4">
+          <h3 class="font-bold text-slate-800 mb-3 text-sm"><i class="fas fa-history text-slate-400 mr-2"></i>آخر النشاطات</h3>
+          <div id="m-recent-activity">
+            <div class="text-center py-4 text-slate-400 text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>جاري التحميل...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── INSPECTIONS ─── -->
+    <div class="page" id="m-inspections">
+      <div class="space-y-4">
+        <!-- New inspection wizard -->
+        <div id="insp-list-view">
+          <button onclick="startNewInspection()" class="btn-full btn-primary mb-4">
+            <i class="fas fa-plus"></i> بدء تفتيش جديد
+          </button>
+          <div id="m-insp-list">
+            <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+          </div>
+        </div>
+
+        <!-- Inspection Wizard -->
+        <div id="insp-wizard" style="display:none">
+          <!-- Step 1: Setup -->
+          <div id="wizard-step-1">
+            <div class="flex items-center gap-2 mb-4">
+              <button onclick="cancelWizard()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i class="fas fa-arrow-right text-slate-600"></i></button>
+              <h3 class="font-bold text-slate-800">إعداد التفتيش</h3>
+            </div>
+            <div class="card p-4 space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-slate-700 mb-1.5 block">عنوان التفتيش *</label>
+                <input class="form-input" id="wi-title" placeholder="مثال: تفتيش السلامة - منطقة B"/>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700 mb-1.5 block">معيار الأيزو</label>
+                <select class="form-input" id="wi-iso">
+                  <option value="ISO_45001">ISO 45001 — السلامة المهنية</option>
+                  <option value="ISO_9001">ISO 9001 — الجودة</option>
+                  <option value="ISO_14001">ISO 14001 — البيئة</option>
+                  <option value="MULTI">متعدد المعايير</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700 mb-1.5 block">الموقع</label>
+                <input class="form-input" id="wi-location" placeholder="اسم المنطقة أو المبنى"/>
+              </div>
+              <div id="gps-status" class="text-xs text-slate-400 flex items-center gap-2">
+                <i class="fas fa-location-dot text-blue-400"></i> جاري تحديد الموقع...
+              </div>
+              <button onclick="wizardStep2()" class="btn-full btn-primary">
+                <i class="fas fa-arrow-left"></i> التالي: قائمة التفتيش
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Checklist -->
+          <div id="wizard-step-2" style="display:none">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <button onclick="document.getElementById('wizard-step-1').style.display='';document.getElementById('wizard-step-2').style.display='none';" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i class="fas fa-arrow-right text-slate-600"></i></button>
+                <h3 class="font-bold text-slate-800">بنود التفتيش</h3>
+              </div>
+              <div id="wi-score-badge" class="badge badge-blue text-sm">0%</div>
+            </div>
+            <div id="wi-checklist" class="space-y-2 mb-4"></div>
+            <div class="card p-4 mb-4">
+              <label class="text-sm font-semibold text-slate-700 mb-1.5 block">ملاحظات عامة</label>
+              <textarea class="form-input" id="wi-notes" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
+            </div>
+            <button onclick="openCameraForInspection()" class="btn-full btn-outline mb-3">
+              <i class="fas fa-camera"></i> التقاط صور للتفتيش
+            </button>
+            <div id="wi-photos" class="flex flex-wrap gap-2 mb-4"></div>
+            <button onclick="wizardSubmit()" class="btn-full btn-success">
+              <i class="fas fa-check-double"></i> إنهاء وإرسال التفتيش
+            </button>
+          </div>
+
+          <!-- Step 3: Result -->
+          <div id="wizard-step-3" style="display:none">
+            <div class="card p-6 text-center">
+              <div id="wi-result-icon" class="text-6xl mb-4">✅</div>
+              <h2 class="text-xl font-black text-slate-800 mb-2" id="wi-result-title">اكتمل التفتيش</h2>
+              <div class="text-4xl font-black my-4" id="wi-result-score"></div>
+              <p class="text-slate-500 text-sm mb-6" id="wi-result-msg"></p>
+              <div id="wi-nc-alert" class="p-3 bg-red-50 border border-red-200 rounded-xl mb-4 text-sm text-red-700 hidden">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span id="wi-nc-count"></span> — تم إنشاء تذاكر RCA تلقائياً
+              </div>
+              <button onclick="cancelWizard()" class="btn-full btn-primary">
+                <i class="fas fa-home"></i> العودة للقائمة
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── NC (Non-Conformance) ─── -->
+    <div class="page" id="m-nc">
+      <div class="space-y-3" id="m-nc-content">
+        <button onclick="openNCForm()" class="btn-full btn-danger">
+          <i class="fas fa-plus"></i> تسجيل عدم مطابقة جديدة
+        </button>
+        <!-- NC Form -->
+        <div id="nc-form-section" style="display:none" class="card p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>NC جديدة</h3>
+            <button onclick="closeNCForm()" class="text-slate-400"><i class="fas fa-times"></i></button>
+          </div>
+          <input class="form-input" id="nc-title" placeholder="عنوان المشكلة *"/>
+          <textarea class="form-input" id="nc-desc" rows="3" placeholder="وصف تفصيلي للمشكلة *"></textarea>
+          <div class="grid grid-cols-2 gap-3">
+            <select class="form-input" id="nc-type">
+              <option value="critical">🔴 حرجة</option>
+              <option value="major" selected>🟠 رئيسية</option>
+              <option value="minor">🟡 ثانوية</option>
+            </select>
+            <select class="form-input" id="nc-iso">
+              <option value="ISO_45001">ISO 45001</option>
+              <option value="ISO_9001">ISO 9001</option>
+              <option value="ISO_14001">ISO 14001</option>
+            </select>
+          </div>
+          <input class="form-input" id="nc-location" placeholder="الموقع"/>
+          <!-- Camera / Photos section -->
+          <div>
+            <button onclick="openCameraForNC()" class="btn-full btn-outline text-sm py-3 mb-2">
+              <i class="fas fa-camera"></i> إضافة صورة للـ NC
+            </button>
+            <div id="nc-photos-preview" class="flex flex-wrap gap-2"></div>
+          </div>
+          <button onclick="submitNC_mobile()" class="btn-full btn-danger">
+            <i class="fas fa-save"></i> حفظ + إنشاء RCA تلقائياً
+          </button>
+        </div>
+        <!-- NC List -->
+        <h3 class="font-bold text-slate-800 text-sm">NCs المسندة إليّ</h3>
+        <div id="m-nc-list">
+          <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CAMERA ─── -->
+    <div class="page" id="m-camera">
+      <div class="space-y-4">
+        <h3 class="font-bold text-slate-800"><i class="fas fa-camera text-blue-500 mr-2"></i>الكاميرا الميدانية</h3>
+
+        <!-- Camera View -->
+        <div id="camera-view" class="bg-black rounded-2xl overflow-hidden" style="min-height:280px;display:flex;align-items:center;justify-content:center;">
+          <div id="cam-placeholder" class="text-center text-white p-8">
+            <i class="fas fa-camera text-5xl opacity-40 block mb-3"></i>
+            <p class="text-sm opacity-60">اضغط لتشغيل الكاميرا</p>
+            <button onclick="startCamera()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold">
+              <i class="fas fa-video mr-2"></i>تشغيل الكاميرا
+            </button>
+          </div>
+          <video id="camera-video" autoplay playsinline muted class="w-full" style="display:none;border-radius:14px;"></video>
+          <div class="camera-overlay" style="display:none" id="cam-overlay">
+            <div class="camera-corner tl"></div><div class="camera-corner tr"></div>
+            <div class="camera-corner bl"></div><div class="camera-corner br"></div>
+          </div>
+          <canvas id="camera-canvas"></canvas>
+        </div>
+
+        <!-- Camera Controls -->
+        <div class="flex items-center justify-between px-4">
+          <button onclick="switchCamera()" id="switch-cam-btn" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center text-slate-600 active:bg-slate-100" style="display:none">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+          <div class="flex-1 flex justify-center">
+            <button onclick="capturePhoto()" id="shutter-btn" class="shutter-btn" style="display:none">
+              <i class="fas fa-camera text-blue-600 text-2xl"></i>
+            </button>
+          </div>
+          <button onclick="stopCamera()" id="stop-cam-btn" class="w-12 h-12 bg-red-50 rounded-full shadow flex items-center justify-center text-red-500 active:bg-red-100" style="display:none">
+            <i class="fas fa-stop"></i>
+          </button>
+        </div>
+
+        <!-- Upload from Gallery -->
+        <label class="btn-full btn-outline cursor-pointer">
+          <i class="fas fa-images"></i> اختيار من المعرض
+          <input type="file" accept="image/*" multiple class="hidden" onchange="uploadFromGallery(event)"/>
+        </label>
+
+        <!-- Captured Photos -->
+        <div id="captured-photos-section" style="display:none">
+          <h4 class="font-semibold text-slate-700 text-sm mb-2"><i class="fas fa-images mr-2 text-slate-400"></i>الصور الملتقطة</h4>
+          <div id="captured-photos-grid" class="grid grid-cols-3 gap-2 mb-3"></div>
+
+          <!-- Link to entity -->
+          <div class="card p-4 space-y-3">
+            <h4 class="text-sm font-semibold text-slate-700">ربط الصور بـ</h4>
+            <select class="form-input" id="photo-entity-type">
+              <option value="inspection">تفتيش</option>
+              <option value="nc">عدم مطابقة (NC)</option>
+              <option value="rca">تحليل RCA</option>
+            </select>
+            <input class="form-input" id="photo-entity-id" placeholder="رقم التفتيش أو NC أو RCA"/>
+            <input class="form-input" id="photo-caption" placeholder="وصف الصورة (اختياري)"/>
+            <button onclick="uploadCapturedPhotos()" class="btn-full btn-success">
+              <i class="fas fa-cloud-upload-alt"></i> رفع الصور وربطها
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RCA (Lean Six Sigma) ─── -->
+    <div class="page" id="m-rca">
+      <div class="space-y-3">
+        <div class="card p-4 bg-gradient-to-r from-purple-50 to-blue-50">
+          <div class="font-bold text-slate-800 text-sm mb-1"><i class="fas fa-search text-purple-500 mr-2"></i>تحليل الأسباب الجذرية</div>
+          <div class="text-xs text-slate-500">كل NC تُولّد تذكرة RCA إجبارية · 5 Whys · Ishikawa</div>
+        </div>
+        <div id="m-rca-list">
+          <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+        </div>
+
+        <!-- RCA Detail Panel -->
+        <div id="rca-detail-panel" style="display:none">
+          <button onclick="document.getElementById('rca-detail-panel').style.display='none'; document.getElementById('m-rca-list').style.display='';"
+                  class="flex items-center gap-2 text-blue-600 text-sm mb-3">
+            <i class="fas fa-arrow-right"></i> العودة للقائمة
+          </button>
+          <div id="rca-detail-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── NOTIFICATIONS ─── -->
+    <div class="page" id="m-notifications">
+      <div class="space-y-2" id="m-notifs-list">
+        <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+      </div>
+    </div>
+
+    <!-- ─── MORE MENU ─── -->
+    <div class="page" id="m-more">
+      <div class="space-y-3">
+        <div class="card p-4">
+          <h3 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-tools text-slate-400 mr-2"></i>أدوات إضافية</h3>
+          <div class="space-y-2">
+            <button onclick="mShowPage('m-rca')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-purple-50 active:bg-purple-100 transition-colors">
+              <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-search text-purple-600"></i></div>
+              <div class="text-right">
+                <div class="font-semibold text-slate-800 text-sm">تحليل الأسباب RCA</div>
+                <div class="text-xs text-slate-500">5 Whys & Ishikawa</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 mr-auto text-xs"></i>
+            </button>
+            <button onclick="mShowPage('m-notifications')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-amber-50 active:bg-amber-100 transition-colors">
+              <div class="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center"><i class="fas fa-bell text-amber-600"></i></div>
+              <div class="text-right">
+                <div class="font-semibold text-slate-800 text-sm">الإشعارات</div>
+                <div class="text-xs text-slate-500">التنبيهات والتحديثات</div>
+              </div>
+              <span class="badge badge-red mr-auto" id="m-notif-badge-more">0</span>
+            </button>
+            <button onclick="mShowPage('m-users')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-blue-50 active:bg-blue-100 transition-colors">
+              <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center"><i class="fas fa-users text-blue-600"></i></div>
+              <div class="text-right">
+                <div class="font-semibold text-slate-800 text-sm">أعضاء الفريق</div>
+                <div class="text-xs text-slate-500">قائمة المستخدمين</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 mr-auto text-xs"></i>
+            </button>
+            <button onclick="mShowPage('m-profile')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-green-50 active:bg-green-100 transition-colors">
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-user-circle text-green-600"></i></div>
+              <div class="text-right">
+                <div class="font-semibold text-slate-800 text-sm">الملف الشخصي</div>
+                <div class="text-xs text-slate-500">معلوماتي وإعداداتي</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 mr-auto text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- App Info -->
+        <div class="card p-4">
+          <h3 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-info-circle text-slate-400 mr-2"></i>معلومات التطبيق</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between text-slate-600"><span>الإصدار</span><span class="font-mono font-bold">v1.0.0</span></div>
+            <div class="flex justify-between text-slate-600"><span>المعايير</span><span class="text-xs">9001 · 45001 · 14001 · 27001</span></div>
+            <div class="flex justify-between text-slate-600"><span>حالة الشبكة</span><span id="m-network-status" class="badge badge-green">متصل</span></div>
+            <div class="flex justify-between text-slate-600"><span>آخر مزامنة</span><span id="m-last-sync" class="text-xs text-slate-400">-</span></div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card p-4 border border-red-100">
+          <button onclick="mobileLogout()" class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 font-bold active:bg-red-100">
+            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TEAM USERS PAGE ─── -->
+    <div class="page" id="m-users">
+      <div class="space-y-3">
+        <div class="flex items-center gap-3 mb-1">
+          <button onclick="mShowPage('m-more')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+            <i class="fas fa-arrow-right text-slate-600 text-sm"></i>
+          </button>
+          <h2 class="font-bold text-slate-800">أعضاء الفريق</h2>
+        </div>
+
+        <!-- Search -->
+        <div class="relative">
+          <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="m-user-search" placeholder="ابحث عن عضو الفريق..."
+            class="form-input pr-9 text-sm" oninput="mSearchUsers(this.value)"/>
+        </div>
+
+        <!-- Role Filter Chips -->
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <button onclick="mFilterUsers('')" class="m-role-chip active px-3 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white whitespace-nowrap">الكل</button>
+          <button onclick="mFilterUsers('admin')" class="m-role-chip px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap">مدير</button>
+          <button onclick="mFilterUsers('manager')" class="m-role-chip px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap">مدير مشروع</button>
+          <button onclick="mFilterUsers('engineer')" class="m-role-chip px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap">مهندس</button>
+          <button onclick="mFilterUsers('auditor')" class="m-role-chip px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap">مراجع</button>
+        </div>
+
+        <!-- Users List -->
+        <div id="m-users-list">
+          <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PROFILE PAGE ─── -->
+    <div class="page" id="m-profile">
+      <div class="space-y-4">
+        <div class="flex items-center gap-3 mb-1">
+          <button onclick="mShowPage('m-more')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+            <i class="fas fa-arrow-right text-slate-600 text-sm"></i>
+          </button>
+          <h2 class="font-bold text-slate-800">الملف الشخصي</h2>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="card p-6 text-center">
+          <div class="relative inline-block mb-3">
+            <div id="m-profile-avatar" class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto text-3xl text-blue-500 overflow-hidden border-4 border-blue-200">
+              <i class="fas fa-user"></i>
+            </div>
+            <label class="absolute bottom-0 right-0 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer border-2 border-white">
+              <i class="fas fa-camera text-white text-xs"></i>
+              <input type="file" accept="image/*" class="hidden" onchange="updateProfileAvatar(event)"/>
+            </label>
+          </div>
+          <div class="font-bold text-slate-800 text-lg" id="m-profile-name">-</div>
+          <div class="text-slate-500 text-sm" id="m-profile-email">-</div>
+          <div class="mt-2" id="m-profile-role-badge"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="card p-3 text-center">
+            <div class="text-xl font-black text-blue-600" id="m-prof-insp">-</div>
+            <div class="text-xs text-slate-500">تفتيشاتي</div>
+          </div>
+          <div class="card p-3 text-center">
+            <div class="text-xl font-black text-red-600" id="m-prof-nc">-</div>
+            <div class="text-xs text-slate-500">NC مُسندة</div>
+          </div>
+          <div class="card p-3 text-center">
+            <div class="text-xl font-black text-green-600" id="m-prof-rca">-</div>
+            <div class="text-xs text-slate-500">RCA مُكتملة</div>
+          </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="card p-4 space-y-3">
+          <h3 class="font-bold text-slate-700 text-sm">معلومات الحساب</h3>
+          <div class="flex justify-between items-center py-2 border-b border-slate-100">
+            <span class="text-slate-500 text-sm">القسم</span>
+            <span class="font-semibold text-slate-800 text-sm" id="m-profile-dept">-</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-slate-100">
+            <span class="text-slate-500 text-sm">رقم الجوال</span>
+            <span class="font-semibold text-slate-800 text-sm" id="m-profile-phone">-</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-slate-500 text-sm">آخر دخول</span>
+            <span class="font-semibold text-slate-800 text-sm" id="m-profile-login">-</span>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="card p-4 space-y-3">
+          <h3 class="font-bold text-slate-700 text-sm">الإعدادات</h3>
+          <label class="flex items-center justify-between py-2 border-b border-slate-100">
+            <span class="text-slate-700 text-sm">تفعيل الإشعارات</span>
+            <input type="checkbox" id="m-notif-toggle" checked class="w-5 h-5 accent-blue-600"/>
+          </label>
+          <label class="flex items-center justify-between py-2 border-b border-slate-100">
+            <span class="text-slate-700 text-sm">تتبع GPS تلقائياً</span>
+            <input type="checkbox" id="m-gps-toggle" checked class="w-5 h-5 accent-blue-600"/>
+          </label>
+          <label class="flex items-center justify-between py-2">
+            <span class="text-slate-700 text-sm">حفظ الصور بجودة عالية</span>
+            <input type="checkbox" id="m-hq-photos" class="w-5 h-5 accent-blue-600"/>
+          </label>
+        </div>
+
+        <button onclick="mobileLogout()" class="btn-full btn-danger">
+          <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /pages-container -->
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav">
+    <div class="bnav-item active" onclick="mShowPage('m-home')" id="nav-m-home">
+      <i class="fas fa-home"></i><span>الرئيسية</span>
+    </div>
+    <div class="bnav-item" onclick="mShowPage('m-inspections')" id="nav-m-inspections">
+      <i class="fas fa-clipboard-check"></i><span>التفتيش</span>
+    </div>
+    <div class="bnav-item" onclick="mShowPage('m-nc')" id="nav-m-nc">
+      <i class="fas fa-exclamation-triangle"></i><span>NC</span>
+    </div>
+    <div class="bnav-item" onclick="openCameraPage()" id="nav-m-camera">
+      <i class="fas fa-camera"></i><span>الكاميرا</span>
+    </div>
+    <div class="bnav-item" onclick="mShowPage('m-more')" id="nav-m-more">
+      <i class="fas fa-th-large"></i><span>المزيد</span>
+    </div>
+  </nav>
+
+</div><!-- /main-app -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// IMS QHSE MOBILE APP
+// ═══════════════════════════════════════════════════
+const MAPI = '';
+let mState = {
+  user: null, currentPage: 'm-home',
+  gps: { lat: null, lng: null },
+  cameraStream: null, cameraFacing: 'environment',
+  capturedPhotos: [], // array of base64
+  ncPhotos: [],
+  wizardPhotos: [],
+  wizardItems: [],
+  currentWizardInspId: null
+};
+
+// ── Auth ──────────────────────────────────────────
+async function mobileLogin() {
+  const btn = document.getElementById('login-btn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري...';
+  btn.disabled = true;
+  try {
+    const email = document.getElementById('m-email').value;
+    const pass  = document.getElementById('m-pass').value;
+    const res   = await fetch(MAPI + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const data = await res.json();
+    if (data.token) {
+      mState.user = data.user;
+      localStorage.setItem('ims_token', data.token);
+      document.getElementById('m-user-name').textContent = data.user.full_name;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+      loadHomeStats();
+      loadInspectionsList();
+      loadNCList();
+      loadRCAList();
+      loadNotifications_m();
+      startGPS();
+    } else {
+      mToast('❌ ' + (data.error || 'بيانات غير صحيحة'), 'error');
+    }
+  } catch(e) {
+    // Demo mode — allow any login
+    const demoUser = { id: 'usr-eng-001', full_name: 'محمد الزهراني', role: 'engineer', email: document.getElementById('m-email').value };
+    mState.user = demoUser;
+    document.getElementById('m-user-name').textContent = demoUser.full_name;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadNotifications_m();
+    startGPS();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+  }
+}
+
+function mobileLogout() {
+  localStorage.removeItem('ims_token');
+  mState.user = null;
+  stopCamera();
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function mToken() { return localStorage.getItem('ims_token') || 'demo'; }
+
+async function mFetch(url, method='GET', body=null) {
+  const opts = { method, headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+mToken() } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(MAPI + url, opts);
+  return r.json();
+}
+
+// ── Navigation ────────────────────────────────────
+function mShowPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+  const nav = document.getElementById('nav-' + pageId);
+  if (nav) nav.classList.add('active');
+  // For pages inside "more", keep more nav active
+  const morePages = ['m-users', 'm-profile', 'm-rca', 'm-notifications'];
+  if (morePages.includes(pageId)) {
+    const moreNav = document.getElementById('nav-m-more');
+    if (moreNav) moreNav.classList.add('active');
+  }
+  mState.currentPage = pageId;
+  // Refresh data on navigate
+  if (pageId === 'm-home') loadHomeStats();
+  if (pageId === 'm-nc') loadNCList();
+  if (pageId === 'm-rca') loadRCAList();
+  if (pageId === 'm-notifications') loadNotifications_m();
+  if (pageId === 'm-users') loadMobileUsers();
+  if (pageId === 'm-profile') loadProfile();
+  if (pageId === 'm-camera') { if (!mState.cameraStream) startCamera(); }
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+
+// ── GPS ───────────────────────────────────────────
+function startGPS() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.watchPosition(pos => {
+    mState.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    const el = document.getElementById('gps-status');
+    if (el) el.innerHTML = '<i class="fas fa-location-dot text-green-400"></i> <span class="text-green-600">GPS: ' + pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4) + '</span>';
+  }, () => {
+    const el = document.getElementById('gps-status');
+    if (el) el.innerHTML = '<i class="fas fa-location-dot text-slate-300"></i> GPS غير متاح';
+  }, { enableHighAccuracy: true, maximumAge: 10000 });
+}
+
+// ── Home Stats ────────────────────────────────────
+async function loadHomeStats() {
+  try {
+    const data = await mFetch('/api/dashboard/overview');
+    const s = data.summary;
+    document.getElementById('m-my-inspections').textContent = s?.inspections?.total || 0;
+    document.getElementById('m-my-ncs').textContent = s?.nonconformances?.open || 0;
+    document.getElementById('m-compliance').textContent = (s?.inspections?.avg_score || 0) + '%';
+    document.getElementById('m-my-rcas').textContent = s?.rca?.open || 0;
+
+    // Recent activity
+    const el = document.getElementById('m-recent-activity');
+    const recent = data.recent_ncs || [];
+    if (!recent.length) { el.innerHTML = '<p class="text-slate-400 text-sm text-center py-2">لا يوجد نشاط حديث</p>'; return; }
+    el.innerHTML = recent.slice(0,4).map(nc => `
+      <div class="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${nc.type==='critical'?'bg-red-100':'bg-orange-100'}">
+          <i class="fas fa-exclamation text-${nc.type==='critical'?'red':'orange'}-600 text-xs"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium text-slate-800 truncate">${nc.title}</div>
+          <div class="text-xs text-slate-400">${nc.project_name} · ${mTimeAgo(nc.detected_at)}</div>
+        </div>
+        <span class="badge ${nc.status==='open'?'badge-red':'badge-green'} text-xs">${nc.status==='open'?'مفتوحة':'مغلقة'}</span>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+// ── Inspections ───────────────────────────────────
+async function loadInspectionsList() {
+  const data = await mFetch('/api/inspections?limit=15');
+  const el = document.getElementById('m-insp-list');
+  if (!el) return;
+  const items = data.data || [];
+  if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد عمليات تفتيش بعد</div>'; return; }
+  el.innerHTML = items.map(i => `
+    <div class="card p-4 mb-3">
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex-1">
+          <div class="font-semibold text-slate-800 text-sm">${i.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${i.ref_number} · ${i.project_name || '-'}</div>
+          <div class="text-xs text-slate-400">${i.location_name || ''} ${i.iso_standard ? '· '+i.iso_standard : ''}</div>
+        </div>
+        <div class="text-center flex-shrink-0">
+          ${i.compliance_score ? `<div class="text-xl font-black ${i.compliance_score>=80?'text-green-600':'text-red-600'}">${i.compliance_score}%</div>` : ''}
+          <span class="badge ${i.status==='completed'?'badge-green':i.status==='pending'?'badge-yellow':'badge-gray'} text-xs">${i.status==='completed'?'مكتمل':i.status==='pending'?'معلق':'جارٍ'}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+const ISO_CHECKLISTS = {
+  ISO_45001: [
+    { cat:'PPE', text:'خوذة السلامة مرتداة بشكل صحيح' },
+    { cat:'PPE', text:'السترة العاكسة والحذاء مناسبان' },
+    { cat:'PPE', text:'القفازات متوفرة وحسب طبيعة العمل' },
+    { cat:'بيئة العمل', text:'منطقة العمل نظيفة وخالية من المخاطر' },
+    { cat:'بيئة العمل', text:'مسالك الطوارئ والمخارج خالية' },
+    { cat:'بيئة العمل', text:'إضاءة كافية في موقع العمل' },
+    { cat:'المعدات', text:'المعدات تم فحصها قبل الاستخدام' },
+    { cat:'المعدات', text:'المعدات المعطوبة خارج الخدمة ومؤشر عليها' },
+    { cat:'التوثيق', text:'تصاريح العمل سارية ومعتمدة' },
+  ],
+  ISO_9001: [
+    { cat:'الوثائق', text:'إجراءات العمل موثقة ومحدثة' },
+    { cat:'الوثائق', text:'سجلات الجودة محفوظة بشكل صحيح' },
+    { cat:'العمليات', text:'مؤشرات الجودة تُقاس وتُسجّل' },
+    { cat:'العمليات', text:'المنتج / الخدمة تطابق المواصفات المحددة' },
+    { cat:'التحسين', text:'الإجراءات التصحيحية مُتابعة وفعالة' },
+  ],
+  ISO_14001: [
+    { cat:'البيئة', text:'النفايات مفرزة ومخزنة بشكل صحيح' },
+    { cat:'البيئة', text:'لا يوجد تسرب للمواد الكيميائية' },
+    { cat:'البيئة', text:'موارد الطاقة والمياه تستخدم بكفاءة' },
+    { cat:'الوثائق', text:'التراخيص البيئية سارية' },
+  ],
+  MULTI: [
+    { cat:'السلامة', text:'PPE مناسبة ومرتداة' },
+    { cat:'السلامة', text:'لا توجد مخاطر سلامة واضحة' },
+    { cat:'الجودة', text:'المنتج يطابق المواصفات' },
+    { cat:'البيئة', text:'لا يوجد تلوث بيئي' },
+  ]
+};
+
+function startNewInspection() {
+  mState.wizardPhotos = [];
+  mState.wizardItems = [];
+  document.getElementById('insp-list-view').style.display = 'none';
+  document.getElementById('insp-wizard').style.display = '';
+  document.getElementById('wizard-step-1').style.display = '';
+  document.getElementById('wizard-step-2').style.display = 'none';
+  document.getElementById('wizard-step-3').style.display = 'none';
+  document.getElementById('wi-title').value = '';
+  document.getElementById('wi-location').value = '';
+  document.getElementById('wi-notes').value = '';
+  document.getElementById('wi-photos').innerHTML = '';
+  mShowPage('m-inspections');
+}
+
+function cancelWizard() {
+  document.getElementById('insp-wizard').style.display = 'none';
+  document.getElementById('insp-list-view').style.display = '';
+  loadInspectionsList();
+}
+
+function wizardStep2() {
+  const title = document.getElementById('wi-title').value.trim();
+  if (!title) { mToast('أدخل عنوان التفتيش', 'error'); return; }
+  const iso = document.getElementById('wi-iso').value;
+  const items = ISO_CHECKLISTS[iso] || ISO_CHECKLISTS.ISO_45001;
+  mState.wizardItems = items.map((it, idx) => ({ ...it, id: 'wi-item-'+idx, result: null }));
+
+  document.getElementById('wizard-step-1').style.display = 'none';
+  document.getElementById('wizard-step-2').style.display = '';
+  renderWizardChecklist();
+}
+
+function renderWizardChecklist() {
+  const cl = document.getElementById('wi-checklist');
+  cl.innerHTML = mState.wizardItems.map((item, i) => `
+    <div class="check-item ${item.result || ''}" id="ci-${i}">
+      <div class="flex-1">
+        <div class="text-xs text-slate-400 mb-0.5">${item.cat}</div>
+        <div class="text-sm font-medium text-slate-800">${item.text}</div>
+      </div>
+      <div class="flex gap-1 flex-shrink-0">
+        <button onclick="setItemResult(${i},'pass')" class="result-btn pass-btn ${item.result==='pass'?'active-pass':''}">✓</button>
+        <button onclick="setItemResult(${i},'fail')" class="result-btn fail-btn ${item.result==='fail'?'active-fail':''}">✗</button>
+        <button onclick="setItemResult(${i},'na')" class="result-btn na-btn ${item.result==='na'?'active-na':''}">N/A</button>
+      </div>
+    </div>
+  `).join('');
+  updateWizardScore();
+}
+
+function setItemResult(i, result) {
+  mState.wizardItems[i].result = result;
+  renderWizardChecklist();
+}
+
+function updateWizardScore() {
+  const answered = mState.wizardItems.filter(it => it.result !== null);
+  const passed   = mState.wizardItems.filter(it => it.result === 'pass');
+  const total    = mState.wizardItems.filter(it => it.result !== 'na' && it.result !== null);
+  const score    = total.length > 0 ? Math.round((passed.length / total.length) * 100) : 0;
+  const badge = document.getElementById('wi-score-badge');
+  if (badge) {
+    badge.textContent = answered.length + '/' + mState.wizardItems.length + ' — ' + score + '%';
+    badge.className = 'badge text-sm ' + (score >= 80 ? 'badge-green' : score >= 60 ? 'badge-yellow' : 'badge-red');
+  }
+}
+
+async function wizardSubmit() {
+  const title    = document.getElementById('wi-title').value.trim();
+  const iso      = document.getElementById('wi-iso').value;
+  const location = document.getElementById('wi-location').value;
+  const notes    = document.getElementById('wi-notes').value;
+
+  // Calculate score
+  const passed = mState.wizardItems.filter(it => it.result === 'pass').length;
+  const active = mState.wizardItems.filter(it => it.result !== 'na' && it.result !== null).length;
+  const total  = mState.wizardItems.length;
+  const score  = active > 0 ? Math.round((passed / active) * 100) : 0;
+  const failed = mState.wizardItems.filter(it => it.result === 'fail');
+
+  try {
+    // Create inspection
+    const insp = await mFetch('/api/inspections', 'POST', {
+      project_id: 'proj-001', title, iso_standard: iso,
+      location_name: location || 'ميداني',
+      latitude: mState.gps.lat, longitude: mState.gps.lng,
+      assigned_to: mState.user?.id || 'usr-eng-001'
+    });
+
+    // Complete inspection
+    await mFetch(`/api/inspections/${insp.id}/complete`, 'PUT', {
+      notes,
+      form_data: {},
+      items_results: mState.wizardItems.map(it => ({
+        id: it.id, item_text: it.text, result: it.result || 'na',
+        severity: it.result === 'fail' ? 'major' : null
+      }))
+    });
+
+    mState.currentWizardInspId = insp.id;
+
+    // Upload photos
+    for (const photo of mState.wizardPhotos) {
+      await mFetch('/api/uploads/photo', 'POST', {
+        image_base64: photo, entity_type: 'inspection', entity_id: insp.id,
+        latitude: mState.gps.lat, longitude: mState.gps.lng
+      });
+    }
+
+    // Show result
+    document.getElementById('wizard-step-2').style.display = 'none';
+    document.getElementById('wizard-step-3').style.display = '';
+    const resultIcon  = document.getElementById('wi-result-icon');
+    const resultTitle = document.getElementById('wi-result-title');
+    const resultScore = document.getElementById('wi-result-score');
+    const resultMsg   = document.getElementById('wi-result-msg');
+    const ncAlert     = document.getElementById('wi-nc-alert');
+
+    resultScore.textContent = score + '%';
+    resultScore.className = 'text-4xl font-black my-4 ' + (score >= 80 ? 'text-green-600' : score >= 60 ? 'text-yellow-600' : 'text-red-600');
+    resultIcon.textContent  = score >= 80 ? '✅' : score >= 60 ? '⚠️' : '❌';
+    resultTitle.textContent = score >= 80 ? 'اكتمل التفتيش بنجاح' : score >= 60 ? 'اكتمل مع ملاحظات' : 'نتيجة التفتيش ضعيفة';
+    resultMsg.textContent   = `${active} من ${total} بنود تم التحقق منها — ${passed} ناجح، ${failed.length} فاشل`;
+
+    if (failed.length > 0) {
+      ncAlert.classList.remove('hidden');
+      document.getElementById('wi-nc-count').textContent = `تم إنشاء ${failed.length} NC تلقائياً`;
+    }
+    mToast('✅ تم إرسال التفتيش بنجاح', 'success');
+  } catch(e) {
+    mToast('❌ خطأ في الإرسال: ' + e.message, 'error');
+  }
+}
+
+// ── NC ────────────────────────────────────────────
+function openNCForm() {
+  mState.ncPhotos = [];
+  document.getElementById('nc-form-section').style.display = '';
+  document.getElementById('nc-title').value = '';
+  document.getElementById('nc-desc').value = '';
+  document.getElementById('nc-location').value = '';
+  document.getElementById('nc-photos-preview').innerHTML = '';
+  mShowPage('m-nc');
+  setTimeout(() => document.getElementById('nc-title').focus(), 300);
+}
+
+function closeNCForm() { document.getElementById('nc-form-section').style.display = 'none'; }
+
+async function loadNCList() {
+  const data = await mFetch('/api/nonconformances?status=open&limit=10');
+  const el = document.getElementById('m-nc-list');
+  if (!el) return;
+  const items = data.data || [];
+  if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد NCs مفتوحة</div>'; return; }
+  el.innerHTML = items.map(n => `
+    <div class="card p-4 mb-3 border-r-4 ${n.type==='critical'?'border-red-500':n.type==='major'?'border-orange-400':'border-yellow-400'}">
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex-1">
+          <div class="text-xs font-mono text-blue-500 mb-1">${n.ref_number}</div>
+          <div class="font-semibold text-slate-800 text-sm">${n.title}</div>
+          <div class="text-xs text-slate-400 mt-1">${n.project_name} · ${n.iso_standard || ''}</div>
+        </div>
+        <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'}">${n.type==='critical'?'حرجة':n.type==='major'?'رئيسية':'ثانوية'}</span>
+      </div>
+      ${n.rca_ref ? `<div class="mt-2 text-xs bg-purple-50 rounded-lg px-3 py-1.5 text-purple-700"><i class="fas fa-search mr-1"></i>RCA: ${n.rca_ref}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+async function submitNC_mobile() {
+  const title = document.getElementById('nc-title').value.trim();
+  const desc  = document.getElementById('nc-desc').value.trim();
+  if (!title || !desc) { mToast('العنوان والوصف مطلوبان', 'error'); return; }
+
+  try {
+    const result = await mFetch('/api/nonconformances', 'POST', {
+      project_id: 'proj-001',
+      title, description: desc,
+      type: document.getElementById('nc-type').value,
+      iso_standard: document.getElementById('nc-iso').value,
+      location: document.getElementById('nc-location').value || null,
+      latitude: mState.gps.lat, longitude: mState.gps.lng,
+      detected_by: mState.user?.id || 'usr-eng-001'
+    });
+
+    // Upload NC photos
+    for (const photo of mState.ncPhotos) {
+      await mFetch('/api/uploads/photo', 'POST', {
+        image_base64: photo, entity_type: 'nc', entity_id: result.id,
+        latitude: mState.gps.lat, longitude: mState.gps.lng
+      });
+    }
+
+    closeNCForm();
+    mToast(`✅ NC مسجّلة — RCA: ${result.rca_ref}`, 'success');
+    loadNCList();
+    setTimeout(() => mShowPage('m-rca'), 1500);
+  } catch(e) {
+    mToast('❌ خطأ: ' + e.message, 'error');
+  }
+}
+
+// ── Camera ────────────────────────────────────────
+async function startCamera() {
+  try {
+    const constraints = { video: { facingMode: mState.cameraFacing, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    mState.cameraStream = stream;
+    const video = document.getElementById('camera-video');
+    video.srcObject = stream;
+    video.style.display = 'block';
+    document.getElementById('cam-placeholder').style.display = 'none';
+    document.getElementById('cam-overlay').style.display = 'block';
+    document.getElementById('shutter-btn').style.display = 'flex';
+    document.getElementById('switch-cam-btn').style.display = 'flex';
+    document.getElementById('stop-cam-btn').style.display = 'flex';
+  } catch(e) {
+    mToast('تعذّر الوصول للكاميرا: ' + e.message, 'error');
+  }
+}
+
+function stopCamera() {
+  if (mState.cameraStream) {
+    mState.cameraStream.getTracks().forEach(t => t.stop());
+    mState.cameraStream = null;
+  }
+  const video = document.getElementById('camera-video');
+  video.srcObject = null;
+  video.style.display = 'none';
+  document.getElementById('cam-placeholder').style.display = 'flex';
+  document.getElementById('cam-overlay').style.display = 'none';
+  document.getElementById('shutter-btn').style.display = 'none';
+  document.getElementById('switch-cam-btn').style.display = 'none';
+  document.getElementById('stop-cam-btn').style.display = 'none';
+}
+
+async function switchCamera() {
+  mState.cameraFacing = mState.cameraFacing === 'environment' ? 'user' : 'environment';
+  stopCamera();
+  await startCamera();
+}
+
+function capturePhoto() {
+  const video  = document.getElementById('camera-video');
+  const canvas = document.getElementById('camera-canvas');
+  if (!video.videoWidth) { mToast('الكاميرا غير جاهزة بعد', 'error'); return; }
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+  mState.capturedPhotos.push(dataUrl);
+  renderCapturedPhotos();
+  // Flash effect
+  const overlay = document.getElementById('cam-overlay');
+  overlay.style.background = 'rgba(255,255,255,0.6)';
+  setTimeout(() => { overlay.style.background = ''; }, 150);
+  mToast('📸 تم التقاط الصورة', 'success');
+}
+
+function uploadFromGallery(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (file.size > 5 * 1024 * 1024) { mToast('الصورة أكبر من 5MB', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      mState.capturedPhotos.push(ev.target.result);
+      renderCapturedPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderCapturedPhotos() {
+  const section = document.getElementById('captured-photos-section');
+  const grid    = document.getElementById('captured-photos-grid');
+  if (!grid) return;
+  if (mState.capturedPhotos.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  grid.innerHTML = mState.capturedPhotos.map((p, i) => `
+    <div class="relative">
+      <img src="${p}" class="photo-thumb w-full aspect-square object-cover"/>
+      <button onclick="removePhoto(${i})" class="absolute -top-1.5 -left-1.5 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">×</button>
+    </div>
+  `).join('');
+}
+
+function removePhoto(i) {
+  mState.capturedPhotos.splice(i, 1);
+  renderCapturedPhotos();
+}
+
+async function uploadCapturedPhotos() {
+  const entityType = document.getElementById('photo-entity-type').value;
+  const entityId   = document.getElementById('photo-entity-id').value.trim();
+  const caption    = document.getElementById('photo-caption').value.trim();
+  if (!entityId) { mToast('أدخل رقم التفتيش أو NC', 'error'); return; }
+  if (!mState.capturedPhotos.length) { mToast('لا توجد صور للرفع', 'error'); return; }
+
+  mToast('جاري رفع ' + mState.capturedPhotos.length + ' صورة...', 'info');
+  let uploaded = 0;
+  for (const photo of mState.capturedPhotos) {
+    try {
+      await mFetch('/api/uploads/photo', 'POST', {
+        image_base64: photo, entity_type: entityType, entity_id: entityId,
+        caption: caption || null, latitude: mState.gps.lat, longitude: mState.gps.lng
+      });
+      uploaded++;
+    } catch(e) {}
+  }
+  mToast('✅ تم رفع ' + uploaded + ' صورة بنجاح', 'success');
+  mState.capturedPhotos = [];
+  renderCapturedPhotos();
+}
+
+function openCameraPage() { mShowPage('m-camera'); if (!mState.cameraStream) startCamera(); }
+
+function openCameraForInspection() {
+  // Take photos and store in wizardPhotos
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
+  input.onchange = e => {
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        mState.wizardPhotos.push(ev.target.result);
+        document.getElementById('wi-photos').innerHTML = mState.wizardPhotos.map((p, i) => `
+          <div class="relative"><img src="${p}" class="photo-thumb"/><button onclick="mState.wizardPhotos.splice(${i},1);document.getElementById('wi-photos').children[${i}]?.remove()" class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs">×</button></div>
+        `).join('');
+        mToast('📸 تمت إضافة الصورة', 'success');
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  input.click();
+}
+
+function openCameraForNC() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
+  input.onchange = e => {
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        mState.ncPhotos.push(ev.target.result);
+        const prev = document.getElementById('nc-photos-preview');
+        prev.innerHTML = mState.ncPhotos.map((p, i) => `
+          <div class="relative"><img src="${p}" class="photo-thumb"/><button onclick="mState.ncPhotos.splice(${i},1);this.parentElement.remove()" class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs">×</button></div>
+        `).join('');
+        mToast('📸 تمت إضافة الصورة', 'success');
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  input.click();
+}
+
+// ── RCA ───────────────────────────────────────────
+async function loadRCAList() {
+  const data = await mFetch('/api/rca?status=open&limit=10');
+  const el   = document.getElementById('m-rca-list');
+  if (!el) return;
+  const items = data.data || [];
+  if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تذاكر RCA مفتوحة</div>'; return; }
+  el.innerHTML = items.map(r => `
+    <div class="card p-4 mb-3 cursor-pointer active:bg-slate-50" onclick="showRCADetail('${r.id}')">
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex-1">
+          <div class="text-xs font-mono text-purple-500 mb-1">${r.ref_number}</div>
+          <div class="font-semibold text-slate-800 text-sm">${r.title}</div>
+          <div class="text-xs text-slate-400 mt-1">NC: ${r.nc_ref} · ${r.project_name}</div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+          <span class="badge ${r.status==='closed'?'badge-green':r.status==='in_progress'?'badge-yellow':'badge-red'} text-xs">${r.status==='closed'?'مغلق':r.status==='in_progress'?'جارٍ':'مفتوح'}</span>
+          <i class="fas fa-chevron-left text-slate-300 text-xs mt-1"></i>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function showRCADetail(id) {
+  const r = await mFetch(`/api/rca/${id}`);
+  document.getElementById('m-rca-list').style.display = 'none';
+  document.getElementById('rca-detail-panel').style.display = '';
+  document.getElementById('rca-detail-content').innerHTML = `
+    <div class="card p-5 space-y-4">
+      <div>
+        <span class="text-xs font-mono text-purple-500">${r.ref_number}</span>
+        <h2 class="font-bold text-slate-800 mt-1">${r.title}</h2>
+        <p class="text-xs text-slate-400 mt-1">NC: ${r.nc_ref} · ${r.project_name}</p>
+      </div>
+      <div class="border-t pt-4">
+        <h4 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-question-circle text-blue-400 mr-2"></i>تحليل 5 Whys</h4>
+        ${[1,2,3,4,5].map(n => `
+          <div class="flex gap-3 mb-3">
+            <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${n}</div>
+            <textarea class="form-input text-sm flex-1" rows="2" id="m-why-${n}" placeholder="لماذا؟ (Why ${n})">${r['why_'+n] || ''}</textarea>
+          </div>
+        `).join('')}
+        <div class="mt-2">
+          <label class="text-xs font-semibold text-amber-700 block mb-1"><i class="fas fa-bullseye mr-1"></i>السبب الجذري</label>
+          <textarea class="form-input text-sm" rows="2" id="m-root-cause" placeholder="السبب الجذري النهائي">${r.root_cause || ''}</textarea>
+        </div>
+        <button onclick="saveRCA_mobile('${id}')" class="btn-full btn-primary mt-4">
+          <i class="fas fa-save"></i> حفظ التحليل
+        </button>
+      </div>
+      ${r.actions?.length ? `
+      <div class="border-t pt-4">
+        <h4 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-tasks text-green-500 mr-2"></i>الإجراءات التصحيحية</h4>
+        ${r.actions.map(a => `
+          <div class="flex items-start gap-2 mb-2 p-3 bg-slate-50 rounded-xl">
+            <i class="fas fa-wrench text-blue-400 mt-1 text-sm"></i>
+            <div class="flex-1">
+              <div class="text-sm font-medium text-slate-800">${a.description}</div>
+              <div class="text-xs text-slate-400 mt-0.5">${a.assigned_name || '-'}</div>
+            </div>
+            <span class="badge ${a.status==='completed'?'badge-green':'badge-yellow'} text-xs">${a.status==='completed'?'مكتمل':'جارٍ'}</span>
+          </div>
+        `).join('')}
+      </div>` : ''}
+    </div>
+  `;
+}
+
+async function saveRCA_mobile(id) {
+  const whys = {};
+  [1,2,3,4,5].forEach(n => { whys['why_'+n] = document.getElementById('m-why-'+n)?.value || null; });
+  await mFetch(`/api/rca/${id}`, 'PUT', {
+    ...whys,
+    root_cause: document.getElementById('m-root-cause')?.value || null,
+    status: 'in_progress'
+  });
+  mToast('✅ تم حفظ التحليل', 'success');
+}
+
+// ── Notifications ─────────────────────────────────
+async function loadNotifications_m() {
+  const data = await mFetch('/api/dashboard/notifications?user_id=' + (mState.user?.id || 'usr-eng-001'));
+  const el   = document.getElementById('m-notifs-list');
+  if (!el) return;
+  const unread = data.filter(n => !n.is_read).length;
+  const badge  = document.getElementById('notif-count');
+  if (badge) badge.textContent = unread;
+  if (!data.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد إشعارات</div>'; return; }
+  const priIcon = { critical:'fa-radiation text-red-500', high:'fa-exclamation-circle text-orange-500', normal:'fa-info-circle text-blue-400', low:'fa-check-circle text-green-500' };
+  el.innerHTML = data.map(n => `
+    <div class="card p-4 flex gap-3 ${!n.is_read ? 'border-r-4 border-blue-400' : 'opacity-75'}">
+      <i class="fas ${priIcon[n.priority]||priIcon.normal} text-lg mt-0.5"></i>
+      <div class="flex-1">
+        <div class="font-semibold text-slate-800 text-sm">${n.title}</div>
+        <div class="text-xs text-slate-600 mt-0.5">${n.message}</div>
+        <div class="text-xs text-slate-400 mt-1">${mTimeAgo(n.created_at)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ── Team Users Page ───────────────────────────────
+let _mUsersCache = [];
+
+async function loadMobileUsers(role = '', search = '') {
+  const el = document.getElementById('m-users-list');
+  if (!el) return;
+  el.innerHTML = '<div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>';
+  try {
+    let url = '/api/users?limit=100';
+    if (role) url += '&role=' + role;
+    if (search) url += '&search=' + encodeURIComponent(search);
+    const data = await mFetch(url);
+    _mUsersCache = data.data || [];
+    renderMobileUsers(_mUsersCache);
+  } catch(e) {
+    el.innerHTML = '<div class="text-center text-slate-400 py-8"><i class="fas fa-wifi-slash text-2xl mb-2 block"></i>تعذّر تحميل البيانات</div>';
+  }
+}
+
+function renderMobileUsers(users) {
+  const el = document.getElementById('m-users-list');
+  if (!el) return;
+  const roleAr = {admin:'مدير النظام', manager:'مدير المشروع', engineer:'مهندس', auditor:'مراجع', viewer:'مشاهد'};
+  const roleColor = {admin:'badge-red', manager:'badge-blue', engineer:'badge-green', auditor:'badge-yellow', viewer:'badge-gray'};
+  const roleIcon = {admin:'fas fa-crown', manager:'fas fa-user-tie', engineer:'fas fa-hard-hat', auditor:'fas fa-search', viewer:'fas fa-eye'};
+
+  if (!users.length) {
+    el.innerHTML = '<div class="text-center text-slate-400 py-8"><i class="fas fa-users text-3xl mb-3 block"></i>لا يوجد أعضاء</div>';
+    return;
+  }
+
+  el.innerHTML = users.map(u => `
+    <div class="card p-4 flex items-center gap-3 ${!u.is_active ? 'opacity-50' : ''}">
+      <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 ${u.avatar_url?.startsWith('data:') ? '' : 'flex items-center justify-center bg-blue-100'}">
+        ${u.avatar_url?.startsWith('data:')
+          ? `<img src="${u.avatar_url}" class="w-full h-full object-cover"/>`
+          : `<span class="text-blue-600 font-bold text-base">${u.full_name?.charAt(0) || '?'}</span>`}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-slate-800 text-sm truncate">${u.full_name}</span>
+          ${!u.is_active ? '<span class="badge badge-red text-xs">معطّل</span>' : ''}
+        </div>
+        <div class="text-xs text-slate-500 truncate mt-0.5">${u.email}</div>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="badge ${roleColor[u.role] || 'badge-gray'} text-xs">
+            <i class="${roleIcon[u.role] || 'fas fa-user'} mr-1"></i>${roleAr[u.role] || u.role}
+          </span>
+          ${u.department ? `<span class="text-xs text-slate-400">${u.department}</span>` : ''}
+        </div>
+      </div>
+      ${u.phone ? `
+      <a href="tel:${u.phone}" class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-phone text-green-600 text-sm"></i>
+      </a>` : `
+      <div class="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-user text-slate-400 text-sm"></i>
+      </div>`}
+    </div>
+  `).join('');
+}
+
+function mSearchUsers(val) {
+  const filtered = _mUsersCache.filter(u =>
+    u.full_name?.toLowerCase().includes(val.toLowerCase()) ||
+    u.email?.toLowerCase().includes(val.toLowerCase())
+  );
+  renderMobileUsers(val ? filtered : _mUsersCache);
+  // Also reload from API for fresh results
+  if (val.length > 2) loadMobileUsers('', val);
+}
+
+function mFilterUsers(role) {
+  // Update chip UI
+  document.querySelectorAll('.m-role-chip').forEach(c => {
+    c.className = 'px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap m-role-chip';
+  });
+  event?.target?.classList?.remove('bg-slate-100', 'text-slate-600');
+  event?.target?.classList?.add('bg-blue-600', 'text-white');
+  loadMobileUsers(role);
+}
+
+// ── Profile Page ─────────────────────────────────
+async function loadProfile() {
+  const user = mState.user;
+  if (!user) return;
+
+  // Fill profile UI
+  const name = document.getElementById('m-profile-name');
+  const email = document.getElementById('m-profile-email');
+  const dept = document.getElementById('m-profile-dept');
+  const phone = document.getElementById('m-profile-phone');
+  const roleBadge = document.getElementById('m-profile-role-badge');
+  const avatarEl = document.getElementById('m-profile-avatar');
+
+  if (name) name.textContent = user.full_name || '-';
+  if (email) email.textContent = user.email || '-';
+  if (dept) dept.textContent = user.department || 'غير محدد';
+  if (phone) phone.textContent = user.phone || 'غير محدد';
+
+  const roleAr = {admin:'مدير النظام', manager:'مدير المشروع', engineer:'مهندس', auditor:'مراجع', viewer:'مشاهد'};
+  const roleColor = {admin:'badge-red', manager:'badge-blue', engineer:'badge-green', auditor:'badge-yellow', viewer:'badge-gray'};
+  if (roleBadge) roleBadge.innerHTML = `<span class="badge ${roleColor[user.role] || 'badge-gray'}">${roleAr[user.role] || user.role}</span>`;
+
+  if (avatarEl && user.avatar_url?.startsWith('data:')) {
+    avatarEl.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover"/>`;
+  } else if (avatarEl) {
+    avatarEl.innerHTML = `<span class="text-blue-600 font-black text-2xl">${user.full_name?.charAt(0) || '?'}</span>`;
+  }
+
+  // Load user stats
+  try {
+    const stats = await mFetch('/api/db-stats');
+    const profInsp = document.getElementById('m-prof-insp');
+    const profNC = document.getElementById('m-prof-nc');
+    const profRCA = document.getElementById('m-prof-rca');
+    if (profInsp) profInsp.textContent = stats?.inspections || '0';
+    if (profNC) profNC.textContent = stats?.nonconformances || '0';
+    if (profRCA) profRCA.textContent = stats?.rca_tickets || '0';
+  } catch(e) {}
+
+  // Last login
+  const loginEl = document.getElementById('m-profile-login');
+  if (loginEl) loginEl.textContent = user.last_login ? mTimeAgo(user.last_login) : 'أول مرة';
+
+  // Network status
+  const netEl = document.getElementById('m-network-status');
+  if (netEl) {
+    if (navigator.onLine) {
+      netEl.className = 'badge badge-green';
+      netEl.textContent = 'متصل';
+    } else {
+      netEl.className = 'badge badge-red';
+      netEl.textContent = 'غير متصل';
+    }
+  }
+
+  // Last sync
+  const syncEl = document.getElementById('m-last-sync');
+  if (syncEl) syncEl.textContent = new Date().toLocaleTimeString('ar-SA');
+}
+
+async function updateProfileAvatar(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 3 * 1024 * 1024) { mToast('حجم الصورة أكبر من 3MB', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const data = ev.target.result;
+    const avatarEl = document.getElementById('m-profile-avatar');
+    if (avatarEl) avatarEl.innerHTML = `<img src="${data}" class="w-full h-full object-cover"/>`;
+    if (mState.user?.id) {
+      try {
+        await mFetch(`/api/users/${mState.user.id}/avatar`, 'POST', { image_base64: data });
+        mState.user.avatar_url = data;
+        mToast('✅ تم تحديث صورتك الشخصية', 'success');
+        // Update top bar avatar too
+        document.getElementById('m-user-name').textContent = mState.user.full_name;
+      } catch(e) { mToast('❌ فشل رفع الصورة', 'error'); }
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Utilities ─────────────────────────────────────
+function mTimeAgo(d) {
+  if (!d) return '-';
+  const diff = Date.now() - new Date(d);
+  const mins = Math.floor(diff/60000);
+  if (mins < 1)  return 'الآن';
+  if (mins < 60) return 'منذ ' + mins + ' دقيقة';
+  const hrs = Math.floor(mins/60);
+  if (hrs < 24)  return 'منذ ' + hrs + ' ساعة';
+  return 'منذ ' + Math.floor(hrs/24) + ' يوم';
+}
+
+function mToast(msg, type='info') {
+  const div = document.createElement('div');
+  const colors = { success:'#059669', error:'#dc2626', info:'#3b82f6', warning:'#d97706' };
+  div.style.cssText = `position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:12px;background:${colors[type]||colors.info};color:white;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.3);text-align:center;min-width:200px;max-width:90vw;animation:fadeInUp .3s ease;`;
+  div.textContent = msg;
+  document.body.appendChild(div);
+  setTimeout(() => { div.style.opacity='0'; div.style.transition='opacity .3s'; setTimeout(()=>div.remove(),300); }, 3000);
+}
+
+// ── PWA Install Prompt ────────────────────────
+let _deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredInstall = e;
+  const prompt = document.getElementById('install-prompt');
+  if (prompt && !localStorage.getItem('ims_install_dismissed')) {
+    setTimeout(() => { prompt.style.display = 'block'; }, 3000);
+  }
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-prompt').style.display = 'none';
+  mToast('✅ تم تثبيت التطبيق بنجاح!', 'success');
+});
+function installPWA() {
+  if (_deferredInstall) {
+    _deferredInstall.prompt();
+    _deferredInstall.userChoice.then(r => {
+      if (r.outcome === 'accepted') mToast('🎉 يتم تثبيت التطبيق...', 'success');
+      _deferredInstall = null;
+      document.getElementById('install-prompt').style.display = 'none';
+    });
+  }
+}
+function dismissInstall() {
+  localStorage.setItem('ims_install_dismissed', '1');
+  document.getElementById('install-prompt').style.display = 'none';
+}
+
+// ── Service Worker Registration ──────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      console.log('[IMS] SW registered:', reg.scope);
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker?.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            mToast('🔄 تحديث متاح — أعد تشغيل التطبيق', 'info');
+          }
+        });
+      });
+    }).catch(err => console.warn('[IMS] SW failed:', err));
+  });
+}
+
+// ── Offline / Online Detection ────────────────
+function updateOnlineStatus() {
+  const isOnline = navigator.onLine;
+  const bar = document.getElementById('offline-bar');
+  if (bar) {
+    bar.style.display = isOnline ? 'none' : 'flex';
+  }
+  if (isOnline) {
+    mToast('✅ الاتصال بالإنترنت عاد', 'success');
+    // Try to sync queued actions
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then(reg => reg.sync?.register('sync-queue'));
+    }
+  } else {
+    mToast('⚠️ أنت غير متصل بالإنترنت — الوضع غير المتصل نشط', 'warning');
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// ── Init ──────────────────────────────────────────
+window.addEventListener('load', async () => {
+  const token = localStorage.getItem('ims_token');
+  if (token) {
+    try {
+      // Validate token with API
+      const res = await fetch(MAPI + '/api/auth/me', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const user = await res.json();
+      if (user && user.id) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        mState.user = user;
+        document.getElementById('m-user-name').textContent = user.full_name || 'مستخدم';
+        loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadNotifications_m();
+        startGPS();
+        return;
+      }
+    } catch(e) {
+      // API unavailable - try demo mode with stored data
+    }
+    // Token invalid or API down - clear token and show login
+    localStorage.removeItem('ims_token');
+  }
+});
+</script>
+</body>
+</html>
