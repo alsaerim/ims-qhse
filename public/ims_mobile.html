@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="IMS QHSE">
   <meta name="theme-color" content="#1e40af">
-  
-  
+  <link rel="manifest" href="file:///E:/manifest.json">
+  <link rel="apple-touch-icon" href="file:///E:/icon-192.png">
   <title>IMS QHSE Mobile</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+  <script src="./IMS QHSE Mobile_files/saved_resource"></script>
+  <link rel="stylesheet" href="./IMS QHSE Mobile_files/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap');
     *{font-family:'Tajawal',sans-serif;-webkit-tap-highlight-color:transparent;}
@@ -123,7 +123,7 @@
   const TOK={};
   window.fetch = async function(url, opts={}) {
     if(typeof url==='string' && url.includes('/api/')) {
-      const u=new URL(url,'https://ims-qhse-production.up.railway.app'), path=u.pathname, q=Object.fromEntries(u.searchParams);
+      const u=new URL(url,'http://localhost'), path=u.pathname, q=Object.fromEntries(u.searchParams);
       const auth=(opts.headers?.Authorization||opts.headers?.['Authorization']||'');
       if(auth) window._mLastAuth=auth;
       let body=null; try{if(opts.body)body=JSON.parse(opts.body);}catch(e){}
@@ -895,7 +895,7 @@
           <span class="font-bold text-slate-800 text-sm truncate">سارة القحطاني</span>
           
         </div>
-        <div class="text-xs text-slate-500 truncate mt-0.5"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d8b9adbcb1acb7aa98b1b5abf5a9b0abbdf6bbb7b5">[email&#160;protected]</a></div>
+        <div class="text-xs text-slate-500 truncate mt-0.5"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="741501101d001b06341d190759051c07115a171b19">[email&#160;protected]</a></div>
         <div class="flex items-center gap-2 mt-1">
           <span class="badge badge-yellow text-xs">
             <i class="fas fa-search mr-1"></i>مراجع
@@ -1021,7 +1021,7 @@
 // ═══════════════════════════════════════════════════
 // IMS QHSE MOBILE APP
 // ═══════════════════════════════════════════════════
-const MAPI = '';
+const MAPI = 'https://ims-qhse-production.up.railway.app';
 let mState = {
   user: null, currentPage: 'm-home',
   gps: { lat: null, lng: null },
