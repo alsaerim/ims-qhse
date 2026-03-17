@@ -54,6 +54,29 @@
       .sidebar.open { transform: translateX(0); }
       .main-content { margin-right: 0; }
     }
+
+    /* ── Sidebar Collapse ── */
+    :root { --sidebar-collapsed-width: 64px; }
+    .sidebar { transition: width 0.3s ease; overflow: hidden; }
+    .sidebar.collapsed { width: var(--sidebar-collapsed-width) !important; }
+    .sidebar.collapsed .sidebar-label,
+    .sidebar.collapsed .sidebar-section-title,
+    .sidebar.collapsed .iso-tabs-section,
+    .sidebar.collapsed .sidebar-logo-text,
+    .sidebar.collapsed .user-info-text,
+    .sidebar.collapsed #nc-count-badge { display: none !important; }
+    .sidebar.collapsed .nav-item { justify-content: center; padding: 10px 0; gap: 0; border-right: none !important; }
+    .sidebar.collapsed .nav-item.active { border-right: 3px solid #3b82f6 !important; }
+    .sidebar.collapsed #sidebar-collapse-row { justify-content: center !important; padding: 12px 0 !important; }
+    .sidebar.collapsed .sidebar-user { justify-content: center; }
+    .sidebar-collapse-btn i { transition: transform 0.3s ease; }
+    .sidebar.collapsed .sidebar-collapse-btn i { transform: rotate(180deg); }
+    .main-content { transition: margin-right 0.3s ease; }
+    body.sidebar-collapsed .main-content { margin-right: var(--sidebar-collapsed-width) !important; }
+    @media (max-width: 768px) {
+      .sidebar.collapsed { width: var(--sidebar-width) !important; }
+      body.sidebar-collapsed .main-content { margin-right: 0 !important; }
+    }
   </style>
 
 <script>
@@ -120,6 +143,129 @@
       {id:'notif-005',user_id:'usr-mgr-001',title:'تم إغلاق NC بنجاح',message:'NC-2025-089 (تسرب زيت الأنابيب) تم إغلاقها وإتمام الإجراءات التصحيحية',priority:'low',is_read:1,created_at:'2026-03-01T11:00:00Z'},
     ],
     sessions: {},
+    org_profile: {
+      name:'شركة الامتثال المتكاملة للخدمات الصناعية',
+      name_en:'Integrated Compliance Industrial Services Co.',
+      industry:'صناعة نفطية وبتروكيماوية',
+      size:'large',
+      employees:450,
+      founded:'2010',
+      city:'الرياض',
+      country:'المملكة العربية السعودية',
+      vision:'أن نكون الشركة الرائدة في تطبيق معايير الجودة والسلامة والبيئة بالمنطقة',
+      mission:'تقديم خدمات صناعية متكاملة بأعلى معايير الجودة والسلامة والامتثال البيئي',
+      objectives:[
+        {id:'obj-001',text:'تحقيق معدل امتثال لا يقل عن 95% لجميع معايير ISO المعتمدة',iso:['ISO_9001','ISO_45001','ISO_14001'],kpi_ref:'kpi-001',status:'in_progress'},
+        {id:'obj-002',text:'خفض عدد عدم المطابقات الرئيسية إلى صفر خلال العام',iso:['ISO_9001'],kpi_ref:'kpi-002',status:'in_progress'},
+        {id:'obj-003',text:'الوصول إلى معدل LTIFR أقل من 0.1 لكل مليون ساعة عمل',iso:['ISO_45001'],kpi_ref:'kpi-004',status:'good'},
+        {id:'obj-004',text:'تقليل الحوادث البيئية إلى صفر وتحقيق التوافق الكامل مع ISO 14001',iso:['ISO_14001'],kpi_ref:'kpi-008',status:'warning'},
+        {id:'obj-005',text:'رفع معدل إغلاق تحليل الأسباب الجذرية إلى 90%',iso:['ISO_9001','ISO_45001'],kpi_ref:'kpi-007',status:'critical'},
+        {id:'obj-006',text:'إتمام 40 ساعة تدريب سنوي لكل موظف في مجال QHSE',iso:['ISO_45001'],kpi_ref:'kpi-009',status:'good'},
+      ],
+      certified_standards:['ISO_9001','ISO_45001','ISO_14001'],
+      cert_body:'Bureau Veritas',
+      last_audit:'2025-11-15',
+      next_audit:'2026-11-15',
+    },
+    iso_standards: [
+      {
+        id:'std-9001', code:'ISO_9001', name:'إدارة الجودة', version:'2015',
+        color:'#3b82f6', icon:'award',
+        scope:'يحدد متطلبات نظام إدارة الجودة لأي منظمة تسعى لإثبات قدرتها على تقديم منتجات وخدمات تلبي متطلبات العملاء والمتطلبات التنظيمية المعمول بها',
+        key_clauses:[
+          {num:'4', title:'سياق المنظمة', desc:'فهم المنظمة وسياقها، احتياجات الأطراف المعنية، نطاق نظام الإدارة'},
+          {num:'5', title:'القيادة', desc:'التزام الإدارة العليا، السياسة، الأدوار والمسؤوليات'},
+          {num:'6', title:'التخطيط', desc:'المخاطر والفرص، أهداف الجودة، تخطيط التغييرات'},
+          {num:'7', title:'الدعم', desc:'الموارد، الكفاءة، الوعي، التواصل، المعلومات الموثقة'},
+          {num:'8', title:'التشغيل', desc:'التخطيط والضبط التشغيلي، متطلبات المنتجات والخدمات، التصميم والتطوير، ضبط المنتجات والخدمات الخارجية'},
+          {num:'9', title:'تقييم الأداء', desc:'المراقبة والقياس والتحليل والتقييم، التدقيق الداخلي، مراجعة الإدارة'},
+          {num:'10', title:'التحسين', desc:'عدم المطابقة والإجراءات التصحيحية، التحسين المستمر'},
+        ],
+        unique_elements:['التركيز على العميل','إدارة الجودة للمنتج والخدمة','ضبط العمليات الخارجية','مراجعة متطلبات العميل'],
+        procedures:[
+          {id:'proc-9001-01',code:'QP-001',title:'إجراء ضبط وثائق الجودة',status:'active'},
+          {id:'proc-9001-02',code:'QP-002',title:'إجراء إدارة عدم المطابقة',status:'active'},
+          {id:'proc-9001-03',code:'QP-003',title:'إجراء التدقيق الداخلي للجودة',status:'active'},
+          {id:'proc-9001-04',code:'QP-004',title:'إجراء مراجعة الإدارة',status:'active'},
+          {id:'proc-9001-05',code:'QP-005',title:'إجراء الإجراءات التصحيحية والوقائية',status:'active'},
+          {id:'proc-9001-06',code:'QP-006',title:'إجراء تقييم الموردين',status:'review'},
+        ]
+      },
+      {
+        id:'std-45001', code:'ISO_45001', name:'السلامة والصحة المهنية', version:'2018',
+        color:'#059669', icon:'hard-hat',
+        scope:'يحدد متطلبات نظام إدارة الصحة والسلامة المهنية ليمكّن المنظمة من توفير أماكن عمل آمنة وصحية، منع الإصابات والأمراض المهنية، وتحسين أداء السلامة بصفة استباقية',
+        key_clauses:[
+          {num:'4', title:'سياق المنظمة', desc:'فهم احتياجات العمال وأصحاب المصلحة، تحديد نطاق نظام OH&S'},
+          {num:'5', title:'القيادة والمشاركة', desc:'التزام القيادة، سياسة OH&S، مشاركة العمال وتشاورهم'},
+          {num:'6', title:'التخطيط', desc:'تحديد الأخطار وتقييم المخاطر، متطلبات قانونية، أهداف OH&S'},
+          {num:'7', title:'الدعم', desc:'الموارد، الكفاءة، الوعي، التواصل، المشاركة والتشاور'},
+          {num:'8', title:'التشغيل', desc:'التخطيط وضبط العمليات، إدارة التغيير، المقاولون، الاستعداد للطوارئ'},
+          {num:'9', title:'تقييم الأداء', desc:'مراقبة ومراجعة وتحليل الأداء، التحقيق في الحوادث، التدقيق الداخلي'},
+          {num:'10', title:'التحسين', desc:'الحوادث وعدم المطابقة، التحسين المستمر'},
+        ],
+        unique_elements:['مشاركة العمال والتشاور معهم','تحديد الأخطار وتقييم مخاطر OH&S','التحقيق في الحوادث والأحداث الوشيكة','ضبط المقاولين من منظور السلامة','خطط الاستعداد والاستجابة للطوارئ'],
+        procedures:[
+          {id:'proc-45001-01',code:'SP-001',title:'إجراء تحديد وتقييم المخاطر',status:'active'},
+          {id:'proc-45001-02',code:'SP-002',title:'إجراء التحقيق في الحوادث',status:'active'},
+          {id:'proc-45001-03',code:'SP-003',title:'إجراء إذن العمل',status:'active'},
+          {id:'proc-45001-04',code:'SP-004',title:'إجراء قفل الطاقة LOTO',status:'active'},
+          {id:'proc-45001-05',code:'SP-005',title:'إجراء العمل في الأماكن المحصورة',status:'active'},
+          {id:'proc-45001-06',code:'SP-006',title:'إجراء إدارة مقاولي السلامة',status:'review'},
+          {id:'proc-45001-07',code:'SP-007',title:'إجراء الاستعداد للطوارئ',status:'active'},
+        ]
+      },
+      {
+        id:'std-14001', code:'ISO_14001', name:'إدارة البيئة', version:'2015',
+        color:'#d97706', icon:'leaf',
+        scope:'يحدد متطلبات نظام الإدارة البيئية الذي تستطيع المنظمة من خلاله تحسين أدائها البيئي، وتحقيق الأهداف البيئية، والوفاء بالالتزامات الامتثالية',
+        key_clauses:[
+          {num:'4', title:'سياق المنظمة', desc:'فهم القضايا البيئية الداخلية والخارجية، احتياجات الأطراف المعنية'},
+          {num:'5', title:'القيادة', desc:'التزام القيادة، السياسة البيئية، الأدوار والمسؤوليات البيئية'},
+          {num:'6', title:'التخطيط', desc:'الجوانب والتأثيرات البيئية، الالتزامات القانونية، الأهداف البيئية'},
+          {num:'7', title:'الدعم', desc:'الموارد، الكفاءة البيئية، الوعي، التواصل الداخلي والخارجي'},
+          {num:'8', title:'التشغيل', desc:'ضبط العمليات ذات الجوانب البيئية الهامة، الاستعداد للطوارئ البيئية'},
+          {num:'9', title:'تقييم الأداء', desc:'مراقبة وقياس الأداء البيئي، تقييم الامتثال، التدقيق الداخلي البيئي'},
+          {num:'10', title:'التحسين', desc:'عدم المطابقة البيئية، الإجراءات التصحيحية، التحسين البيئي المستمر'},
+        ],
+        unique_elements:['تحديد الجوانب البيئية والتأثيرات المرتبطة','إدارة دورة الحياة للمنتج','الالتزامات القانونية البيئية','التواصل البيئي الخارجي مع الجهات المعنية','منع التلوث وتقليل الانبعاثات'],
+        procedures:[
+          {id:'proc-14001-01',code:'EP-001',title:'إجراء تحديد الجوانب البيئية',status:'active'},
+          {id:'proc-14001-02',code:'EP-002',title:'إجراء إدارة النفايات',status:'active'},
+          {id:'proc-14001-03',code:'EP-003',title:'إجراء رصد الانبعاثات',status:'active'},
+          {id:'proc-14001-04',code:'EP-004',title:'إجراء الاستجابة للطوارئ البيئية',status:'active'},
+          {id:'proc-14001-05',code:'EP-005',title:'إجراء الامتثال القانوني البيئي',status:'review'},
+        ]
+      },
+      {
+        id:'std-27001', code:'ISO_27001', name:'أمن المعلومات', version:'2022',
+        color:'#7c3aed', icon:'shield-alt',
+        scope:'يحدد متطلبات إنشاء وتطبيق وصون نظام إدارة أمن المعلومات ISMS بهدف الحفاظ على سرية المعلومات وسلامتها وإتاحتها',
+        key_clauses:[
+          {num:'4', title:'سياق المنظمة', desc:'فهم السياق، احتياجات الأطراف المعنية، نطاق ISMS'},
+          {num:'5', title:'القيادة', desc:'التزام القيادة، سياسة أمن المعلومات، الأدوار والصلاحيات'},
+          {num:'6', title:'التخطيط', desc:'تقييم مخاطر أمن المعلومات، معالجة المخاطر، إعلان إمكانية التطبيق SOA'},
+          {num:'7', title:'الدعم', desc:'الموارد، الكفاءة، الوعي الأمني، التواصل، التوثيق'},
+          {num:'8', title:'التشغيل', desc:'التخطيط والضبط التشغيلي، تقييم ومعالجة مخاطر أمن المعلومات'},
+          {num:'9', title:'تقييم الأداء', desc:'المراقبة والقياس والتحليل، التدقيق الداخلي ISMS، مراجعة الإدارة'},
+          {num:'10', title:'التحسين', desc:'عدم المطابقة والإجراءات التصحيحية، التحسين المستمر لـ ISMS'},
+        ],
+        unique_elements:['تقييم ومعالجة مخاطر أمن المعلومات','إعلان إمكانية التطبيق SOA وضوابط Annex A','إدارة أصول المعلومات وتصنيفها','ضبط الوصول وإدارة الهوية','إدارة الحوادث الأمنية والتعافي منها','أمن العمليات وأمن الاتصالات'],
+        procedures:[
+          {id:'proc-27001-01',code:'IS-001',title:'إجراء تقييم مخاطر أمن المعلومات',status:'active'},
+          {id:'proc-27001-02',code:'IS-002',title:'إجراء ضبط الوصول',status:'active'},
+          {id:'proc-27001-03',code:'IS-003',title:'إجراء إدارة الحوادث الأمنية',status:'active'},
+          {id:'proc-27001-04',code:'IS-004',title:'إجراء النسخ الاحتياطي واستعادة البيانات',status:'review'},
+        ]
+      },
+    ],
+    kpi_history: {
+      'kpi-001': [{month:'أكت',val:89},{month:'نوف',val:91},{month:'ديس',val:90},{month:'يناير',val:92},{month:'فبر',val:91.5},{month:'مارس',val:93.2}],
+      'kpi-002': [{month:'أكت',val:8},{month:'نوف',val:7},{month:'ديس',val:6},{month:'يناير',val:5},{month:'فبر',val:5},{month:'مارس',val:4}],
+      'kpi-003': [{month:'أكت',val:82},{month:'نوف',val:84},{month:'ديس',val:85},{month:'يناير',val:86},{month:'فبر',val:87},{month:'مارس',val:88.5}],
+      'kpi-004': [{month:'أكت',val:0.5},{month:'نوف',val:0.4},{month:'ديس',val:0.3},{month:'يناير',val:0.3},{month:'فبر',val:0.2},{month:'مارس',val:0.2}],
+      'kpi-007': [{month:'أكت',val:20},{month:'نوف',val:25},{month:'ديس',val:30},{month:'يناير',val:32},{month:'فبر',val:38},{month:'مارس',val:40}],
+    },
     lean_wastes: [
       {id:'lw-001',ref:'LW-001',muda_type:'defects',title:'أخطاء في نماذج التفتيش',description:'نماذج التفتيش تحتوي على حقول غير مكتملة بنسبة 23%',impact_score:8,frequency:'high',process:'التفتيش',project_id:'proj-001',project_name:'مصفاة الرياض',detected_by:'أحمد العمري',detected_at:'2026-01-15T09:00:00Z',status:'in_progress',dmaic_phase:'analyze',root_cause:'عدم وضوح إرشادات الملء',proposed_action:'إنشاء نموذج رقمي موحد',estimated_saving:15000,priority:'high'},
       {id:'lw-002',ref:'LW-002',muda_type:'waiting',title:'انتظار موافقة إغلاق NC',description:'متوسط انتظار إغلاق NC يصل إلى 12 يوم عمل',impact_score:9,frequency:'high',process:'إدارة NC',project_id:'proj-001',project_name:'مصفاة الرياض',detected_by:'مدير النظام',detected_at:'2026-01-20T10:00:00Z',status:'open',dmaic_phase:'measure',root_cause:'غياب آلية تصعيد تلقائية',proposed_action:'إضافة تنبيهات تلقائية بعد 5 أيام',estimated_saving:8000,priority:'critical'},
@@ -280,6 +426,16 @@
       MOCK_DB.nonconformances.unshift(newNC);
       return {...newNC, rca_ref:rcaRef};
     }
+    if (path.startsWith('/api/nonconformances/') && method === 'GET') {
+      const ncid = path.split('/')[3];
+      return MOCK_DB.nonconformances.find(n => n.id === ncid) || {error:'غير موجود'};
+    }
+    if (path.startsWith('/api/nonconformances/') && method === 'PUT') {
+      const ncid = path.split('/')[3];
+      const nc = MOCK_DB.nonconformances.find(n => n.id === ncid);
+      if (nc) Object.assign(nc, body);
+      return nc || {error:'غير موجود'};
+    }
 
     // RCA
     if (path === '/api/rca') {
@@ -301,6 +457,54 @@
     // KPIs
     if (path === '/api/kpis' || path === '/api/dashboard/kpis-live') {
       return MOCK_DB.kpis;
+    }
+    if (path === '/api/kpis' && method === 'POST') {
+      var nk = Object.assign({id:'kpi-'+Date.now(), code:'KPI-'+String(MOCK_DB.kpis.length+1).padStart(3,'0'), latest_value:0, status_level:'warning'}, body);
+      MOCK_DB.kpis.push(nk); return nk;
+    }
+    if (path.startsWith('/api/kpis/') && method === 'PUT') {
+      var kid = path.split('/')[3];
+      var kpi = MOCK_DB.kpis.find(function(k){return k.id===kid;});
+      if (kpi) Object.assign(kpi, body);
+      return kpi || {};
+    }
+    if (path.startsWith('/api/kpis/') && method === 'DELETE') {
+      var kid2 = path.split('/')[3];
+      MOCK_DB.kpis = MOCK_DB.kpis.filter(function(k){return k.id!==kid2;});
+      return {success:true};
+    }
+    if (path.startsWith('/api/kpis/') && path.endsWith('/history')) {
+      var kid3 = path.split('/')[3];
+      return MOCK_DB.kpi_history[kid3] || [];
+    }
+    // Org Profile
+    if (path === '/api/org/profile' && method === 'GET') { return MOCK_DB.org_profile; }
+    if (path === '/api/org/profile' && method === 'PUT') { Object.assign(MOCK_DB.org_profile, body); return MOCK_DB.org_profile; }
+    if (path === '/api/org/objectives' && method === 'POST') {
+      var no = Object.assign({id:'obj-'+Date.now()}, body);
+      MOCK_DB.org_profile.objectives.push(no); return no;
+    }
+    if (path.startsWith('/api/org/objectives/') && method === 'PUT') {
+      var oid = path.split('/')[4];
+      var obj = MOCK_DB.org_profile.objectives.find(function(o){return o.id===oid;});
+      if (obj) Object.assign(obj, body); return obj||{};
+    }
+    if (path.startsWith('/api/org/objectives/') && method === 'DELETE') {
+      var oid2 = path.split('/')[4];
+      MOCK_DB.org_profile.objectives = MOCK_DB.org_profile.objectives.filter(function(o){return o.id!==oid2;});
+      return {success:true};
+    }
+    // ISO Standards
+    if (path === '/api/iso/standards') { return MOCK_DB.iso_standards; }
+    if (path.startsWith('/api/iso/standards/') && method === 'GET') {
+      var sid = path.split('/')[4];
+      return MOCK_DB.iso_standards.find(function(s){return s.id===sid||s.code===sid;}) || {};
+    }
+    if (path.startsWith('/api/iso/standards/') && path.endsWith('/procedures') && method === 'POST') {
+      var sc = path.split('/')[4];
+      var std = MOCK_DB.iso_standards.find(function(s){return s.id===sc||s.code===sc;});
+      if (std) { var np = Object.assign({id:'proc-'+Date.now(), status:'active'}, body); std.procedures.push(np); return np; }
+      return {};
     }
 
     // Users
@@ -429,9 +633,10 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="p-5 border-b border-slate-700">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
+  <div class="border-b border-slate-700" style="min-height:64px; display:flex; flex-direction:column; justify-content:center;">
+    <!-- Logo row — hidden when collapsed -->
+    <div class="sidebar-logo-text flex items-center gap-3 px-4 pt-4 pb-2">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0">
         <i class="fas fa-shield-alt text-white text-lg"></i>
       </div>
       <div>
@@ -439,10 +644,16 @@
         <div class="text-xs text-slate-400">نظام الامتثال المتكامل</div>
       </div>
     </div>
+    <!-- Collapse button row — always visible, centred when collapsed -->
+    <div class="flex items-center px-3 pb-3" id="sidebar-collapse-row" style="justify-content:flex-end;">
+      <button onclick="toggleSidebarCollapse()" class="sidebar-collapse-btn w-8 h-8 rounded-lg bg-slate-700 hover:bg-blue-600 flex items-center justify-center text-slate-300 hover:text-white transition-all" title="طي الشريط الجانبي">
+        <i class="fas fa-angles-right text-sm"></i>
+      </button>
+    </div>
   </div>
 
   <!-- ISO Standards Tabs -->
-  <div class="p-3 border-b border-slate-700">
+  <div class="p-3 border-b border-slate-700 iso-tabs-section">
     <div class="text-xs text-slate-500 mb-2 px-2">معايير الأيزو النشطة</div>
     <div class="flex flex-wrap gap-1 px-2">
       <span class="badge badge-blue text-xs">9001</span>
@@ -453,65 +664,68 @@
   </div>
 
   <nav class="p-2 mt-2">
-    <div class="text-xs text-slate-500 px-3 mb-2 uppercase tracking-wider">لوحة التحكم</div>
+    <div class="text-xs text-slate-500 px-3 mb-2 uppercase tracking-wider sidebar-section-title">لوحة التحكم</div>
     <div class="nav-item active" onclick="navigate('dashboard')">
-      <i class="fas fa-tachometer-alt w-4"></i><span>نظرة عامة</span>
+      <i class="fas fa-tachometer-alt w-4"></i><span class="sidebar-label">نظرة عامة</span>
     </div>
     <div class="nav-item" onclick="navigate('map')">
-      <i class="fas fa-map-marked-alt w-4"></i><span>خارطة المشاريع</span>
+      <i class="fas fa-map-marked-alt w-4"></i><span class="sidebar-label">خارطة المشاريع</span>
     </div>
     <div class="nav-item" onclick="navigate('kpis')">
-      <i class="fas fa-chart-line w-4"></i><span>مؤشرات الأداء KPIs</span>
+      <i class="fas fa-chart-line w-4"></i><span class="sidebar-label">مؤشرات الأداء KPIs</span>
     </div>
 
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider">الإدارة</div>
+    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الإدارة</div>
     <div class="nav-item" onclick="navigate('projects')">
-      <i class="fas fa-building w-4"></i><span>المشاريع</span>
+      <i class="fas fa-building w-4"></i><span class="sidebar-label">المشاريع</span>
     </div>
     <div class="nav-item" onclick="navigate('inspections')">
-      <i class="fas fa-clipboard-check w-4"></i><span>التفتيش والمراجعة</span>
+      <i class="fas fa-clipboard-check w-4"></i><span class="sidebar-label">التفتيش والمراجعة</span>
     </div>
     <div class="nav-item" onclick="navigate('nc')">
       <i class="fas fa-exclamation-triangle w-4"></i>
-      <span>عدم المطابقة</span>
+      <span class="sidebar-label">عدم المطابقة</span>
       <span class="badge badge-red text-xs mr-auto" id="nc-count-badge">-</span>
     </div>
 
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider">Lean Six Sigma</div>
+    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">Lean Six Sigma</div>
     <div class="nav-item" onclick="navigate('rca')">
-      <i class="fas fa-search w-4"></i><span>تحليل الأسباب RCA</span>
+      <i class="fas fa-search w-4"></i><span class="sidebar-label">تحليل الأسباب RCA</span>
     </div>
     <div class="nav-item" onclick="navigate('lean')">
-      <i class="fas fa-recycle w-4"></i><span>تحليل الهدر Muda</span>
+      <i class="fas fa-recycle w-4"></i><span class="sidebar-label">تحليل الهدر Muda</span>
     </div>
 
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider">التقارير</div>
+    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">التقارير</div>
     <div class="nav-item" onclick="navigate('reports')">
-      <i class="fas fa-file-pdf w-4"></i><span>التقارير Audit-Ready</span>
+      <i class="fas fa-file-pdf w-4"></i><span class="sidebar-label">التقارير Audit-Ready</span>
     </div>
 
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider">الإعدادات</div>
+    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الإعدادات</div>
+    <div class="nav-item" onclick="navigate('org')">
+      <i class="fas fa-sitemap w-4"></i><span class="sidebar-label">المنظمة</span>
+    </div>
     <div class="nav-item" onclick="navigate('users')">
-      <i class="fas fa-users-cog w-4"></i><span>إدارة المستخدمين</span>
+      <i class="fas fa-users-cog w-4"></i><span class="sidebar-label">إدارة المستخدمين</span>
     </div>
     <div class="nav-item" onclick="navigate('tasks')">
-      <i class="fas fa-th-large w-4"></i><span>لوحة المهام</span>
+      <i class="fas fa-th-large w-4"></i><span class="sidebar-label">لوحة المهام</span>
     </div>
     <div class="nav-item" onclick="location.href='https://ims-qhse-production.up.railway.app/ims_mobile.html'" title="فتح تطبيق الجوال">
-      <i class="fas fa-mobile-alt w-4"></i><span>تطبيق الجوال</span>
-      <i class="fas fa-external-link-alt text-xs mr-auto opacity-50"></i>
+      <i class="fas fa-mobile-alt w-4"></i><span class="sidebar-label">تطبيق الجوال</span>
+      <i class="fas fa-external-link-alt text-xs mr-auto opacity-50 sidebar-label"></i>
     </div>
   </nav>
 
   <!-- User Info -->
   <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold" id="user-avatar">م</div>
-      <div>
+    <div class="flex items-center gap-3 sidebar-user">
+      <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0" id="user-avatar">م</div>
+      <div class="user-info-text">
         <div class="text-sm text-white font-medium" id="user-name">مدير النظام</div>
         <div class="text-xs text-slate-400" id="user-role">admin</div>
       </div>
-      <button onclick="logout()" class="mr-auto text-slate-400 hover:text-red-400 transition-colors">
+      <button onclick="logout()" class="mr-auto text-slate-400 hover:text-red-400 transition-colors user-info-text">
         <i class="fas fa-sign-out-alt"></i>
       </button>
     </div>
@@ -780,7 +994,7 @@ function navigate(page) {
   const titles = {
     dashboard: ['لوحة التحكم', 'نظرة عامة على الامتثال والسلامة'],
     map: ['خارطة المشاريع', 'توزيع المشاريع الجغرافي مع Geofencing'],
-    kpis: ['مؤشرات الأداء KPIs', 'مؤشرات الجودة والسلامة والبيئة'],
+    kpis: ['مؤشرات الأداء KPIs', 'مؤشرات الجودة والسلامة والبيئة — تتبع، إضافة، تعديل'],
     projects: ['إدارة المشاريع', 'قائمة جميع المشاريع النشطة'],
     inspections: ['التفتيش والمراجعة', 'سجل جميع عمليات التفتيش'],
     nc: ['عدم المطابقة', 'إدارة حالات عدم المطابقة NC'],
@@ -788,7 +1002,8 @@ function navigate(page) {
     lean: ['تحليل الهدر Muda', 'مؤشرات Lean Six Sigma وتقليل الهدر'],
     reports: ['التقارير Audit-Ready', 'تقارير الامتثال الجاهزة للمراجعة'],
     notifications: ['الإشعارات', 'جميع التنبيهات والإشعارات'],
-    users: ['إدارة المستخدمين', 'إضافة وتعديل وإدارة حسابات المستخدمين']
+    users: ['إدارة المستخدمين', 'إضافة وتعديل وإدارة حسابات المستخدمين'],
+    org: ['المنظمة', 'الملف التنظيمي · الأهداف · معايير ISO ومقارنتها'],
   };
   
   const [title, sub] = titles[page] || ['الصفحة', ''];
@@ -810,7 +1025,8 @@ function navigate(page) {
     reports: loadReports,
     notifications: loadNotifications,
     users: loadUsers,
-    tasks: loadTasks
+    tasks: loadTasks,
+    org: loadOrganization
   };
   (pages[page] || loadDashboard)();
 }
@@ -1346,6 +1562,7 @@ async function loadNonConformances() {
             <th class="text-right p-3 font-semibold text-slate-600">RCA</th>
             <th class="text-right p-3 font-semibold text-slate-600">الحالة</th>
             <th class="text-right p-3 font-semibold text-slate-600">الموعد</th>
+            <th class="p-3 font-semibold text-slate-600 text-center">إجراءات</th>
           </tr>
         </thead>
         <tbody>
@@ -1363,6 +1580,16 @@ async function loadNonConformances() {
             </td>
             <td class="p-3"><span class="badge ${ncStatusBadge(n.status)}">${ncStatusAr(n.status)}</span></td>
             <td class="p-3 text-xs ${n.due_date && new Date(n.due_date) < new Date() && n.status !== 'closed' ? 'text-red-600 font-bold' : 'text-slate-500'}">${n.due_date ? new Date(n.due_date).toLocaleDateString('ar-SA') : '-'}</td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button onclick="openNCDetail('${n.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="عرض التفاصيل">
+                  <i class="fas fa-eye text-xs"></i>
+                </button>
+                <button onclick="openNCEdit('${n.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="تعديل السجل">
+                  <i class="fas fa-edit text-xs"></i>
+                </button>
+              </div>
+            </td>
           </tr>`).join('')}
         </tbody>
       </table>
@@ -1372,6 +1599,325 @@ async function loadNonConformances() {
 
 function ncSumCard(label, count, badge) {
   return `<div class="card p-4 text-center"><div class="text-2xl font-bold mb-1"><span class="badge ${badge}">${count}</span></div><div class="text-xs text-slate-500">${label}</div></div>`;
+}
+
+// ── NC Detail (عرض التفاصيل) ─────────────────
+function openNCDetail(id) {
+  const ncs = window.MOCK_DB?.nonconformances || [];
+  const n = ncs.find(x => x.id === id);
+  if (!n) return;
+
+  const typeColor = {critical:'#dc2626', major:'#d97706', minor:'#3b82f6', observation:'#64748b'};
+  const color = typeColor[n.type] || '#64748b';
+  const isOverdue = n.due_date && new Date(n.due_date) < new Date() && n.status !== 'closed';
+
+  let modal = document.getElementById('modal-nc-detail');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modal-nc-detail';
+    modal.className = 'modal';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in overflow-hidden shadow-2xl" style="max-height:90vh;overflow-y:auto">
+    <div class="px-6 py-4 flex items-center justify-between sticky top-0" style="background:${color}">
+      <div>
+        <div class="text-white font-mono text-xs opacity-80">${n.ref_number}</div>
+        <h3 class="text-white font-bold text-lg leading-tight">${n.title}</h3>
+      </div>
+      <button onclick="document.getElementById('modal-nc-detail').classList.remove('open')" class="text-white opacity-70 hover:opacity-100 text-xl flex-shrink-0 mr-2">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <!-- Status bar -->
+      <div class="flex flex-wrap gap-2 items-center">
+        <span class="badge ${ncStatusBadge(n.status)} text-sm">${ncStatusAr(n.status)}</span>
+        <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'}">${ncTypeAr(n.type)}</span>
+        ${isOverdue ? '<span class="badge badge-red"><i class="fas fa-clock ml-1"></i>متأخرة</span>' : ''}
+        <span class="badge badge-gray">${n.iso_standard || ''}</span>
+      </div>
+
+      <!-- Info grid -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">المشروع</div>
+          <div class="font-semibold text-slate-800 text-sm">${n.project_name || '-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">الفئة</div>
+          <div class="font-semibold text-slate-800 text-sm">${n.category || '-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">المسؤول</div>
+          <div class="font-semibold text-slate-800 text-sm">${n.assigned_name || '-'}</div>
+        </div>
+        <div class="p-3 ${isOverdue?'bg-red-50':'bg-slate-50'} rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">الموعد النهائي</div>
+          <div class="font-semibold text-sm ${isOverdue?'text-red-600':'text-slate-800'}">${n.due_date ? new Date(n.due_date).toLocaleDateString('ar-SA') : '-'}</div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      ${n.description ? `
+      <div class="p-4 bg-slate-50 rounded-xl">
+        <div class="text-xs font-bold text-slate-600 mb-1">الوصف</div>
+        <p class="text-sm text-slate-700 leading-relaxed">${n.description}</p>
+      </div>` : ''}
+
+      <!-- RCA link -->
+      ${n.rca_ref ? `
+      <div class="p-3 rounded-xl flex items-center gap-3" style="background:#f5f3ff">
+        <i class="fas fa-search text-purple-500"></i>
+        <div>
+          <div class="text-xs text-slate-500">تحليل الأسباب المرتبط</div>
+          <div class="font-bold text-purple-700">${n.rca_ref}</div>
+        </div>
+        <span class="badge badge-${n.rca_status==='closed'?'green':n.rca_status==='in_progress'?'yellow':'red'} mr-auto">${n.rca_status || 'open'}</span>
+      </div>` : ''}
+
+      <!-- Quick status change -->
+      <div>
+        <div class="text-sm font-bold text-slate-700 mb-2">تغيير الحالة السريع</div>
+        <div class="flex gap-2 flex-wrap">
+          ${['open','in_progress','pending_verification','closed'].map(s => `
+          <button onclick="quickUpdateNCStatus('${n.id}','${s}')"
+            class="flex-1 py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all
+            ${n.status === s ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:border-blue-300'}">
+            ${ncStatusAr(s)}
+          </button>`).join('')}
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-2 border-t border-slate-100">
+        <button onclick="openNCEdit('${n.id}'); document.getElementById('modal-nc-detail').classList.remove('open')"
+          class="btn btn-primary flex-1"><i class="fas fa-edit ml-1"></i>تعديل كامل</button>
+        <button onclick="document.getElementById('modal-nc-detail').classList.remove('open')"
+          class="btn btn-danger px-5">إغلاق</button>
+      </div>
+    </div>
+  </div>`;
+
+  modal.classList.add('open');
+}
+
+// ── NC Edit (تعديل كامل) ──────────────────────
+function openNCEdit(id) {
+  const ncs = window.MOCK_DB?.nonconformances || [];
+  const n = ncs.find(x => x.id === id);
+  if (!n) return;
+
+  const projects = window.MOCK_DB?.projects || [];
+  const users    = window.MOCK_DB?.users    || [];
+
+  const projectOpts = projects.map(p =>
+    `<option value="${p.id}" ${p.id === n.project_id ? 'selected' : ''}>${p.name}</option>`
+  ).join('');
+
+  const userOpts = users.map(u =>
+    `<option value="${u.id}" ${u.id === n.assigned_to ? 'selected' : ''}>${u.full_name}</option>`
+  ).join('');
+
+  const statusOpts = [
+    ['open','مفتوحة'],['under_investigation','قيد التحقيق'],
+    ['in_progress','قيد المعالجة'],['pending_verification','بانتظار التحقق'],
+    ['closed','مغلقة'],['cancelled','ملغاة']
+  ].map(([v,l]) => `<option value="${v}" ${v === n.status ? 'selected' : ''}>${l}</option>`).join('');
+
+  const typeOpts = [
+    ['critical','🔴 حرجة'],['major','🟠 رئيسية'],
+    ['minor','🟡 ثانوية'],['observation','🔵 ملاحظة']
+  ].map(([v,l]) => `<option value="${v}" ${v === n.type ? 'selected' : ''}>${l}</option>`).join('');
+
+  const categoryOpts = [
+    ['safety','السلامة'],['quality','الجودة'],['environmental','البيئة'],
+    ['process','العمليات'],['documentation','الوثائق'],['equipment','المعدات']
+  ].map(([v,l]) => `<option value="${v}" ${v === n.category ? 'selected' : ''}>${l}</option>`).join('');
+
+  const isoOpts = [
+    ['ISO_45001','ISO 45001 - السلامة'],['ISO_9001','ISO 9001 - الجودة'],
+    ['ISO_14001','ISO 14001 - البيئة'],['ISO_27001','ISO 27001 - الأمن']
+  ].map(([v,l]) => `<option value="${v}" ${v === n.iso_standard ? 'selected' : ''}>${l}</option>`).join('');
+
+  let modal = document.getElementById('modal-nc-edit');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modal-nc-edit';
+    modal.className = 'modal';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+  <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 fade-in overflow-hidden shadow-2xl" style="max-height:90vh;overflow-y:auto">
+    <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <div class="text-amber-100 font-mono text-xs">${n.ref_number}</div>
+        <h3 class="text-white font-bold text-lg"><i class="fas fa-edit ml-2"></i>تعديل سجل عدم المطابقة</h3>
+      </div>
+      <button onclick="document.getElementById('modal-nc-edit').classList.remove('open')" class="text-white opacity-70 hover:opacity-100 text-xl">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <!-- العنوان -->
+      <div>
+        <label class="text-sm font-medium text-slate-700 block mb-1">العنوان *</label>
+        <input class="form-input" type="text" id="nce-title" value="${(n.title||'').replace(/"/g,'&quot;')}" />
+      </div>
+
+      <!-- الوصف -->
+      <div>
+        <label class="text-sm font-medium text-slate-700 block mb-1">الوصف التفصيلي</label>
+        <textarea class="form-input" id="nce-desc" rows="3">${n.description || ''}</textarea>
+      </div>
+
+      <!-- الحالة + النوع -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-2"><i class="fas fa-traffic-light text-amber-500 ml-1"></i>الحالة *</label>
+          <select class="form-input" id="nce-status">${statusOpts}</select>
+          <!-- Visual status pills -->
+          <div class="flex flex-wrap gap-1 mt-2">
+            ${[['open','مفتوحة','#dc2626'],['in_progress','قيد المعالجة','#d97706'],['pending_verification','انتظار التحقق','#3b82f6'],['closed','مغلقة','#059669']].map(([v,l,c]) => `
+            <button type="button" onclick="document.getElementById('nce-status').value='${v}'; highlightNCStatus('${v}')"
+              id="nce-pill-${v}"
+              class="nce-status-pill text-xs px-3 py-1.5 rounded-full font-bold border-2 transition-all"
+              style="border-color:${c};color:${v===n.status?'white':c};background:${v===n.status?c:'white'}">
+              ${l}
+            </button>`).join('')}
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">النوع</label>
+          <select class="form-input" id="nce-type">${typeOpts}</select>
+        </div>
+      </div>
+
+      <!-- الفئة + ISO -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">الفئة</label>
+          <select class="form-input" id="nce-category">${categoryOpts}</select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">معيار ISO</label>
+          <select class="form-input" id="nce-iso">${isoOpts}</select>
+        </div>
+      </div>
+
+      <!-- المشروع + المسؤول -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">المشروع</label>
+          <select class="form-input" id="nce-project">${projectOpts}</select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">المسؤول</label>
+          <select class="form-input" id="nce-assigned"><option value="">-- اختر --</option>${userOpts}</select>
+        </div>
+      </div>
+
+      <!-- الموقع + الموعد -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">الموقع</label>
+          <input class="form-input" type="text" id="nce-location" value="${(n.location||'').replace(/"/g,'&quot;')}" placeholder="اسم الموقع أو المنطقة" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">الموعد النهائي</label>
+          <input class="form-input" type="date" id="nce-due" value="${n.due_date ? n.due_date.substring(0,10) : ''}" />
+        </div>
+      </div>
+
+      <!-- ملاحظات الإغلاق (تظهر فقط عند الإغلاق) -->
+      <div id="nce-close-section" style="${n.status === 'closed' ? '' : 'display:none'}">
+        <label class="text-sm font-medium text-slate-700 block mb-1">ملاحظات الإغلاق / الإجراء المتخذ</label>
+        <textarea class="form-input" id="nce-close-notes" rows="2" placeholder="صف الإجراء الذي تم اتخاذه لإغلاق هذه الحالة...">${n.close_notes || ''}</textarea>
+      </div>
+
+      <div class="flex gap-3 pt-3 border-t border-slate-100">
+        <button onclick="submitNCEdit('${n.id}')" class="btn btn-primary flex-1">
+          <i class="fas fa-save ml-1"></i>حفظ التعديلات
+        </button>
+        <button onclick="document.getElementById('modal-nc-edit').classList.remove('open')" class="btn btn-danger px-6">إلغاء</button>
+      </div>
+    </div>
+  </div>`;
+
+  modal.classList.add('open');
+
+  // Show/hide close notes when status changes
+  document.getElementById('nce-status').addEventListener('change', function() {
+    const sec = document.getElementById('nce-close-section');
+    if (sec) sec.style.display = this.value === 'closed' ? '' : 'none';
+    highlightNCStatus(this.value);
+  });
+}
+
+function highlightNCStatus(val) {
+  const colors = {open:'#dc2626', in_progress:'#d97706', pending_verification:'#3b82f6', closed:'#059669', under_investigation:'#d97706', cancelled:'#64748b'};
+  document.querySelectorAll('.nce-status-pill').forEach(pill => {
+    const pv = pill.id.replace('nce-pill-','');
+    const c = colors[pv] || '#64748b';
+    if (pv === val) {
+      pill.style.background = c;
+      pill.style.borderColor = c;
+      pill.style.color = 'white';
+    } else {
+      pill.style.background = 'white';
+      pill.style.borderColor = c;
+      pill.style.color = c;
+    }
+  });
+}
+
+async function quickUpdateNCStatus(id, status) {
+  try {
+    await apiFetch('/api/nonconformances/' + id, 'PUT', {status});
+    showToast('✅ تم تحديث الحالة إلى: ' + ncStatusAr(status), 'success');
+    document.getElementById('modal-nc-detail')?.classList.remove('open');
+    loadNonConformances();
+  } catch(e) {
+    showToast('❌ خطأ في التحديث', 'error');
+  }
+}
+
+async function submitNCEdit(id) {
+  const title = document.getElementById('nce-title')?.value?.trim();
+  if (!title) { showToast('❌ يرجى إدخال العنوان', 'error'); return; }
+
+  const projSel = document.getElementById('nce-project');
+  const projName = projSel?.options[projSel.selectedIndex]?.text || '';
+  const userSel  = document.getElementById('nce-assigned');
+  const userName = userSel?.options[userSel.selectedIndex]?.text || '';
+
+  const body = {
+    title,
+    description:   document.getElementById('nce-desc')?.value?.trim(),
+    status:        document.getElementById('nce-status')?.value,
+    type:          document.getElementById('nce-type')?.value,
+    category:      document.getElementById('nce-category')?.value,
+    iso_standard:  document.getElementById('nce-iso')?.value,
+    project_id:    projSel?.value,
+    project_name:  projName,
+    assigned_to:   userSel?.value,
+    assigned_name: userName,
+    location:      document.getElementById('nce-location')?.value?.trim(),
+    due_date:      document.getElementById('nce-due')?.value || null,
+    close_notes:   document.getElementById('nce-close-notes')?.value?.trim(),
+  };
+
+  try {
+    await apiFetch('/api/nonconformances/' + id, 'PUT', body);
+    document.getElementById('modal-nc-edit')?.classList.remove('open');
+    showToast('✅ تم حفظ التعديلات بنجاح', 'success');
+    loadNonConformances();
+  } catch(e) {
+    showToast('❌ خطأ في الحفظ', 'error');
+  }
 }
 
 // ── RCA / Lean Six Sigma ──────────────────────
@@ -1887,29 +2433,809 @@ async function loadKPIs() {
   </div>`;
 }
 
-function renderKPIRow(k) {
-  const val = k.latest_value;
-  const pct = k.target_value > 0 ? Math.min(100, (val / k.target_value) * 100) : 0;
-  const color = k.status_level === 'good' ? '#059669' : k.status_level === 'warning' ? '#d97706' : k.status_level === 'critical' ? '#dc2626' : '#94a3b8';
-  const icon = k.status_level === 'good' ? 'check-circle' : k.status_level === 'warning' ? 'exclamation-circle' : k.status_level === 'critical' ? 'times-circle' : 'question-circle';
+// ── KPIs ─────────────────────────────────────
+async function loadKPIs() {
+  const kpis = await apiFetch('/api/dashboard/kpis-live');
+  const catAr    = {quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'};
+  const catColors = {quality:'#3b82f6',safety:'#059669',environmental:'#d97706',compliance:'#7c3aed',operational:'#64748b'};
+  const catIcons  = {quality:'award',safety:'hard-hat',environmental:'leaf',compliance:'check-double',operational:'cogs'};
+  const isoColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#64748b'};
+  const isoLabels = {ISO_9001:'ISO 9001',ISO_45001:'ISO 45001',ISO_14001:'ISO 14001',ISO_27001:'ISO 27001',MULTI:'متعدد'};
 
-  return `
-  <div class="flex items-center gap-4">
-    <i class="fas fa-${icon} text-lg flex-shrink-0" style="color:${color}"></i>
-    <div class="flex-1 min-w-0">
-      <div class="flex justify-between items-baseline mb-1">
-        <span class="text-sm font-medium text-slate-700 truncate">${k.name}</span>
-        <div class="flex items-baseline gap-1 flex-shrink-0 mr-4">
-          <span class="text-lg font-bold" style="color:${color}">${val !== null ? val : '-'}</span>
-          <span class="text-xs text-slate-400">${k.unit || ''}</span>
-          <span class="text-xs text-slate-400">/ الهدف: ${k.target_value}</span>
+  const totalGood     = kpis.filter(k => k.status_level==='good').length;
+  const totalWarning  = kpis.filter(k => k.status_level==='warning').length;
+  const totalCritical = kpis.filter(k => k.status_level==='critical').length;
+  const categories    = [...new Set(kpis.map(k => k.category))];
+
+  document.getElementById('app-content').innerHTML = `
+  <div class="fade-in space-y-5">
+
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-black text-slate-800"><i class="fas fa-chart-line text-blue-600 ml-2"></i>مؤشرات الأداء الرئيسية KPIs</h2>
+        <p class="text-sm text-slate-500 mt-1">إدارة شاملة للمؤشرات مع تتبع الاتجاه والتحديث اللحظي</p>
+      </div>
+      <button onclick="openKPIModal()" class="btn btn-primary text-sm"><i class="fas fa-plus ml-1"></i>مؤشر جديد</button>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="stat-card border-r-4 border-blue-400">
+        <p class="text-xs text-slate-500 mb-1">إجمالي المؤشرات</p>
+        <p class="text-3xl font-black text-blue-600">${kpis.length}</p>
+        <p class="text-xs text-slate-400 mt-1">مؤشر نشط</p>
+      </div>
+      <div class="stat-card border-r-4 border-green-400">
+        <p class="text-xs text-slate-500 mb-1">ضمن الهدف</p>
+        <p class="text-3xl font-black text-green-600">${totalGood}</p>
+        <p class="text-xs text-slate-400 mt-1"><i class="fas fa-check-circle text-green-400"></i> مؤشر جيد</p>
+      </div>
+      <div class="stat-card border-r-4 border-yellow-400">
+        <p class="text-xs text-slate-500 mb-1">تحتاج مراجعة</p>
+        <p class="text-3xl font-black text-yellow-600">${totalWarning}</p>
+        <p class="text-xs text-slate-400 mt-1"><i class="fas fa-exclamation-circle text-yellow-400"></i> تحذير</p>
+      </div>
+      <div class="stat-card border-r-4 border-red-400">
+        <p class="text-xs text-slate-500 mb-1">حرجة</p>
+        <p class="text-3xl font-black text-red-600">${totalCritical}</p>
+        <p class="text-xs text-slate-400 mt-1"><i class="fas fa-times-circle text-red-400"></i> تتطلب تدخلاً</p>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="card p-3 flex flex-wrap gap-3 items-center">
+      <span class="text-sm font-medium text-slate-600"><i class="fas fa-filter ml-1 text-blue-500"></i>تصفية:</span>
+      <select id="kpi-filter-cat" class="form-input text-xs" style="width:140px" onchange="filterKPICards()">
+        <option value="">كل الفئات</option>
+        ${Object.entries(catAr).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+      </select>
+      <select id="kpi-filter-iso" class="form-input text-xs" style="width:140px" onchange="filterKPICards()">
+        <option value="">كل المعايير</option>
+        ${Object.entries(isoLabels).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+      </select>
+      <select id="kpi-filter-status" class="form-input text-xs" style="width:140px" onchange="filterKPICards()">
+        <option value="">كل الحالات</option>
+        <option value="good">✅ جيد</option>
+        <option value="warning">⚠️ تحذير</option>
+        <option value="critical">🔴 حرج</option>
+      </select>
+      <button onclick="resetKPIFilters()" class="text-xs text-slate-400 hover:text-slate-600 underline">إعادة تعيين</button>
+    </div>
+
+    <!-- KPI Cards by category -->
+    <div id="kpi-cards-container" class="space-y-5">
+      ${categories.map(cat => {
+        const catKpis = kpis.filter(k => k.category === cat);
+        const color = catColors[cat] || '#64748b';
+        const icon  = catIcons[cat] || 'circle';
+        return `
+        <div class="card overflow-hidden kpi-cat-group" data-cat="${cat}">
+          <div class="px-5 py-3 flex items-center justify-between border-b border-slate-100" style="background:${color}12">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:${color}22">
+                <i class="fas fa-${icon}" style="color:${color}"></i>
+              </div>
+              <span class="font-bold text-slate-800">${catAr[cat] || cat}</span>
+              <span class="badge badge-gray text-xs">${catKpis.length} مؤشر</span>
+            </div>
+          </div>
+          <div class="divide-y divide-slate-50">
+            ${catKpis.map(k => renderKPIRow(k)).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit KPI -->
+  <div class="modal" id="modal-kpi">
+    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 fade-in overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4 flex items-center justify-between sticky top-0">
+        <h3 class="text-white font-bold text-lg" id="kpi-modal-title"><i class="fas fa-chart-line ml-2"></i>مؤشر جديد</h3>
+        <button onclick="closeModal('modal-kpi')" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="kpi-edit-id" />
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">اسم المؤشر *</label>
+            <input class="form-input" type="text" id="kpi-name" placeholder="مثال: معدل الامتثال العام" />
+          </div>
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">الكود</label>
+            <input class="form-input" type="text" id="kpi-code" placeholder="COMPLIANCE_RATE" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">الفئة</label>
+            <select class="form-input" id="kpi-category">
+              ${Object.entries(catAr).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">معيار ISO</label>
+            <select class="form-input" id="kpi-iso">
+              ${Object.entries(isoLabels).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">الوحدة</label>
+            <input class="form-input" type="text" id="kpi-unit" placeholder="% أو عدد" />
+          </div>
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">الهدف</label>
+            <input class="form-input" type="number" id="kpi-target" placeholder="95" />
+          </div>
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">حد التحذير</label>
+            <input class="form-input" type="number" id="kpi-warn" placeholder="80" />
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">القيمة الحالية</label>
+          <input class="form-input" type="number" step="0.1" id="kpi-current" placeholder="0" />
+        </div>
+        <div class="flex gap-3 pt-2 border-t border-slate-100">
+          <button onclick="submitKPI()" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ المؤشر</button>
+          <button onclick="closeModal('modal-kpi')" class="btn btn-danger px-6">إلغاء</button>
         </div>
       </div>
-      <div class="kpi-bar">
-        <div class="kpi-fill" style="width:${pct}%;background:${color}"></div>
+    </div>
+  </div>
+
+  <!-- Modal: KPI Detail/Trend -->
+  <div class="modal" id="modal-kpi-detail">
+    <div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div id="kpi-detail-header" class="px-6 py-4 flex items-center justify-between sticky top-0">
+        <h3 class="text-white font-bold text-lg" id="kpi-detail-title">تفاصيل المؤشر</h3>
+        <button onclick="closeModal('modal-kpi-detail')" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="p-5" id="kpi-detail-body"></div>
+    </div>
+  </div>`;
+
+  // Draw mini spark charts
+  setTimeout(() => {
+    kpis.forEach(k => {
+      const hist = (window.MOCK_DB?.kpi_history || {})[k.id];
+      if (hist && document.getElementById('spark-' + k.id)) {
+        drawSparkline('spark-' + k.id, hist.map(h => h.val), isoColors[k.iso_standard] || '#3b82f6');
+      }
+    });
+  }, 100);
+}
+
+function renderKPIRow(k) {
+  const val    = k.latest_value;
+  const target = k.target_value;
+  const pct    = target > 0 ? Math.min(100, Math.max(0, (val / target) * 100)) : 0;
+  const color  = k.status_level==='good' ? '#059669' : k.status_level==='warning' ? '#d97706' : k.status_level==='critical' ? '#dc2626' : '#94a3b8';
+  const icon   = k.status_level==='good' ? 'check-circle' : k.status_level==='warning' ? 'exclamation-circle' : k.status_level==='critical' ? 'times-circle' : 'question-circle';
+  const isoColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#64748b'};
+  const isoColor  = isoColors[k.iso_standard] || '#64748b';
+  const hasHist   = !!(window.MOCK_DB?.kpi_history||{})[k.id];
+
+  return `<div class="p-4 hover:bg-slate-50 transition-colors kpi-row" data-cat="${k.category}" data-iso="${k.iso_standard}" data-status="${k.status_level}">
+    <div class="flex items-center gap-3">
+      <i class="fas fa-${icon} text-lg flex-shrink-0" style="color:${color}"></i>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap mb-1">
+          <span class="text-sm font-semibold text-slate-800">${k.name}</span>
+          <span class="badge text-xs" style="background:${isoColor}18;color:${isoColor}">${k.iso_standard?.replace('_',' ')}</span>
+          <span class="font-mono text-xs text-slate-400">${k.code}</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex-1">
+            <div class="flex justify-between text-xs text-slate-500 mb-1">
+              <span>القيمة الحالية: <b style="color:${color}">${val} ${k.unit||''}</b></span>
+              <span>الهدف: ${target} ${k.unit||''} | حد التحذير: ${k.warning_threshold}</span>
+            </div>
+            <div class="kpi-bar">
+              <div class="kpi-fill" style="width:${pct}%;background:${color}"></div>
+            </div>
+          </div>
+          ${hasHist ? `<canvas id="spark-${k.id}" width="80" height="30" class="flex-shrink-0 rounded" title="اتجاه 6 أشهر"></canvas>` : ''}
+        </div>
+      </div>
+      <div class="flex flex-col gap-1 flex-shrink-0 mr-1">
+        <button onclick="openKPIDetail('${k.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg" title="عرض الاتجاه"><i class="fas fa-chart-area text-xs"></i></button>
+        <button onclick="openKPIEdit('${k.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg" title="تعديل"><i class="fas fa-edit text-xs"></i></button>
+        <button onclick="deleteKPI('${k.id}')" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg" title="حذف"><i class="fas fa-trash text-xs"></i></button>
       </div>
     </div>
   </div>`;
+}
+
+function drawSparkline(canvasId, data, color) {
+  const c = document.getElementById(canvasId);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  ctx.clearRect(0, 0, w, h);
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = (i / (data.length - 1)) * (w - 4) + 2;
+    const y = h - 4 - ((v - min) / range) * (h - 8);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  // Fill area
+  ctx.lineTo((data.length - 1) / (data.length - 1) * (w - 4) + 2, h);
+  ctx.lineTo(2, h);
+  ctx.closePath();
+  ctx.fillStyle = color + '22';
+  ctx.fill();
+}
+
+function filterKPICards() {
+  const cat    = document.getElementById('kpi-filter-cat')?.value || '';
+  const iso    = document.getElementById('kpi-filter-iso')?.value || '';
+  const status = document.getElementById('kpi-filter-status')?.value || '';
+  document.querySelectorAll('.kpi-row').forEach(row => {
+    const match = (!cat || row.dataset.cat === cat) &&
+                  (!iso || row.dataset.iso === iso) &&
+                  (!status || row.dataset.status === status);
+    row.style.display = match ? '' : 'none';
+  });
+  // Hide empty category groups
+  document.querySelectorAll('.kpi-cat-group').forEach(g => {
+    const visible = [...g.querySelectorAll('.kpi-row')].some(r => r.style.display !== 'none');
+    g.style.display = visible ? '' : 'none';
+  });
+}
+
+function resetKPIFilters() {
+  ['kpi-filter-cat','kpi-filter-iso','kpi-filter-status'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.querySelectorAll('.kpi-row, .kpi-cat-group').forEach(el => el.style.display = '');
+}
+
+function openKPIModal() {
+  document.getElementById('kpi-edit-id').value = '';
+  document.getElementById('kpi-modal-title').innerHTML = '<i class="fas fa-plus-circle ml-2"></i>إضافة مؤشر جديد';
+  ['kpi-name','kpi-code','kpi-unit','kpi-target','kpi-warn','kpi-current'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('modal-kpi').classList.add('open');
+}
+
+function openKPIEdit(id) {
+  const kpi = (window.MOCK_DB?.kpis || []).find(k => k.id === id);
+  if (!kpi) return;
+  document.getElementById('kpi-edit-id').value = kpi.id;
+  document.getElementById('kpi-modal-title').innerHTML = '<i class="fas fa-edit ml-2"></i>تعديل المؤشر';
+  document.getElementById('kpi-name').value    = kpi.name || '';
+  document.getElementById('kpi-code').value    = kpi.code || '';
+  document.getElementById('kpi-unit').value    = kpi.unit || '';
+  document.getElementById('kpi-target').value  = kpi.target_value ?? '';
+  document.getElementById('kpi-warn').value    = kpi.warning_threshold ?? '';
+  document.getElementById('kpi-current').value = kpi.latest_value ?? '';
+  const catSel = document.getElementById('kpi-category');
+  if (catSel) catSel.value = kpi.category || 'quality';
+  const isoSel = document.getElementById('kpi-iso');
+  if (isoSel) isoSel.value = kpi.iso_standard || 'MULTI';
+  document.getElementById('modal-kpi').classList.add('open');
+}
+
+async function submitKPI() {
+  const name = document.getElementById('kpi-name').value.trim();
+  if (!name) { showToast('❌ يرجى إدخال اسم المؤشر', 'error'); return; }
+  const editId = document.getElementById('kpi-edit-id').value;
+  const target  = parseFloat(document.getElementById('kpi-target').value) || 0;
+  const warn    = parseFloat(document.getElementById('kpi-warn').value) || 0;
+  const current = parseFloat(document.getElementById('kpi-current').value) || 0;
+  const statusLevel = current >= target ? 'good' : current >= warn ? 'warning' : 'critical';
+  const body = {
+    name, code: document.getElementById('kpi-code').value.trim(),
+    category: document.getElementById('kpi-category').value,
+    iso_standard: document.getElementById('kpi-iso').value,
+    unit: document.getElementById('kpi-unit').value.trim(),
+    target_value: target, warning_threshold: warn,
+    latest_value: current, status_level: statusLevel
+  };
+  try {
+    if (editId) {
+      await apiFetch('/api/kpis/' + editId, 'PUT', body);
+      showToast('✅ تم تحديث المؤشر بنجاح', 'success');
+    } else {
+      await apiFetch('/api/kpis', 'POST', body);
+      showToast('✅ تم إضافة المؤشر بنجاح', 'success');
+    }
+    closeModal('modal-kpi');
+    loadKPIs();
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
+}
+
+async function deleteKPI(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا المؤشر؟')) return;
+  await apiFetch('/api/kpis/' + id, 'DELETE');
+  showToast('🗑️ تم حذف المؤشر', 'info');
+  loadKPIs();
+}
+
+async function openKPIDetail(id) {
+  const kpi = (window.MOCK_DB?.kpis || []).find(k => k.id === id);
+  if (!kpi) return;
+  const hist = (window.MOCK_DB?.kpi_history || {})[id] || [];
+  const color = kpi.status_level==='good' ? '#059669' : kpi.status_level==='warning' ? '#d97706' : '#dc2626';
+  const isoColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#64748b'};
+  const isoC = isoColors[kpi.iso_standard] || '#64748b';
+
+  const header = document.getElementById('kpi-detail-header');
+  header.style.background = color;
+  document.getElementById('kpi-detail-title').textContent = kpi.name;
+
+  const pct = kpi.target_value > 0 ? Math.min(100, (kpi.latest_value / kpi.target_value) * 100) : 0;
+  const trend = hist.length >= 2 ? (hist[hist.length-1].val - hist[hist.length-2].val) : 0;
+  const trendIcon = trend > 0 ? 'arrow-up' : trend < 0 ? 'arrow-down' : 'minus';
+  const trendColor = trend > 0 ? '#059669' : trend < 0 ? '#dc2626' : '#94a3b8';
+
+  document.getElementById('kpi-detail-body').innerHTML = `
+    <div class="space-y-5">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="p-3 bg-slate-50 rounded-xl text-center">
+          <div class="text-2xl font-black" style="color:${color}">${kpi.latest_value}</div>
+          <div class="text-xs text-slate-500">${kpi.unit || ''} حالياً</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl text-center">
+          <div class="text-2xl font-black text-slate-700">${kpi.target_value}</div>
+          <div class="text-xs text-slate-500">${kpi.unit || ''} الهدف</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl text-center">
+          <i class="fas fa-${trendIcon} text-xl" style="color:${trendColor}"></i>
+          <div class="text-xs text-slate-500 mt-1">${trend > 0 ? '+' : ''}${trend.toFixed(1)} اتجاه</div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs mb-1 text-slate-500">
+          <span>نسبة الإنجاز</span><span>${pct.toFixed(0)}%</span>
+        </div>
+        <div class="kpi-bar h-3">
+          <div class="kpi-fill h-3" style="width:${pct}%;background:${color}"></div>
+        </div>
+      </div>
+      ${hist.length ? `
+      <div>
+        <div class="text-sm font-bold text-slate-700 mb-2">اتجاه آخر 6 أشهر</div>
+        <canvas id="chart-kpi-trend-${id}" height="120"></canvas>
+      </div>` : '<p class="text-slate-400 text-sm text-center py-4">لا توجد بيانات تاريخية</p>'}
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-slate-500 mb-1">الفئة</div>
+          <div class="font-bold text-slate-800">${{quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'}[kpi.category]||kpi.category}</div>
+        </div>
+        <div class="p-3 rounded-xl" style="background:${isoC}12">
+          <div class="text-slate-500 mb-1">معيار ISO</div>
+          <div class="font-bold" style="color:${isoC}">${kpi.iso_standard?.replace('_',' ')}</div>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="openKPIEdit('${kpi.id}'); closeModal('modal-kpi-detail')" class="btn btn-primary flex-1 text-sm"><i class="fas fa-edit ml-1"></i>تعديل المؤشر</button>
+        <button onclick="closeModal('modal-kpi-detail')" class="btn btn-danger px-5 text-sm">إغلاق</button>
+      </div>
+    </div>`;
+
+  document.getElementById('modal-kpi-detail').classList.add('open');
+
+  if (hist.length) {
+    setTimeout(() => {
+      const ctx = document.getElementById('chart-kpi-trend-' + id);
+      if (!ctx) return;
+      new Chart(ctx, {
+        type:'line',
+        data:{
+          labels: hist.map(h => h.month),
+          datasets:[{
+            label: kpi.name,
+            data: hist.map(h => h.val),
+            borderColor: color,
+            backgroundColor: color + '22',
+            fill: true, tension: 0.4, pointBackgroundColor: color, pointRadius: 4
+          },{
+            label:'الهدف',
+            data: hist.map(() => kpi.target_value),
+            borderColor:'#94a3b8',
+            borderDash:[5,5], pointRadius:0, fill:false
+          }]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+          scales:{y:{ticks:{callback: v => v + (kpi.unit||'')}}}
+        }
+      });
+    }, 100);
+  }
+}
+
+// ── Organization Page ─────────────────────────
+async function loadOrganization() {
+  const [org, standards] = await Promise.all([
+    apiFetch('/api/org/profile'),
+    apiFetch('/api/iso/standards')
+  ]);
+
+  const stdColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdIcons  = {ISO_9001:'award',ISO_45001:'hard-hat',ISO_14001:'leaf',ISO_27001:'shield-alt'};
+  const objStatus = {good:'badge-green',in_progress:'badge-blue',warning:'badge-yellow',critical:'badge-red'};
+  const objStatusAr={good:'مُحقق',in_progress:'قيد التنفيذ',warning:'يحتاج مراجعة',critical:'متأخر'};
+  const isoNames  = {ISO_9001:'ISO 9001',ISO_45001:'ISO 45001',ISO_14001:'ISO 14001',ISO_27001:'ISO 27001'};
+
+  // Build comparison matrix (all clauses 4-10 common, show unique elements per standard)
+  const comparisonRows = [
+    {aspect:'نوع نظام الإدارة',vals:{ISO_9001:'الجودة',ISO_45001:'الصحة والسلامة المهنية',ISO_14001:'البيئة',ISO_27001:'أمن المعلومات'}},
+    {aspect:'الهدف الجوهري',vals:{ISO_9001:'رضا العميل وجودة المنتج',ISO_45001:'السلامة والصحة المهنية للعمال',ISO_14001:'تحسين الأداء البيئي',ISO_27001:'حماية المعلومات وأمنها'}},
+    {aspect:'المستفيد الأساسي',vals:{ISO_9001:'العميل',ISO_45001:'العامل / الموظف',ISO_14001:'المجتمع والبيئة',ISO_27001:'أصحاب المعلومات والبيانات'}},
+    {aspect:'تحليل المخاطر',vals:{ISO_9001:'مخاطر الجودة والعمليات',ISO_45001:'أخطار ومخاطر السلامة المهنية',ISO_14001:'جوانب وتأثيرات بيئية',ISO_27001:'مخاطر أمن المعلومات وضوابط Annex A'}},
+    {aspect:'المشاركة والتشاور',vals:{ISO_9001:'❌ غير مطلوب صراحةً',ISO_45001:'✅ مشاركة العمال والتشاور معهم إلزامي',ISO_14001:'⚠️ تواصل مع الأطراف الخارجية',ISO_27001:'⚠️ الوعي الأمني للموظفين'}},
+    {aspect:'التحقيق في الحوادث',vals:{ISO_9001:'❌ ليس متطلباً محدداً',ISO_45001:'✅ التحقيق في الحوادث وعدم المطابقة OH&S',ISO_14001:'⚠️ الطوارئ البيئية',ISO_27001:'✅ إدارة الحوادث الأمنية'}},
+    {aspect:'التواصل الخارجي',vals:{ISO_9001:'⚠️ مع العملاء والموردين',ISO_45001:'⚠️ مع الجهات التنظيمية',ISO_14001:'✅ إلزامي مع الجهات البيئية والمجتمع',ISO_27001:'⚠️ عند الحوادث الأمنية'}},
+    {aspect:'متطلبات التوثيق الخاصة',vals:{ISO_9001:'ضبط الجودة، مراجعة العميل، التصميم',ISO_45001:'تقييم المخاطر، إذن العمل، التحقيق',ISO_14001:'الجوانب البيئية، الامتثال القانوني',ISO_27001:'SOA، سياسة ISMS، سجل الأصول'}},
+    {aspect:'الهيكل العالي Level (HLS)',vals:{ISO_9001:'✅ البنى المشتركة للبنود 4-10',ISO_45001:'✅ البنى المشتركة للبنود 4-10',ISO_14001:'✅ البنى المشتركة للبنود 4-10',ISO_27001:'✅ البنى المشتركة للبنود 4-10'}},
+  ];
+
+  document.getElementById('app-content').innerHTML = `
+  <div class="fade-in space-y-6">
+
+    <!-- Org header tabs -->
+    <div class="card overflow-hidden">
+      <div class="flex border-b border-slate-100 overflow-x-auto">
+        <button class="tab active flex-shrink-0" id="org-tab-profile"   onclick="switchOrgTab('profile')"><i class="fas fa-building ml-1"></i>ملف المنظمة</button>
+        <button class="tab flex-shrink-0"         id="org-tab-objectives" onclick="switchOrgTab('objectives')"><i class="fas fa-bullseye ml-1"></i>الأهداف الاستراتيجية</button>
+        <button class="tab flex-shrink-0"         id="org-tab-standards"  onclick="switchOrgTab('standards')"><i class="fas fa-certificate ml-1"></i>معايير ISO</button>
+        <button class="tab flex-shrink-0"         id="org-tab-compare"    onclick="switchOrgTab('compare')"><i class="fas fa-balance-scale ml-1"></i>مقارنة المعايير</button>
+      </div>
+
+      <!-- TAB: Profile -->
+      <div id="org-section-profile" class="p-6">
+        <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg">
+              <i class="fas fa-industry text-white text-2xl"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-black text-slate-800">${org.name}</h2>
+              <p class="text-sm text-slate-500">${org.name_en}</p>
+              <div class="flex gap-2 mt-1 flex-wrap">
+                ${(org.certified_standards||[]).map(s => `<span class="badge text-xs" style="background:${stdColors[s]}18;color:${stdColors[s]}">${isoNames[s]||s}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+          <button onclick="openOrgEdit()" class="btn btn-primary text-sm"><i class="fas fa-edit ml-1"></i>تعديل الملف</button>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <h3 class="font-bold text-slate-700 text-sm border-b pb-2">معلومات المنظمة</h3>
+            ${[
+              ['القطاع',org.industry,'industry'],
+              ['الحجم',{small:'صغيرة',medium:'متوسطة',large:'كبيرة'}[org.size]||org.size,'users'],
+              ['عدد الموظفين',org.employees + ' موظف','user-friends'],
+              ['تأسست عام',org.founded,'calendar'],
+              ['المدينة',org.city + ' · ' + org.country,'map-marker-alt'],
+              ['جهة الاعتماد',org.cert_body,'award'],
+              ['آخر مراجعة',org.last_audit,'calendar-check'],
+              ['المراجعة القادمة',org.next_audit,'calendar-alt'],
+            ].map(([l,v,ic]) => `<div class="flex items-center gap-3 text-sm">
+              <i class="fas fa-${ic} w-4 text-blue-400 flex-shrink-0"></i>
+              <span class="text-slate-500">${l}:</span>
+              <span class="font-medium text-slate-800">${v||'-'}</span>
+            </div>`).join('')}
+          </div>
+          <div class="space-y-3">
+            <h3 class="font-bold text-slate-700 text-sm border-b pb-2">الرؤية والرسالة</h3>
+            <div class="p-4 bg-blue-50 rounded-xl border-r-4 border-blue-500">
+              <div class="text-xs font-bold text-blue-700 mb-1"><i class="fas fa-eye ml-1"></i>الرؤية</div>
+              <p class="text-sm text-slate-700">${org.vision}</p>
+            </div>
+            <div class="p-4 bg-green-50 rounded-xl border-r-4 border-green-500">
+              <div class="text-xs font-bold text-green-700 mb-1"><i class="fas fa-rocket ml-1"></i>الرسالة</div>
+              <p class="text-sm text-slate-700">${org.mission}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Objectives -->
+      <div id="org-section-objectives" class="p-6 hidden">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-slate-800"><i class="fas fa-bullseye text-blue-500 ml-2"></i>الأهداف الاستراتيجية للمنظمة</h3>
+          <button onclick="openObjectiveModal()" class="btn btn-primary text-sm"><i class="fas fa-plus ml-1"></i>هدف جديد</button>
+        </div>
+        <div class="space-y-3" id="objectives-list">
+          ${(org.objectives||[]).map(o => renderObjectiveCard(o, stdColors, isoNames, objStatus, objStatusAr)).join('')}
+        </div>
+      </div>
+
+      <!-- TAB: Standards -->
+      <div id="org-section-standards" class="p-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          ${standards.map(std => {
+            const color = stdColors[std.code] || '#64748b';
+            const icon  = stdIcons[std.code]  || 'certificate';
+            return `
+            <div class="border border-slate-100 rounded-xl overflow-hidden">
+              <div class="p-4 flex items-center justify-between" style="background:${color}12">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${color}">
+                    <i class="fas fa-${icon} text-white"></i>
+                  </div>
+                  <div>
+                    <div class="font-black text-slate-800">${std.code.replace('_',' ')} <span class="font-normal text-xs text-slate-400">v${std.version}</span></div>
+                    <div class="text-sm" style="color:${color}">${std.name}</div>
+                  </div>
+                </div>
+                <span class="badge text-xs" style="background:${color}22;color:${color}">
+                  ${(org.certified_standards||[]).includes(std.code) ? '✅ معتمد' : '⏳ غير معتمد'}
+                </span>
+              </div>
+              <div class="p-4 space-y-3">
+                <p class="text-xs text-slate-600 leading-relaxed">${std.scope}</p>
+                <div>
+                  <div class="text-xs font-bold text-slate-700 mb-2">البنود الرئيسية (4-10)</div>
+                  <div class="space-y-1">
+                    ${std.key_clauses.map(c => `
+                    <div class="flex gap-2 text-xs">
+                      <span class="font-bold flex-shrink-0 w-5" style="color:${color}">${c.num}</span>
+                      <span class="font-medium text-slate-700">${c.title}</span>
+                      <span class="text-slate-400 truncate">${c.desc}</span>
+                    </div>`).join('')}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-700 mb-2">ما يميز هذا المعيار</div>
+                  <div class="flex flex-wrap gap-1">
+                    ${std.unique_elements.map(e => `<span class="text-xs px-2 py-0.5 rounded-full" style="background:${color}15;color:${color}">${e}</span>`).join('')}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-700 mb-2">الإجراءات المرتبطة (${std.procedures.length})</div>
+                  <div class="space-y-1">
+                    ${std.procedures.map(p => `
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono" style="color:${color}">${p.code}</span>
+                        <span class="text-slate-700">${p.title}</span>
+                      </div>
+                      <span class="badge ${p.status==='active'?'badge-green':'badge-yellow'} text-xs">${p.status==='active'?'نشط':'مراجعة'}</span>
+                    </div>`).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- TAB: Compare -->
+      <div id="org-section-compare" class="p-6 hidden">
+        <div class="mb-4">
+          <h3 class="font-bold text-slate-800 mb-1"><i class="fas fa-balance-scale text-purple-500 ml-2"></i>مصفوفة مقارنة معايير ISO</h3>
+          <p class="text-sm text-slate-500">أوجه الاتفاق والاختلاف بين المعايير الأربعة — البنية العالية HLS مشتركة للجميع (البنود 4–10)</p>
+        </div>
+
+        <!-- HLS Shared banner -->
+        <div class="p-4 mb-4 rounded-xl bg-gradient-to-r from-slate-700 to-slate-800 text-white">
+          <div class="font-bold mb-1"><i class="fas fa-link ml-1 text-blue-300"></i>ما يشترك فيه الجميع — High Level Structure (HLS/Annex SL)</div>
+          <p class="text-sm opacity-90">جميع معايير ISO تتبع نفس البنية من البند 4 إلى 10: سياق المنظمة ← القيادة ← التخطيط ← الدعم ← التشغيل ← تقييم الأداء ← التحسين. مما يُسهّل تطبيق أنظمة الإدارة المتكاملة IMS.</div>
+        </div>
+
+        <!-- Comparison table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+          <table class="w-full text-sm" style="min-width:700px">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="text-right p-3 font-bold text-slate-700 w-44">وجه المقارنة</th>
+                ${standards.map(s => `
+                <th class="p-3 text-center font-bold w-36" style="color:${stdColors[s.code]||'#64748b'}">
+                  <div class="flex flex-col items-center gap-1">
+                    <i class="fas fa-${stdIcons[s.code]||'certificate'} text-lg"></i>
+                    <span>${s.code.replace('_',' ')}</span>
+                    <span class="font-normal text-xs text-slate-400">${s.name}</span>
+                  </div>
+                </th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${comparisonRows.map((row, i) => `
+              <tr class="${i%2===0?'bg-white':'bg-slate-50'} border-b border-slate-100">
+                <td class="p-3 font-semibold text-slate-700 text-xs">${row.aspect}</td>
+                ${standards.map(s => `<td class="p-3 text-xs text-center text-slate-600">${row.vals[s.code]||'-'}</td>`).join('')}
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Unique elements per standard -->
+        <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          ${standards.map(std => {
+            const color = stdColors[std.code] || '#64748b';
+            return `
+            <div class="p-4 rounded-xl border-2" style="border-color:${color}30;background:${color}06">
+              <div class="flex items-center gap-2 mb-3">
+                <i class="fas fa-${stdIcons[std.code]||'certificate'}" style="color:${color}"></i>
+                <span class="font-bold text-sm" style="color:${color}">${std.code.replace('_',' ')} — ما يختص به وحده</span>
+              </div>
+              <ul class="space-y-1">
+                ${std.unique_elements.map(e => `<li class="text-xs flex gap-2 text-slate-700"><span style="color:${color}">◆</span>${e}</li>`).join('')}
+              </ul>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Objective -->
+  <div class="modal" id="modal-objective">
+    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 fade-in shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-700 px-6 py-4 flex items-center justify-between sticky top-0">
+        <h3 class="text-white font-bold"><i class="fas fa-bullseye ml-2"></i>هدف استراتيجي</h3>
+        <button onclick="closeModal('modal-objective')" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="obj-edit-id" />
+        <div>
+          <label class="text-sm font-medium text-slate-700 block mb-1">نص الهدف *</label>
+          <textarea class="form-input" id="obj-text" rows="3" placeholder="مثال: تحقيق معدل امتثال 95% لجميع المعايير..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">معايير ISO المرتبطة</label>
+            <div class="space-y-1">
+              ${['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(s => `
+              <label class="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" class="obj-iso-cb" value="${s}" />
+                <span class="badge text-xs" style="background:${stdColors[s]}18;color:${stdColors[s]}">${isoNames[s]}</span>
+              </label>`).join('')}
+            </div>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">الحالة</label>
+            <select class="form-input" id="obj-status">
+              <option value="in_progress">قيد التنفيذ</option>
+              <option value="good">مُحقق</option>
+              <option value="warning">يحتاج مراجعة</option>
+              <option value="critical">متأخر</option>
+            </select>
+            <label class="text-sm font-medium text-slate-700 block mb-1 mt-3">مؤشر KPI المرتبط</label>
+            <select class="form-input" id="obj-kpi">
+              <option value="">-- اختر --</option>
+              ${(window.MOCK_DB?.kpis||[]).map(k => `<option value="${k.id}">${k.name}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2 border-t border-slate-100">
+          <button onclick="submitObjective()" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ الهدف</button>
+          <button onclick="closeModal('modal-objective')" class="btn btn-danger px-5">إلغاء</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderObjectiveCard(o, stdColors, isoNames, objStatus, objStatusAr) {
+  const kpi = (window.MOCK_DB?.kpis||[]).find(k => k.id === o.kpi_ref);
+  return `<div class="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white transition-colors" id="obj-card-${o.id}">
+    <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i class="fas fa-bullseye text-indigo-600 text-sm"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-medium text-slate-800 mb-2">${o.text}</p>
+        <div class="flex flex-wrap gap-2 items-center">
+          ${(o.iso||[]).map(s => `<span class="badge text-xs" style="background:${stdColors[s]}18;color:${stdColors[s]}">${isoNames[s]||s}</span>`).join('')}
+          <span class="badge ${objStatus[o.status]||'badge-gray'} text-xs">${objStatusAr[o.status]||o.status}</span>
+          ${kpi ? `<span class="text-xs text-slate-400"><i class="fas fa-chart-line ml-1"></i>${kpi.name}: <b>${kpi.latest_value}${kpi.unit||''}</b></span>` : ''}
+        </div>
+      </div>
+      <div class="flex gap-1 flex-shrink-0">
+        <button onclick="openObjectiveEdit('${o.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg"><i class="fas fa-edit text-xs"></i></button>
+        <button onclick="deleteObjective('${o.id}')" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg"><i class="fas fa-trash text-xs"></i></button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function switchOrgTab(tab) {
+  ['profile','objectives','standards','compare'].forEach(t => {
+    document.getElementById('org-section-' + t)?.classList.toggle('hidden', t !== tab);
+    document.getElementById('org-tab-' + t)?.classList.toggle('active', t === tab);
+  });
+}
+
+function openOrgEdit() {
+  const org = window.MOCK_DB?.org_profile || {};
+  const html = `<div class="modal open" id="modal-org-edit">
+    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 fade-in shadow-2xl overflow-y-auto max-h-[90vh]">
+      <div class="bg-gradient-to-r from-blue-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0">
+        <h3 class="text-white font-bold"><i class="fas fa-edit ml-2"></i>تعديل ملف المنظمة</h3>
+        <button onclick="document.getElementById('modal-org-edit').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        ${[['name','اسم المنظمة (عربي)',org.name],['name_en','اسم المنظمة (إنجليزي)',org.name_en],['industry','القطاع',org.industry],['city','المدينة',org.city],['vision','الرؤية',org.vision,'textarea'],['mission','الرسالة',org.mission,'textarea']].map(([id,label,val,type]) =>
+          `<div><label class="text-sm font-medium text-slate-700 block mb-1">${label}</label>
+          ${type==='textarea' ? `<textarea class="form-input" id="org-edit-${id}" rows="2">${val||''}</textarea>` : `<input class="form-input" type="text" id="org-edit-${id}" value="${(val||'').replace(/"/g,'&quot;')}" />`}</div>`
+        ).join('')}
+        <div class="flex gap-3 pt-2 border-t">
+          <button onclick="submitOrgEdit()" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ</button>
+          <button onclick="document.getElementById('modal-org-edit').remove()" class="btn btn-danger px-5">إلغاء</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function submitOrgEdit() {
+  const body = {};
+  ['name','name_en','industry','city','vision','mission'].forEach(f => {
+    const el = document.getElementById('org-edit-' + f); if(el) body[f] = el.value.trim();
+  });
+  await apiFetch('/api/org/profile', 'PUT', body);
+  document.getElementById('modal-org-edit')?.remove();
+  showToast('✅ تم تحديث ملف المنظمة', 'success');
+  loadOrganization();
+}
+
+function openObjectiveModal() {
+  document.getElementById('obj-edit-id').value = '';
+  document.getElementById('obj-text').value = '';
+  document.getElementById('obj-status').value = 'in_progress';
+  document.getElementById('obj-kpi').value = '';
+  document.querySelectorAll('.obj-iso-cb').forEach(cb => cb.checked = false);
+  document.getElementById('modal-objective').classList.add('open');
+}
+
+function openObjectiveEdit(id) {
+  const obj = (window.MOCK_DB?.org_profile?.objectives||[]).find(o => o.id === id);
+  if (!obj) return;
+  document.getElementById('obj-edit-id').value = obj.id;
+  document.getElementById('obj-text').value = obj.text || '';
+  document.getElementById('obj-status').value = obj.status || 'in_progress';
+  document.getElementById('obj-kpi').value = obj.kpi_ref || '';
+  document.querySelectorAll('.obj-iso-cb').forEach(cb => cb.checked = (obj.iso||[]).includes(cb.value));
+  document.getElementById('modal-objective').classList.add('open');
+}
+
+async function submitObjective() {
+  const text = document.getElementById('obj-text').value.trim();
+  if (!text) { showToast('❌ يرجى كتابة الهدف', 'error'); return; }
+  const editId = document.getElementById('obj-edit-id').value;
+  const iso = [...document.querySelectorAll('.obj-iso-cb:checked')].map(cb => cb.value);
+  const body = {
+    text,
+    iso,
+    status: document.getElementById('obj-status').value,
+    kpi_ref: document.getElementById('obj-kpi').value
+  };
+  if (editId) {
+    await apiFetch('/api/org/objectives/' + editId, 'PUT', body);
+    showToast('✅ تم تحديث الهدف', 'success');
+  } else {
+    await apiFetch('/api/org/objectives', 'POST', body);
+    showToast('✅ تم إضافة الهدف', 'success');
+  }
+  closeModal('modal-objective');
+  loadOrganization();
+  switchOrgTab('objectives');
+}
+
+async function deleteObjective(id) {
+  if (!confirm('حذف هذا الهدف؟')) return;
+  await apiFetch('/api/org/objectives/' + id, 'DELETE');
+  showToast('🗑️ تم حذف الهدف', 'info');
+  loadOrganization();
+  switchOrgTab('objectives');
 }
 
 // ── Map ───────────────────────────────────────
@@ -2043,7 +3369,10 @@ async function loadLean() {
       '<td class="p-3"><span class="badge ' + (statusBadge[w.status] || 'badge-gray') + '">' + (statusAr[w.status] || w.status) + '</span></td>' +
       '<td class="p-3 text-xs text-green-700 font-bold">' + Number(w.estimated_saving || 0).toLocaleString('ar-SA') + ' ر.س</td>' +
       '<td class="p-3 text-center">' +
-        '<button onclick="openWasteDetail(\'' + w.id + '\')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg" title="عرض التفاصيل"><i class="fas fa-eye text-xs"></i></button>' +
+        '<div class="flex items-center justify-center gap-1">' +
+          '<button onclick="openWasteDetail(\'' + w.id + '\')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg" title="عرض التفاصيل"><i class="fas fa-eye text-xs"></i></button>' +
+          '<button onclick="openWasteEdit(\'' + w.id + '\')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg" title="تعديل السجل"><i class="fas fa-edit text-xs"></i></button>' +
+        '</div>' +
       '</td>' +
     '</tr>';
   });
@@ -2409,6 +3738,210 @@ async function updateWasteStatus(id, status) {
   }
 }
 
+function openWasteEdit(id) {
+  const wastes = window.MOCK_DB?.lean_wastes || [];
+  const w = wastes.find(x => x.id === id);
+  if (!w) return;
+
+  const mudaTypeAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط في الإنتاج',motion:'الحركة الزائدة',inventory:'المخزون الزائد',over_processing:'المعالجة الزائدة',transportation:'النقل الزائد',skills:'إهدار المهارات'};
+  const dmaicAr    = {define:'تعريف (Define)',measure:'قياس (Measure)',analyze:'تحليل (Analyze)',improve:'تحسين (Improve)',control:'تحكم (Control)'};
+  const dmaicColor = {define:'#3b82f6',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#64748b'};
+  const dmaicPhases = ['define','measure','analyze','improve','control'];
+
+  let editModal = document.getElementById('modal-waste-edit');
+  if (!editModal) {
+    editModal = document.createElement('div');
+    editModal.id = 'modal-waste-edit';
+    editModal.className = 'modal';
+    document.body.appendChild(editModal);
+  }
+
+  const projectOptions = (window.MOCK_DB?.projects || []).map(p =>
+    '<option value="' + p.id + '" data-name="' + p.name + '"' + (p.id === w.project_id ? ' selected' : '') + '>' + p.name + '</option>'
+  ).join('');
+
+  const mudaOptions = Object.entries(mudaTypeAr).map(([k,v]) =>
+    '<option value="' + k + '"' + (k === w.muda_type ? ' selected' : '') + '>' + v + '</option>'
+  ).join('');
+
+  const dmaicOptions = dmaicPhases.map(ph =>
+    '<option value="' + ph + '"' + (ph === w.dmaic_phase ? ' selected' : '') + '>' + dmaicAr[ph] + '</option>'
+  ).join('');
+
+  const freqOptions = ['high','medium','low'].map(f =>
+    '<option value="' + f + '"' + (f === w.frequency ? ' selected' : '') + '>' + ({high:'مرتفع',medium:'متوسط',low:'منخفض'}[f]) + '</option>'
+  ).join('');
+
+  const statusOptions = ['open','in_progress','closed'].map(s =>
+    '<option value="' + s + '"' + (s === w.status ? ' selected' : '') + '>' + ({open:'مفتوحة',in_progress:'قيد المعالجة',closed:'مغلقة'}[s]) + '</option>'
+  ).join('');
+
+  // DMAIC visual stepper
+  let dmaicStepperHtml = '<div class="flex items-center justify-between mb-1">';
+  dmaicPhases.forEach((ph, i) => {
+    const active = ph === w.dmaic_phase;
+    const color = dmaicColor[ph];
+    dmaicStepperHtml +=
+      '<div class="flex flex-col items-center cursor-pointer flex-1" onclick="selectDmaicPhase(\'' + ph + '\')" id="edit-dmaic-step-' + ph + '">' +
+        '<div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ' +
+          (active ? 'text-white border-transparent' : 'text-slate-400 border-slate-200 bg-white') + '" style="' + (active ? 'background:' + color + ';border-color:' + color + ';' : '') + '" id="edit-dmaic-circle-' + ph + '">' + (i+1) + '</div>' +
+        '<div class="text-xs mt-1 font-semibold text-center" style="color:' + (active ? color : '#94a3b8') + '" id="edit-dmaic-label-' + ph + '">' + Object.keys(dmaicAr)[i].toUpperCase().slice(0,1) + ['D','M','A','I','C'][i] + '</div>' +
+      '</div>' +
+      (i < 4 ? '<div class="flex-1 h-0.5 self-center mb-4 bg-slate-200" style="margin-top:-12px"></div>' : '');
+  });
+  dmaicStepperHtml += '</div>';
+
+  editModal.innerHTML =
+    '<div class="bg-white rounded-2xl w-full max-w-2xl mx-4 fade-in overflow-hidden shadow-2xl" style="max-height:90vh;overflow-y:auto">' +
+
+    '<div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4 flex items-center justify-between sticky top-0 z-10">' +
+      '<div>' +
+        '<div class="text-amber-100 font-mono text-xs">' + w.ref + '</div>' +
+        '<h3 class="text-white font-bold text-lg"><i class="fas fa-edit ml-2"></i>تعديل سجل الهدر</h3>' +
+      '</div>' +
+      '<button onclick="document.getElementById(\'modal-waste-edit\').classList.remove(\'open\')" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+    '</div>' +
+
+    '<div class="p-6 space-y-5">' +
+
+      // DMAIC Phase stepper visual
+      '<div class="bg-slate-50 rounded-xl p-4">' +
+        '<div class="text-sm font-bold text-slate-700 mb-3"><i class="fas fa-route text-amber-500 ml-1"></i>مرحلة DMAIC — انقر لتغيير المرحلة</div>' +
+        dmaicStepperHtml +
+        '<input type="hidden" id="edit-w-dmaic" value="' + w.dmaic_phase + '" />' +
+      '</div>' +
+
+      // Title + MUDA type
+      '<div class="grid grid-cols-1 gap-4" style="grid-template-columns:1fr 1fr">' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">عنوان الهدر *</label>' +
+          '<input class="form-input" type="text" id="edit-w-title" value="' + (w.title||'').replace(/"/g,'&quot;') + '" />' +
+        '</div>' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">نوع MUDA *</label>' +
+          '<select class="form-input" id="edit-w-muda-type">' + mudaOptions + '</select>' +
+        '</div>' +
+      '</div>' +
+
+      // Description
+      '<div>' +
+        '<label class="text-sm font-medium text-slate-700 block mb-1">الوصف التفصيلي</label>' +
+        '<textarea class="form-input" id="edit-w-desc" rows="2">' + (w.description||'') + '</textarea>' +
+      '</div>' +
+
+      // Process + Project
+      '<div class="grid grid-cols-2 gap-4">' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">العملية / القسم</label>' +
+          '<input class="form-input" type="text" id="edit-w-process" value="' + (w.process||'').replace(/"/g,'&quot;') + '" />' +
+        '</div>' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">المشروع</label>' +
+          '<select class="form-input" id="edit-w-project"><option value="">-- اختر --</option>' + projectOptions + '</select>' +
+        '</div>' +
+      '</div>' +
+
+      // Impact + Frequency + Status
+      '<div class="grid grid-cols-3 gap-4">' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">درجة الأثر (1-10)</label>' +
+          '<input class="form-input" type="number" id="edit-w-impact" min="1" max="10" value="' + (w.impact_score||5) + '" />' +
+        '</div>' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">التكرار</label>' +
+          '<select class="form-input" id="edit-w-freq">' + freqOptions + '</select>' +
+        '</div>' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">الحالة</label>' +
+          '<select class="form-input" id="edit-w-status">' + statusOptions + '</select>' +
+        '</div>' +
+      '</div>' +
+
+      // Root cause + Proposed action
+      '<div class="grid grid-cols-2 gap-4">' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">السبب الجذري</label>' +
+          '<input class="form-input" type="text" id="edit-w-root" value="' + (w.root_cause||'').replace(/"/g,'&quot;') + '" />' +
+        '</div>' +
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">الإجراء المقترح</label>' +
+          '<input class="form-input" type="text" id="edit-w-action" value="' + (w.proposed_action||'').replace(/"/g,'&quot;') + '" />' +
+        '</div>' +
+      '</div>' +
+
+      // Saving
+      '<div>' +
+        '<label class="text-sm font-medium text-slate-700 block mb-1">الوفر المالي المتوقع (ر.س)</label>' +
+        '<input class="form-input" type="number" id="edit-w-saving" min="0" value="' + (w.estimated_saving||0) + '" />' +
+      '</div>' +
+
+      // Buttons
+      '<div class="flex gap-3 pt-3 border-t border-slate-100">' +
+        '<button onclick="submitWasteEdit(\'' + w.id + '\')" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ التعديلات</button>' +
+        '<button onclick="document.getElementById(\'modal-waste-edit\').classList.remove(\'open\')" class="btn btn-danger px-6">إلغاء</button>' +
+      '</div>' +
+
+    '</div></div>';
+
+  editModal.classList.add('open');
+}
+
+function selectDmaicPhase(phase) {
+  const dmaicColor = {define:'#3b82f6',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#64748b'};
+  const phases = ['define','measure','analyze','improve','control'];
+  document.getElementById('edit-w-dmaic').value = phase;
+  phases.forEach(ph => {
+    const circle = document.getElementById('edit-dmaic-circle-' + ph);
+    const label  = document.getElementById('edit-dmaic-label-' + ph);
+    if (!circle || !label) return;
+    if (ph === phase) {
+      circle.style.background = dmaicColor[ph];
+      circle.style.borderColor = dmaicColor[ph];
+      circle.style.color = 'white';
+      label.style.color = dmaicColor[ph];
+    } else {
+      circle.style.background = 'white';
+      circle.style.borderColor = '#e2e8f0';
+      circle.style.color = '#94a3b8';
+      label.style.color = '#94a3b8';
+    }
+  });
+}
+
+async function submitWasteEdit(id) {
+  const projSel = document.getElementById('edit-w-project');
+  const projOpt = projSel.options[projSel.selectedIndex];
+  const projName = projOpt?.dataset?.name || projOpt?.text || '';
+
+  const impact = parseInt(document.getElementById('edit-w-impact').value) || 5;
+  const body = {
+    title:           document.getElementById('edit-w-title').value.trim(),
+    muda_type:       document.getElementById('edit-w-muda-type').value,
+    description:     document.getElementById('edit-w-desc').value.trim(),
+    process:         document.getElementById('edit-w-process').value.trim(),
+    project_id:      projSel.value,
+    project_name:    projName,
+    impact_score:    impact,
+    frequency:       document.getElementById('edit-w-freq').value,
+    dmaic_phase:     document.getElementById('edit-w-dmaic').value,
+    status:          document.getElementById('edit-w-status').value,
+    root_cause:      document.getElementById('edit-w-root').value.trim(),
+    proposed_action: document.getElementById('edit-w-action').value.trim(),
+    estimated_saving: parseInt(document.getElementById('edit-w-saving').value) || 0,
+    priority: impact >= 8 ? 'critical' : impact >= 6 ? 'high' : impact >= 4 ? 'medium' : 'low'
+  };
+
+  if (!body.title) { showToast('❌ يرجى إدخال عنوان الهدر', 'error'); return; }
+  try {
+    await apiFetch('/api/lean/wastes/' + id, 'PUT', body);
+    document.getElementById('modal-waste-edit').classList.remove('open');
+    showToast('✅ تم حفظ التعديلات بنجاح', 'success');
+    loadLean();
+  } catch(e) {
+    showToast('❌ خطأ في الحفظ', 'error');
+  }
+}
+
 function filterWasteTable() {
   const typeFilter = document.getElementById('waste-filter-type')?.value || '';
   const statusFilter = document.getElementById('waste-filter-status')?.value || '';
@@ -2650,6 +4183,22 @@ function showToast(msg, type = 'info') {
 }
 
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+function toggleSidebarCollapse() {
+  const sidebar = document.getElementById('sidebar');
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  document.body.classList.toggle('sidebar-collapsed', isCollapsed);
+  // persist preference
+  localStorage.setItem('ims_sidebar_collapsed', isCollapsed ? '1' : '0');
+}
+
+// Restore collapse state on load
+(function() {
+  if (localStorage.getItem('ims_sidebar_collapsed') === '1') {
+    document.getElementById('sidebar')?.classList.add('collapsed');
+    document.body.classList.add('sidebar-collapsed');
+  }
+})();
 async function logout() {
   try {
     await apiFetch('/api/auth/logout', 'POST');
