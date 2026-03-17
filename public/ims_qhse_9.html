@@ -422,25 +422,19 @@
     }
 
     // Inspections
+    if (method === 'POST' && path === '/api/inspections') {
+      const newInsp = {id:'insp-'+Date.now(),ref_number:'INS-2026-'+(MOCK_DB.inspections.length+1).toString().padStart(3,'0'),status:'pending',result:null,compliance_score:null,...body,created_at:new Date().toISOString()};
+      MOCK_DB.inspections.unshift(newInsp);
+      return newInsp;
+    }
     if (path === '/api/inspections') {
       let data = [...MOCK_DB.inspections];
       if (q.iso_standard) data = data.filter(i => i.iso_standard === q.iso_standard);
       if (q.status) data = data.filter(i => i.status === q.status);
       return {data, total:data.length};
     }
-    if (method === 'POST' && path === '/api/inspections') {
-      const newInsp = {id:'insp-'+Date.now(),ref_number:'INS-2026-'+(MOCK_DB.inspections.length+1).toString().padStart(3,'0'),status:'pending',result:null,compliance_score:null,...body,created_at:new Date().toISOString()};
-      MOCK_DB.inspections.unshift(newInsp);
-      return newInsp;
-    }
 
     // Non-conformances
-    if (path === '/api/nonconformances') {
-      let data = [...MOCK_DB.nonconformances];
-      if (q.status) data = data.filter(n => n.status === q.status);
-      if (q.type) data = data.filter(n => n.type === q.type);
-      return {data, total:data.length};
-    }
     if (method === 'POST' && path === '/api/nonconformances') {
       const num = MOCK_DB.nonconformances.length + 1;
       const rcaNum = MOCK_DB.rca_tickets.length + 1;
@@ -450,6 +444,12 @@
       const newNC = {id:'nc-new-'+Date.now(),ref_number:'NC-2026-'+(num).toString().padStart(3,'0'),status:'open',rca_id:newRCA.id,rca_ref:rcaRef,rca_status:'open',detected_at:new Date().toISOString(),...body};
       MOCK_DB.nonconformances.unshift(newNC);
       return {...newNC, rca_ref:rcaRef};
+    }
+    if (path === '/api/nonconformances') {
+      let data = [...MOCK_DB.nonconformances];
+      if (q.status) data = data.filter(n => n.status === q.status);
+      if (q.type) data = data.filter(n => n.type === q.type);
+      return {data, total:data.length};
     }
     if (path.startsWith('/api/nonconformances/') && method === 'GET') {
       const ncid = path.split('/')[3];
@@ -463,6 +463,33 @@
     }
 
     // RCA
+    if (method === 'POST' && path === '/api/rca') {
+      const num = MOCK_DB.rca_tickets.length + 1;
+      const ref = 'RCA-2026-' + num.toString().padStart(3,'0');
+      const proj = MOCK_DB.projects.find(p => p.id === body.project_id);
+      const user = MOCK_DB.users.find(u => u.id === body.assigned_to);
+      const newRCA = {
+        id: 'rca-' + Date.now(),
+        ref_number: ref,
+        status: 'open',
+        methodology: body.methodology || '5_whys',
+        title: body.title || 'تحليل جديد',
+        nc_id: body.nc_id || null,
+        nc_ref: body.nc_ref || null,
+        nc_description: body.nc_description || '',
+        project_id: body.project_id || '',
+        project_name: proj ? proj.name : '',
+        assigned_to: body.assigned_to || '',
+        assigned_name: user ? user.full_name : '',
+        why_1:null, why_2:null, why_3:null, why_4:null, why_5:null,
+        root_cause: null,
+        target_date: body.target_date || null,
+        actions: [],
+        created_at: new Date().toISOString()
+      };
+      MOCK_DB.rca_tickets.unshift(newRCA);
+      return newRCA;
+    }
     if (path === '/api/rca') {
       let data = [...MOCK_DB.rca_tickets];
       if (q.status) data = data.filter(r => r.status === q.status);
@@ -480,12 +507,12 @@
     }
 
     // KPIs
-    if (path === '/api/kpis' || path === '/api/dashboard/kpis-live') {
-      return MOCK_DB.kpis;
-    }
     if (path === '/api/kpis' && method === 'POST') {
       var nk = Object.assign({id:'kpi-'+Date.now(), code:'KPI-'+String(MOCK_DB.kpis.length+1).padStart(3,'0'), latest_value:0, status_level:'warning'}, body);
       MOCK_DB.kpis.push(nk); return nk;
+    }
+    if (path === '/api/kpis' || path === '/api/dashboard/kpis-live') {
+      return MOCK_DB.kpis;
     }
     if (path.startsWith('/api/kpis/') && method === 'PUT') {
       var kid = path.split('/')[3];
@@ -520,6 +547,10 @@
       return {success:true};
     }
     // ISO Standards
+    if (path === '/api/iso/standards' && method === 'POST') {
+      var ns = Object.assign({id:'std-'+Date.now(), procedures:[], key_clauses:[], unique_elements:[]}, body);
+      MOCK_DB.iso_standards.push(ns); return ns;
+    }
     if (path === '/api/iso/standards') { return MOCK_DB.iso_standards; }
     if (path.startsWith('/api/iso/standards/') && method === 'GET') {
       var sid = path.split('/')[4];
@@ -1946,6 +1977,189 @@ async function submitNCEdit(id) {
 }
 
 // ── RCA / Lean Six Sigma ──────────────────────
+// ── New RCA Modal ─────────────────────────────
+function openNewRCAModal() {
+  document.getElementById('modal-new-rca')?.remove();
+
+  var projects = window.MOCK_DB?.projects || [];
+  var users    = window.MOCK_DB?.users    || [];
+  var ncs      = window.MOCK_DB?.nonconformances || [];
+
+  var projOpts = '<option value="">-- اختر المشروع --</option>';
+  projects.forEach(function(p){
+    projOpts += '<option value="'+p.id+'">'+p.name+'</option>';
+  });
+
+  var userOpts = '<option value="">-- اختر المسؤول --</option>';
+  users.filter(function(u){return u.is_active;}).forEach(function(u){
+    userOpts += '<option value="'+u.id+'">'+u.full_name+'</option>';
+  });
+
+  var ncOpts = '<option value="">-- اختر NC مرتبطة (اختياري) --</option>';
+  ncs.filter(function(n){return n.status !== 'closed';}).forEach(function(n){
+    ncOpts += '<option value="'+n.id+'" data-ref="'+n.ref_number+'" data-desc="'+(n.title||'').replace(/"/g,'&quot;')+'">'+n.ref_number+' — '+n.title.substring(0,50)+'</option>';
+  });
+
+  var methOpts = [
+    ['5_whys','🔍 5 Whys — لماذا × 5'],
+    ['ishikawa','🐟 Ishikawa — مخطط العظمة'],
+    ['pareto','📊 Pareto — قاعدة 80/20'],
+    ['fmea','⚙️ FMEA — تحليل أنماط الفشل']
+  ].map(function(m){
+    return '<option value="'+m[0]+'">'+m[1]+'</option>';
+  }).join('');
+
+  // Min date = today
+  var today = new Date().toISOString().split('T')[0];
+
+  var html =
+    '<div id="modal-new-rca" class="modal open">' +
+    '<div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">' +
+
+      '<div class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">' +
+        '<div>' +
+          '<div class="text-purple-200 text-xs mb-0.5">إنشاء تحليل جديد</div>' +
+          '<h3 class="text-white font-bold text-lg"><i class="fas fa-lightbulb ml-2"></i>تحليل سبب جذري — RCA</h3>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'modal-new-rca\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+      '</div>' +
+
+      '<div class="p-6 space-y-4">' +
+
+        // العنوان
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-1">عنوان التحليل *</label>' +
+          '<input class="form-input" type="text" id="rca-new-title" placeholder="مثال: تحليل سبب عطل منظومة الانبعاثات" />' +
+        '</div>' +
+
+        // المنهجية
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-2">منهجية التحليل *</label>' +
+          '<div class="grid grid-cols-2 gap-2" id="rca-meth-pills">' +
+            [['5_whys','🔍 5 Whys','#7c3aed'],['ishikawa','🐟 Ishikawa','#2563eb'],['pareto','📊 Pareto','#d97706'],['fmea','⚙️ FMEA','#059669']].map(function(m){
+              return '<button type="button" onclick="selectRCAMeth(\''+m[0]+'\')" id="rca-meth-'+m[0]+'" '+
+                'class="py-2.5 px-3 rounded-xl text-sm font-bold border-2 transition-all text-right" '+
+                'style="border-color:'+(m[0]==='5_whys'?m[2]:'#e2e8f0')+';background:'+(m[0]==='5_whys'?m[2]:'white')+';color:'+(m[0]==='5_whys'?'white':m[2])+'">'+
+                m[1]+'</button>';
+            }).join('') +
+          '</div>' +
+          '<input type="hidden" id="rca-new-methodology" value="5_whys" />' +
+        '</div>' +
+
+        // NC المرتبطة
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-1">حالة عدم المطابقة المرتبطة <span class="text-slate-400 font-normal">(اختياري)</span></label>' +
+          '<select class="form-input" id="rca-new-nc" onchange="onRCAncSelect()">' + ncOpts + '</select>' +
+        '</div>' +
+
+        // وصف المشكلة
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-1">وصف المشكلة *</label>' +
+          '<textarea class="form-input" id="rca-new-desc" rows="3" placeholder="صف المشكلة أو الحادثة التي تحتاج تحليلاً..."></textarea>' +
+        '</div>' +
+
+        // المشروع + المسؤول
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-bold text-slate-700 block mb-1">المشروع</label>' +
+            '<select class="form-input" id="rca-new-project">' + projOpts + '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-bold text-slate-700 block mb-1">المسؤول عن التحليل</label>' +
+            '<select class="form-input" id="rca-new-assigned">' + userOpts + '</select>' +
+          '</div>' +
+        '</div>' +
+
+        // الموعد النهائي
+        '<div>' +
+          '<label class="text-sm font-bold text-slate-700 block mb-1">الموعد النهائي للإغلاق</label>' +
+          '<input class="form-input" type="date" id="rca-new-date" min="'+today+'" />' +
+        '</div>' +
+
+        '<div class="flex gap-3 pt-3 border-t border-slate-100">' +
+          '<button onclick="submitNewRCA()" class="btn btn-primary flex-1" style="background:#7c3aed">' +
+            '<i class="fas fa-plus ml-1"></i>إنشاء التحليل والبدء' +
+          '</button>' +
+          '<button onclick="document.getElementById(\'modal-new-rca\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
+        '</div>' +
+
+      '</div>' +
+    '</div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function selectRCAMeth(val) {
+  var colors = {
+    '5_whys':'#7c3aed', 'ishikawa':'#2563eb',
+    'pareto':'#d97706', 'fmea':'#059669'
+  };
+  var el = document.getElementById('rca-new-methodology');
+  if (el) el.value = val;
+  ['5_whys','ishikawa','pareto','fmea'].forEach(function(m){
+    var btn = document.getElementById('rca-meth-'+m);
+    if (!btn) return;
+    var c = colors[m];
+    if (m === val) {
+      btn.style.background   = c;
+      btn.style.borderColor  = c;
+      btn.style.color        = 'white';
+    } else {
+      btn.style.background   = 'white';
+      btn.style.borderColor  = '#e2e8f0';
+      btn.style.color        = c;
+    }
+  });
+}
+
+function onRCAncSelect() {
+  var sel  = document.getElementById('rca-new-nc');
+  var opt  = sel ? sel.options[sel.selectedIndex] : null;
+  var desc = document.getElementById('rca-new-desc');
+  if (opt && opt.value && desc && !desc.value.trim()) {
+    // Auto-fill description from NC title
+    desc.value = opt.dataset.desc || '';
+  }
+}
+
+async function submitNewRCA() {
+  var title = (document.getElementById('rca-new-title')?.value || '').trim();
+  if (!title) { showToast('❌ يرجى إدخال عنوان التحليل', 'error'); return; }
+
+  var desc  = (document.getElementById('rca-new-desc')?.value || '').trim();
+  if (!desc) { showToast('❌ يرجى وصف المشكلة', 'error'); return; }
+
+  var ncSel  = document.getElementById('rca-new-nc');
+  var ncId   = ncSel  ? ncSel.value  : '';
+  var ncOpt  = ncSel  ? ncSel.options[ncSel.selectedIndex] : null;
+  var ncRef  = ncOpt && ncId ? ncOpt.dataset.ref : '';
+
+  var projSel = document.getElementById('rca-new-project');
+  var userSel = document.getElementById('rca-new-assigned');
+
+  var body = {
+    title,
+    nc_description: desc,
+    methodology:    document.getElementById('rca-new-methodology')?.value || '5_whys',
+    nc_id:          ncId   || null,
+    nc_ref:         ncRef  || null,
+    project_id:     projSel ? projSel.value : '',
+    assigned_to:    userSel ? userSel.value : '',
+    target_date:    document.getElementById('rca-new-date')?.value || null,
+  };
+
+  try {
+    var newRCA = await apiFetch('/api/rca', 'POST', body);
+    document.getElementById('modal-new-rca')?.remove();
+    showToast('✅ تم إنشاء التحليل — ' + newRCA.ref_number, 'success');
+    // Reload list first, then open the detail
+    await loadRCA();
+    loadRCADetail(newRCA.id);
+  } catch(e) {
+    showToast('❌ خطأ في الإنشاء', 'error');
+  }
+}
+
 async function loadRCA() {
   var el = document.getElementById('app-content');
   el.innerHTML = '<div class="flex items-center justify-center h-64"><i class="fas fa-spinner fa-spin text-purple-500 text-3xl"></i></div>';
@@ -2107,6 +2321,7 @@ async function loadRCA() {
         '<h2 class="text-xl font-black text-slate-800"><i class="fas fa-lightbulb text-yellow-500 ml-2"></i>تحليل الأسباب الجذرية (RCA)</h2>' +
         '<p class="text-sm text-slate-500 mt-1">أدوات التحليل: 5 Whys · Ishikawa · الإجراءات التصحيحية والوقائية</p>' +
       '</div>' +
+      '<button onclick="openNewRCAModal()" class="btn btn-primary text-sm"><i class="fas fa-plus ml-1"></i>تحليل جديد</button>' +
     '</div>' +
 
     // KPIs
@@ -2165,7 +2380,21 @@ async function loadRCADetail(id) {
   el.innerHTML = '<div class="flex items-center justify-center h-64"><i class="fas fa-spinner fa-spin text-purple-500 text-3xl"></i></div>';
 
   var data;
-  try { data = await apiFetch('/api/rca/' + id); } catch(e) { showToast('❌ خطأ في تحميل البيانات','error'); return; }
+  try {
+    data = await apiFetch('/api/rca/' + id);
+    // If API returned error object, fallback to MOCK_DB directly
+    if (!data || data.error) {
+      data = (window.MOCK_DB?.rca_tickets || []).find(function(r){ return r.id === id; });
+    }
+  } catch(e) {
+    data = (window.MOCK_DB?.rca_tickets || []).find(function(r){ return r.id === id; });
+  }
+
+  if (!data || !data.id) {
+    showToast('❌ لم يتم العثور على التحليل', 'error');
+    loadRCA();
+    return;
+  }
 
   var ishData = {};
   try { ishData = data.ishikawa_data ? (typeof data.ishikawa_data==='string' ? JSON.parse(data.ishikawa_data) : data.ishikawa_data) : {}; } catch(e){}
@@ -2323,32 +2552,155 @@ async function loadRCADetail(id) {
 
     // Tabs card
     '<div class="card overflow-hidden">' +
-      '<div class="flex border-b border-slate-100 bg-slate-50">' +
-        '<button id="rtab-whys"     onclick="switchRCATab(\'whys\')"     class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-purple-500 text-purple-700"><i class="fas fa-question-circle ml-1"></i>5 Whys</button>' +
-        '<button id="rtab-ish"      onclick="switchRCATab(\'ish\')"      class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700"><i class="fas fa-fish ml-1"></i>Ishikawa</button>' +
-        '<button id="rtab-actions"  onclick="switchRCATab(\'actions\')"  class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700"><i class="fas fa-tasks ml-1"></i>الإجراءات (' + actions.length + ')</button>' +
+      '<div class="flex border-b border-slate-100 bg-slate-50 overflow-x-auto">' +
+        '<button id="rtab-whys"    onclick="switchRCATab(\'whys\')"    class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-purple-500 text-purple-700 whitespace-nowrap px-3"><i class="fas fa-question-circle ml-1"></i>5 Whys</button>' +
+        '<button id="rtab-ish"     onclick="switchRCATab(\'ish\')"     class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-fish ml-1"></i>Ishikawa</button>' +
+        '<button id="rtab-fmea"    onclick="switchRCATab(\'fmea\')"    class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-cogs ml-1"></i>FMEA</button>' +
+        '<button id="rtab-actions" onclick="switchRCATab(\'actions\')" class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-tasks ml-1"></i>الإجراءات (' + actions.length + ')</button>' +
       '</div>' +
       '<div class="p-5">' +
         '<div id="rpanel-whys">' + whysHtml + '</div>' +
         '<div id="rpanel-ish" style="display:none">' + ishHtml2 + '</div>' +
+        '<div id="rpanel-fmea" style="display:none">' + buildFMEAPanel(id, data) + '</div>' +
         '<div id="rpanel-actions" style="display:none">' + actListHtml + addActHtml + '</div>' +
       '</div>' +
     '</div>' +
 
     '</div>';
+
+  // Auto-switch to matching tab based on methodology
+  if (data.methodology === 'ishikawa') switchRCATab('ish');
+  else if (data.methodology === 'fmea') switchRCATab('fmea');
+  else switchRCATab('whys');
+}
+
+function buildFMEAPanel(id, data) {
+  var fmea = data.fmea_data || [];
+
+  var rowsHtml = '';
+  if (fmea.length) {
+    fmea.forEach(function(row, i) {
+      var rpn = (row.severity||1) * (row.occurrence||1) * (row.detection||1);
+      var rpnClr = rpn >= 200 ? '#dc2626' : rpn >= 100 ? '#d97706' : '#059669';
+      rowsHtml +=
+        '<tr class="border-b border-slate-100 hover:bg-slate-50">' +
+          '<td class="p-2 text-xs text-slate-700">' + (row.function||'-') + '</td>' +
+          '<td class="p-2 text-xs text-slate-700">' + (row.failure_mode||'-') + '</td>' +
+          '<td class="p-2 text-xs text-slate-700">' + (row.effect||'-') + '</td>' +
+          '<td class="p-2 text-center"><span class="badge" style="background:#dc262618;color:#dc2626">' + (row.severity||'-') + '</span></td>' +
+          '<td class="p-2 text-center"><span class="badge" style="background:#d9770618;color:#d97706">' + (row.occurrence||'-') + '</span></td>' +
+          '<td class="p-2 text-center"><span class="badge" style="background:#3b82f618;color:#3b82f6">' + (row.detection||'-') + '</span></td>' +
+          '<td class="p-2 text-center"><span class="font-black text-sm" style="color:'+rpnClr+'">' + rpn + '</span></td>' +
+          '<td class="p-2 text-xs text-slate-700">' + (row.action||'-') + '</td>' +
+          '<td class="p-2 text-center"><button onclick="deleteFMEARow(\''+id+'\','+i+')" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-trash"></i></button></td>' +
+        '</tr>';
+    });
+  } else {
+    rowsHtml = '<tr><td colspan="9" class="p-6 text-center text-slate-400 text-sm"><i class="fas fa-table text-2xl block mb-2"></i>لا توجد سجلات FMEA — أضف أول سجل أدناه</td></tr>';
+  }
+
+  return '' +
+    '<div class="mb-4 p-3 bg-green-50 rounded-xl border border-green-100 text-xs text-green-700">' +
+      '<b>FMEA</b> — Failure Mode and Effects Analysis: تحليل أنماط الفشل وتأثيراتها' +
+      ' · <b>RPN</b> = الخطورة × التكرار × الكشف' +
+    '</div>' +
+
+    // FMEA table
+    '<div class="overflow-x-auto rounded-xl border border-slate-200 mb-4">' +
+      '<table class="w-full text-sm" style="min-width:700px">' +
+        '<thead class="bg-slate-50 border-b border-slate-200">' +
+          '<tr>' +
+            '<th class="text-right p-2 text-xs font-bold text-slate-600">الوظيفة</th>' +
+            '<th class="text-right p-2 text-xs font-bold text-slate-600">نمط الفشل</th>' +
+            '<th class="text-right p-2 text-xs font-bold text-slate-600">التأثير</th>' +
+            '<th class="p-2 text-xs font-bold text-red-600 text-center">S</th>' +
+            '<th class="p-2 text-xs font-bold text-yellow-600 text-center">O</th>' +
+            '<th class="p-2 text-xs font-bold text-blue-600 text-center">D</th>' +
+            '<th class="p-2 text-xs font-bold text-slate-700 text-center">RPN</th>' +
+            '<th class="text-right p-2 text-xs font-bold text-slate-600">الإجراء</th>' +
+            '<th class="p-2"></th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+      '</table>' +
+    '</div>' +
+
+    // Add row form
+    '<div class="border border-slate-200 rounded-xl p-4 bg-slate-50">' +
+      '<div class="text-sm font-bold text-slate-700 mb-3"><i class="fas fa-plus-circle text-green-500 ml-1"></i>إضافة سجل FMEA جديد</div>' +
+      '<div class="grid grid-cols-1 gap-3">' +
+        '<div class="grid grid-cols-2 gap-3">' +
+          '<div><label class="text-xs font-medium text-slate-600 block mb-1">الوظيفة / العملية</label>' +
+          '<input class="form-input text-sm" id="fmea-function" placeholder="مثال: ضخ السائل" /></div>' +
+          '<div><label class="text-xs font-medium text-slate-600 block mb-1">نمط الفشل المحتمل</label>' +
+          '<input class="form-input text-sm" id="fmea-failure" placeholder="مثال: انسداد المضخة" /></div>' +
+        '</div>' +
+        '<div class="grid grid-cols-2 gap-3">' +
+          '<div><label class="text-xs font-medium text-slate-600 block mb-1">التأثير المحتمل</label>' +
+          '<input class="form-input text-sm" id="fmea-effect" placeholder="مثال: توقف الإنتاج" /></div>' +
+          '<div><label class="text-xs font-medium text-slate-600 block mb-1">الإجراء الموصى به</label>' +
+          '<input class="form-input text-sm" id="fmea-action" placeholder="مثال: صيانة وقائية شهرية" /></div>' +
+        '</div>' +
+        '<div class="grid grid-cols-3 gap-3">' +
+          '<div><label class="text-xs font-medium text-red-600 block mb-1">الخطورة S (1-10)</label>' +
+          '<input class="form-input text-sm" type="number" id="fmea-s" min="1" max="10" value="5" /></div>' +
+          '<div><label class="text-xs font-medium text-yellow-600 block mb-1">التكرار O (1-10)</label>' +
+          '<input class="form-input text-sm" type="number" id="fmea-o" min="1" max="10" value="5" /></div>' +
+          '<div><label class="text-xs font-medium text-blue-600 block mb-1">الكشف D (1-10)</label>' +
+          '<input class="form-input text-sm" type="number" id="fmea-d" min="1" max="10" value="5" /></div>' +
+        '</div>' +
+        '<button onclick="addFMEARow(\''+id+'\')" class="btn btn-primary w-full text-sm" style="background:#059669">' +
+          '<i class="fas fa-plus ml-1"></i>إضافة السجل' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function addFMEARow(id) {
+  var fn  = document.getElementById('fmea-function')?.value?.trim();
+  var fm  = document.getElementById('fmea-failure')?.value?.trim();
+  if (!fn || !fm) { showToast('❌ أدخل الوظيفة ونمط الفشل', 'error'); return; }
+
+  var rca = (window.MOCK_DB?.rca_tickets||[]).find(function(r){return r.id===id;});
+  if (!rca) return;
+  if (!rca.fmea_data) rca.fmea_data = [];
+
+  rca.fmea_data.push({
+    function:   fn,
+    failure_mode: fm,
+    effect:     document.getElementById('fmea-effect')?.value?.trim() || '',
+    action:     document.getElementById('fmea-action')?.value?.trim() || '',
+    severity:   parseInt(document.getElementById('fmea-s')?.value) || 5,
+    occurrence: parseInt(document.getElementById('fmea-o')?.value) || 5,
+    detection:  parseInt(document.getElementById('fmea-d')?.value) || 5,
+  });
+
+  showToast('✅ تم إضافة السجل', 'success');
+  loadRCADetail(id);
+  setTimeout(function(){ switchRCATab('fmea'); }, 100);
+}
+
+function deleteFMEARow(id, idx) {
+  if (!confirm('حذف هذا السجل؟')) return;
+  var rca = (window.MOCK_DB?.rca_tickets||[]).find(function(r){return r.id===id;});
+  if (rca && rca.fmea_data) {
+    rca.fmea_data.splice(idx, 1);
+    loadRCADetail(id);
+    setTimeout(function(){ switchRCATab('fmea'); }, 100);
+  }
 }
 
 function switchRCATab(tab) {
-  ['whys','ish','actions'].forEach(function(t){
+  ['whys','ish','fmea','actions'].forEach(function(t){
     var panel = document.getElementById('rpanel-'+t);
     var btn   = document.getElementById('rtab-'+t);
     if (!panel || !btn) return;
     if (t === tab) {
       panel.style.display = '';
-      btn.className = 'rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-purple-500 text-purple-700';
+      btn.className = 'rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-purple-500 text-purple-700 whitespace-nowrap px-3';
     } else {
       panel.style.display = 'none';
-      btn.className = 'rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+      btn.className = 'rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3';
     }
   });
 }
