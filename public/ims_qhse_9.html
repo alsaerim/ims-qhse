@@ -552,7 +552,7 @@
       MOCK_DB.iso_standards.push(ns); return ns;
     }
     if (path === '/api/iso/standards') { return MOCK_DB.iso_standards; }
-    if (path.startsWith('/api/iso/standards/') && method === 'GET') {
+    if (path.startsWith('/api/iso/standards/') && method === 'GET' && !path.includes('/procedures')) {
       var sid = path.split('/')[4];
       return MOCK_DB.iso_standards.find(function(s){return s.id===sid||s.code===sid;}) || {};
     }
@@ -561,6 +561,19 @@
       var std = MOCK_DB.iso_standards.find(function(s){return s.id===sc||s.code===sc;});
       if (std) { var np = Object.assign({id:'proc-'+Date.now(), status:'active'}, body); std.procedures.push(np); return np; }
       return {};
+    }
+    if (path.startsWith('/api/iso/standards/') && path.includes('/procedures/') && method === 'PUT') {
+      var pts = path.split('/'); var stdId4 = pts[4]; var procId4 = pts[6];
+      var std4 = MOCK_DB.iso_standards.find(function(s){return s.id===stdId4;});
+      var proc4 = std4 && std4.procedures ? std4.procedures.find(function(p){return p.id===procId4;}) : null;
+      if (proc4) Object.assign(proc4, body);
+      return proc4 || {};
+    }
+    if (path.startsWith('/api/iso/standards/') && path.includes('/procedures/') && method === 'DELETE') {
+      var pts2 = path.split('/'); var stdId5 = pts2[4]; var procId5 = pts2[6];
+      var std5 = MOCK_DB.iso_standards.find(function(s){return s.id===stdId5;});
+      if (std5 && std5.procedures) std5.procedures = std5.procedures.filter(function(p){return p.id!==procId5;});
+      return {success:true};
     }
 
     // Users
@@ -3335,12 +3348,23 @@ async function loadOrganization() {
 
       <!-- TAB: Standards -->
       <div id="org-section-standards" class="p-6 hidden">
+        <!-- Header with add button -->
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-bold text-slate-800"><i class="fas fa-certificate text-blue-500 ml-2"></i>معايير ISO المطبّقة</h3>
+            <p class="text-xs text-slate-500 mt-0.5">${standards.length} معيار مسجّل</p>
+          </div>
+          <button onclick="openAddStandardModal()" class="btn btn-primary text-sm">
+            <i class="fas fa-plus ml-1"></i>إضافة معيار جديد
+          </button>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           ${standards.map(std => {
             const color = stdColors[std.code] || '#64748b';
             const icon  = stdIcons[std.code]  || 'certificate';
             return `
-            <div class="border border-slate-100 rounded-xl overflow-hidden">
+            <div class="border border-slate-100 rounded-xl overflow-hidden" id="std-card-${std.id}">
               <div class="p-4 flex items-center justify-between" style="background:${color}12">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${color}">
@@ -3374,17 +3398,42 @@ async function loadOrganization() {
                     ${std.unique_elements.map(e => `<span class="text-xs px-2 py-0.5 rounded-full" style="background:${color}15;color:${color}">${e}</span>`).join('')}
                   </div>
                 </div>
+
+                <!-- Procedures with edit -->
                 <div>
-                  <div class="text-xs font-bold text-slate-700 mb-2">الإجراءات المرتبطة (${std.procedures.length})</div>
-                  <div class="space-y-1">
-                    ${std.procedures.map(p => `
-                    <div class="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg">
-                      <div class="flex items-center gap-2">
-                        <span class="font-mono" style="color:${color}">${p.code}</span>
-                        <span class="text-slate-700">${p.title}</span>
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="text-xs font-bold text-slate-700">الإجراءات المرتبطة (${std.procedures.length})</div>
+                    <button onclick="openAddProcedureModal('${std.id}','${color}')"
+                      class="text-xs px-2 py-1 rounded-lg font-bold flex items-center gap-1 transition-all"
+                      style="background:${color}15;color:${color}">
+                      <i class="fas fa-plus text-xs"></i> إجراء جديد
+                    </button>
+                  </div>
+                  <div class="space-y-1" id="proc-list-${std.id}">
+                    ${std.procedures.map(p => {
+                      const statusMap = {active:'نشط',review:'مراجعة',draft:'مسودة',retired:'متقاعد'};
+                      const badgeMap  = {active:'badge-green',review:'badge-yellow',draft:'badge-gray',retired:'badge-red'};
+                      return `
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg group hover:bg-white transition-all" id="proc-row-${p.id}">
+                      <div class="flex items-center gap-2 min-w-0 flex-1">
+                        <span class="font-mono font-bold flex-shrink-0" style="color:${color}">${p.code}</span>
+                        <span class="text-slate-700 truncate">${p.title}</span>
                       </div>
-                      <span class="badge ${p.status==='active'?'badge-green':'badge-yellow'} text-xs">${p.status==='active'?'نشط':'مراجعة'}</span>
-                    </div>`).join('')}
+                      <div class="flex items-center gap-1 flex-shrink-0">
+                        <!-- Status badge - clickable to cycle -->
+                        <button onclick="cycleProcStatus('${std.id}','${p.id}')"
+                          class="badge ${badgeMap[p.status]||'badge-gray'} text-xs cursor-pointer hover:opacity-80 transition-all"
+                          id="proc-badge-${p.id}" title="انقر لتغيير الحالة">
+                          ${statusMap[p.status]||p.status}
+                        </button>
+                        <!-- Edit button -->
+                        <button onclick="openEditProcedureModal('${std.id}','${p.id}','${color}')"
+                          class="p-1 text-amber-500 hover:bg-amber-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                          title="تعديل الإجراء">
+                          <i class="fas fa-edit text-xs"></i>
+                        </button>
+                      </div>
+                    </div>`}).join('')}
                   </div>
                 </div>
               </div>
@@ -3523,6 +3572,274 @@ function renderObjectiveCard(o, stdColors, isoNames, objStatus, objStatusAr) {
   </div>`;
 }
 
+// ══════════════════════════════════════════════
+//  ISO Standards Management
+// ══════════════════════════════════════════════
+
+// ── Cycle procedure status on badge click ──
+function cycleProcStatus(stdId, procId) {
+  var std  = (window.MOCK_DB?.iso_standards||[]).find(function(s){return s.id===stdId;});
+  var proc = std?.procedures?.find(function(p){return p.id===procId;});
+  if (!proc) return;
+
+  var cycle  = ['active','review','draft','retired'];
+  var labels = {active:'نشط', review:'مراجعة', draft:'مسودة', retired:'متقاعد'};
+  var badges = {active:'badge-green', review:'badge-yellow', draft:'badge-gray', retired:'badge-red'};
+
+  var idx     = cycle.indexOf(proc.status);
+  var nextIdx = (idx + 1) % cycle.length;
+  proc.status = cycle[nextIdx];
+
+  // Update badge in DOM without full reload
+  var badge = document.getElementById('proc-badge-' + procId);
+  if (badge) {
+    badge.textContent = labels[proc.status];
+    badge.className = 'badge ' + badges[proc.status] + ' text-xs cursor-pointer hover:opacity-80 transition-all';
+  }
+
+  // Persist via API silently
+  apiFetch('/api/iso/standards/' + stdId + '/procedures/' + procId, 'PUT', {status: proc.status})
+    .then(function(){ showToast('✅ ' + labels[proc.status], 'success'); })
+    .catch(function(){});
+}
+
+// ── Add Procedure Modal ──
+function openAddProcedureModal(stdId, color) {
+  openProcedureModal(stdId, color, null);
+}
+
+function openEditProcedureModal(stdId, procId, color) {
+  var std  = (window.MOCK_DB?.iso_standards||[]).find(function(s){return s.id===stdId;});
+  var proc = std?.procedures?.find(function(p){return p.id===procId;});
+  if (!proc) return;
+  openProcedureModal(stdId, color, proc);
+}
+
+function openProcedureModal(stdId, color, proc) {
+  document.getElementById('modal-procedure')?.remove();
+  color = color || '#3b82f6';
+  var isEdit = !!proc;
+
+  var statusOpts = ['active','review','draft','retired'].map(function(s){
+    var labels = {active:'✅ نشط', review:'⚠️ مراجعة', draft:'📝 مسودة', retired:'🚫 متقاعد'};
+    return '<option value="'+s+'"'+(proc&&proc.status===s?' selected':(!proc&&s==='active'?' selected':''))+'>'+labels[s]+'</option>';
+  }).join('');
+
+  var html =
+    '<div class="modal open" id="modal-procedure">' +
+    '<div class="bg-white rounded-2xl w-full max-w-lg mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:88vh;overflow-y:auto">' +
+
+      '<div class="px-6 py-4 flex items-center justify-between sticky top-0 z-10" style="background:'+color+'">' +
+        '<h3 class="text-white font-bold"><i class="fas fa-'+(isEdit?'edit':'plus-circle')+' ml-2"></i>'+(isEdit?'تعديل إجراء':'إضافة إجراء جديد')+'</h3>' +
+        '<button onclick="document.getElementById(\'modal-procedure\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+      '</div>' +
+
+      '<div class="p-6 space-y-4">' +
+        '<input type="hidden" id="proc-std-id" value="'+stdId+'">' +
+        '<input type="hidden" id="proc-id"     value="'+(proc?proc.id:'')+'">' +
+
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">كود الإجراء *</label>' +
+            '<input class="form-input font-mono" type="text" id="proc-code" value="'+(proc?proc.code:'')+'" placeholder="مثال: QP-001"/>' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">الحالة</label>' +
+            '<select class="form-input" id="proc-status">'+statusOpts+'</select>' +
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">عنوان الإجراء *</label>' +
+          '<input class="form-input" type="text" id="proc-title" value="'+(proc?(proc.title||'').replace(/"/g,'&quot;'):'')+'" placeholder="مثال: إجراء ضبط وثائق الجودة"/>' +
+        '</div>' +
+
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">الوصف / نطاق التطبيق</label>' +
+          '<textarea class="form-input" id="proc-desc" rows="2" placeholder="وصف مختصر...">'+(proc?proc.description||'':'')+'</textarea>' +
+        '</div>' +
+
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">المسؤول</label>' +
+            '<input class="form-input" type="text" id="proc-owner" value="'+(proc?(proc.owner||'').replace(/"/g,'&quot;'):'')+'" placeholder="القسم أو الشخص المسؤول"/>' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">رقم الإصدار</label>' +
+            '<input class="form-input" type="text" id="proc-version" value="'+(proc?proc.version||'1.0':'1.0')+'" placeholder="1.0"/>' +
+          '</div>' +
+        '</div>' +
+
+        // Divider + delete for edit mode
+        (isEdit ?
+          '<div class="p-3 bg-red-50 rounded-xl flex items-center justify-between border border-red-100">' +
+            '<span class="text-xs text-red-600 font-medium">حذف هذا الإجراء نهائياً</span>' +
+            '<button onclick="deleteProcedure(\''+stdId+'\',\''+proc.id+'\')" class="btn btn-danger text-xs px-3 py-1.5">' +
+              '<i class="fas fa-trash ml-1"></i>حذف</button>' +
+          '</div>' : '') +
+
+        '<div class="flex gap-3 pt-2 border-t border-slate-100">' +
+          '<button onclick="submitProcedure()" class="btn btn-primary flex-1" style="background:'+color+'">' +
+            '<i class="fas fa-save ml-1"></i>'+(isEdit?'حفظ التعديلات':'إضافة الإجراء')+
+          '</button>' +
+          '<button onclick="document.getElementById(\'modal-procedure\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
+        '</div>' +
+      '</div>' +
+    '</div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function submitProcedure() {
+  var code  = (document.getElementById('proc-code')?.value||'').trim();
+  var title = (document.getElementById('proc-title')?.value||'').trim();
+  if (!code)  { showToast('❌ يرجى إدخال كود الإجراء', 'error'); return; }
+  if (!title) { showToast('❌ يرجى إدخال عنوان الإجراء', 'error'); return; }
+
+  var stdId  = document.getElementById('proc-std-id')?.value;
+  var procId = document.getElementById('proc-id')?.value;
+  var body   = {
+    code,
+    title,
+    status:      document.getElementById('proc-status')?.value || 'active',
+    description: document.getElementById('proc-desc')?.value?.trim() || '',
+    owner:       document.getElementById('proc-owner')?.value?.trim() || '',
+    version:     document.getElementById('proc-version')?.value?.trim() || '1.0',
+  };
+
+  try {
+    if (procId) {
+      await apiFetch('/api/iso/standards/'+stdId+'/procedures/'+procId, 'PUT', body);
+      showToast('✅ تم تحديث الإجراء', 'success');
+    } else {
+      await apiFetch('/api/iso/standards/'+stdId+'/procedures', 'POST', body);
+      showToast('✅ تم إضافة الإجراء', 'success');
+    }
+    document.getElementById('modal-procedure')?.remove();
+    loadOrganization();
+    setTimeout(function(){ switchOrgTab('standards'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
+}
+
+async function deleteProcedure(stdId, procId) {
+  if (!confirm('هل أنت متأكد من حذف هذا الإجراء؟')) return;
+  await apiFetch('/api/iso/standards/'+stdId+'/procedures/'+procId, 'DELETE');
+  document.getElementById('modal-procedure')?.remove();
+  showToast('🗑️ تم حذف الإجراء', 'info');
+  loadOrganization();
+  setTimeout(function(){ switchOrgTab('standards'); }, 100);
+}
+
+// ── Add New Standard Modal ──
+function openAddStandardModal() {
+  document.getElementById('modal-add-standard')?.remove();
+
+  var colorOptions = ['#3b82f6','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#db2777'];
+  var colorPills = colorOptions.map(function(c){
+    return '<button type="button" onclick="selectStdColor(\''+c+'\')" id="std-col-'+c.replace('#','')+'" '+
+      'class="w-8 h-8 rounded-lg border-2 border-transparent transition-all" '+
+      'style="background:'+c+'" title="'+c+'"></button>';
+  }).join('');
+
+  var html =
+    '<div class="modal open" id="modal-add-standard">' +
+    '<div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">' +
+
+      '<div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 flex items-center justify-between sticky top-0 z-10">' +
+        '<h3 class="text-white font-bold text-lg"><i class="fas fa-certificate ml-2"></i>إضافة معيار ISO جديد</h3>' +
+        '<button onclick="document.getElementById(\'modal-add-standard\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
+      '</div>' +
+
+      '<div class="p-6 space-y-4">' +
+
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">كود المعيار *</label>' +
+            '<input class="form-input font-mono" type="text" id="std-code" placeholder="مثال: ISO_45001"/>' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">الإصدار</label>' +
+            '<input class="form-input" type="text" id="std-version" value="2015" placeholder="مثال: 2018"/>' +
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">اسم المعيار *</label>' +
+          '<input class="form-input" type="text" id="std-name" placeholder="مثال: إدارة الجودة"/>' +
+        '</div>' +
+
+        '<div>' +
+          '<label class="text-sm font-medium text-slate-700 block mb-1">نطاق التطبيق</label>' +
+          '<textarea class="form-input" id="std-scope" rows="3" placeholder="وصف نطاق وهدف هذا المعيار..."></textarea>' +
+        '</div>' +
+
+        '<div class="grid grid-cols-2 gap-4">' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-2">لون المعيار</label>' +
+            '<div class="flex gap-2 flex-wrap">' + colorPills + '</div>' +
+            '<input type="hidden" id="std-color" value="#3b82f6">' +
+          '</div>' +
+          '<div>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">أيقونة</label>' +
+            '<select class="form-input" id="std-icon">' +
+              '<option value="certificate">🏅 شهادة</option>' +
+              '<option value="award">🏆 جائزة</option>' +
+              '<option value="hard-hat">⛑️ سلامة</option>' +
+              '<option value="leaf">🌿 بيئة</option>' +
+              '<option value="shield-alt">🛡️ أمن</option>' +
+              '<option value="cogs">⚙️ عمليات</option>' +
+              '<option value="chart-line">📈 أداء</option>' +
+            '</select>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="flex gap-3 pt-3 border-t border-slate-100">' +
+          '<button onclick="submitNewStandard()" class="btn btn-primary flex-1">' +
+            '<i class="fas fa-plus ml-1"></i>إضافة المعيار</button>' +
+          '<button onclick="document.getElementById(\'modal-add-standard\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
+        '</div>' +
+      '</div>' +
+    '</div></div>';
+
+  document.body.insertAdjacentHTML('beforeend', html);
+  selectStdColor('#3b82f6');
+}
+
+function selectStdColor(color) {
+  document.getElementById('std-color').value = color;
+  document.querySelectorAll('[id^="std-col-"]').forEach(function(btn){
+    var isSelected = btn.style.background === color || btn.getAttribute('title') === color;
+    btn.style.borderColor = isSelected ? '#1e293b' : 'transparent';
+    btn.style.transform   = isSelected ? 'scale(1.2)' : 'scale(1)';
+  });
+}
+
+async function submitNewStandard() {
+  var code = (document.getElementById('std-code')?.value||'').trim().toUpperCase().replace(/\s+/g,'_');
+  var name = (document.getElementById('std-name')?.value||'').trim();
+  if (!code) { showToast('❌ يرجى إدخال كود المعيار', 'error'); return; }
+  if (!name) { showToast('❌ يرجى إدخال اسم المعيار', 'error'); return; }
+
+  var body = {
+    code, name,
+    version:         document.getElementById('std-version')?.value?.trim() || '2015',
+    scope:           document.getElementById('std-scope')?.value?.trim() || '',
+    color:           document.getElementById('std-color')?.value || '#3b82f6',
+    icon:            document.getElementById('std-icon')?.value || 'certificate',
+    procedures:      [],
+    key_clauses:     [],
+    unique_elements: [],
+  };
+
+  try {
+    await apiFetch('/api/iso/standards', 'POST', body);
+    document.getElementById('modal-add-standard')?.remove();
+    showToast('✅ تم إضافة المعيار بنجاح', 'success');
+    loadOrganization();
+    setTimeout(function(){ switchOrgTab('standards'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الإضافة', 'error'); }
+}
+
 function switchOrgTab(tab) {
   ['profile','objectives','standards','compare'].forEach(t => {
     document.getElementById('org-section-' + t)?.classList.toggle('hidden', t !== tab);
@@ -3532,36 +3849,173 @@ function switchOrgTab(tab) {
 
 function openOrgEdit() {
   const org = window.MOCK_DB?.org_profile || {};
+  document.getElementById('modal-org-edit')?.remove();
+
+  const certStds   = org.certified_standards || [];
+  const stdColors  = {ISO_9001:'#3b82f6', ISO_45001:'#059669', ISO_14001:'#d97706', ISO_27001:'#7c3aed'};
+  const stdNames   = {ISO_9001:'ISO 9001', ISO_45001:'ISO 45001', ISO_14001:'ISO 14001', ISO_27001:'ISO 27001'};
+
+  const stdCheckboxes = ['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(s => `
+    <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-xl border-2 transition-all"
+      id="org-std-lbl-${s}"
+      style="border-color:${certStds.includes(s)?stdColors[s]:'#e2e8f0'};background:${certStds.includes(s)?stdColors[s]+'15':'white'}">
+      <input type="checkbox" value="${s}" class="org-std-cb" ${certStds.includes(s)?'checked':''}
+        onchange="
+          var c=this.closest('label');
+          c.style.borderColor=this.checked?'${stdColors[s]}':'#e2e8f0';
+          c.style.background=this.checked?'${stdColors[s]}15':'white';
+        " style="accent-color:${stdColors[s]}"/>
+      <span class="text-xs font-bold" style="color:${stdColors[s]}">${stdNames[s]}</span>
+    </label>`).join('');
+
   const html = `<div class="modal open" id="modal-org-edit">
-    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 fade-in shadow-2xl overflow-y-auto max-h-[90vh]">
-      <div class="bg-gradient-to-r from-blue-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0">
-        <h3 class="text-white font-bold"><i class="fas fa-edit ml-2"></i>تعديل ملف المنظمة</h3>
+    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">
+      <div class="bg-gradient-to-r from-blue-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+        <h3 class="text-white font-bold text-lg"><i class="fas fa-building ml-2"></i>تعديل ملف المنظمة</h3>
         <button onclick="document.getElementById('modal-org-edit').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
       </div>
-      <div class="p-6 space-y-4">
-        ${[['name','اسم المنظمة (عربي)',org.name],['name_en','اسم المنظمة (إنجليزي)',org.name_en],['industry','القطاع',org.industry],['city','المدينة',org.city],['vision','الرؤية',org.vision,'textarea'],['mission','الرسالة',org.mission,'textarea']].map(([id,label,val,type]) =>
-          `<div><label class="text-sm font-medium text-slate-700 block mb-1">${label}</label>
-          ${type==='textarea' ? `<textarea class="form-input" id="org-edit-${id}" rows="2">${val||''}</textarea>` : `<input class="form-input" type="text" id="org-edit-${id}" value="${(val||'').replace(/"/g,'&quot;')}" />`}</div>`
-        ).join('')}
-        <div class="flex gap-3 pt-2 border-t">
-          <button onclick="submitOrgEdit()" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ</button>
-          <button onclick="document.getElementById('modal-org-edit').remove()" class="btn btn-danger px-5">إلغاء</button>
+      <div class="p-6 space-y-5">
+
+        <!-- الهوية -->
+        <div>
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+            <div class="w-6 h-6 rounded bg-blue-100 flex items-center justify-center"><i class="fas fa-id-card text-blue-600 text-xs"></i></div>
+            <span class="font-bold text-slate-700 text-sm">هوية المنظمة</span>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">اسم المنظمة (عربي) *</label>
+              <input class="form-input" type="text" id="org-edit-name" value="${(org.name||'').replace(/"/g,'&quot;')}" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">اسم المنظمة (إنجليزي)</label>
+              <input class="form-input" type="text" id="org-edit-name_en" value="${(org.name_en||'').replace(/"/g,'&quot;')}" />
+            </div>
+          </div>
+        </div>
+
+        <!-- المعلومات التفصيلية -->
+        <div>
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+            <div class="w-6 h-6 rounded bg-green-100 flex items-center justify-center"><i class="fas fa-info-circle text-green-600 text-xs"></i></div>
+            <span class="font-bold text-slate-700 text-sm">المعلومات التفصيلية</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">القطاع الصناعي</label>
+              <input class="form-input" type="text" id="org-edit-industry" value="${(org.industry||'').replace(/"/g,'&quot;')}" placeholder="مثال: صناعة نفطية" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">حجم المنظمة</label>
+              <select class="form-input" id="org-edit-size">
+                <option value="small"  ${org.size==='small' ?'selected':''}>صغيرة (أقل من 50)</option>
+                <option value="medium" ${org.size==='medium'?'selected':''}>متوسطة (50 - 250)</option>
+                <option value="large"  ${org.size==='large' ?'selected':''}>كبيرة (أكثر من 250)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">عدد الموظفين</label>
+              <input class="form-input" type="number" id="org-edit-employees" value="${org.employees||''}" min="1" placeholder="مثال: 450" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">سنة التأسيس</label>
+              <input class="form-input" type="number" id="org-edit-founded" value="${org.founded||''}" min="1900" max="2030" placeholder="مثال: 2010" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">المدينة</label>
+              <input class="form-input" type="text" id="org-edit-city" value="${(org.city||'').replace(/"/g,'&quot;')}" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">الدولة</label>
+              <input class="form-input" type="text" id="org-edit-country" value="${(org.country||'').replace(/"/g,'&quot;')}" />
+            </div>
+          </div>
+        </div>
+
+        <!-- الاعتماد -->
+        <div>
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+            <div class="w-6 h-6 rounded bg-yellow-100 flex items-center justify-center"><i class="fas fa-award text-yellow-600 text-xs"></i></div>
+            <span class="font-bold text-slate-700 text-sm">بيانات الاعتماد</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">جهة الاعتماد</label>
+              <input class="form-input" type="text" id="org-edit-cert_body" value="${(org.cert_body||'').replace(/"/g,'&quot;')}" placeholder="Bureau Veritas" />
+            </div>
+            <div></div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">تاريخ آخر مراجعة</label>
+              <input class="form-input" type="date" id="org-edit-last_audit" value="${org.last_audit||''}" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">تاريخ المراجعة القادمة</label>
+              <input class="form-input" type="date" id="org-edit-next_audit" value="${org.next_audit||''}" />
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="text-xs font-medium text-slate-600 block mb-2">معايير ISO المعتمدة</label>
+            <div class="flex flex-wrap gap-2">${stdCheckboxes}</div>
+          </div>
+        </div>
+
+        <!-- الرؤية والرسالة -->
+        <div>
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+            <div class="w-6 h-6 rounded bg-purple-100 flex items-center justify-center"><i class="fas fa-eye text-purple-600 text-xs"></i></div>
+            <span class="font-bold text-slate-700 text-sm">الرؤية والرسالة</span>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">الرؤية</label>
+              <textarea class="form-input" id="org-edit-vision" rows="2">${org.vision||''}</textarea>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 block mb-1">الرسالة</label>
+              <textarea class="form-input" id="org-edit-mission" rows="2">${org.mission||''}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-3 border-t border-slate-100">
+          <button onclick="submitOrgEdit()" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ جميع التعديلات</button>
+          <button onclick="document.getElementById('modal-org-edit').remove()" class="btn btn-danger px-6">إلغاء</button>
         </div>
       </div>
     </div>
   </div>`;
+
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
 async function submitOrgEdit() {
-  const body = {};
-  ['name','name_en','industry','city','vision','mission'].forEach(f => {
-    const el = document.getElementById('org-edit-' + f); if(el) body[f] = el.value.trim();
-  });
+  const name = document.getElementById('org-edit-name')?.value?.trim();
+  if (!name) { showToast('❌ يرجى إدخال اسم المنظمة', 'error'); return; }
+
+  const certStds = [...document.querySelectorAll('.org-std-cb:checked')].map(cb => cb.value);
+
+  const body = {
+    name,
+    name_en:              document.getElementById('org-edit-name_en')?.value?.trim(),
+    industry:             document.getElementById('org-edit-industry')?.value?.trim(),
+    size:                 document.getElementById('org-edit-size')?.value,
+    employees:            parseInt(document.getElementById('org-edit-employees')?.value) || 0,
+    founded:              document.getElementById('org-edit-founded')?.value?.trim(),
+    city:                 document.getElementById('org-edit-city')?.value?.trim(),
+    country:              document.getElementById('org-edit-country')?.value?.trim(),
+    cert_body:            document.getElementById('org-edit-cert_body')?.value?.trim(),
+    last_audit:           document.getElementById('org-edit-last_audit')?.value || null,
+    next_audit:           document.getElementById('org-edit-next_audit')?.value || null,
+    vision:               document.getElementById('org-edit-vision')?.value?.trim(),
+    mission:              document.getElementById('org-edit-mission')?.value?.trim(),
+    certified_standards:  certStds,
+  };
+
   await apiFetch('/api/org/profile', 'PUT', body);
   document.getElementById('modal-org-edit')?.remove();
-  showToast('✅ تم تحديث ملف المنظمة', 'success');
+  showToast('✅ تم تحديث ملف المنظمة بنجاح', 'success');
   loadOrganization();
+  switchOrgTab('profile');
 }
 
 function openObjectiveModal() {
