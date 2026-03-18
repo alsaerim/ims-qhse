@@ -373,44 +373,130 @@
 
     // Dashboard overview
     if (path === '/api/dashboard/overview') {
-      const openNCs = MOCK_DB.nonconformances.filter(n => n.status === 'open').length;
-      const criticalNCs = MOCK_DB.nonconformances.filter(n => n.type === 'critical').length;
-      const completedInsp = MOCK_DB.inspections.filter(i => i.status === 'completed');
-      const avgScore = completedInsp.length ? Math.round(completedInsp.reduce((s,i) => s+(i.compliance_score||0),0)/completedInsp.length*10)/10 : 0;
-      const closedRCA = MOCK_DB.rca_tickets.filter(r => r.status === 'closed').length;
-      const openRCA = MOCK_DB.rca_tickets.filter(r => r.status !== 'closed').length;
+      // ── Live calculations from all data ──
+      const db = MOCK_DB;
+      const now = new Date();
+
+      // Inspections
+      const completedInsp = db.inspections.filter(i => i.status === 'completed');
+      const overdueInsp   = db.inspections.filter(i => i.status === 'overdue' || (i.scheduled_at && new Date(i.scheduled_at) < now && i.status === 'pending'));
+      const avgScore      = completedInsp.length ? Math.round(completedInsp.reduce((s,i)=>s+(i.compliance_score||0),0)/completedInsp.length*10)/10 : 0;
+
+      // NCs
+      const openNCs     = db.nonconformances.filter(n=>n.status==='open').length;
+      const criticalNCs = db.nonconformances.filter(n=>n.type==='critical').length;
+      const overdueNCs  = db.nonconformances.filter(n=>n.due_date && new Date(n.due_date)<now && n.status!=='closed').length;
+
+      // RCA
+      const closedRCA = db.rca_tickets.filter(r=>r.status==='closed').length;
+      const openRCA   = db.rca_tickets.filter(r=>r.status!=='closed').length;
+      const closureRate = db.rca_tickets.length ? Math.round(closedRCA/db.rca_tickets.length*100) : 0;
+
+      // Risks (new)
+      const risks     = db.risks || [];
+      const getRpn    = r => r.probability * r.impact;
+      const critRisks = risks.filter(r=>getRpn(r)>=15).length;
+      const openRisks = risks.filter(r=>r.status==='open').length;
+      const mitigRisks= risks.filter(r=>r.status==='mitigated'||r.status==='closed').length;
+      const avgRpn    = risks.length ? Math.round(risks.reduce((s,r)=>s+getRpn(r),0)/risks.length) : 0;
+
+      // Annual plans (new)
+      const plans      = db.annual_plans || [];
+      const doneP      = plans.filter(p=>p.status==='completed').length;
+      const inProgP    = plans.filter(p=>p.status==='in_progress').length;
+      const delayedP   = plans.filter(p=>p.status==='delayed').length;
+      const avgProgress= plans.length ? Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length) : 0;
+
+      // KPIs
+      const kpis       = db.kpis || [];
+      const goodKpis   = kpis.filter(k=>k.status_level==='good').length;
+      const critKpis   = kpis.filter(k=>k.status_level==='critical').length;
+
+      // Lean wastes
+      const wastes     = db.lean_wastes || [];
+      const openWastes = wastes.filter(w=>w.status==='open').length;
+      const closedWastes=wastes.filter(w=>w.status==='closed').length;
+      const leanScore  = wastes.length ? Math.round(((closedWastes + wastes.filter(w=>w.status==='in_progress').length*0.5)/wastes.length)*100) : 0;
+
+      // ISO gap analysis (new)
+      const gap     = db.gap_analysis || {};
+      const gapStds = db.iso_standards.filter(s=>gap[s.code]);
+      const gapAvgs = gapStds.map(s=>{
+        const vals = Object.values(gap[s.code]?.clauses||{});
+        return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+      });
+      const overallGap = gapAvgs.length ? Math.round(gapAvgs.reduce((a,b)=>a+b,0)/gapAvgs.length) : 0;
+
+      // NC by category (live)
+      const ncByCat = {};
+      db.nonconformances.forEach(n => { ncByCat[n.category||'other'] = (ncByCat[n.category||'other']||0)+1; });
+      const ncByCatArr = Object.entries(ncByCat).map(([c,n])=>({category:c,count:n})).sort((a,b)=>b.count-a.count);
+
+      // ISO breakdown (live)
+      const isoBreakdown = db.iso_standards.map(s => {
+        const stInsp    = db.inspections.filter(i=>i.iso_standard===s.code && i.status==='completed');
+        const stAvg     = stInsp.length ? Math.round(stInsp.reduce((a,i)=>a+(i.compliance_score||0),0)/stInsp.length*10)/10 : 0;
+        const stPassed  = stInsp.filter(i=>i.result==='pass').length;
+        return {iso_standard:s.code, total_inspections:stInsp.length, avg_compliance:stAvg, passed:stPassed};
+      });
+
       return {
         summary:{
-          projects:{total:MOCK_DB.projects.length,active:MOCK_DB.projects.filter(p=>p.status==='active').length},
-          inspections:{total:MOCK_DB.inspections.length,completed:completedInsp.length,avg_score:avgScore,pending:MOCK_DB.inspections.filter(i=>i.status==='pending').length},
-          nonconformances:{total:MOCK_DB.nonconformances.length,open:openNCs,closed:MOCK_DB.nonconformances.filter(n=>n.status==='closed').length,critical:criticalNCs},
-          rca:{total:MOCK_DB.rca_tickets.length,open:openRCA,closed:closedRCA,closure_rate:MOCK_DB.rca_tickets.length?Math.round(closedRCA/MOCK_DB.rca_tickets.length*100):0}
+          projects:{total:db.projects.length, active:db.projects.filter(p=>p.status==='active').length},
+          inspections:{total:db.inspections.length, completed:completedInsp.length, avg_score:avgScore, pending:db.inspections.filter(i=>i.status==='pending').length, overdue:overdueInsp.length},
+          nonconformances:{total:db.nonconformances.length, open:openNCs, closed:db.nonconformances.filter(n=>n.status==='closed').length, critical:criticalNCs, overdue:overdueNCs},
+          rca:{total:db.rca_tickets.length, open:openRCA, closed:closedRCA, closure_rate:closureRate},
+          risks:{total:risks.length, critical:critRisks, open:openRisks, mitigated:mitigRisks, avg_rpn:avgRpn},
+          plans:{total:plans.length, completed:doneP, in_progress:inProgP, delayed:delayedP, avg_progress:avgProgress},
+          kpis:{total:kpis.length, good:goodKpis, critical:critKpis},
+          lean:{total:wastes.length, open:openWastes, closed:closedWastes, score:leanScore},
+          gap:{overall:overallGap, stds:gapAvgs.length},
         },
-        recent_ncs:MOCK_DB.nonconformances.slice(0,5),
-        notifications:MOCK_DB.notifications.filter(n=>!n.is_read),
+        recent_ncs:db.nonconformances.slice(0,5),
+        recent_risks:(risks||[]).filter(r=>r.status==='open').slice(0,3),
+        recent_plans:(plans||[]).filter(p=>p.status==='in_progress').slice(0,3),
+        notifications:db.notifications.filter(n=>!n.is_read),
         charts:{
           compliance_trend:[
-            {month:'2025-09',avg_score:89.5,count:8},{month:'2025-10',avg_score:91.2,count:10},
-            {month:'2025-11',avg_score:87.8,count:9},{month:'2025-12',avg_score:93.4,count:12},
-            {month:'2026-01',avg_score:90.1,count:11},{month:'2026-02',avg_score:91.8,count:7}
+            {month:'2025-09',avg_score:89.5},{month:'2025-10',avg_score:91.2},
+            {month:'2025-11',avg_score:87.8},{month:'2025-12',avg_score:93.4},
+            {month:'2026-01',avg_score:90.1},{month:'2026-02',avg_score:avgScore||91.8}
           ],
-          nc_by_category:[
-            {category:'safety',count:8},{category:'quality',count:5},{category:'documentation',count:4},
-            {category:'environmental',count:3},{category:'process',count:3},{category:'equipment',count:2}
-          ],
-          iso_breakdown:[
-            {iso_standard:'ISO_9001',total_inspections:12,avg_compliance:88.5,passed:9},
-            {iso_standard:'ISO_45001',total_inspections:18,avg_compliance:91.2,passed:16},
-            {iso_standard:'ISO_14001',total_inspections:8,avg_compliance:85.0,passed:6},
-            {iso_standard:'MULTI',total_inspections:4,avg_compliance:93.0,passed:4}
-          ]
+          nc_by_category: ncByCatArr,
+          iso_breakdown:  isoBreakdown,
         }
       };
     }
 
     // Dashboard map
     if (path === '/api/dashboard/map') {
-      return MOCK_DB.projects.map(p => ({...p,inspection_count:Math.floor(Math.random()*10)+5,open_nc_count:p.open_ncs}));
+      return MOCK_DB.projects.map(p => {
+        const pInsps   = MOCK_DB.inspections.filter(i => i.project_id === p.id);
+        const pComp    = pInsps.filter(i => i.status === 'completed');
+        const avgComp  = pComp.length ? Math.round(pComp.reduce((s,i)=>s+(i.compliance_score||0),0)/pComp.length) : (p.avg_compliance||0);
+        const pNCs     = MOCK_DB.nonconformances.filter(n => n.project_id === p.id);
+        const openNCs  = pNCs.filter(n => n.status !== 'closed').length;
+        const critNCs  = pNCs.filter(n => n.type === 'critical').length;
+        const overdueNCs = pNCs.filter(n => n.due_date && new Date(n.due_date) < new Date() && n.status !== 'closed').length;
+        const pRisks   = (MOCK_DB.risks||[]).filter(r => r.project_id === p.id).length;
+        const pPlans   = (MOCK_DB.annual_plans||[]).filter(pl => pl.project_id === p.id).length;
+        const pRCAs    = MOCK_DB.rca_tickets.filter(r => r.project_id === p.id);
+        const openRCAs = pRCAs.filter(r => r.status !== 'closed').length;
+        return {
+          ...p,
+          avg_compliance:   avgComp,
+          open_nc_count:    openNCs,
+          critical_nc_count:critNCs,
+          overdue_nc_count: overdueNCs,
+          total_inspections:pInsps.length,
+          completed_inspections: pComp.length,
+          open_rca_count:   openRCAs,
+          risks_count:      pRisks,
+          plans_count:      pPlans,
+          recent_ncs:       pNCs.filter(n=>n.status!=='closed').slice(0,3),
+          recent_inspections: pComp.slice(-2).reverse(),
+        };
+      });
     }
 
     // Dashboard notifications
@@ -1202,75 +1288,175 @@ function navigate(page) {
 // ── Dashboard ────────────────────────────────
 async function loadDashboard() {
   const data = await apiFetch('/api/dashboard/overview');
-  const s = data.summary;
-  
-  document.getElementById('app-content').innerHTML = `
-  <div class="fade-in space-y-6">
-    <!-- Stats Row -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      ${statCard('المشاريع النشطة', s.projects?.active || 0, 'building', '#3b82f6', 'من إجمالي ' + (s.projects?.total || 0))}
-      ${statCard('معدل الامتثال', (s.inspections?.avg_score || 0) + '%', 'check-circle', s.inspections?.avg_score >= 90 ? '#059669' : '#d97706', s.inspections?.completed + ' تفتيش مكتمل')}
-      ${statCard('عدم المطابقة المفتوحة', s.nonconformances?.open || 0, 'exclamation-triangle', '#dc2626', s.nonconformances?.critical + ' حرجة')}
-      ${statCard('معدل إغلاق RCA', (s.rca?.closure_rate || 0) + '%', 'search', '#7c3aed', s.rca?.open + ' مفتوحة')}
-    </div>
+  const s    = data.summary;
+  const org  = window.MOCK_DB?.org_profile || {};
 
-    <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Compliance Trend -->
-      <div class="card p-5 lg:col-span-2">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="font-bold text-slate-800">📈 اتجاه الامتثال - آخر 6 أشهر</h3>
-          <div class="flex gap-2">
-            <span class="badge badge-blue">ISO 9001</span>
-            <span class="badge badge-green">ISO 45001</span>
+  document.getElementById('app-content').innerHTML = `
+  <div class="fade-in space-y-5">
+
+    <!-- Welcome Banner -->
+    <div class="card p-5 overflow-hidden" style="background:linear-gradient(135deg,#1e3a8a,#1e40af,#2563eb);border:none">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <div class="text-blue-200 text-xs mb-1">لوحة التحكم الرئيسية — ${new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
+          <h2 class="text-xl font-black text-white">${org.name || 'نظام IMS QHSE'}</h2>
+          <p class="text-blue-200 text-sm mt-1">${org.industry||''} · ${org.city||''} · ${(org.certified_standards||[]).map(s=>s.replace('_',' ')).join(' · ')}</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+          <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
+            <div class="text-2xl font-black text-white">${s.inspections?.avg_score||0}%</div>
+            <div class="text-blue-200 text-xs">معدل الامتثال</div>
+          </div>
+          <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
+            <div class="text-2xl font-black text-white">${s.gap?.overall||0}%</div>
+            <div class="text-blue-200 text-xs">متوسط الفجوة</div>
+          </div>
+          <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
+            <div class="text-2xl font-black text-white">${s.rca?.closure_rate||0}%</div>
+            <div class="text-blue-200 text-xs">إغلاق RCA</div>
           </div>
         </div>
-        <canvas id="chart-trend" height="120"></canvas>
-      </div>
-      
-      <!-- ISO Breakdown -->
-      <div class="card p-5">
-        <h3 class="font-bold text-slate-800 mb-4">📊 توزيع المعايير</h3>
-        <canvas id="chart-iso" height="180"></canvas>
       </div>
     </div>
 
-    <!-- NC Pareto + Recent NCs -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Pareto Chart -->
+    <!-- Row 1: Core KPIs (8 cards) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${statCard('المشاريع النشطة',    s.projects?.active||0,           'building',           '#3b82f6', 'من ' + (s.projects?.total||0) + ' إجمالي')}
+      ${statCard('معدل الامتثال',      (s.inspections?.avg_score||0)+'%','check-circle',       s.inspections?.avg_score>=90?'#059669':'#d97706', (s.inspections?.completed||0) + ' تفتيش مكتمل')}
+      ${statCard('NC مفتوحة',          s.nonconformances?.open||0,       'exclamation-triangle','#dc2626', (s.nonconformances?.critical||0) + ' حرجة · ' + (s.nonconformances?.overdue||0) + ' متأخرة')}
+      ${statCard('إغلاق RCA',          (s.rca?.closure_rate||0)+'%',     'search',             '#7c3aed', (s.rca?.open||0) + ' مفتوحة · ' + (s.rca?.closed||0) + ' مغلقة')}
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${statCard('المخاطر الحرجة',     s.risks?.critical||0,             'shield-alt',         '#dc2626', 'من ' + (s.risks?.total||0) + ' إجمالي · RPN متوسط: ' + (s.risks?.avg_rpn||0))}
+      ${statCard('الخطة السنوية',      (s.plans?.avg_progress||0)+'%',   'calendar-alt',       '#059669', (s.plans?.completed||0) + ' مكتملة · ' + (s.plans?.in_progress||0) + ' جارية')}
+      ${statCard('مؤشر Lean',          (s.lean?.score||0)+'%',           'recycle',            '#0891b2', (s.lean?.closed||0) + ' هدر معالج من ' + (s.lean?.total||0))}
+      ${statCard('مؤشرات الأداء',      (s.kpis?.good||0)+'/' +(s.kpis?.total||0),'chart-line', '#059669', (s.kpis?.critical||0) + ' بحاجة تدخل')}
+    </div>
+
+    <!-- Row 2: Chart + ISO Gap -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div class="card p-5 lg:col-span-2">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-slate-800"><i class="fas fa-chart-line text-blue-500 ml-2"></i>اتجاه الامتثال — آخر 6 أشهر</h3>
+        </div>
+        <canvas id="chart-trend" height="110"></canvas>
+      </div>
       <div class="card p-5">
-        <h3 class="font-bold text-slate-800 mb-4">📉 مخطط Pareto - فئات عدم المطابقة</h3>
+        <h3 class="font-bold text-slate-800 mb-3"><i class="fas fa-certificate text-purple-500 ml-2"></i>توزيع المعايير</h3>
+        <canvas id="chart-iso" height="170"></canvas>
+      </div>
+    </div>
+
+    <!-- Row 3: ISO Cards (dynamic from standards) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${(window.MOCK_DB?.iso_standards||[]).map(std => {
+        const clr   = std.color || {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'}[std.code] || '#64748b';
+        const isoD  = (data.charts?.iso_breakdown||[]).find(b=>b.iso_standard===std.code);
+        const score = isoD?.avg_compliance || 0;
+        const gap   = window.MOCK_DB?.gap_analysis?.[std.code];
+        const gapVals = gap ? Object.values(gap.clauses||{}) : [];
+        const gapAvg  = gapVals.length ? Math.round(gapVals.reduce((a,b)=>a+b,0)/gapVals.length) : null;
+        const isCert  = (org.certified_standards||[]).includes(std.code);
+        return `<div class="card p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${clr}20">
+              <i class="fas fa-${std.icon||'certificate'} text-sm" style="color:${clr}"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="font-bold text-sm text-slate-800 truncate">${std.code.replace('_',' ')}</div>
+              <div class="text-xs" style="color:${clr}">${std.name}</div>
+            </div>
+            ${isCert ? '<span class="badge badge-green text-xs flex-shrink-0">✅</span>' : '<span class="badge badge-gray text-xs flex-shrink-0">⏳</span>'}
+          </div>
+          ${score > 0 ? `
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span>التفتيش</span><span style="color:${clr}">${score}%</span>
+          </div>
+          <div class="kpi-bar mb-2"><div class="kpi-fill" style="width:${score}%;background:${clr}"></div></div>` : ''}
+          ${gapAvg !== null ? `
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span>تحليل الفجوة</span><span style="color:${gapAvg>=80?clr:'#dc2626'}">${gapAvg}%</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-fill" style="width:${gapAvg}%;background:${gapAvg>=80?clr:'#dc2626'}"></div></div>` : ''}
+          <div class="text-xs text-slate-400 mt-2">${isoD?.total_inspections||0} تفتيش · ${isoD?.passed||0} ناجح</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Row 4: NC Pareto + Risks + Plans -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- Pareto -->
+      <div class="card p-5">
+        <h3 class="font-bold text-slate-800 mb-4"><i class="fas fa-chart-bar text-orange-500 ml-2"></i>Pareto — NC حسب الفئة</h3>
         <canvas id="chart-pareto" height="160"></canvas>
       </div>
 
-      <!-- Recent NCs -->
+      <!-- Top Risks -->
       <div class="card p-5">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="font-bold text-slate-800">⚠️ أحدث حالات NC</h3>
-          <button onclick="navigate('nc')" class="text-blue-600 text-sm hover:underline">عرض الكل</button>
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-triangle text-red-500 ml-2"></i>أعلى المخاطر</h3>
+          <button onclick="navigate('org'); setTimeout(()=>switchOrgTab('risks'),300)" class="text-xs text-blue-600 hover:underline">عرض الكل</button>
         </div>
-        <div class="space-y-3">
-          ${(data.recent_ncs || []).map(nc => `
-            <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-              <span class="badge ${nc.type === 'critical' ? 'badge-red' : nc.type === 'major' ? 'badge-yellow' : 'badge-blue'} mt-0.5">${ncTypeAr(nc.type)}</span>
+        <div class="space-y-2">
+          ${(data.recent_risks||[]).map(r => {
+            const rpn = r.probability * r.impact;
+            const clr = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#3b82f6';
+            const owners = Array.isArray(r.owners)?r.owners:(r.owner?[r.owner]:[]);
+            return `<div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-xs" style="background:${clr}">${rpn}</div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-slate-800 truncate">${nc.title}</p>
-                <p class="text-xs text-slate-500">${nc.project_name} · ${timeAgo(nc.detected_at)}</p>
+                <div class="text-sm font-medium text-slate-800 truncate">${r.title}</div>
+                <div class="text-xs text-slate-400">${owners.join('، ')||'-'} · ${r.iso?.replace('_',' ')||'—'}</div>
               </div>
-              <span class="badge ${ncStatusBadge(nc.status)}">${ncStatusAr(nc.status)}</span>
-            </div>
-          `).join('') || '<p class="text-slate-400 text-center py-4">لا توجد بيانات</p>'}
+            </div>`;
+          }).join('') || '<div class="text-center py-4 text-slate-400 text-sm">لا توجد مخاطر مفتوحة</div>'}
+        </div>
+      </div>
+
+      <!-- Active Plans -->
+      <div class="card p-5">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-slate-800"><i class="fas fa-calendar-alt text-blue-500 ml-2"></i>المبادرات الجارية</h3>
+          <button onclick="navigate('org'); setTimeout(()=>switchOrgTab('annual'),300)" class="text-xs text-blue-600 hover:underline">عرض الكل</button>
+        </div>
+        <div class="space-y-2">
+          ${(data.recent_plans||[]).map(p => {
+            const clr = {completed:'#059669',in_progress:'#d97706',planned:'#3b82f6',delayed:'#dc2626'}[p.status]||'#64748b';
+            const owners = Array.isArray(p.owners)?p.owners:(p.owner?[p.owner]:[]);
+            return `<div class="p-3 bg-slate-50 rounded-xl">
+              <div class="text-sm font-medium text-slate-800 truncate mb-1">${p.title}</div>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 kpi-bar"><div class="kpi-fill" style="width:${p.progress}%;background:${clr}"></div></div>
+                <span class="text-xs font-bold flex-shrink-0" style="color:${clr}">${p.progress}%</span>
+              </div>
+              <div class="text-xs text-slate-400 mt-1">${owners.join('، ')||'-'}</div>
+            </div>`;
+          }).join('') || '<div class="text-center py-4 text-slate-400 text-sm">لا توجد مبادرات جارية</div>'}
         </div>
       </div>
     </div>
 
-    <!-- ISO Compliance Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      ${isoCard('ISO 9001', 'الجودة', data.charts?.iso_breakdown, '#3b82f6')}
-      ${isoCard('ISO 45001', 'السلامة المهنية', data.charts?.iso_breakdown, '#059669')}
-      ${isoCard('ISO 14001', 'البيئة', data.charts?.iso_breakdown, '#d97706')}
-      ${isoCard('ISO 27001', 'أمن المعلومات', data.charts?.iso_breakdown, '#7c3aed')}
+    <!-- Row 5: Recent NCs -->
+    <div class="card p-5">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-circle text-red-400 ml-2"></i>أحدث حالات عدم المطابقة</h3>
+        <button onclick="navigate('nc')" class="text-blue-600 text-sm hover:underline">عرض الكل</button>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        ${(data.recent_ncs||[]).map(nc => `
+          <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl hover:bg-white transition-colors cursor-pointer" onclick="navigate('nc')">
+            <span class="badge ${nc.type==='critical'?'badge-red':nc.type==='major'?'badge-yellow':'badge-blue'} mt-0.5 flex-shrink-0">${ncTypeAr(nc.type)}</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-slate-800 truncate">${nc.title}</p>
+              <p class="text-xs text-slate-500">${nc.project_name} · ${timeAgo(nc.detected_at)}</p>
+            </div>
+            <span class="badge ${ncStatusBadge(nc.status)} flex-shrink-0">${ncStatusAr(nc.status)}</span>
+          </div>
+        `).join('') || '<p class="text-slate-400 text-center py-4 col-span-2">لا توجد بيانات</p>'}
+      </div>
     </div>
+
   </div>`;
 
   // Render Charts
@@ -6110,42 +6296,309 @@ async function deleteObjective(id) {
 
 // ── Map ───────────────────────────────────────
 async function loadMap() {
-  const mapData = await apiFetch('/api/dashboard/map');
+  const projects = await apiFetch('/api/dashboard/map');
+  const db       = window.MOCK_DB || {};
+  const stds     = db.iso_standards || [];
+  const stdColors= {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+
+  const clrFor  = v => v>=90?'#059669':v>=75?'#d97706':'#dc2626';
+  const lblFor  = v => v>=90?'ممتاز':v>=75?'جيد':'يحتاج تحسين';
+
+  // ── Summary ──
+  const activeP   = projects.filter(p=>p.status==='active');
+  const totalComp = projects.length ? Math.round(projects.reduce((s,p)=>s+(p.avg_compliance||0),0)/projects.length) : 0;
+  const totalOpenNC = projects.reduce((s,p)=>s+(p.open_nc_count||0),0);
+  const totalInsp   = projects.reduce((s,p)=>s+(p.total_inspections||0),0);
+  const totalCritNC = projects.reduce((s,p)=>s+(p.critical_nc_count||0),0);
+
+  // ── SVG pins: KSA map  (lon 36-56 → x 30-470 / lat 32-16 → y 20-500) ──
+  const toX = lon => Math.round(((lon-36)/(56-36))*440+30);
+  const toY = lat => Math.round(((32-lat)/(32-16))*480+20);
+
+  // Active project selected state
+  let selectedId = projects[0]?.id || '';
+
+  const buildPins = (selId) => projects.map(p => {
+    const x   = toX(p.longitude||46);
+    const y   = toY(p.latitude||24);
+    const clr = clrFor(p.avg_compliance||0);
+    const sel = p.id === selId;
+    const r   = p.status==='active' ? 18 : 13;
+    return `<g class="map-pin" data-id="${p.id}" onclick="selectMapProject('${p.id}')" style="cursor:pointer">
+      <circle cx="${x}" cy="${y}" r="${r+6}" fill="${clr}" opacity="${sel?0.25:0.1}" class="pin-pulse"/>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="${clr}" stroke="white" stroke-width="${sel?3:2}" filter="${sel?'drop-shadow(0 0 6px '+clr+')':''}"/>
+      <text x="${x}" y="${y+1}" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="8.5" font-weight="bold" font-family="Arial">${p.avg_compliance||0}%</text>
+      <text x="${x}" y="${y+r+11}" text-anchor="middle" fill="#1e293b" font-size="8" font-family="Arial" font-weight="${sel?'bold':'normal'}">${p.city}</text>
+      ${(p.critical_nc_count||0)>0?`<circle cx="${x+r-1}" cy="${y-r+1}" r="6" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+        <text x="${x+r-1}" y="${y-r+2}" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="6.5" font-weight="bold">${p.critical_nc_count}</text>`:''}
+    </g>`;
+  }).join('');
+
+  const buildDetail = (p) => {
+    if (!p) return '<div class="p-6 text-center text-slate-400">اختر مشروعاً</div>';
+    const clr  = clrFor(p.avg_compliance||0);
+    const isos = stds.filter(s=>p['iso_'+s.code.split('_')[1]?.toLowerCase()]||p[s.code]);
+    const isoApplied = [
+      p.iso_9001  && {code:'ISO_9001', name:'الجودة'},
+      p.iso_45001 && {code:'ISO_45001',name:'السلامة'},
+      p.iso_14001 && {code:'ISO_14001',name:'البيئة'},
+    ].filter(Boolean);
+
+    return `
+      <div class="flex items-start gap-3 mb-4">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${clr}15">
+          <i class="fas fa-${p.status==='active'?'hard-hat':'flag-checkered'} text-lg" style="color:${clr}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-bold text-slate-800 text-sm leading-tight">${p.name}</div>
+          <div class="text-xs text-slate-500 mt-0.5">${p.client_name||''} · ${p.city}</div>
+          <div class="flex gap-1 mt-1 flex-wrap">
+            <span class="badge ${p.status==='active'?'badge-green':'badge-gray'} text-xs">${p.status==='active'?'نشط':'مكتمل'}</span>
+            ${isoApplied.map(s=>`<span class="badge badge-blue text-xs">${s.code.replace('_',' ')}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl text-center mb-4" style="background:${clr}10;border:1px solid ${clr}20">
+        <div class="text-4xl font-black" style="color:${clr}">${p.avg_compliance||0}%</div>
+        <div class="text-xs text-slate-500 mt-1">معدل الامتثال · ${lblFor(p.avg_compliance||0)}</div>
+        <div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${clr}"></div></div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        ${[
+          {l:'تفتيش',   v:p.total_inspections||0,   sub:(p.completed_inspections||0)+' مكتمل', c:'#3b82f6'},
+          {l:'NC مفتوحة', v:p.open_nc_count||0,      sub:(p.critical_nc_count||0)+' حرجة',   c:(p.open_nc_count||0)>0?'#dc2626':'#059669'},
+          {l:'RCA مفتوحة',v:p.open_rca_count||0,     sub:'بحاجة متابعة',                      c:(p.open_rca_count||0)>0?'#d97706':'#059669'},
+        ].map(k=>`<div class="p-2 rounded-xl text-center" style="background:${k.c}10">
+          <div class="text-xl font-black" style="color:${k.c}">${k.v}</div>
+          <div class="text-xs font-bold" style="color:${k.c}">${k.l}</div>
+          <div class="text-xs text-slate-400">${k.sub}</div>
+        </div>`).join('')}
+      </div>
+
+      ${(p.recent_ncs||[]).length ? `
+      <div class="mb-3">
+        <div class="text-xs font-bold text-slate-600 mb-2"><i class="fas fa-exclamation-triangle text-red-400 ml-1"></i>NC المفتوحة</div>
+        <div class="space-y-1.5">
+          ${(p.recent_ncs||[]).map(n=>`
+          <div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg">
+            <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'} text-xs flex-shrink-0">${ncTypeAr(n.type)}</span>
+            <span class="text-xs text-slate-700 truncate flex-1">${n.title}</span>
+          </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${(p.recent_inspections||[]).length ? `
+      <div>
+        <div class="text-xs font-bold text-slate-600 mb-2"><i class="fas fa-clipboard-check text-green-400 ml-1"></i>آخر التفتيشات</div>
+        <div class="space-y-1.5">
+          ${(p.recent_inspections||[]).map(i=>`
+          <div class="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
+            <span class="text-xs font-bold flex-shrink-0" style="color:${clrFor(i.compliance_score||0)}">${i.compliance_score||0}%</span>
+            <span class="text-xs text-slate-700 truncate flex-1">${i.title}</span>
+          </div>`).join('')}
+        </div>
+      </div>` : ''}`;
+  };
+
   document.getElementById('app-content').innerHTML = `
-  <div class="fade-in grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 card p-5">
-      <h3 class="font-bold text-slate-800 mb-4"><i class="fas fa-map-marked-alt text-blue-500 mr-2"></i>خارطة المشاريع التفاعلية</h3>
-      <div class="rounded-xl overflow-hidden" style="height:420px;background:linear-gradient(135deg,#e0f2fe,#ddd6fe)">
-        <div class="h-full flex items-center justify-center flex-col gap-4">
-          <div class="text-6xl">🗺️</div>
-          <p class="text-slate-600 font-medium">خارطة Geofencing التفاعلية</p>
-          <p class="text-sm text-slate-500">تتطلب تكامل Mapbox/Leaflet.js</p>
-          <div class="grid grid-cols-2 gap-3 mt-2">
-            ${mapData.slice(0,4).map(p => `
-            <div class="bg-white rounded-xl p-3 shadow-sm text-center">
-              <div class="font-bold text-sm text-slate-800">${p.name.substring(0,20)}</div>
-              <div class="text-xs text-slate-500">${p.city || '-'}</div>
-              <div class="text-lg font-bold ${(p.avg_compliance||0) >= 90 ? 'text-green-600' : 'text-yellow-600'}">${p.avg_compliance || 0}%</div>
-              ${p.open_nc_count > 0 ? `<span class="badge badge-red text-xs">${p.open_nc_count} NC مفتوحة</span>` : '<span class="badge badge-green text-xs">✓ ممتاز</span>'}
+  <div class="fade-in space-y-5">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <h2 class="text-xl font-black text-slate-800"><i class="fas fa-map-marked-alt text-blue-500 ml-2"></i>خارطة المشاريع</h2>
+        <p class="text-sm text-slate-500 mt-1">توزيع المشاريع جغرافياً مع مؤشرات الأداء الحية من جميع الصفحات</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded-xl px-3 py-2">
+        <i class="fas fa-map-pin"></i>
+        للخرائط التفاعلية الحقيقية يرجى تفعيل <b>Mapbox API</b>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      ${[
+        {l:'إجمالي المشاريع', v:projects.length,   sub:activeP.length+' نشط',         c:'#3b82f6', i:'building'},
+        {l:'متوسط الامتثال',  v:totalComp+'%',     sub:lblFor(totalComp),              c:clrFor(totalComp), i:'check-circle'},
+        {l:'NC مفتوحة',       v:totalOpenNC,        sub:totalCritNC+' حرجة',           c:'#dc2626', i:'exclamation-triangle'},
+        {l:'إجمالي التفتيش',  v:totalInsp,          sub:'عبر كل المشاريع',             c:'#7c3aed', i:'clipboard-check'},
+        {l:'مشاريع مكتملة',  v:projects.length-activeP.length, sub:'من '+projects.length, c:'#059669', i:'flag-checkered'},
+      ].map(k=>`<div class="stat-card">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm text-slate-500 mb-1">${k.l}</p>
+            <p class="text-2xl font-bold" style="color:${k.c}">${k.v}</p>
+            <p class="text-xs text-slate-400 mt-1">${k.sub}</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${k.c}20">
+            <i class="fas fa-${k.i}" style="color:${k.c}"></i>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Map + Detail + Rank -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- SVG Map -->
+      <div class="lg:col-span-2 card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-globe-asia text-blue-400 ml-2"></i>المملكة العربية السعودية</h3>
+          <div class="flex gap-3">
+            <span class="flex items-center gap-1 text-xs"><span class="w-3 h-3 rounded-full inline-block" style="background:#059669"></span>≥90%</span>
+            <span class="flex items-center gap-1 text-xs"><span class="w-3 h-3 rounded-full inline-block" style="background:#d97706"></span>75-89%</span>
+            <span class="flex items-center gap-1 text-xs"><span class="w-3 h-3 rounded-full inline-block" style="background:#dc2626"></span>&lt;75%</span>
+          </div>
+        </div>
+        <div style="position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(160deg,#dbeafe 0%,#e0f2fe 50%,#ede9fe 100%)">
+          <svg id="ksa-map-svg" viewBox="0 0 500 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+            <defs>
+              <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/></filter>
+            </defs>
+            <!-- KSA shape -->
+            <path d="M75,55 L130,42 L195,36 L275,30 L348,38 L418,58 L458,98 L468,148
+                     L452,195 L442,255 L424,308 L402,358 L372,398 L342,428 L300,458
+                     L262,478 L242,488 L222,478 L198,458 L158,428 L118,390
+                     L78,342 L50,282 L42,222 L47,162 L62,102 Z"
+              fill="white" fill-opacity="0.7" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+            <!-- Region labels -->
+            <text x="195" y="135" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Arial" font-style="italic">نجد</text>
+            <text x="360" y="195" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Arial">المنطقة الشرقية</text>
+            <text x="95" y="210" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Arial">الحجاز</text>
+            <text x="150" y="410" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Arial">جازان / عسير</text>
+            <text x="350" y="380" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Arial">نجران</text>
+            <!-- Grid -->
+            <line x1="0" y1="260" x2="500" y2="260" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="5,5"/>
+            <line x1="250" y1="0" x2="250" y2="520" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="5,5"/>
+            <!-- Pins -->
+            <g id="map-pins">${buildPins(selectedId)}</g>
+          </svg>
+        </div>
+        <p class="text-xs text-slate-400 mt-2 text-center">
+          <i class="fas fa-hand-pointer ml-1"></i>انقر على أي موقع لعرض تفاصيله · الأرقام = معدل الامتثال · الدائرة الحمراء = NC حرجة
+        </p>
+      </div>
+
+      <!-- Right column: Detail + Rank -->
+      <div class="flex flex-col gap-4">
+
+        <!-- Selected project detail -->
+        <div class="card p-4 flex-1" id="map-detail-card">
+          ${buildDetail(projects.find(p=>p.id===selectedId))}
+        </div>
+
+        <!-- Rank list -->
+        <div class="card p-4">
+          <h4 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-trophy text-yellow-400 ml-1"></i>الترتيب بالامتثال</h4>
+          <div class="space-y-2" id="map-rank-list">
+            ${projects.slice().sort((a,b)=>(b.avg_compliance||0)-(a.avg_compliance||0)).map((p,i)=>`
+            <div class="flex items-center gap-2 py-1.5 px-2 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors ${p.id===selectedId?'bg-blue-50':''}"
+                 id="rank-row-${p.id}" onclick="selectMapProject('${p.id}')">
+              <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 text-white"
+                style="background:${i===0?'#f59e0b':i===1?'#94a3b8':i===2?'#b45309':clrFor(p.avg_compliance||0)}">${i+1}</span>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-slate-800 truncate">${p.city}</div>
+                <div class="kpi-bar mt-0.5" style="height:4px">
+                  <div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${clrFor(p.avg_compliance||0)}"></div>
+                </div>
+              </div>
+              <span class="text-xs font-black flex-shrink-0" style="color:${clrFor(p.avg_compliance||0)}">${p.avg_compliance||0}%</span>
+              ${(p.open_nc_count||0)>0?`<span class="badge badge-red text-xs">${p.open_nc_count}</span>`:''}
             </div>`).join('')}
           </div>
         </div>
       </div>
     </div>
-    <div class="space-y-4">
-      <div class="card p-4">
-        <h4 class="font-bold text-slate-800 mb-3">ترتيب المواقع بالامتثال</h4>
-        ${mapData.sort((a,b) => (b.avg_compliance||0) - (a.avg_compliance||0)).map((p,i) => `
-        <div class="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
-          <span class="w-6 h-6 rounded-full ${i===0?'bg-yellow-100 text-yellow-700':i===1?'bg-slate-100 text-slate-600':'bg-orange-100 text-orange-700'} flex items-center justify-center text-xs font-bold">${i+1}</span>
-          <div class="flex-1">
-            <div class="text-sm font-medium text-slate-800">${p.name.substring(0,25)}</div>
-            <div class="kpi-bar mt-1"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#059669':'#d97706'}"></div></div>
-          </div>
-          <span class="font-bold text-sm ${(p.avg_compliance||0)>=90?'text-green-600':'text-yellow-600'}">${p.avg_compliance||0}%</span>
-        </div>`).join('')}
+
+    <!-- All projects cards grid -->
+    <div>
+      <h3 class="font-bold text-slate-800 mb-3"><i class="fas fa-th-large text-slate-400 ml-2"></i>بطاقات المشاريع التفصيلية</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="all-project-cards">
+        ${projects.map(p => buildProjectCard(p, clrFor)).join('')}
       </div>
     </div>
+
+  </div>`;
+
+  // Store for re-render
+  window._mapProjects  = projects;
+  window._mapBuildPins = buildPins;
+  window._mapBuildDetail = buildDetail;
+  window._mapClrFor    = clrFor;
+}
+
+function selectMapProject(id) {
+  const projects    = window._mapProjects || [];
+  const buildPins   = window._mapBuildPins;
+  const buildDetail = window._mapBuildDetail;
+  const clrFor      = window._mapClrFor || (v=>v>=90?'#059669':v>=75?'#d97706':'#dc2626');
+  const p           = projects.find(x=>x.id===id);
+  if (!p) return;
+
+  // Update pins SVG
+  const pinsEl = document.getElementById('map-pins');
+  if (pinsEl && buildPins) pinsEl.innerHTML = buildPins(id);
+
+  // Update detail card
+  const detail = document.getElementById('map-detail-card');
+  if (detail && buildDetail) detail.innerHTML = buildDetail(p);
+
+  // Update rank highlight
+  document.querySelectorAll('[id^="rank-row-"]').forEach(el => {
+    el.classList.toggle('bg-blue-50', el.id === 'rank-row-'+id);
+  });
+
+  // Highlight project card
+  document.querySelectorAll('[id^="proj-card-"]').forEach(el => {
+    el.style.boxShadow = el.id === 'proj-card-'+id ? '0 0 0 2px '+clrFor(p.avg_compliance||0) : '';
+  });
+}
+
+function buildProjectCard(p, clrFor) {
+  const clr     = clrFor(p.avg_compliance||0);
+  const isoAppl = [p.iso_9001&&'ISO 9001', p.iso_45001&&'ISO 45001', p.iso_14001&&'ISO 14001'].filter(Boolean);
+  return `<div class="card p-5 hover:shadow-md transition-all cursor-pointer" id="proj-card-${p.id}"
+       style="border-right:4px solid ${clr}" onclick="selectMapProject('${p.id}')">
+    <div class="flex items-start gap-3 mb-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${clr}15">
+        <i class="fas fa-${p.status==='active'?'hard-hat':'flag-checkered'}" style="color:${clr}"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="font-bold text-slate-800 text-sm leading-tight truncate">${p.name}</div>
+        <div class="text-xs text-slate-500">${p.client_name||''} · ${p.city}</div>
+        <div class="flex gap-1 mt-1 flex-wrap">
+          ${isoAppl.map(s=>`<span class="badge badge-blue text-xs">${s}</span>`).join('')}
+          <span class="badge ${p.status==='active'?'badge-green':'badge-gray'} text-xs">${p.status==='active'?'نشط':'مكتمل'}</span>
+        </div>
+      </div>
+      <div class="text-center flex-shrink-0">
+        <div class="text-2xl font-black" style="color:${clr}">${p.avg_compliance||0}%</div>
+        <div class="text-xs text-slate-400">امتثال</div>
+      </div>
+    </div>
+
+    <div class="kpi-bar mb-3"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${clr}"></div></div>
+
+    <div class="grid grid-cols-4 gap-2 text-center">
+      ${[
+        {l:'تفتيش',    v:p.total_inspections||0,    c:'#3b82f6'},
+        {l:'NC',       v:p.open_nc_count||0,         c:(p.open_nc_count||0)>0?'#dc2626':'#059669'},
+        {l:'حرجة',    v:p.critical_nc_count||0,     c:(p.critical_nc_count||0)>0?'#dc2626':'#059669'},
+        {l:'متأخرة',  v:p.overdue_nc_count||0,      c:(p.overdue_nc_count||0)>0?'#d97706':'#059669'},
+      ].map(k=>`<div class="p-2 rounded-xl" style="background:${k.c}10">
+        <div class="font-bold text-sm" style="color:${k.c}">${k.v}</div>
+        <div class="text-xs text-slate-400">${k.l}</div>
+      </div>`).join('')}
+    </div>
+
+    ${(p.recent_ncs||[]).length ? `<div class="mt-3 space-y-1">
+      ${(p.recent_ncs||[]).slice(0,2).map(n=>`<div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg">
+        <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'} text-xs flex-shrink-0">${ncTypeAr(n.type)}</span>
+        <span class="text-xs text-slate-700 truncate">${n.title}</span>
+      </div>`).join('')}
+    </div>` : ''}
   </div>`;
 }
 
@@ -6859,21 +7312,550 @@ function filterWasteTable() {
 
 // ── Reports ───────────────────────────────────
 async function loadReports() {
+  const db   = window.MOCK_DB || {};
+  const org  = db.org_profile || {};
+  const now  = new Date().toLocaleDateString('ar-SA', {year:'numeric',month:'long',day:'numeric'});
+
+  // ── Live stats for report cards ──
+  const insps      = db.inspections     || [];
+  const ncs        = db.nonconformances || [];
+  const rcas       = db.rca_tickets     || [];
+  const risks      = db.risks           || [];
+  const plans      = db.annual_plans    || [];
+  const wastes     = db.lean_wastes     || [];
+  const kpis       = db.kpis            || [];
+  const stds       = db.iso_standards   || [];
+  const gap        = db.gap_analysis    || {};
+
+  const compInsps  = insps.filter(i=>i.status==='completed');
+  const avgComp    = compInsps.length ? Math.round(compInsps.reduce((s,i)=>s+(i.compliance_score||0),0)/compInsps.length) : 0;
+  const openNCs    = ncs.filter(n=>n.status!=='closed').length;
+  const closedRCAs = rcas.filter(r=>r.status==='closed').length;
+  const rcaRate    = rcas.length ? Math.round(closedRCAs/rcas.length*100) : 0;
+  const critRisks  = risks.filter(r=>r.probability*r.impact>=15).length;
+  const avgPlan    = plans.length ? Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length) : 0;
+  const leanScore  = wastes.length ? Math.round(((wastes.filter(w=>w.status==='closed').length + wastes.filter(w=>w.status==='in_progress').length*0.5)/wastes.length)*100) : 0;
+  const gapAvgs    = stds.filter(s=>gap[s.code]).map(s=>{const v=Object.values(gap[s.code]?.clauses||{});return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;});
+  const overallGap = gapAvgs.length ? Math.round(gapAvgs.reduce((a,b)=>a+b,0)/gapAvgs.length) : 0;
+
+  const statusClr  = v => v>=90?'#059669':v>=70?'#d97706':'#dc2626';
+
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      ${reportCard('تقرير الامتثال الشامل', 'Audit-Ready بضغطة واحدة', 'file-pdf', '#dc2626', 'PDF', 'generateAuditReport()')}
-      ${reportCard('تقرير KPIs الشهري', 'مؤشرات الأداء للفترة المحددة', 'chart-bar', '#3b82f6', 'PDF', 'generateKPIReport()')}
-      ${reportCard('تقرير Lean Six Sigma', 'تقليل الهدر وتحسين العمليات', 'recycle', '#059669', 'PDF', 'generateLeanReport()')}
-    </div>
-    
-    <div class="card p-5">
-      <h3 class="font-bold text-slate-800 mb-4"><i class="fas fa-eye text-blue-500 mr-2"></i>معاينة التقرير - مشروع مصفاة الرياض</h3>
-      <div id="report-preview">
-        <button onclick="loadReportPreview()" class="btn btn-primary"><i class="fas fa-eye"></i> تحميل معاينة التقرير</button>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <h2 class="text-xl font-black text-slate-800"><i class="fas fa-file-alt text-blue-500 ml-2"></i>مركز التقارير</h2>
+        <p class="text-sm text-slate-500 mt-1">تقارير حية من جميع الصفحات · قابلة للتنزيل كـ HTML</p>
+      </div>
+      <div class="text-xs text-slate-500 bg-slate-100 rounded-xl px-3 py-2">
+        <i class="fas fa-sync-alt ml-1 text-blue-400"></i>${now}
       </div>
     </div>
+
+    <!-- Report Cards Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      ${rptCard('تقرير الامتثال الشامل','Audit-Ready — جميع المعايير','file-certificate','#3b82f6',
+        `<div class="grid grid-cols-2 gap-2 text-center mt-2">
+          <div class="p-2 bg-blue-50 rounded-xl"><div class="font-black text-blue-700">${avgComp}%</div><div class="text-xs text-slate-500">معدل الامتثال</div></div>
+          <div class="p-2 bg-blue-50 rounded-xl"><div class="font-black text-blue-700">${compInsps.length}</div><div class="text-xs text-slate-500">تفتيش مكتمل</div></div>
+        </div>`,
+        "downloadReport('compliance')")}
+
+      ${rptCard('تقرير عدم المطابقة NC','تحليل شامل + توزيع + RCA','exclamation-triangle','#dc2626',
+        `<div class="grid grid-cols-2 gap-2 text-center mt-2">
+          <div class="p-2 rounded-xl" style="background:#fee2e2"><div class="font-black text-red-700">${openNCs}</div><div class="text-xs text-slate-500">مفتوحة</div></div>
+          <div class="p-2 rounded-xl" style="background:#f0fdf4"><div class="font-black text-green-700">${rcaRate}%</div><div class="text-xs text-slate-500">إغلاق RCA</div></div>
+        </div>`,
+        "downloadReport('nc')")}
+
+      ${rptCard('تقرير إدارة المخاطر','مصفوفة + سجل + خطط المعالجة','shield-alt','#dc2626',
+        `<div class="grid grid-cols-2 gap-2 text-center mt-2">
+          <div class="p-2 rounded-xl" style="background:#fee2e2"><div class="font-black text-red-700">${critRisks}</div><div class="text-xs text-slate-500">مخاطر حرجة</div></div>
+          <div class="p-2 rounded-xl" style="background:#f0fdf4"><div class="font-black text-green-700">${risks.filter(r=>r.status==='mitigated').length}</div><div class="text-xs text-slate-500">تم معالجتها</div></div>
+        </div>`,
+        "downloadReport('risks')")}
+
+      ${rptCard('تقرير الخطة السنوية','تقدم المبادرات والميزانية','calendar-alt','#059669',
+        `<div class="grid grid-cols-2 gap-2 text-center mt-2">
+          <div class="p-2 bg-green-50 rounded-xl"><div class="font-black text-green-700">${avgPlan}%</div><div class="text-xs text-slate-500">متوسط التقدم</div></div>
+          <div class="p-2 bg-green-50 rounded-xl"><div class="font-black text-green-700">${plans.filter(p=>p.status==='completed').length}/${plans.length}</div><div class="text-xs text-slate-500">مكتملة</div></div>
+        </div>`,
+        "downloadReport('plans')")}
+
+      ${rptCard('تقرير تحليل الفجوة','الامتثال لكل بند لكل معيار ISO','chart-bar','#7c3aed',
+        `<div class="grid grid-cols-2 gap-2 text-center mt-2">
+          <div class="p-2 rounded-xl" style="background:#ede9fe"><div class="font-black" style="color:#7c3aed">${overallGap}%</div><div class="text-xs text-slate-500">متوسط الفجوة</div></div>
+          <div class="p-2 rounded-xl" style="background:#ede9fe"><div class="font-black" style="color:#7c3aed">${stds.filter(s=>gap[s.code]).length}</div><div class="text-xs text-slate-500">معايير محللة</div></div>
+        </div>`,
+        "downloadReport('gap')")}
+
+      ${rptCard('تقرير Lean Six Sigma','تحليل الهدر + DMAIC','recycle','#0891b2',
+        `<div class="grid grid-cols-2 gap-2 text-center mt-2">
+          <div class="p-2 rounded-xl" style="background:#e0f2fe"><div class="font-black" style="color:#0891b2">${leanScore}%</div><div class="text-xs text-slate-500">مؤشر Lean</div></div>
+          <div class="p-2 rounded-xl" style="background:#e0f2fe"><div class="font-black" style="color:#0891b2">${wastes.length}</div><div class="text-xs text-slate-500">سجل هدر</div></div>
+        </div>`,
+        "downloadReport('lean')")}
+
+    </div>
+
+    <!-- Download All -->
+    <div class="card p-4 flex items-center justify-between gap-4 bg-gradient-to-r from-slate-700 to-slate-900" style="border:none">
+      <div>
+        <div class="font-bold text-white"><i class="fas fa-archive ml-2"></i>تنزيل جميع التقارير دفعة واحدة</div>
+        <div class="text-slate-400 text-xs mt-1">يولّد ملف HTML شامل لجميع التقارير مدمجة في صفحة واحدة</div>
+      </div>
+      <button onclick="downloadReport('all')" class="btn btn-primary flex-shrink-0" style="background:#3b82f6">
+        <i class="fas fa-download ml-2"></i>تنزيل الكل
+      </button>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-slate-800"><i class="fas fa-eye text-blue-500 ml-2"></i>معاينة سريعة</h3>
+        <div class="flex gap-2">
+          ${['compliance','nc','risks','plans','gap','lean'].map(t=>`
+          <button onclick="previewReport('${t}')"
+            class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-all report-tab"
+            data-tab="${t}">
+            ${{compliance:'الامتثال',nc:'NC',risks:'المخاطر',plans:'الخطة',gap:'الفجوة',lean:'Lean'}[t]}
+          </button>`).join('')}
+        </div>
+      </div>
+      <div id="report-preview-area" class="rounded-xl border border-slate-100 p-4 min-h-48 text-sm">
+        <div class="text-center text-slate-400 py-8"><i class="fas fa-file-alt text-3xl mb-3 block"></i>اختر تقريراً للمعاينة</div>
+      </div>
+    </div>
+
   </div>`;
+}
+
+function rptCard(title, sub, icon, color, statsHtml, action) {
+  return `<div class="card p-5 hover:shadow-md transition-all">
+    <div class="flex items-start gap-3 mb-2">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${color}15">
+        <i class="fas fa-${icon} text-xl" style="color:${color}"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="font-bold text-slate-800 text-sm">${title}</div>
+        <div class="text-xs text-slate-500">${sub}</div>
+      </div>
+    </div>
+    ${statsHtml}
+    <div class="flex gap-2 mt-3">
+      <button onclick="${action}" class="btn btn-primary flex-1 text-xs py-2" style="background:${color}">
+        <i class="fas fa-download ml-1"></i>تنزيل HTML
+      </button>
+      <button onclick="previewReport('${action.match(/\'(\w+)\'/)?.[1]||''}')" class="text-xs px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors">
+        <i class="fas fa-eye text-slate-400"></i>
+      </button>
+    </div>
+  </div>`;
+}
+
+// ── Report Preview ──────────────────────────
+function previewReport(type) {
+  document.querySelectorAll('.report-tab').forEach(b => {
+    b.classList.toggle('bg-blue-50', b.dataset.tab===type);
+    b.classList.toggle('border-blue-300', b.dataset.tab===type);
+    b.classList.toggle('text-blue-600', b.dataset.tab===type);
+  });
+  const el = document.getElementById('report-preview-area');
+  if (!el) return;
+  el.innerHTML = buildReportHTML(type, true);
+}
+
+// ── Report HTML Builder ─────────────────────
+function buildReportHTML(type, preview=false) {
+  const db   = window.MOCK_DB || {};
+  const org  = db.org_profile || {};
+  const now  = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  const stds = db.iso_standards || [];
+  const stdColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+
+  const header = (title, subtitle, color='#1e3a8a') => `
+    <div style="background:linear-gradient(135deg,${color},${color}dd);padding:24px 32px;border-radius:12px 12px 0 0;margin:-1px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="color:rgba(255,255,255,0.7);font-size:11px;margin-bottom:4px">${org.name||'نظام IMS QHSE'}</div>
+          <h1 style="color:white;font-size:20px;font-weight:900;margin:0 0 4px">${title}</h1>
+          <div style="color:rgba(255,255,255,0.8);font-size:12px">${subtitle}</div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,0.15);padding:10px 16px;border-radius:8px">
+          <div style="color:white;font-size:11px;opacity:0.8">تاريخ الإصدار</div>
+          <div style="color:white;font-weight:bold;font-size:13px">${now}</div>
+        </div>
+      </div>
+    </div>`;
+
+  const kpiBox = (label, value, color='#3b82f6') => `
+    <div style="text-align:center;padding:12px;background:${color}0d;border-radius:10px;border:1px solid ${color}20">
+      <div style="font-size:22px;font-weight:900;color:${color}">${value}</div>
+      <div style="font-size:11px;color:#64748b;margin-top:2px">${label}</div>
+    </div>`;
+
+  const section = (title, content, icon='circle') => `
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:13px;font-weight:700;color:#334155;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin-bottom:12px">
+        ${title}
+      </h3>
+      ${content}
+    </div>`;
+
+  const tableStyle = 'width:100%;border-collapse:collapse;font-size:12px';
+  const thStyle    = 'padding:8px;background:#f8fafc;text-align:right;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0';
+  const tdStyle    = 'padding:7px 8px;border-bottom:1px solid #f1f5f9;color:#334155';
+  const trAlt      = 'background:#fafafa';
+
+  let body = '';
+
+  // ════════════════════════════════
+  if (type === 'compliance' || type === 'all') {
+    const insps   = db.inspections || [];
+    const comp    = insps.filter(i=>i.status==='completed');
+    const avgC    = comp.length ? Math.round(comp.reduce((s,i)=>s+(i.compliance_score||0),0)/comp.length) : 0;
+    const ncs     = db.nonconformances || [];
+    const rcas    = db.rca_tickets || [];
+    const clr     = avgC>=90?'#059669':avgC>=75?'#d97706':'#dc2626';
+
+    body += header('تقرير الامتثال الشامل', 'Audit-Ready — ISO 9001 / ISO 45001 / ISO 14001', '#1e3a8a');
+    body += `<div style="padding:20px">`;
+    body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
+      ${kpiBox('معدل الامتثال', avgC+'%', clr)}
+      ${kpiBox('تفتيش مكتمل', comp.length, '#3b82f6')}
+      ${kpiBox('NC مفتوحة', ncs.filter(n=>n.status!=='closed').length, '#dc2626')}
+      ${kpiBox('إغلاق RCA', (rcas.length?Math.round(rcas.filter(r=>r.status==='closed').length/rcas.length*100):0)+'%', '#7c3aed')}
+    </div>`;
+
+    body += section('سجل التفتيشات المكتملة',
+      `<table style="${tableStyle}">
+        <thead><tr>
+          <th style="${thStyle}">الرقم</th><th style="${thStyle}">العنوان</th>
+          <th style="${thStyle}">المشروع</th><th style="${thStyle}">المعيار</th>
+          <th style="${thStyle}">الامتثال</th><th style="${thStyle}">النتيجة</th>
+        </tr></thead>
+        <tbody>
+          ${comp.slice(0,preview?5:999).map((i,idx)=>`<tr style="${idx%2===1?trAlt:''}">
+            <td style="${tdStyle}">${i.ref_number}</td>
+            <td style="${tdStyle}">${i.title}</td>
+            <td style="${tdStyle}">${i.project_name}</td>
+            <td style="${tdStyle}">${i.iso_standard?.replace('_',' ')||'—'}</td>
+            <td style="${tdStyle};font-weight:bold;color:${i.compliance_score>=90?'#059669':i.compliance_score>=75?'#d97706':'#dc2626'}">${i.compliance_score||0}%</td>
+            <td style="${tdStyle}">${i.result==='pass'?'✅ ناجح':i.result==='fail'?'❌ فاشل':'—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`);
+
+    // ISO gap in compliance report
+    const gapStds = stds.filter(s=>db.gap_analysis?.[s.code]);
+    if (gapStds.length) {
+      body += section('تحليل الفجوة لكل معيار',
+        `<div style="display:grid;grid-template-columns:repeat(${Math.min(gapStds.length,4)},1fr);gap:10px">
+          ${gapStds.map(s=>{
+            const clr2 = s.color||stdColors[s.code]||'#64748b';
+            const vals = Object.values(db.gap_analysis[s.code]?.clauses||{});
+            const avg2 = vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+            return `<div style="padding:12px;background:${clr2}0d;border-radius:8px;text-align:center;border:1px solid ${clr2}20">
+              <div style="font-weight:900;font-size:20px;color:${clr2}">${avg2}%</div>
+              <div style="font-size:11px;color:#64748b">${s.code.replace('_',' ')}</div>
+              <div style="font-size:10px;color:${avg2>=80?'#059669':'#dc2626'}">${100-avg2>0?'فجوة '+(100-avg2)+'%':'✓ ممتاز'}</div>
+            </div>`;
+          }).join('')}
+        </div>`);
+    }
+    body += `</div>`;
+  }
+
+  // ════════════════════════════════
+  if (type === 'nc' || type === 'all') {
+    const ncs  = db.nonconformances || [];
+    const open = ncs.filter(n=>n.status!=='closed');
+    const byCat = {};
+    ncs.forEach(n=>{byCat[n.category||'other']=(byCat[n.category||'other']||0)+1;});
+
+    body += (type==='all'?'<div style="page-break-before:always">':'');
+    body += header('تقرير عدم المطابقة NC', 'تحليل شامل + توزيع حسب الفئة', '#dc2626');
+    body += `<div style="padding:20px">`;
+    body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
+      ${kpiBox('إجمالي NC', ncs.length, '#3b82f6')}
+      ${kpiBox('مفتوحة', open.length, '#dc2626')}
+      ${kpiBox('حرجة', ncs.filter(n=>n.type==='critical').length, '#dc2626')}
+      ${kpiBox('مغلقة', ncs.filter(n=>n.status==='closed').length, '#059669')}
+    </div>`;
+
+    body += section('توزيع NC حسب الفئة',
+      `<div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${Object.entries(byCat).map(([cat,cnt])=>
+          `<div style="padding:6px 12px;background:#fee2e2;border-radius:6px;font-size:12px"><b style="color:#dc2626">${cnt}</b> ${cat}</div>`
+        ).join('')}
+      </div>`);
+
+    body += section('سجل عدم المطابقات',
+      `<table style="${tableStyle}">
+        <thead><tr>
+          <th style="${thStyle}">الرقم</th><th style="${thStyle}">العنوان</th>
+          <th style="${thStyle}">النوع</th><th style="${thStyle}">المشروع</th>
+          <th style="${thStyle}">الحالة</th><th style="${thStyle}">الموعد</th>
+        </tr></thead>
+        <tbody>
+          ${ncs.slice(0,preview?5:999).map((n,idx)=>`<tr style="${idx%2===1?trAlt:''}">
+            <td style="${tdStyle};color:#3b82f6;font-family:monospace">${n.ref_number}</td>
+            <td style="${tdStyle}">${n.title.substring(0,45)}${n.title.length>45?'...':''}</td>
+            <td style="${tdStyle};font-weight:bold;color:${n.type==='critical'?'#dc2626':n.type==='major'?'#d97706':'#3b82f6'}">${n.type==='critical'?'حرجة':n.type==='major'?'رئيسية':'ثانوية'}</td>
+            <td style="${tdStyle}">${n.project_name}</td>
+            <td style="${tdStyle}">${n.status==='open'?'مفتوحة':n.status==='in_progress'?'جارية':'مغلقة'}</td>
+            <td style="${tdStyle};color:${n.due_date&&new Date(n.due_date)<new Date()&&n.status!=='closed'?'#dc2626':'#64748b'}">${n.due_date?new Date(n.due_date).toLocaleDateString('ar-SA'):'-'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`);
+    body += `</div>`;
+    if (type==='all') body += '</div>';
+  }
+
+  // ════════════════════════════════
+  if (type === 'risks' || type === 'all') {
+    const risks  = db.risks || [];
+    const getRpn = r => r.probability * r.impact;
+    const sorted = risks.slice().sort((a,b)=>getRpn(b)-getRpn(a));
+
+    body += (type==='all'?'<div style="page-break-before:always">':'');
+    body += header('تقرير إدارة المخاطر', 'سجل المخاطر + مصفوفة RPN + خطط المعالجة', '#7c3aed');
+    body += `<div style="padding:20px">`;
+    body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
+      ${kpiBox('إجمالي المخاطر', risks.length, '#7c3aed')}
+      ${kpiBox('حرجة RPN≥15', risks.filter(r=>getRpn(r)>=15).length, '#dc2626')}
+      ${kpiBox('عالية RPN≥8', risks.filter(r=>getRpn(r)>=8&&getRpn(r)<15).length, '#d97706')}
+      ${kpiBox('تم معالجتها', risks.filter(r=>r.status==='mitigated'||r.status==='closed').length, '#059669')}
+    </div>`;
+
+    body += section('سجل المخاطر مرتباً بالأولوية',
+      `<table style="${tableStyle}">
+        <thead><tr>
+          <th style="${thStyle}">RPN</th><th style="${thStyle}">المخاطرة</th>
+          <th style="${thStyle}">الفئة</th><th style="${thStyle}">المسؤولون</th>
+          <th style="${thStyle}">الحالة</th><th style="${thStyle}">المعيار</th>
+        </tr></thead>
+        <tbody>
+          ${sorted.slice(0,preview?5:999).map((r,idx)=>{
+            const rpn = getRpn(r);
+            const clr = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#3b82f6';
+            const owners = Array.isArray(r.owners)?r.owners.join('، '):(r.owner||'—');
+            return `<tr style="${idx%2===1?trAlt:''}">
+              <td style="${tdStyle};font-weight:900;color:${clr}">${rpn}</td>
+              <td style="${tdStyle}">${r.title.substring(0,40)}${r.title.length>40?'...':''}</td>
+              <td style="${tdStyle}">${r.category||'—'}</td>
+              <td style="${tdStyle}">${owners}</td>
+              <td style="${tdStyle}">${r.status==='open'?'مفتوحة':r.status==='mitigated'?'معالجة':r.status}</td>
+              <td style="${tdStyle}">${r.iso?.replace('_',' ')||'—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`);
+    body += `</div>`;
+    if (type==='all') body += '</div>';
+  }
+
+  // ════════════════════════════════
+  if (type === 'plans' || type === 'all') {
+    const plans = db.annual_plans || [];
+
+    body += (type==='all'?'<div style="page-break-before:always">':'');
+    body += header('تقرير الخطة السنوية', 'تقدم المبادرات والميزانية '+new Date().getFullYear(), '#059669');
+    body += `<div style="padding:20px">`;
+    const totalBudget = plans.reduce((s,p)=>s+(p.budget||0),0);
+    const avgProg     = plans.length?Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length):0;
+    body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
+      ${kpiBox('إجمالي المبادرات', plans.length, '#059669')}
+      ${kpiBox('متوسط التقدم', avgProg+'%', '#059669')}
+      ${kpiBox('مكتملة', plans.filter(p=>p.status==='completed').length, '#059669')}
+      ${kpiBox('الميزانية الإجمالية', totalBudget.toLocaleString('ar-SA')+' ر.س', '#3b82f6')}
+    </div>`;
+
+    body += section('جدول المبادرات السنوية',
+      `<table style="${tableStyle}">
+        <thead><tr>
+          <th style="${thStyle}">المبادرة</th><th style="${thStyle}">الفئة</th>
+          <th style="${thStyle}">المعيار</th><th style="${thStyle}">المسؤولون</th>
+          <th style="${thStyle}">التقدم</th><th style="${thStyle}">الحالة</th>
+          <th style="${thStyle}">الميزانية</th>
+        </tr></thead>
+        <tbody>
+          ${plans.slice(0,preview?5:999).map((p,idx)=>{
+            const clr2 = p.status==='completed'?'#059669':p.status==='in_progress'?'#d97706':p.status==='delayed'?'#dc2626':'#3b82f6';
+            const owners = Array.isArray(p.owners)?p.owners.join('، '):(p.owner||'—');
+            return `<tr style="${idx%2===1?trAlt:''}">
+              <td style="${tdStyle};font-weight:600">${p.title.substring(0,35)}${p.title.length>35?'...':''}</td>
+              <td style="${tdStyle}">${p.category||'—'}</td>
+              <td style="${tdStyle}">${p.iso?.replace('_',' ')||'متعدد'}</td>
+              <td style="${tdStyle}">${owners}</td>
+              <td style="${tdStyle};font-weight:bold;color:${clr2}">${p.progress}%</td>
+              <td style="${tdStyle};color:${clr2}">${p.status==='completed'?'مكتمل':p.status==='in_progress'?'جارٍ':p.status==='delayed'?'متأخر':'مخطط'}</td>
+              <td style="${tdStyle}">${(p.budget||0).toLocaleString('ar-SA')} ر.س</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`);
+    body += `</div>`;
+    if (type==='all') body += '</div>';
+  }
+
+  // ════════════════════════════════
+  if (type === 'gap' || type === 'all') {
+    const gap  = db.gap_analysis || {};
+    const stds2= stds.filter(s=>gap[s.code]);
+    const clauses = [4,5,6,7,8,9,10];
+    const clauseAr = {4:'السياق',5:'القيادة',6:'التخطيط',7:'الدعم',8:'التشغيل',9:'تقييم الأداء',10:'التحسين'};
+
+    body += (type==='all'?'<div style="page-break-before:always">':'');
+    body += header('تقرير تحليل الفجوة', 'الامتثال لكل بند لكل معيار ISO', '#7c3aed');
+    body += `<div style="padding:20px">`;
+
+    body += section('ملخص متوسط الامتثال لكل معيار',
+      `<div style="display:grid;grid-template-columns:repeat(${Math.min(stds2.length,4)},1fr);gap:10px">
+        ${stds2.map(s=>{
+          const clr2 = s.color||stdColors[s.code]||'#64748b';
+          const vals = Object.values(gap[s.code]?.clauses||{});
+          const avg2 = vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+          return `<div style="padding:14px;background:${clr2}0d;border-radius:10px;text-align:center;border:1px solid ${clr2}25">
+            <div style="font-weight:900;font-size:24px;color:${clr2}">${avg2}%</div>
+            <div style="font-size:12px;font-weight:700;color:${clr2}">${s.code.replace('_',' ')}</div>
+            <div style="font-size:11px;color:#64748b">${s.name}</div>
+            <div style="margin-top:6px;height:6px;background:#e2e8f0;border-radius:3px">
+              <div style="width:${avg2}%;height:100%;background:${clr2};border-radius:3px"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`);
+
+    const allClauses = new Set();
+    stds2.forEach(s=>Object.keys(gap[s.code]?.clauses||{}).forEach(c=>allClauses.add(parseInt(c))));
+    const clsList = Array.from(allClauses).sort((a,b)=>a-b);
+
+    body += section('تفاصيل الفجوة لكل بند',
+      `<table style="${tableStyle}">
+        <thead><tr>
+          <th style="${thStyle}">البند</th>
+          ${stds2.map(s=>`<th style="${thStyle};color:${s.color||stdColors[s.code]||'#64748b'}">${s.code.replace('_',' ')}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${clsList.slice(0,preview?5:999).map((c,idx)=>`<tr style="${idx%2===1?trAlt:''}">
+            <td style="${tdStyle};font-weight:600">البند ${c}${clauseAr[c]?' — '+clauseAr[c]:''}</td>
+            ${stds2.map(s=>{
+              const val = gap[s.code]?.clauses?.[c] ?? '-';
+              const clr2 = s.color||stdColors[s.code]||'#64748b';
+              const isLow = typeof val==='number' && val<80;
+              return `<td style="${tdStyle};font-weight:bold;color:${isLow?'#dc2626':clr2}">${val}${typeof val==='number'?'%':''}</td>`;
+            }).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>`);
+    body += `</div>`;
+    if (type==='all') body += '</div>';
+  }
+
+  // ════════════════════════════════
+  if (type === 'lean' || type === 'all') {
+    const wastes = db.lean_wastes || [];
+    const closed = wastes.filter(w=>w.status==='closed').length;
+    const inProg = wastes.filter(w=>w.status==='in_progress').length;
+    const score  = wastes.length?Math.round(((closed+inProg*0.5)/wastes.length)*100):0;
+    const saving = wastes.reduce((s,w)=>s+(w.estimated_saving||0),0);
+    const mudaAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
+
+    body += (type==='all'?'<div style="page-break-before:always">':'');
+    body += header('تقرير Lean Six Sigma', 'تحليل الهدر MUDA + مسار DMAIC', '#0891b2');
+    body += `<div style="padding:20px">`;
+    body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
+      ${kpiBox('مؤشر Lean', score+'%', '#0891b2')}
+      ${kpiBox('إجمالي الهدر', wastes.length, '#3b82f6')}
+      ${kpiBox('هدر مُعالج', closed, '#059669')}
+      ${kpiBox('الوفر المتوقع', saving.toLocaleString('ar-SA')+' ر.س', '#7c3aed')}
+    </div>`;
+
+    body += section('سجل الهدر المرصود',
+      `<table style="${tableStyle}">
+        <thead><tr>
+          <th style="${thStyle}">الرقم</th><th style="${thStyle}">العنوان</th>
+          <th style="${thStyle}">نوع الهدر</th><th style="${thStyle}">الأولوية</th>
+          <th style="${thStyle}">الأثر</th><th style="${thStyle}">الحالة</th>
+          <th style="${thStyle}">الوفر</th>
+        </tr></thead>
+        <tbody>
+          ${wastes.slice(0,preview?5:999).map((w,idx)=>`<tr style="${idx%2===1?trAlt:''}">
+            <td style="${tdStyle};color:#0891b2;font-family:monospace">${w.ref}</td>
+            <td style="${tdStyle}">${w.title.substring(0,35)}${w.title.length>35?'...':''}</td>
+            <td style="${tdStyle}">${mudaAr[w.muda_type]||w.muda_type}</td>
+            <td style="${tdStyle};font-weight:bold;color:${w.priority==='critical'?'#dc2626':w.priority==='high'?'#d97706':'#3b82f6'}">${w.priority==='critical'?'حرجة':w.priority==='high'?'عالية':'متوسطة'}</td>
+            <td style="${tdStyle};font-weight:bold;color:${w.impact_score>=8?'#dc2626':w.impact_score>=5?'#d97706':'#059669'}">${w.impact_score}/10</td>
+            <td style="${tdStyle}">${w.status==='closed'?'✅ مُعالج':w.status==='in_progress'?'🔄 جارٍ':'⭕ مفتوح'}</td>
+            <td style="${tdStyle};color:#059669;font-weight:bold">${(w.estimated_saving||0).toLocaleString('ar-SA')}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`);
+    body += `</div>`;
+    if (type==='all') body += '</div>';
+  }
+
+  // Footer
+  body += `<div style="text-align:center;padding:16px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;margin-top:20px">
+    ${org.name||'نظام IMS QHSE'} · تم إصداره بتاريخ ${now} · IMS QHSE System
+  </div>`;
+
+  return body;
+}
+
+// ── Download Report ─────────────────────────
+function downloadReport(type) {
+  const db  = window.MOCK_DB || {};
+  const org = db.org_profile || {};
+  const titles = {
+    compliance:'تقرير_الامتثال_الشامل',
+    nc:'تقرير_عدم_المطابقة',
+    risks:'تقرير_إدارة_المخاطر',
+    plans:'تقرير_الخطة_السنوية',
+    gap:'تقرير_تحليل_الفجوة',
+    lean:'تقرير_Lean_Six_Sigma',
+    all:'جميع_التقارير'
+  };
+
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${titles[type]||'تقرير'}</title>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',Tahoma,Arial,sans-serif; direction:rtl; background:#f8fafc; color:#334155; padding:20px; }
+    @media print {
+      body { padding:0; background:white; }
+      @page { margin:1.5cm; size:A4; }
+    }
+    .print-btn { position:fixed; bottom:20px; left:20px; background:#3b82f6; color:white; border:none; padding:12px 20px; border-radius:10px; cursor:pointer; font-size:14px; display:flex; align-items:center; gap:8px; z-index:999; box-shadow:0 4px 12px rgba(59,130,246,0.4); }
+    .print-btn:hover { background:#2563eb; }
+    @media print { .print-btn { display:none; } }
+    .wrapper { max-width:900px; margin:0 auto; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.08); }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">🖨️ طباعة / PDF</button>
+  <div class="wrapper">
+    ${buildReportHTML(type, false)}
+  </div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${titles[type]||'تقرير'}_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ تم تنزيل التقرير بنجاح','success');
 }
 
 function reportCard(title, sub, icon, color, type, action) {
@@ -6888,44 +7870,19 @@ function reportCard(title, sub, icon, color, type, action) {
       </div>
     </div>
     <div class="flex justify-between items-center">
-      <span class="badge" style="background:${color}20;color:${color}">${type}</span>
-      <button class="btn btn-primary text-xs py-1 px-3"><i class="fas fa-download mr-1"></i>توليد</button>
+      <span class="badge" style="background:${color}20;color:${color}">HTML</span>
+      <button class="btn btn-primary text-xs py-1 px-3"><i class="fas fa-download ml-1"></i>توليد</button>
     </div>
   </div>`;
 }
 
 async function loadReportPreview() {
-  const data = await apiFetch('/api/reports/audit-ready/' + state.currentProject);
-  const s = data.executive_summary;
-  document.getElementById('report-preview').innerHTML = `
-  <div class="border border-slate-200 rounded-xl p-6 bg-white" dir="rtl">
-    <div class="text-center mb-6 border-b pb-4">
-      <h2 class="text-xl font-bold text-slate-800">تقرير الامتثال الشامل - Audit Ready</h2>
-      <p class="text-sm text-slate-500">ISO 9001 / ISO 45001 / ISO 14001</p>
-      <p class="text-xs text-slate-400">تاريخ الإصدار: ${new Date().toLocaleDateString('ar-SA')}</p>
-    </div>
-    <div class="grid grid-cols-4 gap-4 mb-6">
-      ${[
-        ['التفتيش المكتمل', s.completed_inspections, '#3b82f6'],
-        ['معدل الامتثال', s.avg_compliance_score + '%', s.avg_compliance_score >= 90 ? '#059669' : '#d97706'],
-        ['NC المفتوحة', s.open_ncs, s.open_ncs > 0 ? '#dc2626' : '#059669'],
-        ['معدل إغلاق RCA', s.rca_closure_rate + '%', '#7c3aed']
-      ].map(([k,v,c]) => `<div class="text-center p-3 bg-slate-50 rounded-xl">
-        <div class="text-2xl font-black" style="color:${c}">${v}</div>
-        <div class="text-xs text-slate-500 mt-1">${k}</div>
-      </div>`).join('')}
-    </div>
-    <div class="p-4 rounded-xl mb-4 ${s.overall_status === 'EXCELLENT' ? 'bg-green-50 border border-green-200' : s.overall_status === 'GOOD' ? 'bg-blue-50 border border-blue-200' : 'bg-red-50 border border-red-200'}">
-      <div class="font-bold">الحالة العامة: ${s.overall_status === 'EXCELLENT' ? '🏆 ممتاز' : s.overall_status === 'GOOD' ? '✅ جيد' : s.overall_status === 'NEEDS_IMPROVEMENT' ? '⚠️ يحتاج تحسين' : '🚨 حرج'}</div>
-    </div>
-    <button onclick="printReport()" class="btn btn-primary w-full"><i class="fas fa-print mr-2"></i>طباعة / تصدير PDF</button>
-  </div>`;
+  previewReport('compliance');
 }
-
-function generateAuditReport() { loadReportPreview(); showToast('🔄 جاري توليد تقرير PDF...', 'info'); }
-function generateKPIReport() { loadKPIs(); showToast('📊 تقرير KPIs قيد التحضير', 'info'); }
-function generateLeanReport() { loadLean(); showToast('♻️ تقرير Lean Six Sigma قيد التحضير', 'info'); }
-function printReport() { window.print(); }
+function generateAuditReport() { downloadReport('compliance'); }
+function generateKPIReport()   { downloadReport('compliance'); }
+function generateLeanReport()  { downloadReport('lean'); }
+function printReport()         { window.print(); }
 
 // ── Notifications ─────────────────────────────
 async function loadNotifications() {
