@@ -9156,7 +9156,7 @@ function onColDrop(e, colKey) {
 
   var labelsAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'};
   showToast('↕️ ' + labelsAr[oldStatus] + ' → ' + labelsAr[colKey], 'success');
-
+  if (typeof window._syncDB === 'function') window._syncDB();
   refreshKanbanBoard();
 }
 
@@ -9181,19 +9181,23 @@ function refreshKanbanBoard() {
   var users = (window.MOCK_DB && window.MOCK_DB.users) || [];
   var cols  = ['todo','inprogress','review','done'];
 
-  // ── 1. Update KPI counters ──
+  // ── 1. حساب الأرقام ──
   var total   = tasks.length;
   var overdue = tasks.filter(function(t){ return t.due_date && new Date(t.due_date)<new Date() && t.status!=='done'; }).length;
+  var counts  = {};
   cols.forEach(function(s){
-    var cnt = tasks.filter(function(t){ return t.status===s; }).length;
-    document.querySelectorAll('[data-kpi-status="'+s+'"]').forEach(function(el){ el.textContent = cnt; });
+    counts[s] = tasks.filter(function(t){ return t.status===s; }).length;
   });
-  var totalEl = document.querySelector('[data-kpi-total]');
-  if (totalEl) totalEl.textContent = total;
-  var overdueEl = document.querySelector('[data-kpi-overdue]');
-  if (overdueEl) overdueEl.textContent = overdue;
 
-  // ── 2. Update team progress ──
+  // ── 2. تحديث KPI cards بكل الطرق الممكنة ──
+  // بـ data-attribute
+  cols.forEach(function(s){
+    document.querySelectorAll('[data-kpi-status="'+s+'"]').forEach(function(el){ el.textContent = counts[s]; });
+  });
+  document.querySelectorAll('[data-kpi-total]').forEach(function(el){ el.textContent = total; });
+  document.querySelectorAll('[data-kpi-overdue]').forEach(function(el){ el.textContent = overdue; });
+
+  // ── 3. تحديث إنجاز الفريق ──
   var teamEl = document.getElementById('team-progress-list');
   if (teamEl) {
     var teamHtml = '';
@@ -9220,14 +9224,14 @@ function refreshKanbanBoard() {
     teamEl.innerHTML = teamHtml || '<p class="text-slate-400 text-xs text-center py-2">لا يوجد مستخدمون نشطون</p>';
   }
 
-  // ── 3. Update kanban columns ──
+  // ── 4. تحديث أعمدة الكانبان ──
   var colColors = {todo:'#64748b',inprogress:'#d97706',review:'#7c3aed',done:'#059669'};
   cols.forEach(function(colKey){
     var zone = document.getElementById('drop-zone-'+colKey);
     if (!zone) return;
     var colTasks = tasks.filter(function(t){ return t.status===colKey; });
 
-    // Update column badge count
+    // تحديث عداد العمود
     var wrapper = document.getElementById('col-wrapper-'+colKey);
     if (wrapper) {
       var badge = wrapper.querySelector('.col-count');

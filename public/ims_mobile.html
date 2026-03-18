@@ -3111,38 +3111,38 @@ function syncFromWebApp() {
   try {
     const _shared = localStorage.getItem('IMS_SHARED_DB');
     if (!_shared) {
-      mToast('⚠️ افتح النظام الرئيسي أولاً لتوليد البيانات', 'warning');
+      mToast('⚠️ افتح النظام الرئيسي في نفس المتصفح أولاً', 'warning');
       return;
     }
     const _parsed = JSON.parse(_shared);
-    const MDATA   = window.MDATA;
-    if (!MDATA) { mToast('❌ خطأ: بيانات التطبيق غير محملة', 'error'); return; }
+    const MD = window.MDATA;
+    if (!MD) { mToast('❌ خطأ داخلي: MDATA غير محمّل', 'error'); return; }
 
-    let updated = 0;
-    const map = {
-      tasks:           'tasks',
-      annual_plans:    'annual_plans',
-      risks:           'risks',
-      nonconformances: 'nonconformances',
-      inspections:     'inspections',
-      rca_tickets:     'rca',
-      lean_wastes:     'lean_wastes',
-    };
-    Object.entries(map).forEach(([webKey, mobileKey]) => {
-      const src = _parsed[webKey];
-      if (src !== undefined && Array.isArray(src)) {
-        MDATA[mobileKey] = src;
-        updated++;
-      }
-    });
+    // ── Status mapping: web → mobile ──
+    const stMap = {todo:'pending', inprogress:'in_progress', review:'in_progress', done:'completed'};
+    const normalizeTasks = arr => (arr||[]).map(t => Object.assign({}, t, {
+      status:  stMap[t.status] || t.status,
+      project: t.project_name || t.project || '',
+      iso:     t.iso_standard || t.iso || '',
+    }));
+
+    // Sync each collection
+    if (Array.isArray(_parsed.tasks))           MD.tasks           = normalizeTasks(_parsed.tasks);
+    if (Array.isArray(_parsed.annual_plans))     MD.annual_plans    = _parsed.annual_plans;
+    if (Array.isArray(_parsed.risks))            MD.risks           = _parsed.risks;
+    if (Array.isArray(_parsed.nonconformances))  MD.nonconformances = _parsed.nonconformances;
+    if (Array.isArray(_parsed.inspections))      MD.inspections     = _parsed.inspections;
+    if (Array.isArray(_parsed.rca_tickets))      MD.rca             = _parsed.rca_tickets;
+    if (Array.isArray(_parsed.lean_wastes))      MD.lean_wastes     = _parsed.lean_wastes;
 
     // Update sync timestamp
     const syncEl = document.getElementById('m-last-sync');
     if (syncEl) syncEl.textContent = new Date().toLocaleTimeString('ar-SA');
 
-    mToast('✅ تمت المزامنة — ' + updated + ' قوائم محدّثة', 'success');
+    const taskCount = (MD.tasks||[]).length;
+    mToast('✅ تمت المزامنة — ' + taskCount + ' مهمة محمّلة', 'success');
 
-    // Refresh current page data
+    // Refresh all loaded pages
     loadHomeStats();
     const p = mState.currentPage;
     if (p === 'm-tasks')       loadTasksList();
