@@ -190,11 +190,17 @@
     try {
       const saved = localStorage.getItem('IMS_SHARED_DB');
       const base  = saved ? JSON.parse(saved) : {};
+      // الجوال يحفظ المهام بصيغته فقط في tasks — لا يلمس tasks_web
       base.tasks           = MDATA.tasks           || [];
       base.nonconformances = MDATA.nonconformances  || [];
       base.inspections     = MDATA.inspections      || [];
       base.rca_tickets     = MDATA.rca              || [];
       base.lean_wastes     = MDATA.lean_wastes      || [];
+      // تحديث tasks_web بالحالات المحوّلة للويب
+      const mobToWeb = {pending:'todo',in_progress:'inprogress',completed:'done'};
+      base.tasks_web = (MDATA.tasks||[]).map(function(t){
+        return Object.assign({},t,{status: mobToWeb[t.status]||t.status});
+      });
       localStorage.setItem('IMS_SHARED_DB', JSON.stringify(base));
     } catch(e) {}
   };

@@ -863,30 +863,43 @@
   if (_saved) {
     try {
       const parsed = JSON.parse(_saved);
-      // Merge only mutable collections
-      ['tasks','annual_plans','risks','gap_analysis','comparisonRows',
+      // Merge only mutable collections — EXCEPT tasks (handled separately below)
+      ['annual_plans','risks','gap_analysis','comparisonRows',
        'nonconformances','inspections','rca_tickets','lean_wastes','kpis',
        'iso_standards','org_profile'].forEach(k => {
         if (parsed[k] !== undefined) MOCK_DB[k] = parsed[k];
       });
+      // Tasks: استخدم tasks_web إذا موجود (يحفظ الحالات الأصلية للويب)
+      // وإلا حوّل من صيغة الجوال
+      if (Array.isArray(parsed.tasks_web) && parsed.tasks_web.length > 0) {
+        MOCK_DB.tasks = parsed.tasks_web;
+      } else if (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
+        const mobileToWeb = {pending:'todo', in_progress:'inprogress', completed:'done'};
+        MOCK_DB.tasks = parsed.tasks.map(function(t) {
+          return Object.assign({}, t, {
+            status: mobileToWeb[t.status] || t.status,
+          });
+        });
+      }
     } catch(e) {}
   }
 
   // Auto-save on every API mutation
   function _syncDB() {
     try {
-      // Normalize web task statuses → mobile statuses
-      const statusMap = {todo:'pending', inprogress:'in_progress', review:'in_progress', done:'completed'};
+      // للجوال: نحفظ بحالات mobile (pending/in_progress/completed)
+      const webToMobile = {todo:'pending', inprogress:'in_progress', review:'in_progress', done:'completed'};
       const mobileTasks = (MOCK_DB.tasks||[]).map(function(t) {
         return Object.assign({}, t, {
-          status:      statusMap[t.status] || t.status,
-          // Ensure mobile fields exist
-          project:     t.project_name || t.project || '',
-          iso:         t.iso_standard || t.iso || '',
+          status:  webToMobile[t.status] || t.status,
+          project: t.project_name || t.project || '',
+          iso:     t.iso_standard || t.iso || '',
         });
       });
+      // للويب: نحفظ الحالات الأصلية (todo/inprogress/review/done) في مفتاح منفصل
       const snapshot = {
-        tasks:          mobileTasks,
+        tasks:          mobileTasks,        // للجوال
+        tasks_web:      MOCK_DB.tasks||[], // للويب (حالات أصلية)
         annual_plans:   MOCK_DB.annual_plans||[],
         risks:          MOCK_DB.risks||[],
         gap_analysis:   MOCK_DB.gap_analysis||{},
