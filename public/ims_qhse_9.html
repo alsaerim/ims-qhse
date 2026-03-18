@@ -857,55 +857,6 @@
   // Expose MOCK_DB globally for UI dropdowns
   window.MOCK_DB = MOCK_DB;
 
-  // ── Sync MOCK_DB ↔ localStorage ──────────────────
-  // Load persisted data if available
-  const _saved = localStorage.getItem('IMS_SHARED_DB');
-  if (_saved) {
-    try {
-      const parsed = JSON.parse(_saved);
-      // Merge only mutable collections
-      ['tasks','annual_plans','risks','gap_analysis','comparisonRows',
-       'nonconformances','inspections','rca_tickets','lean_wastes','kpis',
-       'iso_standards','org_profile'].forEach(k => {
-        if (parsed[k] !== undefined) MOCK_DB[k] = parsed[k];
-      });
-    } catch(e) {}
-  }
-
-  // Auto-save on every API mutation
-  function _syncDB() {
-    try {
-      // Normalize web task statuses → mobile statuses
-      const statusMap = {todo:'pending', inprogress:'in_progress', review:'in_progress', done:'completed'};
-      const mobileTasks = (MOCK_DB.tasks||[]).map(function(t) {
-        return Object.assign({}, t, {
-          status:      statusMap[t.status] || t.status,
-          // Ensure mobile fields exist
-          project:     t.project_name || t.project || '',
-          iso:         t.iso_standard || t.iso || '',
-        });
-      });
-      const snapshot = {
-        tasks:          mobileTasks,
-        annual_plans:   MOCK_DB.annual_plans||[],
-        risks:          MOCK_DB.risks||[],
-        gap_analysis:   MOCK_DB.gap_analysis||{},
-        comparisonRows: MOCK_DB.comparisonRows||[],
-        nonconformances:MOCK_DB.nonconformances||[],
-        inspections:    MOCK_DB.inspections||[],
-        rca_tickets:    MOCK_DB.rca_tickets||[],
-        lean_wastes:    MOCK_DB.lean_wastes||[],
-        kpis:           MOCK_DB.kpis||[],
-        iso_standards:  MOCK_DB.iso_standards||[],
-        org_profile:    MOCK_DB.org_profile||{},
-      };
-      localStorage.setItem('IMS_SHARED_DB', JSON.stringify(snapshot));
-    } catch(e) {}
-  }
-  window._syncDB = _syncDB;
-  // Initial sync on page load
-  _syncDB();
-
   // ── Intercept fetch ──
   window.fetch = async function(url, opts = {}) {
     if (typeof url === 'string' && url.includes('/api/')) {
@@ -918,10 +869,6 @@
       try { if (opts.body) body = JSON.parse(opts.body); } catch(e) {}
 
       const result = mockRoute(url, opts.method || 'GET', body);
-      // Sync to localStorage after any mutation
-      if ((opts.method||'GET') !== 'GET' && typeof window._syncDB === 'function') {
-        window._syncDB();
-      }
       return {
         ok: !result.error || result.error === undefined,
         status: result.error ? (result.error.includes('غير موجود') ? 404 : 500) : 200,
@@ -8480,18 +8427,18 @@ async function loadTasks() {
 
   // ── KPI cards ──
   var kpiHtml = '';
-  [{v:total,  l:'إجمالي المهام', i:'layer-group',       c:'#3b82f6', attr:'data-kpi-total'},
-   {v:todo,   l:'قيد الانتظار',  i:'clock',             c:'#94a3b8', attr:'data-kpi-status="todo"'},
-   {v:inprog, l:'قيد التنفيذ',   i:'spinner',           c:'#d97706', attr:'data-kpi-status="inprogress"'},
-   {v:review, l:'مراجعة',        i:'eye',               c:'#7c3aed', attr:'data-kpi-status="review"'},
-   {v:done,   l:'مكتملة',        i:'check-circle',      c:'#059669', attr:'data-kpi-status="done"'},
-   {v:overdue,l:'متأخرة',        i:'exclamation-circle',c:'#dc2626', attr:'data-kpi-overdue'}
+  [{v:total,l:'إجمالي المهام',i:'layer-group',c:'#3b82f6'},
+   {v:todo,l:'قيد الانتظار',i:'clock',c:'#94a3b8'},
+   {v:inprog,l:'قيد التنفيذ',i:'spinner',c:'#d97706'},
+   {v:review,l:'مراجعة',i:'eye',c:'#7c3aed'},
+   {v:done,l:'مكتملة',i:'check-circle',c:'#059669'},
+   {v:overdue,l:'متأخرة',i:'exclamation-circle',c:'#dc2626'}
   ].forEach(function(k){
     kpiHtml += '<div class="card p-4 flex items-center gap-3">' +
       '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:'+k.c+'18">' +
         '<i class="fas fa-'+k.i+'" style="color:'+k.c+'"></i>' +
       '</div>' +
-      '<div><div class="text-2xl font-black" style="color:'+k.c+'" '+k.attr+'>'+k.v+'</div>' +
+      '<div><div class="text-2xl font-black" style="color:'+k.c+'">'+k.v+'</div>' +
       '<div class="text-xs text-slate-500">'+k.l+'</div></div>' +
     '</div>';
   });
@@ -8680,7 +8627,7 @@ async function loadTasks() {
       '</div>' +
       '<div class="card p-4">' +
         '<div class="text-sm font-bold text-slate-800 mb-3"><i class="fas fa-users text-blue-400 ml-2"></i>إنجاز الفريق</div>' +
-        '<div id="team-progress-list">' + (teamHtml || '<div class="text-xs text-slate-400 text-center py-2">لا يوجد مستخدمون</div>') + '</div>' +
+        (teamHtml || '<div class="text-xs text-slate-400 text-center py-2">لا يوجد مستخدمون</div>') +
       '</div>' +
     '</div>' +
 
@@ -8792,8 +8739,6 @@ function submitNewTask() {
 
   closeModal('modal-task');
   showToast('✅ تم إنشاء المهمة بنجاح','success');
-  // Sync to localStorage so mobile sees the new task
-  if (typeof window._syncDB === 'function') window._syncDB();
   loadTasks();
 }
 
@@ -9064,7 +9009,7 @@ function moveTask(taskId, newStatus) {
     task.status = newStatus;
     var sAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'}[newStatus]||newStatus;
     showToast('✅ تم نقل المهمة إلى: '+sAr,'success');
-    if (typeof window._syncDB === 'function') window._syncDB();
+    // Refresh board without closing detail modal
     refreshKanbanBoard();
     openTaskDetail(taskId);
   }
@@ -9177,85 +9122,46 @@ function getDragAfterElement(container, y) {
 
 // Refresh only the board cards without full reload
 function refreshKanbanBoard() {
-  var tasks = (window.MOCK_DB && window.MOCK_DB.tasks) || [];
-  var users = (window.MOCK_DB && window.MOCK_DB.users) || [];
-  var cols  = ['todo','inprogress','review','done'];
-
-  // ── 1. Update KPI counters ──
-  var total   = tasks.length;
-  var overdue = tasks.filter(function(t){ return t.due_date && new Date(t.due_date)<new Date() && t.status!=='done'; }).length;
-  cols.forEach(function(s){
-    var cnt = tasks.filter(function(t){ return t.status===s; }).length;
-    document.querySelectorAll('[data-kpi-status="'+s+'"]').forEach(function(el){ el.textContent = cnt; });
-  });
-  var totalEl = document.querySelector('[data-kpi-total]');
-  if (totalEl) totalEl.textContent = total;
-  var overdueEl = document.querySelector('[data-kpi-overdue]');
-  if (overdueEl) overdueEl.textContent = overdue;
-
-  // ── 2. Update team progress ──
-  var teamEl = document.getElementById('team-progress-list');
-  if (teamEl) {
-    var teamHtml = '';
-    users.filter(function(u){ return u.is_active; }).forEach(function(u){
-      var uTasks = tasks.filter(function(t){ return t.assigned_to === u.id; });
-      var uDone  = uTasks.filter(function(t){ return t.status === 'done'; }).length;
-      var uPct   = uTasks.length ? Math.round(uDone / uTasks.length * 100) : 0;
-      var initials = u.full_name.split(' ').map(function(w){ return w[0]; }).join('').substring(0,2);
-      var roleClr  = {admin:'#7c3aed',manager:'#2563eb',engineer:'#059669',auditor:'#d97706'}[u.role]||'#64748b';
-      teamHtml +=
-        '<div class="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">' +
-          '<div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0" style="background:'+roleClr+'">'+initials+'</div>' +
-          '<div class="flex-1 min-w-0">' +
-            '<div class="text-sm font-bold text-slate-800 truncate">'+u.full_name+'</div>' +
-            '<div class="flex items-center gap-2 mt-1">' +
-              '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">' +
-                '<div class="h-full rounded-full transition-all" style="width:'+uPct+'%;background:'+roleClr+'"></div>' +
-              '</div>' +
-              '<span class="text-xs font-bold text-slate-500">'+uDone+'/'+uTasks.length+'</span>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-    });
-    teamEl.innerHTML = teamHtml || '<p class="text-slate-400 text-xs text-center py-2">لا يوجد مستخدمون نشطون</p>';
-  }
-
-  // ── 3. Update kanban columns ──
+  var tasks    = (window.MOCK_DB && window.MOCK_DB.tasks)    || [];
+  var users    = (window.MOCK_DB && window.MOCK_DB.users)    || [];
+  var cols     = ['todo','inprogress','review','done'];
+  var labelsAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'};
   var colColors = {todo:'#64748b',inprogress:'#d97706',review:'#7c3aed',done:'#059669'};
-  cols.forEach(function(colKey){
-    var zone = document.getElementById('drop-zone-'+colKey);
-    if (!zone) return;
-    var colTasks = tasks.filter(function(t){ return t.status===colKey; });
+  var colBg     = {todo:'#f8fafc',inprogress:'#fffbeb',review:'#faf5ff',done:'#f0fdf4'};
+  var colIcons  = {todo:'clock',inprogress:'bolt',review:'eye',done:'check-circle'};
 
-    // Update column badge count
-    var wrapper = document.getElementById('col-wrapper-'+colKey);
+  cols.forEach(function(colKey) {
+    var zone = document.getElementById('drop-zone-' + colKey);
+    if (!zone) return;
+    var colTasks = tasks.filter(function(t){return t.status===colKey;});
+
+    // Update count badge
+    var wrapper = document.getElementById('col-wrapper-' + colKey);
     if (wrapper) {
       var badge = wrapper.querySelector('.col-count');
       if (badge) badge.textContent = colTasks.length;
     }
 
-    if (!colTasks.length) {
-      zone.innerHTML = '<div class="text-center py-8 text-slate-300 text-sm"><i class="fas fa-inbox text-2xl block mb-2"></i>لا توجد مهام</div>';
-      return;
-    }
-
     var html = '';
-    colTasks.forEach(function(t){
-      var isOverdue = t.due_date && new Date(t.due_date)<new Date() && t.status!=='done';
-      var assignee  = users.find(function(u){ return u.id===t.assigned_to; });
-      var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
-      var aClr      = assignee ? ({admin:'#7c3aed',manager:'#2563eb',engineer:'#059669',auditor:'#d97706'}[assignee.role]||'#64748b') : '#94a3b8';
-      var aName     = assignee ? assignee.full_name : 'غير محدد';
-      var prioClr   = {high:'#dc2626',medium:'#d97706',low:'#059669'}[t.priority]||'#94a3b8';
-      var prioAr    = {high:'عالية',medium:'متوسطة',low:'منخفضة'}[t.priority]||'';
-      var commentCount = (t.comments||[]).length;
-      var attachCount  = (t.attachments||[]).length;
+    if (!colTasks.length) {
+      html = '<div class="text-center py-8 text-slate-300 text-sm"><i class="fas fa-inbox text-2xl block mb-2"></i>لا توجد مهام</div>';
+    } else {
+      colTasks.forEach(function(t) {
+        var isOverdue = t.due_date && new Date(t.due_date) < new Date() && t.status !== 'done';
+        var assignee  = users.find(function(u){return u.id===t.assigned_to;});
+        var aName     = assignee ? assignee.full_name : 'غير محدد';
+        var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
+        var aClr      = assignee ? ({admin:'#7c3aed',manager:'#2563eb',engineer:'#059669',auditor:'#d97706'}[assignee.role]||'#64748b') : '#94a3b8';
+        var prioClr   = {high:'#dc2626',medium:'#d97706',low:'#059669'}[t.priority]||'#94a3b8';
+        var prioAr    = {high:'عالية',medium:'متوسطة',low:'منخفضة'}[t.priority]||'';
+        var commentCount = (t.comments||[]).length;
+        var attachCount  = (t.attachments||[]).length;
 
-      html +=
-        '<div class="task-card bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-3 cursor-grab hover:shadow-md hover:-translate-y-0.5 transition-all select-none"' +
-        ' draggable="true" data-task-id="'+t.id+'" data-status="'+t.status+'"' +
-        ' ondragstart="onTaskDragStart(event,\''+t.id+'\')" ondragend="onTaskDragEnd(event)"' +
-        ' onclick="openTaskDetail(\''+t.id+'\')">' +
+        html += '<div class="task-card bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-3 cursor-grab hover:shadow-md hover:-translate-y-0.5 transition-all select-none" ' +
+          'draggable="true" data-task-id="'+t.id+'" data-status="'+t.status+'" ' +
+          'ondragstart="onTaskDragStart(event,\''+t.id+'\')" ' +
+          'ondragend="onTaskDragEnd(event)" ' +
+          'onclick="openTaskDetail(\''+t.id+'\')">' +
           '<div class="flex items-start justify-between gap-2 mb-2">' +
             '<div class="text-sm font-bold text-slate-800 leading-snug flex-1">'+t.title+'</div>' +
             '<div class="flex items-center gap-1.5 flex-shrink-0">' +
@@ -9268,22 +9174,28 @@ function refreshKanbanBoard() {
             '<div class="flex items-center gap-2">' +
               '<div class="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-black" style="background:'+aClr+'" title="'+aName+'">'+aInitials+'</div>' +
               (isOverdue ? '<span class="text-xs text-red-500 font-bold"><i class="fas fa-fire ml-1"></i>متأخر</span>' :
-               (t.due_date ? '<span class="text-xs text-slate-400">'+new Date(t.due_date).toLocaleDateString('ar-SA')+'</span>' : '')) +
+                (t.due_date ? '<span class="text-xs text-slate-400">'+new Date(t.due_date).toLocaleDateString('ar-SA')+'</span>' : '')) +
             '</div>' +
             '<div class="flex items-center gap-3 text-slate-400">' +
               (commentCount ? '<span class="text-xs"><i class="fas fa-comment-alt ml-1"></i>'+commentCount+'</span>' : '') +
-              (attachCount  ? '<span class="text-xs"><i class="fas fa-paperclip ml-1"></i>'+attachCount+'</span>'  : '') +
+              (attachCount  ? '<span class="text-xs"><i class="fas fa-paperclip ml-1"></i>'+attachCount+'</span>' : '') +
             '</div>' +
           '</div>' +
         '</div>';
-    });
+      });
+    }
+
     zone.innerHTML = html;
+    // Rebind drag events — already inline so no need
+
+    // Update KPI counters in header
+    var kpiEls = document.querySelectorAll('[data-kpi-status]');
+    kpiEls.forEach(function(el) {
+      var s = el.getAttribute('data-kpi-status');
+      el.textContent = tasks.filter(function(t){return t.status===s;}).length;
+    });
   });
-
-  // ── 4. Sync to localStorage ──
-  if (typeof window._syncDB === 'function') window._syncDB();
 }
-
 
 // ══════════════════════════════════════════════
 //  TASK EDIT MODAL
@@ -9485,7 +9397,6 @@ function submitTaskEdit(id) {
   var editModal = document.getElementById('modal-task-edit');
   if (editModal) editModal.remove();
   showToast('✅ تم حفظ التعديلات بنجاح', 'success');
-  if (typeof window._syncDB === 'function') window._syncDB();
   refreshKanbanBoard();
   openTaskDetail(id);
 }
@@ -9497,7 +9408,6 @@ function deleteTask(id) {
   var editModal = document.getElementById('modal-task-edit');
   if (editModal) editModal.remove();
   showToast('🗑️ تم حذف المهمة', 'info');
-  if (typeof window._syncDB === 'function') window._syncDB();
   refreshKanbanBoard();
 }
 
