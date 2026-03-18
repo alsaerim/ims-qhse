@@ -857,6 +857,43 @@
   // Expose MOCK_DB globally for UI dropdowns
   window.MOCK_DB = MOCK_DB;
 
+  // ── Sync MOCK_DB ↔ localStorage ──────────────────
+  // Load persisted data if available
+  const _saved = localStorage.getItem('IMS_SHARED_DB');
+  if (_saved) {
+    try {
+      const parsed = JSON.parse(_saved);
+      // Merge only mutable collections
+      ['tasks','annual_plans','risks','gap_analysis','comparisonRows',
+       'nonconformances','inspections','rca_tickets','lean_wastes','kpis',
+       'iso_standards','org_profile'].forEach(k => {
+        if (parsed[k] !== undefined) MOCK_DB[k] = parsed[k];
+      });
+    } catch(e) {}
+  }
+
+  // Auto-save on every API mutation
+  function _syncDB() {
+    try {
+      const snapshot = {
+        tasks:          MOCK_DB.tasks||[],
+        annual_plans:   MOCK_DB.annual_plans||[],
+        risks:          MOCK_DB.risks||[],
+        gap_analysis:   MOCK_DB.gap_analysis||{},
+        comparisonRows: MOCK_DB.comparisonRows||[],
+        nonconformances:MOCK_DB.nonconformances||[],
+        inspections:    MOCK_DB.inspections||[],
+        rca_tickets:    MOCK_DB.rca_tickets||[],
+        lean_wastes:    MOCK_DB.lean_wastes||[],
+        kpis:           MOCK_DB.kpis||[],
+        iso_standards:  MOCK_DB.iso_standards||[],
+        org_profile:    MOCK_DB.org_profile||{},
+      };
+      localStorage.setItem('IMS_SHARED_DB', JSON.stringify(snapshot));
+    } catch(e) {}
+  }
+  window._syncDB = _syncDB;
+
   // ── Intercept fetch ──
   window.fetch = async function(url, opts = {}) {
     if (typeof url === 'string' && url.includes('/api/')) {
@@ -869,6 +906,10 @@
       try { if (opts.body) body = JSON.parse(opts.body); } catch(e) {}
 
       const result = mockRoute(url, opts.method || 'GET', body);
+      // Sync to localStorage after any mutation
+      if ((opts.method||'GET') !== 'GET' && typeof window._syncDB === 'function') {
+        window._syncDB();
+      }
       return {
         ok: !result.error || result.error === undefined,
         status: result.error ? (result.error.includes('غير موجود') ? 404 : 500) : 200,
@@ -8739,6 +8780,8 @@ function submitNewTask() {
 
   closeModal('modal-task');
   showToast('✅ تم إنشاء المهمة بنجاح','success');
+  // Sync to localStorage so mobile sees the new task
+  if (typeof window._syncDB === 'function') window._syncDB();
   loadTasks();
 }
 
@@ -9009,7 +9052,7 @@ function moveTask(taskId, newStatus) {
     task.status = newStatus;
     var sAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'}[newStatus]||newStatus;
     showToast('✅ تم نقل المهمة إلى: '+sAr,'success');
-    // Refresh board without closing detail modal
+    if (typeof window._syncDB === 'function') window._syncDB();
     refreshKanbanBoard();
     openTaskDetail(taskId);
   }
@@ -9397,6 +9440,7 @@ function submitTaskEdit(id) {
   var editModal = document.getElementById('modal-task-edit');
   if (editModal) editModal.remove();
   showToast('✅ تم حفظ التعديلات بنجاح', 'success');
+  if (typeof window._syncDB === 'function') window._syncDB();
   refreshKanbanBoard();
   openTaskDetail(id);
 }
@@ -9408,6 +9452,7 @@ function deleteTask(id) {
   var editModal = document.getElementById('modal-task-edit');
   if (editModal) editModal.remove();
   showToast('🗑️ تم حذف المهمة', 'info');
+  if (typeof window._syncDB === 'function') window._syncDB();
   refreshKanbanBoard();
 }
 

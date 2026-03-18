@@ -164,7 +164,41 @@
       {id:'task-005',title:'تفتيش البيئة — محطة المعالجة',type:'inspection',priority:'medium',status:'pending',assigned_to:'usr-eng-001',project:'منشأة تحلية مياه الخبر',due_date:'2026-03-28T00:00:00Z',iso:'ISO_14001'},
     ]
   };
-  const TOK={};
+
+  // ── Sync from shared localStorage (written by web app) ──
+  try {
+    const _shared = localStorage.getItem('IMS_SHARED_DB');
+    if (_shared) {
+      const _parsed = JSON.parse(_shared);
+      // Merge mutable collections from web app into mobile MDATA
+      ['tasks','annual_plans','risks','nonconformances','inspections',
+       'rca','lean_wastes','iso_standards','org_profile'].forEach(k => {
+        // rca_tickets in web = rca in mobile
+        const webKey = k === 'rca' ? 'rca_tickets' : k;
+        if (_parsed[webKey] !== undefined && Array.isArray(_parsed[webKey]) && _parsed[webKey].length > 0) {
+          MDATA[k] = _parsed[webKey];
+        } else if (_parsed[k] !== undefined) {
+          MDATA[k] = _parsed[k];
+        }
+      });
+      console.log('[Mobile Sync] ✅ Loaded shared data from web app');
+    }
+  } catch(e) { console.warn('[Mobile Sync] Could not load shared data:', e); }
+
+  // ── Save mobile mutations back to localStorage ──
+  function _mSyncDB() {
+    try {
+      const _saved = localStorage.getItem('IMS_SHARED_DB');
+      const base   = _saved ? JSON.parse(_saved) : {};
+      // Write back mobile mutations
+      base.tasks           = MDATA.tasks || [];
+      base.nonconformances = MDATA.nonconformances || [];
+      base.inspections     = MDATA.inspections || [];
+      base.rca_tickets     = MDATA.rca || [];
+      base.lean_wastes     = MDATA.lean_wastes || [];
+      localStorage.setItem('IMS_SHARED_DB', JSON.stringify(base));
+    } catch(e) {}
+  }
   window.fetch = async function(url, opts={}) {
     if(typeof url==='string' && url.includes('/api/')) {
       const u=new URL(url,'http://localhost'), path=u.pathname, q=Object.fromEntries(u.searchParams);
@@ -245,7 +279,11 @@
         if(w)Object.assign(w,body);result=w||{error:'not found'};
       } else if(path==='/api/tasks'){
         let d=[...MDATA.tasks];
-        if(q.assigned_to)d=d.filter(t=>t.assigned_to===q.assigned_to);
+        // Filter by assigned_to — use logged-in user if not specified
+        const myId = (window._mLastAuth||'').replace('Bearer mob-','');
+        const filterUser = q.assigned_to || myId || null;
+        if(filterUser) d=d.filter(t=>t.assigned_to===filterUser||!t.assigned_to);
+        if(q.status) d=d.filter(t=>t.status===q.status);
         result={data:d,total:d.length};
       } else if(path.startsWith('/api/tasks/')&&method==='PUT'){
         const tid=path.split('/')[3];
@@ -259,6 +297,8 @@
         result={error:'mock: not found '+path};
       }
       const ok=!result?.error;
+      // Sync mutations back to shared localStorage
+      if (method !== 'GET' && typeof _mSyncDB === 'function') _mSyncDB();
       return {ok,status:ok?200:404,json:async()=>result,text:async()=>JSON.stringify(result)};
     }
     return _rf(url,opts);
@@ -840,7 +880,10 @@
             <div class="flex justify-between text-slate-600"><span>الإصدار</span><span class="font-mono font-bold">v2.0.0</span></div>
             <div class="flex justify-between text-slate-600"><span>المعايير</span><span class="text-xs">9001 · 45001 · 14001 · 27001</span></div>
             <div class="flex justify-between text-slate-600"><span>حالة الشبكة</span><span id="m-network-status" class="badge badge-green">متصل</span></div>
-            <div class="flex justify-between text-slate-600"><span>آخر مزامنة</span><span id="m-last-sync" class="text-xs text-slate-400">-</span></div>
+            <div class="flex justify-between items-center text-slate-600"><span>آخر مزامنة</span><span id="m-last-sync" class="text-xs text-slate-400">-</span></div>
+            <button onclick="syncFromWebApp()" class="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm active:bg-blue-100 transition-colors">
+              <i class="fas fa-sync-alt"></i> مزامنة مع النظام الرئيسي
+            </button>
           </div>
         </div>
 
@@ -1029,6 +1072,8 @@ async function mobileLogin() {
       document.getElementById('m-user-name').textContent = data.user.full_name;
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
+      // Sync shared data from web app first
+      syncFromWebApp();
       loadHomeStats();
       loadInspectionsList();
       loadNCList();
@@ -1046,6 +1091,7 @@ async function mobileLogin() {
     document.getElementById('m-user-name').textContent = demoUser.full_name;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-app').style.display = 'block';
+    syncFromWebApp();
     loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadTasksList(); loadNotifications_m();
     startGPS();
   } finally {
@@ -3052,6 +3098,55 @@ function updateOnlineStatus() {
 }
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
+
+// ── Sync from Web App ────────────────────────────
+function syncFromWebApp() {
+  try {
+    const _shared = localStorage.getItem('IMS_SHARED_DB');
+    if (!_shared) { mToast('⚠️ لا توجد بيانات مشتركة بعد — افتح النظام الرئيسي أولاً', 'warning'); return; }
+    const _parsed = JSON.parse(_shared);
+    let updated = 0;
+    const map = {
+      tasks:           'tasks',
+      annual_plans:    'annual_plans',
+      risks:           'risks',
+      nonconformances: 'nonconformances',
+      inspections:     'inspections',
+      rca_tickets:     'rca',
+      lean_wastes:     'lean_wastes',
+    };
+    Object.entries(map).forEach(([webKey, mobileKey]) => {
+      if (_parsed[webKey] !== undefined) {
+        const src = Array.isArray(_parsed[webKey]) ? _parsed[webKey] : [];
+        if (JSON.stringify(MDATA[mobileKey]) !== JSON.stringify(src)) {
+          MDATA[mobileKey] = src;
+          updated++;
+        }
+      }
+    });
+
+    // Update sync timestamp
+    const syncEl = document.getElementById('m-last-sync');
+    if (syncEl) syncEl.textContent = new Date().toLocaleTimeString('ar-SA');
+
+    if (updated > 0) {
+      mToast('✅ تمت المزامنة — تم تحديث ' + updated + ' قوائم', 'success');
+      // Refresh current page
+      loadHomeStats();
+      if (mState.currentPage === 'm-tasks')    loadTasksList();
+      if (mState.currentPage === 'm-nc')       loadNCList();
+      if (mState.currentPage === 'm-rca')      loadRCAList();
+      if (mState.currentPage === 'm-risks')    loadRisksList();
+      if (mState.currentPage === 'm-plans')    loadPlansList();
+      if (mState.currentPage === 'm-lean')     loadLeanList();
+      if (mState.currentPage === 'm-inspections') loadInspectionsList();
+    } else {
+      mToast('✅ البيانات محدّثة بالفعل', 'info');
+    }
+  } catch(e) {
+    mToast('❌ خطأ في المزامنة: ' + e.message, 'error');
+  }
+}
 
 // ── Init ──────────────────────────────────────────
 window.addEventListener('load', async () => {
