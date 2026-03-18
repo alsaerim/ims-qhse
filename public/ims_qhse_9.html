@@ -168,6 +168,28 @@
       {id:'notif-005',user_id:'usr-mgr-001',title:'تم إغلاق NC بنجاح',message:'NC-2025-089 (تسرب زيت الأنابيب) تم إغلاقها وإتمام الإجراءات التصحيحية',priority:'low',is_read:1,created_at:'2026-03-01T11:00:00Z'},
     ],
     sessions: {},
+    annual_plans: [
+      {id:'ap-001', title:'برنامج رفع الامتثال ISO 45001', category:'safety', iso:'ISO_45001', status:'in_progress', priority:'high', owner:'أحمد العمري', start_month:1, end_month:6, progress:65, budget:50000, notes:'تدريب الكوادر وتحديث إجراءات السلامة'},
+      {id:'ap-002', title:'مراجعة وثائق نظام الجودة ISO 9001', category:'quality', iso:'ISO_9001', status:'completed', priority:'medium', owner:'سارة القحطاني', start_month:1, end_month:3, progress:100, budget:20000, notes:'تم إعادة هيكلة جميع وثائق الجودة'},
+      {id:'ap-003', title:'برنامج التحسين البيئي ISO 14001', category:'environmental', iso:'ISO_14001', status:'planned', priority:'medium', owner:'محمد الزهراني', start_month:7, end_month:12, progress:0, budget:35000, notes:'خفض الانبعاثات بنسبة 20%'},
+      {id:'ap-004', title:'التدقيق الداخلي الشامل', category:'audit', iso:'MULTI', status:'in_progress', priority:'high', owner:'سارة القحطاني', start_month:3, end_month:4, progress:40, budget:15000, notes:'مراجعة شاملة لجميع المعايير'},
+      {id:'ap-005', title:'تأهيل وتدريب فريق QHSE', category:'training', iso:'MULTI', status:'in_progress', priority:'medium', owner:'أحمد العمري', start_month:1, end_month:12, progress:55, budget:80000, notes:'برنامج تدريبي سنوي مستمر'},
+      {id:'ap-006', title:'تجديد شهادة Bureau Veritas', category:'certification', iso:'ISO_9001', status:'planned', priority:'critical', owner:'أحمد العمري', start_month:10, end_month:11, progress:0, budget:25000, notes:'تجديد الاعتماد السنوي'},
+    ],
+    risks: [
+      {id:'risk-001', title:'عدم إتمام مراجعة ISO 45001 في الموعد المحدد', category:'compliance', iso:'ISO_45001', probability:3, impact:4, status:'open', owner:'أحمد العمري', mitigation:'وضع خطة مراجعة تفصيلية مع مواعيد واضحة', created_at:'2026-01-15T00:00:00Z'},
+      {id:'risk-002', title:'ارتفاع معدل الحوادث فوق الحد المسموح', category:'safety', iso:'ISO_45001', probability:2, impact:5, status:'mitigated', owner:'محمد الزهراني', mitigation:'تكثيف دوريات السلامة وتدريب المشرفين', created_at:'2026-01-20T00:00:00Z'},
+      {id:'risk-003', title:'فجوة في توثيق إجراءات الجودة', category:'quality', iso:'ISO_9001', probability:4, impact:3, status:'open', owner:'سارة القحطاني', mitigation:'تكليف فريق لمراجعة جميع الوثائق خلال 60 يوم', created_at:'2026-02-01T00:00:00Z'},
+      {id:'risk-004', title:'تجاوز حدود الانبعاثات البيئية', category:'environmental', iso:'ISO_14001', probability:2, impact:4, status:'open', owner:'محمد الزهراني', mitigation:'تركيب مستشعرات مراقبة مستمرة', created_at:'2026-02-10T00:00:00Z'},
+      {id:'risk-005', title:'انتهاء صلاحية شهادات كفاءة الموظفين', category:'compliance', iso:'MULTI', probability:3, impact:3, status:'open', owner:'أحمد العمري', mitigation:'بناء قاعدة بيانات لمتابعة تواريخ الشهادات', created_at:'2026-02-15T00:00:00Z'},
+      {id:'risk-006', title:'ضعف الاستجابة لحوادث أمن المعلومات', category:'security', iso:'ISO_27001', probability:2, impact:5, status:'mitigated', owner:'سارة القحطاني', mitigation:'تفعيل خطة الاستجابة للحوادث وإجراء تدريب محاكاة', created_at:'2026-02-20T00:00:00Z'},
+    ],
+    gap_analysis: {
+      ISO_9001:   {clauses:{4:85, 5:90, 6:70, 7:80, 8:75, 9:65, 10:60}},
+      ISO_45001:  {clauses:{4:90, 5:85, 6:75, 7:88, 8:70, 9:80, 10:72}},
+      ISO_14001:  {clauses:{4:80, 5:75, 6:65, 7:70, 8:60, 9:55, 10:50}},
+      ISO_27001:  {clauses:{4:70, 5:65, 6:60, 7:72, 8:55, 9:68, 10:58}},
+    },
     org_profile: {
       name:'شركة الامتثال المتكاملة للخدمات الصناعية',
       name_en:'Integrated Compliance Industrial Services Co.',
@@ -427,6 +449,16 @@
       MOCK_DB.inspections.unshift(newInsp);
       return newInsp;
     }
+    if (path.startsWith('/api/inspections/') && method === 'GET') {
+      const iid = path.split('/')[3];
+      return MOCK_DB.inspections.find(i => i.id === iid) || {error:'غير موجود'};
+    }
+    if (path.startsWith('/api/inspections/') && method === 'PUT') {
+      const iid = path.split('/')[3];
+      const insp = MOCK_DB.inspections.find(i => i.id === iid);
+      if (insp) Object.assign(insp, body);
+      return insp || {error:'غير موجود'};
+    }
     if (path === '/api/inspections') {
       let data = [...MOCK_DB.inspections];
       if (q.iso_standard) data = data.filter(i => i.iso_standard === q.iso_standard);
@@ -674,7 +706,63 @@
       return w || {error:'not found'};
     }
     if (path.startsWith('/api/reports/lean-waste/')) {
-      return {lean_metrics:{paper_elimination:{total_inspections:15,digital_forms:13,digitalization_rate:87,waste_reduction_target:'100%',current_waste_elimination:'87%'},muda_categories:{defects:{ncs_by_category:[{category:'safety',count:8},{category:'quality',count:5},{category:'documentation',count:4}]},waiting:{overdue_items:{overdue_inspections:1,overdue_ncs:1,overdue_rcas:2}},over_processing:{overdue_actions:2}},improvement_score:82}};
+      // ── حساب معدل الرقمنة من بيانات التفتيش الحقيقية ──
+      const allInsp        = MOCK_DB.inspections || [];
+      const totalInsp      = allInsp.length;
+      const digitalInsp    = allInsp.filter(i => i.status === 'completed' || i.status === 'in_progress').length;
+      const digitRate      = totalInsp > 0 ? Math.round((digitalInsp / totalInsp) * 100) : 0;
+
+      // ── حساب مؤشر Lean من بيانات الهدر ──
+      const allWastes      = MOCK_DB.lean_wastes || [];
+      const totalWastes    = allWastes.length;
+      const closedWastes   = allWastes.filter(w => w.status === 'closed').length;
+      const inProgWastes   = allWastes.filter(w => w.status === 'in_progress').length;
+      // الهدر المغلق يُحسب بالكامل، قيد المعالجة يُحسب بنصف وزن
+      const leanScore      = totalWastes > 0
+        ? Math.round(((closedWastes + inProgWastes * 0.5) / totalWastes) * 100)
+        : 0;
+
+      // ── متأخرات من NC و RCA والتفتيش ──
+      const now             = new Date();
+      const overdueInsp     = allInsp.filter(i => i.status === 'overdue' || (i.scheduled_at && new Date(i.scheduled_at) < now && i.status === 'pending')).length;
+      const overdueNCs      = (MOCK_DB.nonconformances || []).filter(n => n.due_date && new Date(n.due_date) < now && n.status !== 'closed').length;
+      const overdueRCAs     = (MOCK_DB.rca_tickets    || []).filter(r => r.target_date && new Date(r.target_date) < now && r.status !== 'closed').length;
+      const overdueActions  = (MOCK_DB.rca_tickets    || []).flatMap(r => r.actions || []).filter(a => a.due_date && new Date(a.due_date) < now && a.status !== 'completed').length;
+
+      // ── توزيع NCs حسب الفئة ──
+      const ncByCat = {};
+      (MOCK_DB.nonconformances || []).forEach(n => {
+        const cat = n.category || 'other';
+        ncByCat[cat] = (ncByCat[cat] || 0) + 1;
+      });
+      const ncsByCategoryArr = Object.entries(ncByCat).map(([category, count]) => ({category, count}));
+
+      return {
+        lean_metrics: {
+          paper_elimination: {
+            total_inspections:       totalInsp,
+            digital_forms:           digitalInsp,
+            digitalization_rate:     digitRate,
+            waste_reduction_target:  '100%',
+            current_waste_elimination: digitRate + '%',
+          },
+          muda_categories: {
+            defects: { ncs_by_category: ncsByCategoryArr },
+            waiting: { overdue_items: { overdue_inspections: overdueInsp, overdue_ncs: overdueNCs, overdue_rcas: overdueRCAs } },
+            over_processing: { overdue_actions: overdueActions }
+          },
+          improvement_score: leanScore,
+          // Extra breakdown for tooltip/detail
+          _detail: {
+            wastes_total:     totalWastes,
+            wastes_closed:    closedWastes,
+            wastes_inprog:    inProgWastes,
+            insp_total:       totalInsp,
+            insp_digital:     digitalInsp,
+            overdue_total:    overdueInsp + overdueNCs + overdueRCAs,
+          }
+        }
+      };
     }
 
     return {error:'الوجهة غير موجودة: ' + path, mock:true};
@@ -1600,23 +1688,301 @@ async function filterInspections(el, iso) {
 
 function renderInspectionsList(items) {
   if (!items.length) return '<div class="card p-8 text-center text-slate-400"><i class="fas fa-clipboard text-4xl mb-3 block"></i>لا توجد عمليات تفتيش</div>';
-  return `<div class="grid gap-4">
+  return `<div class="grid gap-3">
     ${items.map(i => `
-    <div class="card p-5 flex items-center gap-4">
+    <div class="card p-4 flex items-center gap-4 hover:shadow-md transition-all group">
       <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${i.result === 'pass' ? 'bg-green-100' : i.result === 'fail' ? 'bg-red-100' : 'bg-blue-100'}">
         <i class="fas fa-${i.result === 'pass' ? 'check-circle text-green-600' : i.result === 'fail' ? 'times-circle text-red-600' : 'clipboard-check text-blue-600'} text-xl"></i>
       </div>
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-slate-800">${i.title}</div>
         <div class="text-xs text-slate-500 mt-1">${i.ref_number} · ${i.project_name} · ${i.assigned_name || 'غير محدد'}</div>
-        <div class="text-xs text-slate-400">${i.location_name || ''} · ${i.iso_standard || ''}</div>
+        <div class="text-xs text-slate-400">${i.location_name || ''} ${i.iso_standard ? '· '+i.iso_standard.replace('_',' ') : ''}</div>
       </div>
       <div class="text-center flex-shrink-0">
-        ${i.compliance_score ? `<div class="text-2xl font-bold ${i.compliance_score >= 90 ? 'text-green-600' : i.compliance_score >= 70 ? 'text-yellow-600' : 'text-red-600'}">${i.compliance_score}%</div><div class="text-xs text-slate-400">امتثال</div>` : ''}
-        <span class="badge ${i.status === 'completed' ? 'badge-green' : i.status === 'pending' ? 'badge-yellow' : 'badge-gray'} text-xs mt-1">${inspStatusAr(i.status)}</span>
+        ${i.compliance_score != null ? `<div class="text-2xl font-bold ${i.compliance_score >= 90 ? 'text-green-600' : i.compliance_score >= 70 ? 'text-yellow-600' : 'text-red-600'}">${i.compliance_score}%</div><div class="text-xs text-slate-400">امتثال</div>` : ''}
+        <span class="badge ${i.status === 'completed' ? 'badge-green' : i.status === 'in_progress' ? 'badge-yellow' : i.status === 'overdue' ? 'badge-red' : 'badge-gray'} text-xs mt-1 block">${inspStatusAr(i.status)}</span>
+      </div>
+      <div class="flex flex-col gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button onclick="openInspDetail('${i.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="عرض التفاصيل">
+          <i class="fas fa-eye text-xs"></i>
+        </button>
+        <button onclick="openInspEdit('${i.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="تعديل">
+          <i class="fas fa-edit text-xs"></i>
+        </button>
       </div>
     </div>`).join('')}
   </div>`;
+}
+
+// ── Inspection Detail ─────────────────────────
+function openInspDetail(id) {
+  const insps = window.MOCK_DB?.inspections || [];
+  const i = insps.find(x => x.id === id);
+  if (!i) return;
+
+  const resultMap  = {pass:'✅ ناجح', fail:'❌ فاشل', partial:'⚠️ جزئي'};
+  const statusClr  = {completed:'#059669', in_progress:'#d97706', pending:'#3b82f6', overdue:'#dc2626', cancelled:'#64748b'};
+  const headerClr  = statusClr[i.status] || '#3b82f6';
+  const isOverdue  = i.status === 'overdue';
+
+  document.getElementById('modal-insp-detail')?.remove();
+
+  const html = `<div class="modal open" id="modal-insp-detail">
+  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">
+
+    <div class="px-6 py-4 flex items-center justify-between sticky top-0 z-10" style="background:${headerClr}">
+      <div>
+        <div class="text-white text-xs opacity-80 font-mono">${i.ref_number}</div>
+        <h3 class="text-white font-bold text-base leading-tight">${i.title}</h3>
+      </div>
+      <button onclick="document.getElementById('modal-insp-detail').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="p-6 space-y-4">
+
+      <!-- Status + result badges -->
+      <div class="flex flex-wrap gap-2">
+        <span class="badge ${i.status==='completed'?'badge-green':i.status==='in_progress'?'badge-yellow':i.status==='overdue'?'badge-red':'badge-gray'}">
+          ${inspStatusAr(i.status)}
+        </span>
+        ${i.result ? `<span class="badge ${i.result==='pass'?'badge-green':i.result==='fail'?'badge-red':'badge-yellow'}">${resultMap[i.result]||i.result}</span>` : ''}
+        ${i.iso_standard ? `<span class="badge badge-blue text-xs">${i.iso_standard.replace('_',' ')}</span>` : ''}
+        ${isOverdue ? '<span class="badge badge-red"><i class="fas fa-clock ml-1"></i>متأخر</span>' : ''}
+      </div>
+
+      <!-- Score gauge -->
+      ${i.compliance_score != null ? `
+      <div class="p-4 rounded-xl text-center" style="background:${i.compliance_score>=90?'#f0fdf4':i.compliance_score>=70?'#fefce8':'#fef2f2'}">
+        <div class="text-4xl font-black mb-1" style="color:${i.compliance_score>=90?'#059669':i.compliance_score>=70?'#d97706':'#dc2626'}">${i.compliance_score}%</div>
+        <div class="text-sm font-bold text-slate-600">نسبة الامتثال</div>
+        <div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${i.compliance_score}%;background:${i.compliance_score>=90?'#059669':i.compliance_score>=70?'#d97706':'#dc2626'}"></div></div>
+      </div>` : ''}
+
+      <!-- Info grid -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">المشروع</div>
+          <div class="text-sm font-bold text-slate-800">${i.project_name||'-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">المسؤول</div>
+          <div class="text-sm font-bold text-slate-800">${i.assigned_name||'-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">الموقع</div>
+          <div class="text-sm font-bold text-slate-800">${i.location_name||'-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">النوع</div>
+          <div class="text-sm font-bold text-slate-800">${{routine:'روتيني',audit:'مراجعة',scheduled:'مجدول',emergency:'طارئ'}[i.type]||i.type||'-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">تاريخ الجدولة</div>
+          <div class="text-sm font-bold text-slate-800">${i.scheduled_at ? new Date(i.scheduled_at).toLocaleDateString('ar-SA') : '-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">تاريخ الإتمام</div>
+          <div class="text-sm font-bold text-slate-800">${i.completed_at ? new Date(i.completed_at).toLocaleDateString('ar-SA') : '-'}</div>
+        </div>
+      </div>
+
+      ${i.notes ? `<div class="p-4 bg-slate-50 rounded-xl">
+        <div class="text-xs font-bold text-slate-600 mb-1">ملاحظات</div>
+        <p class="text-sm text-slate-700">${i.notes}</p>
+      </div>` : ''}
+
+      <!-- Quick status change -->
+      <div>
+        <div class="text-sm font-bold text-slate-700 mb-2">تغيير الحالة السريع</div>
+        <div class="grid grid-cols-2 gap-2">
+          ${['pending','in_progress','completed','overdue'].map(s => `
+          <button onclick="quickUpdateInspStatus('${i.id}','${s}')"
+            class="py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all"
+            style="border-color:${statusClr[s]||'#64748b'};background:${i.status===s?(statusClr[s]||'#64748b'):'white'};color:${i.status===s?'white':(statusClr[s]||'#64748b')}">
+            ${inspStatusAr(s)}
+          </button>`).join('')}
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-2 border-t border-slate-100">
+        <button onclick="openInspEdit('${i.id}'); document.getElementById('modal-insp-detail').remove()" class="btn btn-primary flex-1">
+          <i class="fas fa-edit ml-1"></i>تعديل كامل
+        </button>
+        <button onclick="document.getElementById('modal-insp-detail').remove()" class="btn btn-danger px-5">إغلاق</button>
+      </div>
+    </div>
+  </div></div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+// ── Inspection Edit ───────────────────────────
+function openInspEdit(id) {
+  const insps    = window.MOCK_DB?.inspections || [];
+  const projects = window.MOCK_DB?.projects    || [];
+  const users    = window.MOCK_DB?.users       || [];
+  const i = insps.find(x => x.id === id);
+  if (!i) return;
+
+  const projOpts = projects.map(p => `<option value="${p.id}" ${p.id===i.project_id?'selected':''}>${p.name}</option>`).join('');
+  const userOpts = users.filter(u=>u.is_active).map(u => `<option value="${u.id}" ${u.id===i.assigned_to?'selected':''}>${u.full_name}</option>`).join('');
+
+  const statusOpts = [
+    ['pending','قيد الانتظار'], ['in_progress','جارٍ'],
+    ['completed','مكتمل'], ['overdue','متأخر'], ['cancelled','ملغى']
+  ].map(([v,l]) => `<option value="${v}" ${v===i.status?'selected':''}>${l}</option>`).join('');
+
+  const resultOpts = [
+    ['','-- لم يُحدد --'], ['pass','✅ ناجح'], ['fail','❌ فاشل'], ['partial','⚠️ جزئي']
+  ].map(([v,l]) => `<option value="${v}" ${v===(i.result||'')?'selected':''}>${l}</option>`).join('');
+
+  const typeOpts = [
+    ['routine','روتيني'], ['audit','مراجعة'], ['scheduled','مجدول'], ['emergency','طارئ']
+  ].map(([v,l]) => `<option value="${v}" ${v===i.type?'selected':''}>${l}</option>`).join('');
+
+  document.getElementById('modal-insp-edit')?.remove();
+
+  const html = `<div class="modal open" id="modal-insp-edit">
+  <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">
+
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <div class="text-blue-200 text-xs font-mono">${i.ref_number}</div>
+        <h3 class="text-white font-bold text-lg"><i class="fas fa-edit ml-2"></i>تعديل عملية التفتيش</h3>
+      </div>
+      <button onclick="document.getElementById('modal-insp-edit').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="p-6 space-y-4">
+
+      <div>
+        <label class="text-sm font-bold text-slate-700 block mb-1">عنوان التفتيش *</label>
+        <input class="form-input" type="text" id="inspe-title" value="${(i.title||'').replace(/"/g,'&quot;')}" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1"><i class="fas fa-traffic-light text-amber-500 ml-1"></i>الحالة</label>
+          <select class="form-input" id="inspe-status">${statusOpts}</select>
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">النتيجة</label>
+          <select class="form-input" id="inspe-result">${resultOpts}</select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">نسبة الامتثال %</label>
+          <input class="form-input" type="number" id="inspe-score" min="0" max="100" value="${i.compliance_score??''}" placeholder="مثال: 94" />
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">نوع التفتيش</label>
+          <select class="form-input" id="inspe-type">${typeOpts}</select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">المشروع</label>
+          <select class="form-input" id="inspe-project"><option value="">--</option>${projOpts}</select>
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">المسؤول</label>
+          <select class="form-input" id="inspe-assigned"><option value="">--</option>${userOpts}</select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">الموقع</label>
+          <input class="form-input" type="text" id="inspe-location" value="${(i.location_name||'').replace(/"/g,'&quot;')}" placeholder="اسم الموقع" />
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">معيار ISO</label>
+          <select class="form-input" id="inspe-iso">
+            <option value="">-- بدون --</option>
+            ${(window.MOCK_DB?.iso_standards||[]).map(s=>`<option value="${s.code}" ${s.code===i.iso_standard?'selected':''}>${s.code.replace('_',' ')}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">تاريخ الجدولة</label>
+          <input class="form-input" type="date" id="inspe-scheduled" value="${i.scheduled_at?i.scheduled_at.substring(0,10):''}" />
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">تاريخ الإتمام</label>
+          <input class="form-input" type="date" id="inspe-completed" value="${i.completed_at?i.completed_at.substring(0,10):''}" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-bold text-slate-700 block mb-1">ملاحظات</label>
+        <textarea class="form-input" id="inspe-notes" rows="3" placeholder="ملاحظات إضافية عن التفتيش...">${i.notes||''}</textarea>
+      </div>
+
+      <div class="flex gap-3 pt-3 border-t border-slate-100">
+        <button onclick="submitInspEdit('${i.id}')" class="btn btn-primary flex-1">
+          <i class="fas fa-save ml-1"></i>حفظ التعديلات
+        </button>
+        <button onclick="document.getElementById('modal-insp-edit').remove()" class="btn btn-danger px-6">إلغاء</button>
+      </div>
+    </div>
+  </div></div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function quickUpdateInspStatus(id, status) {
+  const insps = window.MOCK_DB?.inspections || [];
+  const insp  = insps.find(x => x.id === id);
+  if (insp) {
+    insp.status = status;
+    if (status === 'completed' && !insp.completed_at) insp.completed_at = new Date().toISOString();
+  }
+  showToast('✅ تم تحديث الحالة: ' + inspStatusAr(status), 'success');
+  document.getElementById('modal-insp-detail')?.remove();
+  loadInspections();
+}
+
+async function submitInspEdit(id) {
+  const title = document.getElementById('inspe-title')?.value?.trim();
+  if (!title) { showToast('❌ يرجى إدخال العنوان', 'error'); return; }
+
+  const projSel = document.getElementById('inspe-project');
+  const userSel = document.getElementById('inspe-assigned');
+  const projName = projSel?.options[projSel.selectedIndex]?.text || '';
+  const userName = userSel?.options[userSel.selectedIndex]?.text || '';
+
+  const score = document.getElementById('inspe-score')?.value;
+  const comp  = document.getElementById('inspe-completed')?.value;
+
+  const body = {
+    title,
+    status:           document.getElementById('inspe-status')?.value,
+    result:           document.getElementById('inspe-result')?.value || null,
+    compliance_score: score !== '' && score != null ? parseFloat(score) : null,
+    type:             document.getElementById('inspe-type')?.value,
+    project_id:       projSel?.value || '',
+    project_name:     projName,
+    assigned_to:      userSel?.value || '',
+    assigned_name:    userName,
+    location_name:    document.getElementById('inspe-location')?.value?.trim(),
+    iso_standard:     document.getElementById('inspe-iso')?.value || null,
+    scheduled_at:     document.getElementById('inspe-scheduled')?.value ? document.getElementById('inspe-scheduled').value+'T08:00:00Z' : null,
+    completed_at:     comp ? comp+'T08:00:00Z' : null,
+    notes:            document.getElementById('inspe-notes')?.value?.trim(),
+  };
+
+  try {
+    await apiFetch('/api/inspections/' + id, 'PUT', body);
+    document.getElementById('modal-insp-edit')?.remove();
+    showToast('✅ تم حفظ التعديلات بنجاح', 'success');
+    loadInspections();
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
 }
 
 // ── Non-Conformances ──────────────────────────
@@ -3300,6 +3666,8 @@ async function loadOrganization() {
         <button class="tab flex-shrink-0"         id="org-tab-objectives" onclick="switchOrgTab('objectives')"><i class="fas fa-bullseye ml-1"></i>الأهداف الاستراتيجية</button>
         <button class="tab flex-shrink-0"         id="org-tab-standards"  onclick="switchOrgTab('standards')"><i class="fas fa-certificate ml-1"></i>معايير ISO</button>
         <button class="tab flex-shrink-0"         id="org-tab-compare"    onclick="switchOrgTab('compare')"><i class="fas fa-balance-scale ml-1"></i>مقارنة المعايير</button>
+        <button class="tab flex-shrink-0"         id="org-tab-annual"     onclick="switchOrgTab('annual')"><i class="fas fa-calendar-alt ml-1"></i>الخطة السنوية</button>
+        <button class="tab flex-shrink-0"         id="org-tab-risks"      onclick="switchOrgTab('risks')"><i class="fas fa-shield-alt ml-1"></i>إدارة المخاطر</button>
       </div>
 
       <!-- TAB: Profile -->
@@ -3540,6 +3908,87 @@ async function loadOrganization() {
           }).join('')}
         </div>
       </div>
+
+      <!-- TAB: Annual Plan -->
+      <div id="org-section-annual" class="p-6 hidden">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="font-bold text-slate-800"><i class="fas fa-calendar-alt text-blue-500 ml-2"></i>الخطة السنوية</h3>
+            <p class="text-xs text-slate-500 mt-1">تخطيط ومتابعة المبادرات والمشاريع السنوية</p>
+          </div>
+          <button onclick="openAnnualPlanModal()" class="btn btn-primary text-sm"><i class="fas fa-plus ml-1"></i>إضافة مبادرة</button>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="grid grid-cols-4 gap-3 mb-5" id="annual-summary"></div>
+
+        <!-- Timeline -->
+        <div class="card overflow-hidden" id="annual-timeline">
+          <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+            <span class="font-bold text-slate-700 text-sm">جدول المبادرات ${new Date().getFullYear()}</span>
+            <div class="flex gap-2">
+              <span class="badge badge-green text-xs">مكتمل</span>
+              <span class="badge badge-yellow text-xs">جارٍ</span>
+              <span class="badge badge-red text-xs">متأخر</span>
+              <span class="badge badge-gray text-xs">مخطط</span>
+            </div>
+          </div>
+          <div id="annual-list" class="divide-y divide-slate-50"></div>
+        </div>
+      </div>
+
+      <!-- TAB: Risk Management -->
+      <div id="org-section-risks" class="p-6 hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-bold text-slate-800"><i class="fas fa-shield-alt text-red-500 ml-2"></i>إدارة المخاطر وتحليل الفجوة</h3>
+            <p class="text-xs text-slate-500 mt-1">تقييم المخاطر · مصفوفة الاحتمالية والتأثير · تحليل الفجوة مقابل معايير ISO</p>
+          </div>
+          <button onclick="openRiskModal()" class="btn btn-primary text-sm" style="background:#dc2626"><i class="fas fa-plus ml-1"></i>إضافة مخاطرة</button>
+        </div>
+
+        <!-- Risk KPI Summary -->
+        <div class="grid grid-cols-4 gap-3 mb-5" id="risk-summary-cards"></div>
+
+        <!-- Matrix + Gap -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+          <div class="card p-5">
+            <h4 class="font-bold text-slate-700 mb-3 text-sm"><i class="fas fa-th text-red-400 ml-1"></i>مصفوفة الاحتمالية × التأثير</h4>
+            <div id="risk-matrix-grid"></div>
+          </div>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-chart-bar text-purple-500 ml-1"></i>تحليل الفجوة — مقابل ISO</h4>
+              <button onclick="openGapEditModal()" class="p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition-colors" title="تعديل بيانات الفجوة">
+                <i class="fas fa-edit text-xs"></i>
+              </button>
+            </div>
+            <div id="gap-analysis-chart"></div>
+          </div>
+        </div>
+
+        <!-- Risks table -->
+        <div class="card overflow-hidden">
+          <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+            <span class="font-bold text-slate-700 text-sm">سجل المخاطر</span>
+            <div class="flex gap-2">
+              <select class="form-input text-xs" style="width:130px" id="risk-filter-level" onchange="renderRisks()">
+                <option value="">كل المستويات</option>
+                <option value="critical">حرجة</option>
+                <option value="high">عالية</option>
+                <option value="medium">متوسطة</option>
+                <option value="low">منخفضة</option>
+              </select>
+              <select class="form-input text-xs" style="width:130px" id="risk-filter-iso" onchange="renderRisks()">
+                <option value="">كل المعايير</option>
+                ${(window.MOCK_DB?.iso_standards||[]).map(s=>`<option value="${s.code}">${s.code.replace('_',' ')}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div id="risks-list"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -4221,57 +4670,88 @@ function toggleStdCertified(code) {
 function openEditComparisonModal() {
   document.getElementById('modal-edit-comparison')?.remove();
 
-  var rows = window._comparisonRows || [];
-  if (!rows.length) {
-    showToast('لا توجد بيانات مقارنة متاحة', 'info');
+  var rows      = window.MOCK_DB?.comparisonRows || window._comparisonRows || [];
+  var standards = window.MOCK_DB?.iso_standards || [];
+
+  if (!rows.length && !standards.length) {
+    showToast('لا توجد بيانات متاحة', 'info');
     return;
   }
 
-  var standards = window.MOCK_DB?.iso_standards || [];
-
-  var tableRows = rows.map(function(row, idx) {
-    var cells = standards.map(function(std) {
-      var val = (row.vals && row.vals[std.code]) || '';
-      return '<td class="p-2"><input class="form-input text-xs" style="min-width:140px" ' +
-        'id="cmp-'+idx+'-'+std.code+'" value="'+(val||'').replace(/"/g,'&quot;')+'" /></td>';
-    }).join('');
-    return '<tr class="border-b border-slate-100">' +
-      '<td class="p-2 text-xs font-bold text-slate-700 whitespace-nowrap">'+row.aspect+'</td>' +
-      cells +
-    '</tr>';
-  }).join('');
-
+  // Header cells
   var headerCells = standards.map(function(std){
     var c = std.color || '#64748b';
-    return '<th class="p-2 text-xs font-bold whitespace-nowrap" style="color:'+c+'">'+std.code.replace('_',' ')+'</th>';
+    return '<th class="p-2 text-xs font-bold whitespace-nowrap text-center" style="color:'+c+'">'+std.code.replace('_',' ')+'</th>';
   }).join('');
+
+  // Row builder helper
+  function buildRow(row, idx) {
+    var cells = standards.map(function(std) {
+      var val = (row.vals && row.vals[std.code]) || '';
+      var c   = std.color || '#64748b';
+      return '<td class="p-2">' +
+        '<input class="form-input text-xs cmp-cell" style="min-width:130px;border-color:'+c+'20" ' +
+        'data-std="'+std.code+'" ' +
+        'value="'+(val||'').replace(/"/g,'&quot;')+'" ' +
+        'placeholder="اكتب القيمة..." />' +
+      '</td>';
+    }).join('');
+    return '<tr class="border-b border-slate-100 cmp-row" data-idx="'+idx+'">' +
+      '<td class="p-2 whitespace-nowrap">' +
+        '<input class="form-input text-xs font-bold cmp-aspect" style="min-width:160px" ' +
+        'value="'+row.aspect.replace(/"/g,'&quot;')+'" placeholder="وجه المقارنة..." />' +
+      '</td>' +
+      cells +
+      '<td class="p-2 text-center">' +
+        '<button onclick="removeCmpRow(this)" class="text-red-400 hover:text-red-600 p-1 rounded transition-colors" title="حذف">' +
+          '<i class="fas fa-times text-xs"></i>' +
+        '</button>' +
+      '</td>' +
+    '</tr>';
+  }
+
+  var tableRows = rows.map(function(row, idx){ return buildRow(row, idx); }).join('');
 
   var html =
     '<div class="modal open" id="modal-edit-comparison">' +
-    '<div class="bg-white rounded-2xl w-full max-w-4xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">' +
+    '<div class="bg-white rounded-2xl w-full max-w-4xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:92vh;overflow-y:auto">' +
 
       '<div class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">' +
         '<h3 class="text-white font-bold text-lg"><i class="fas fa-table ml-2"></i>تعديل مصفوفة المقارنة</h3>' +
         '<button onclick="document.getElementById(\'modal-edit-comparison\').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
       '</div>' +
 
-      '<div class="p-6">' +
-        '<p class="text-xs text-slate-500 mb-4">عدّل قيم المقارنة لكل معيار في الجدول أدناه</p>' +
+      '<div class="p-6 space-y-4">' +
+
+        '<p class="text-xs text-slate-500">عدّل أوجه المقارنة وقيمها لكل معيار · يمكن إضافة أوجه جديدة أو حذف الموجودة</p>' +
+
         '<div class="overflow-x-auto rounded-xl border border-slate-200">' +
           '<table class="w-full text-sm" style="min-width:600px">' +
             '<thead class="bg-slate-50 border-b border-slate-200">' +
               '<tr>' +
-                '<th class="p-2 text-right text-xs font-bold text-slate-700">وجه المقارنة</th>' +
+                '<th class="p-2 text-right text-xs font-bold text-slate-700 whitespace-nowrap">وجه المقارنة</th>' +
                 headerCells +
+                '<th class="p-2 w-8"></th>' +
               '</tr>' +
             '</thead>' +
-            '<tbody>' + tableRows + '</tbody>' +
+            '<tbody id="cmp-tbody">' + tableRows + '</tbody>' +
+            '<tfoot>' +
+              '<tr>' +
+                '<td colspan="'+(standards.length + 2)+'" class="p-2">' +
+                  '<button onclick="addCmpRow()" ' +
+                    'class="w-full py-2.5 rounded-xl border-2 border-dashed border-purple-200 text-purple-500 hover:border-purple-400 hover:bg-purple-50 transition-all text-xs font-bold flex items-center justify-center gap-2">' +
+                    '<i class="fas fa-plus"></i> إضافة وجه مقارنة جديد' +
+                  '</button>' +
+                '</td>' +
+              '</tr>' +
+            '</tfoot>' +
           '</table>' +
         '</div>' +
 
-        '<div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">' +
-          '<button onclick="submitComparisonEdit()" class="btn btn-primary flex-1">' +
-            '<i class="fas fa-save ml-1"></i>حفظ التعديلات</button>' +
+        '<div class="flex gap-3 pt-2 border-t border-slate-100">' +
+          '<button onclick="submitComparisonEdit()" class="btn btn-primary flex-1" style="background:#7c3aed">' +
+            '<i class="fas fa-save ml-1"></i>حفظ المصفوفة' +
+          '</button>' +
           '<button onclick="document.getElementById(\'modal-edit-comparison\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
         '</div>' +
       '</div>' +
@@ -4280,21 +4760,82 @@ function openEditComparisonModal() {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function submitComparisonEdit() {
-  var rows      = window.MOCK_DB?.comparisonRows || window._comparisonRows || [];
+function addCmpRow() {
+  var tbody     = document.getElementById('cmp-tbody');
+  if (!tbody) return;
   var standards = window.MOCK_DB?.iso_standards || [];
+  var idx       = tbody.querySelectorAll('.cmp-row').length;
 
-  rows.forEach(function(row, idx) {
-    if (!row.vals) row.vals = {};
-    standards.forEach(function(std) {
-      var el = document.getElementById('cmp-' + idx + '-' + std.code);
-      if (el) row.vals[std.code] = el.value.trim();
+  var cells = standards.map(function(std){
+    var c = std.color || '#64748b';
+    return '<td class="p-2">' +
+      '<input class="form-input text-xs cmp-cell" style="min-width:130px;border-color:'+c+'20" ' +
+      'data-std="'+std.code+'" placeholder="اكتب القيمة..." />' +
+    '</td>';
+  }).join('');
+
+  var tr = document.createElement('tr');
+  tr.className = 'border-b border-slate-100 cmp-row';
+  tr.dataset.idx = idx;
+  tr.innerHTML =
+    '<td class="p-2">' +
+      '<input class="form-input text-xs font-bold cmp-aspect" style="min-width:160px" placeholder="وجه المقارنة الجديد..." />' +
+    '</td>' +
+    cells +
+    '<td class="p-2 text-center">' +
+      '<button onclick="removeCmpRow(this)" class="text-red-400 hover:text-red-600 p-1 rounded transition-colors" title="حذف">' +
+        '<i class="fas fa-times text-xs"></i>' +
+      '</button>' +
+    '</td>';
+
+  tbody.appendChild(tr);
+  tr.querySelector('.cmp-aspect')?.focus();
+}
+
+function removeCmpRow(btn) {
+  var row = btn.closest('.cmp-row');
+  if (row) {
+    row.style.opacity = '0';
+    row.style.transition = 'opacity 0.2s';
+    setTimeout(function(){ row.remove(); }, 200);
+  }
+}
+
+function submitComparisonEdit() {
+  var tbody     = document.getElementById('cmp-tbody');
+  var standards = window.MOCK_DB?.iso_standards || [];
+  var newRows   = [];
+
+  if (tbody) {
+    // Read all rows from DOM
+    tbody.querySelectorAll('.cmp-row').forEach(function(tr) {
+      var aspectEl = tr.querySelector('.cmp-aspect');
+      var aspect   = aspectEl ? aspectEl.value.trim() : '';
+      if (!aspect) return; // skip empty rows
+
+      var vals = {};
+      tr.querySelectorAll('.cmp-cell').forEach(function(input) {
+        var std = input.dataset.std;
+        if (std) vals[std] = input.value.trim();
+      });
+
+      newRows.push({aspect: aspect, vals: vals});
     });
-  });
+  } else {
+    // Fallback to old method
+    var rows = window.MOCK_DB?.comparisonRows || window._comparisonRows || [];
+    rows.forEach(function(row, idx) {
+      if (!row.vals) row.vals = {};
+      standards.forEach(function(std) {
+        var el = document.getElementById('cmp-' + idx + '-' + std.code);
+        if (el) row.vals[std.code] = el.value.trim();
+      });
+      newRows.push(row);
+    });
+  }
 
-  // Save directly to MOCK_DB so it persists across loadOrganization() calls
-  if (window.MOCK_DB) window.MOCK_DB.comparisonRows = rows;
-  window._comparisonRows = rows;
+  if (window.MOCK_DB) window.MOCK_DB.comparisonRows = newRows;
+  window._comparisonRows = newRows;
 
   document.getElementById('modal-edit-comparison')?.remove();
   showToast('✅ تم حفظ مصفوفة المقارنة', 'success');
@@ -4303,10 +4844,1030 @@ function submitComparisonEdit() {
 }
 
 function switchOrgTab(tab) {
-  ['profile','objectives','standards','compare'].forEach(t => {
+  ['profile','objectives','standards','compare','annual','risks'].forEach(t => {
     document.getElementById('org-section-' + t)?.classList.toggle('hidden', t !== tab);
     document.getElementById('org-tab-' + t)?.classList.toggle('active', t === tab);
   });
+  if (tab === 'annual') renderAnnualPlan();
+  if (tab === 'risks')  { renderRisks(); renderRiskMatrix(); renderGapAnalysis(); }
+}
+
+// ══════════════════════════════════════════════
+//  ANNUAL PLAN
+// ══════════════════════════════════════════════
+function renderAnnualPlan() {
+  const plans = window.MOCK_DB?.annual_plans || [];
+  const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+  const statusMap = {completed:'مكتمل', in_progress:'جارٍ', planned:'مخطط', delayed:'متأخر'};
+  const statusClr = {completed:'#059669', in_progress:'#d97706', planned:'#3b82f6', delayed:'#dc2626'};
+  const statusBadge= {completed:'badge-green', in_progress:'badge-yellow', planned:'badge-gray', delayed:'badge-red'};
+  const catIcon   = {safety:'hard-hat', quality:'award', environmental:'leaf', audit:'search', training:'graduation-cap', certification:'certificate'};
+
+  // Summary
+  const total     = plans.length;
+  const completed = plans.filter(p=>p.status==='completed').length;
+  const inProg    = plans.filter(p=>p.status==='in_progress').length;
+  const totalBudget = plans.reduce((s,p)=>s+(p.budget||0),0);
+  const avgProgress = total ? Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/total) : 0;
+
+  const summaryEl = document.getElementById('annual-summary');
+  if (summaryEl) summaryEl.innerHTML = [
+    {v:total, l:'إجمالي المبادرات', c:'#3b82f6', i:'layer-group'},
+    {v:completed, l:'مكتملة', c:'#059669', i:'check-circle'},
+    {v:inProg, l:'جارية', c:'#d97706', i:'spinner'},
+    {v:avgProgress+'%', l:'متوسط التقدم', c:'#7c3aed', i:'chart-line'},
+  ].map(k=>`<div class="card p-4 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${k.c}18">
+      <i class="fas fa-${k.i}" style="color:${k.c}"></i>
+    </div>
+    <div>
+      <div class="text-xl font-black" style="color:${k.c}">${k.v}</div>
+      <div class="text-xs text-slate-500">${k.l}</div>
+    </div>
+  </div>`).join('');
+
+  // Timeline list
+  const listEl = document.getElementById('annual-list');
+  if (!listEl) return;
+  if (!plans.length) { listEl.innerHTML = '<div class="p-8 text-center text-slate-400">لا توجد مبادرات — اضغط إضافة مبادرة</div>'; return; }
+
+  listEl.innerHTML = plans.map(p => {
+    const icon = catIcon[p.category] || 'circle';
+    const clr  = statusClr[p.status] || '#64748b';
+    const dur  = p.end_month - p.start_month + 1;
+    const timelineBar = `
+      <div class="relative h-5 bg-slate-100 rounded-full overflow-hidden" style="margin-top:4px">
+        <div style="position:absolute;right:${((p.start_month-1)/12*100).toFixed(1)}%;width:${(dur/12*100).toFixed(1)}%;height:100%;background:${clr};border-radius:4px;opacity:0.8"></div>
+        <div style="position:absolute;right:${((p.start_month-1)/12*100).toFixed(1)}%;width:${(dur/12*p.progress/100*100/12*12).toFixed(1)}%;height:100%;background:${clr};border-radius:4px"></div>
+      </div>
+      <div class="flex justify-between text-xs text-slate-300 mt-0.5" style="font-size:9px">
+        ${months.map((m,i)=>`<span>${m.substring(0,3)}</span>`).join('')}
+      </div>`;
+
+    return `<div class="p-4 hover:bg-slate-50 transition-colors group">
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style="background:${clr}15">
+          <i class="fas fa-${icon} text-sm" style="color:${clr}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap mb-1">
+            <span class="font-bold text-slate-800 text-sm">${p.title}</span>
+            <span class="badge ${statusBadge[p.status]||'badge-gray'} text-xs">${statusMap[p.status]||p.status}</span>
+            ${p.iso && p.iso !== 'MULTI' ? `<span class="badge badge-blue text-xs">${p.iso.replace('_',' ')}</span>` : '<span class="badge badge-gray text-xs">متعدد</span>'}
+            ${p.priority==='critical'?'<span class="badge badge-red text-xs">أولوية حرجة</span>':''}
+          </div>
+          <div class="text-xs text-slate-500 mb-2">${Array.isArray(p.owners)&&p.owners.length ? p.owners.join('، ') : (p.owner||'—')} · ${months[p.start_month-1]} — ${months[p.end_month-1]} · الميزانية: ${p.budget?.toLocaleString('ar-SA')} ر.س</div>
+          <div class="flex items-center gap-2 mb-1">
+            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all" style="width:${p.progress}%;background:${clr}"></div>
+            </div>
+            <span class="text-xs font-black" style="color:${clr}">${p.progress}%</span>
+          </div>
+        </div>
+        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+          <button onclick="openAnnualPlanView('${p.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg" title="عرض التفاصيل"><i class="fas fa-eye text-xs"></i></button>
+          <button onclick="openAnnualPlanEdit('${p.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg"><i class="fas fa-edit text-xs"></i></button>
+          <button onclick="deleteAnnualPlan('${p.id}')" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg"><i class="fas fa-trash text-xs"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAnnualPlanModal(id) {
+  const plan  = id ? (window.MOCK_DB?.annual_plans||[]).find(p=>p.id===id) : null;
+  const users = (window.MOCK_DB?.users||[]).filter(u=>u.is_active);
+  document.getElementById('modal-annual')?.remove();
+
+  const months  = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const mOpts   = months.map((m,i)=>`<option value="${i+1}" ${plan&&plan.start_month===(i+1)?'selected':''}>${m}</option>`).join('');
+  const mOpts2  = months.map((m,i)=>`<option value="${i+1}" ${plan&&plan.end_month===(i+1)?'selected':''}>${m}</option>`).join('');
+  const stdOpts = (window.MOCK_DB?.iso_standards||[]).map(s=>`<option value="${s.code}" ${plan&&plan.iso===s.code?'selected':''}>${s.code.replace('_',' ')}</option>`).join('');
+
+  // Owners — support array or legacy string
+  const ownersList = Array.isArray(plan?.owners) ? plan.owners : (plan?.owner ? [plan.owner] : []);
+  const roleAr     = {admin:'مدير نظام', manager:'مدير', engineer:'مهندس', auditor:'مدقق'};
+
+  const ownersCbs = users.map(u => `
+    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-blue-50 transition-colors">
+      <input type="checkbox" class="ap-owner-cb" value="${u.full_name}"
+        ${ownersList.includes(u.full_name)?'checked':''}
+        style="accent-color:#1e40af"/>
+      <span class="text-sm text-slate-700">${u.full_name}</span>
+      <span class="text-xs text-slate-400 mr-auto">${roleAr[u.role]||u.role}</span>
+    </label>`).join('');
+
+  const html = `<div class="modal open" id="modal-annual">
+  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:92vh;overflow-y:auto">
+    <div class="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+      <h3 class="text-white font-bold text-lg"><i class="fas fa-calendar-plus ml-2"></i>${plan?'تعديل':'إضافة'} مبادرة سنوية</h3>
+      <button onclick="document.getElementById('modal-annual').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <div><label class="text-sm font-bold text-slate-700 block mb-1">عنوان المبادرة *</label>
+        <input class="form-input" id="ap-title" value="${(plan?.title||'').replace(/"/g,'&quot;')}" placeholder="عنوان المبادرة..."/></div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">الفئة</label>
+          <select class="form-input" id="ap-category">
+            ${['safety:السلامة','quality:الجودة','environmental:البيئة','audit:تدقيق','training:تدريب','certification:اعتماد'].map(c=>{const[v,l]=c.split(':');return`<option value="${v}" ${plan?.category===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">معيار ISO</label>
+          <select class="form-input" id="ap-iso">
+            <option value="MULTI" ${plan?.iso==='MULTI'||!plan?'selected':''}>متعدد المعايير</option>
+            ${stdOpts}
+          </select></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">شهر البداية</label>
+          <select class="form-input" id="ap-start">${mOpts}</select></div>
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">شهر النهاية</label>
+          <select class="form-input" id="ap-end">${mOpts2}</select></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">الحالة</label>
+          <select class="form-input" id="ap-status">
+            ${['planned:مخطط','in_progress:جارٍ','completed:مكتمل','delayed:متأخر'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${plan?.status===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">الأولوية</label>
+          <select class="form-input" id="ap-priority">
+            ${['critical:حرجة','high:عالية','medium:متوسطة','low:منخفضة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${plan?.priority===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">نسبة الإنجاز %</label>
+          <input class="form-input" type="number" id="ap-progress" min="0" max="100" value="${plan?.progress||0}"/></div>
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">الميزانية (ر.س)</label>
+          <input class="form-input" type="number" id="ap-budget" value="${plan?.budget||0}"/></div>
+      </div>
+
+      <!-- Owners checkboxes -->
+      <div>
+        <label class="text-sm font-bold text-slate-700 block mb-2">
+          <i class="fas fa-users text-slate-400 ml-1"></i>المسؤولون
+          <span class="text-slate-400 font-normal text-xs">(يمكن اختيار أكثر من شخص)</span>
+        </label>
+        <div class="border border-slate-200 rounded-xl p-3 max-h-40 overflow-y-auto space-y-1">
+          ${ownersCbs || '<div class="text-xs text-slate-400 text-center py-2">لا يوجد مستخدمون نشطون</div>'}
+        </div>
+        <!-- Show selected count -->
+        <div class="text-xs text-slate-400 mt-1" id="ap-owners-count">
+          ${ownersList.length ? ownersList.length + ' مسؤول محدد' : 'لم يتم اختيار مسؤول بعد'}
+        </div>
+      </div>
+
+      <div><label class="text-sm font-bold text-slate-700 block mb-1">ملاحظات</label>
+        <textarea class="form-input" id="ap-notes" rows="2">${plan?.notes||''}</textarea></div>
+
+      <div class="flex gap-3 pt-3 border-t border-slate-100">
+        <button onclick="submitAnnualPlan('${plan?.id||''}')" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ</button>
+        <button onclick="document.getElementById('modal-annual').remove()" class="btn btn-danger px-5">إلغاء</button>
+      </div>
+    </div>
+  </div></div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  // Live counter update
+  document.querySelectorAll('.ap-owner-cb').forEach(cb => {
+    cb.addEventListener('change', function() {
+      const count = document.querySelectorAll('.ap-owner-cb:checked').length;
+      const el = document.getElementById('ap-owners-count');
+      if (el) el.textContent = count ? count + ' مسؤول محدد' : 'لم يتم اختيار مسؤول بعد';
+    });
+  });
+}
+
+function openAnnualPlanEdit(id) { openAnnualPlanModal(id); }
+
+function submitAnnualPlan(id) {
+  const title = document.getElementById('ap-title')?.value?.trim();
+  if (!title) { showToast('❌ يرجى إدخال العنوان','error'); return; }
+
+  // Collect selected owners
+  const owners = [...document.querySelectorAll('.ap-owner-cb:checked')].map(cb=>cb.value);
+
+  const obj = {
+    title,
+    category:    document.getElementById('ap-category')?.value,
+    iso:         document.getElementById('ap-iso')?.value,
+    start_month: parseInt(document.getElementById('ap-start')?.value),
+    end_month:   parseInt(document.getElementById('ap-end')?.value),
+    status:      document.getElementById('ap-status')?.value,
+    priority:    document.getElementById('ap-priority')?.value,
+    progress:    parseInt(document.getElementById('ap-progress')?.value)||0,
+    budget:      parseInt(document.getElementById('ap-budget')?.value)||0,
+    owners,
+    owner:       owners[0] || '',   // للتوافق مع الكود القديم
+    notes:       document.getElementById('ap-notes')?.value?.trim(),
+  };
+
+  if (!window.MOCK_DB.annual_plans) window.MOCK_DB.annual_plans = [];
+  if (id) {
+    const idx = window.MOCK_DB.annual_plans.findIndex(p=>p.id===id);
+    if (idx>=0) Object.assign(window.MOCK_DB.annual_plans[idx], obj);
+  } else {
+    window.MOCK_DB.annual_plans.unshift({id:'ap-'+Date.now(), ...obj});
+  }
+  document.getElementById('modal-annual')?.remove();
+  showToast('✅ تم حفظ المبادرة','success');
+  renderAnnualPlan();
+}
+
+function deleteAnnualPlan(id) {
+  if (!confirm('حذف هذه المبادرة؟')) return;
+  window.MOCK_DB.annual_plans = (window.MOCK_DB.annual_plans||[]).filter(p=>p.id!==id);
+  showToast('🗑️ تم الحذف','info');
+  renderAnnualPlan();
+}
+
+// ══════════════════════════════════════════════
+//  RISK MANAGEMENT + GAP ANALYSIS
+// ══════════════════════════════════════════════
+function renderRisks() {
+  const risks   = window.MOCK_DB?.risks || [];
+  const lvlF    = document.getElementById('risk-filter-level')?.value || '';
+  const isoF    = document.getElementById('risk-filter-iso')?.value   || '';
+  const getRiskLevel = (p,i) => { const s=p*i; return s>=15?'critical':s>=8?'high':s>=4?'medium':'low'; };
+  const levelBadge = {critical:'badge-red', high:'badge-yellow', medium:'badge-blue', low:'badge-green'};
+  const levelAr    = {critical:'حرجة', high:'عالية', medium:'متوسطة', low:'منخفضة'};
+  const statusBadge= {open:'badge-red', mitigated:'badge-green', monitoring:'badge-yellow', closed:'badge-gray'};
+  const statusAr   = {open:'مفتوحة', mitigated:'مُعالجة', monitoring:'مراقبة', closed:'مغلقة'};
+
+  // ── Summary KPI cards ──
+  const getRpn = r => r.probability * r.impact;
+  const totalR  = risks.length;
+  const critR   = risks.filter(r=>getRpn(r)>=15).length;
+  const highR   = risks.filter(r=>getRpn(r)>=8&&getRpn(r)<15).length;
+  const mitigR  = risks.filter(r=>r.status==='mitigated'||r.status==='closed').length;
+  const summEl  = document.getElementById('risk-summary-cards');
+  if (summEl) summEl.innerHTML = [
+    {v:totalR,  l:'إجمالي المخاطر', c:'#3b82f6', i:'shield-alt'},
+    {v:critR,   l:'مخاطر حرجة',     c:'#dc2626', i:'exclamation-triangle'},
+    {v:highR,   l:'مخاطر عالية',    c:'#d97706', i:'exclamation-circle'},
+    {v:mitigR,  l:'تم معالجتها',    c:'#059669', i:'check-circle'},
+  ].map(k=>`<div class="card p-4 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:${k.c}18">
+      <i class="fas fa-${k.i}" style="color:${k.c}"></i>
+    </div>
+    <div><div class="text-xl font-black" style="color:${k.c}">${k.v}</div>
+    <div class="text-xs text-slate-500">${k.l}</div></div>
+  </div>`).join('');
+
+  // ── Risks list ──
+  const el = document.getElementById('risks-list');
+  if (!el) return;
+
+  const filtered = risks.filter(r => {
+    const lv = getRiskLevel(r.probability, r.impact);
+    return (!lvlF || lv===lvlF) && (!isoF || r.iso===isoF);
+  });
+
+  if (!filtered.length) { el.innerHTML = '<div class="p-8 text-center text-slate-400"><i class="fas fa-shield-alt text-3xl mb-3 block"></i>لا توجد مخاطر مطابقة</div>'; return; }
+
+  el.innerHTML = filtered.map(r => {
+    const lv   = getRiskLevel(r.probability, r.impact);
+    const rpn  = r.probability * r.impact;
+    const lvClr= {critical:'#dc2626', high:'#d97706', medium:'#3b82f6', low:'#059669'}[lv];
+    const owners   = Array.isArray(r.owners) ? r.owners : (r.owner ? [r.owner] : []);
+    const mitPoints= Array.isArray(r.mitigation_points) ? r.mitigation_points : (r.mitigation ? [r.mitigation] : []);
+
+    return `<div class="p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors group">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-sm shadow-sm" style="background:${lvClr}">${rpn}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap mb-1">
+            <span class="font-bold text-slate-800 text-sm">${r.title}</span>
+            <span class="badge ${levelBadge[lv]} text-xs">${levelAr[lv]}</span>
+            <span class="badge ${statusBadge[r.status]||'badge-gray'} text-xs">${statusAr[r.status]||r.status}</span>
+            ${r.iso && r.iso!=='MULTI' ? `<span class="badge badge-blue text-xs">${r.iso.replace('_',' ')}</span>` : ''}
+          </div>
+          <div class="flex items-center gap-3 flex-wrap mb-1">
+            <span class="text-xs text-slate-500">احتمالية: <b>${r.probability}/5</b></span>
+            <span class="text-xs text-slate-500">تأثير: <b>${r.impact}/5</b></span>
+            <span class="text-xs font-bold" style="color:${lvClr}">RPN: ${rpn}</span>
+            ${owners.length ? `<span class="text-xs text-slate-400"><i class="fas fa-users ml-1"></i>${owners.join('، ')}</span>` : ''}
+          </div>
+          ${mitPoints.length ? `<div class="mt-1 space-y-0.5">
+            ${mitPoints.map(pt=>`<div class="flex gap-1.5 text-xs text-slate-600"><span class="text-green-500 flex-shrink-0">◆</span>${pt}</div>`).join('')}
+          </div>` : ''}
+        </div>
+        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+          <button onclick="openRiskView('${r.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg" title="عرض التفاصيل"><i class="fas fa-eye text-xs"></i></button>
+          <button onclick="openRiskEdit('${r.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg" title="تعديل"><i class="fas fa-edit text-xs"></i></button>
+          <button onclick="deleteRisk('${r.id}')" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg" title="حذف"><i class="fas fa-trash text-xs"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRiskMatrix() {
+  const risks = window.MOCK_DB?.risks || [];
+  const getRiskLevel = (p,i) => { const s=p*i; return s>=15?'critical':s>=8?'high':s>=4?'medium':'low'; };
+  const lvlClr = {critical:'#dc2626', high:'#d97706', medium:'#3b82f6', low:'#059669'};
+  const el = document.getElementById('risk-matrix-grid');
+  if (!el) return;
+
+  // 5×5 matrix
+  let html = '<div style="display:grid;grid-template-columns:24px repeat(5,1fr);gap:2px;font-size:10px">';
+  // Header row
+  html += '<div></div>';
+  for (let i=1;i<=5;i++) html += `<div class="text-center font-bold text-slate-500 pb-1">تأثير ${i}</div>`;
+  // Rows (probability 5 to 1)
+  for (let p=5;p>=1;p--) {
+    html += `<div class="flex items-center justify-center font-bold text-slate-500" style="writing-mode:vertical-rl;font-size:9px">احتمالية ${p}</div>`;
+    for (let i=1;i<=5;i++) {
+      const rpn = p*i;
+      const lv  = rpn>=15?'critical':rpn>=8?'high':rpn>=4?'medium':'low';
+      const clr = lvlClr[lv];
+      const cellRisks = risks.filter(r=>r.probability===p && r.impact===i);
+      html += `<div class="rounded-lg flex items-center justify-center text-white font-black text-xs cursor-default transition-all hover:scale-110"
+        style="height:36px;background:${clr};opacity:${0.3 + rpn/25*0.7}" title="${lv} - RPN:${rpn}">
+        ${cellRisks.length ? `<span class="w-5 h-5 rounded-full bg-white bg-opacity-30 flex items-center justify-center" style="color:white">${cellRisks.length}</span>` : ''}
+      </div>`;
+    }
+  }
+  html += '</div>';
+  // Legend
+  html += '<div class="flex gap-3 mt-3 flex-wrap">';
+  [{l:'حرجة (RPN≥15)',c:'#dc2626'},{l:'عالية (RPN≥8)',c:'#d97706'},{l:'متوسطة (RPN≥4)',c:'#3b82f6'},{l:'منخفضة',c:'#059669'}]
+    .forEach(x=>{ html += `<div class="flex items-center gap-1 text-xs"><div class="w-3 h-3 rounded" style="background:${x.c}"></div>${x.l}</div>`; });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderGapAnalysis() {
+  const gap   = window.MOCK_DB?.gap_analysis || {};
+  const stds  = (window.MOCK_DB?.iso_standards||[]).filter(s => gap[s.code]);
+  const el    = document.getElementById('gap-analysis-chart');
+  if (!el) return;
+
+  const stdColors= {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const clauseAr = {4:'السياق',5:'القيادة',6:'التخطيط',7:'الدعم',8:'التشغيل',9:'تقييم الأداء',10:'التحسين'};
+
+  // Collect ALL clause keys across all standards
+  const allClausesSet = new Set();
+  stds.forEach(s => { Object.keys(gap[s.code]?.clauses||{}).forEach(c => allClausesSet.add(parseInt(c))); });
+  const allClauses = Array.from(allClausesSet).sort((a,b)=>a-b);
+
+  if (!allClauses.length || !stds.length) {
+    el.innerHTML = '<div class="text-center py-6 text-slate-400 text-sm">لا توجد بيانات — اضغط ✏️ لإضافة بيانات</div>';
+    return;
+  }
+
+  let html = '<div class="space-y-3">';
+  allClauses.forEach(c => {
+    html += `<div>
+      <div class="flex items-center justify-between text-xs mb-1">
+        <span class="font-bold text-slate-700">البند ${c}${clauseAr[c] ? ' — ' + clauseAr[c] : ''}</span>
+        <span class="text-slate-400">الهدف: 100%</span>
+      </div>
+      <div class="space-y-1">`;
+    stds.forEach(s => {
+      const val    = gap[s.code]?.clauses?.[c] ?? null;
+      if (val === null) return;
+      const clr    = s.color || stdColors[s.code] || '#64748b';
+      const gapVal = 100 - val;
+      html += `<div class="flex items-center gap-2">
+        <span class="text-xs w-20 text-right flex-shrink-0" style="color:${clr}">${s.code.replace('_',' ')}</span>
+        <div class="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all" style="width:${val}%;background:${clr}"></div>
+        </div>
+        <span class="text-xs font-bold w-8" style="color:${clr}">${val}%</span>
+        ${gapVal>20?`<span class="text-xs text-red-500 font-bold flex-shrink-0">فجوة ${gapVal}%</span>`:''}
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+
+  // Overall summary
+  let summaryHtml = '<div class="mt-4 p-3 bg-slate-50 rounded-xl"><div class="text-xs font-bold text-slate-700 mb-2">ملخص الفجوة الإجمالية</div><div class="grid grid-cols-2 gap-2">';
+  stds.forEach(s => {
+    const vals = Object.values(gap[s.code]?.clauses||{});
+    const avg  = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+    const clr  = s.color || stdColors[s.code] || '#64748b';
+    summaryHtml += `<div class="p-2 rounded-lg" style="background:${clr}12">
+      <div class="text-xs font-bold" style="color:${clr}">${s.code.replace('_',' ')}</div>
+      <div class="text-lg font-black" style="color:${clr}">${avg}%</div>
+      <div class="text-xs text-slate-500">متوسط الامتثال</div>
+      <div class="kpi-bar mt-1"><div class="kpi-fill" style="width:${avg}%;background:${clr}"></div></div>
+    </div>`;
+  });
+  summaryHtml += '</div></div>';
+
+  el.innerHTML = html + summaryHtml;
+}
+
+// ── Gap Analysis Edit Modal ───────────────────
+function openGapEditModal() {
+  document.getElementById('modal-gap-edit')?.remove();
+
+  const gap     = window.MOCK_DB?.gap_analysis || {};
+  const stds    = (window.MOCK_DB?.iso_standards||[]).filter(s => gap[s.code]);
+  const clauses = [4,5,6,7,8,9,10];
+  const clauseAr= {4:'السياق',5:'القيادة',6:'التخطيط',7:'الدعم',8:'التشغيل',9:'تقييم الأداء',10:'التحسين'};
+  const stdColors= {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+
+  // Build table header
+  const thCols = stds.map(s => {
+    const clr = s.color || stdColors[s.code] || '#64748b';
+    return `<th class="p-2 text-center text-xs font-bold" style="color:${clr}">${s.code.replace('_',' ')}</th>`;
+  }).join('');
+
+  // Build table rows — one row per clause
+  const tableRows = clauses.map(c => {
+    const cells = stds.map(s => {
+      const clr = s.color || stdColors[s.code] || '#64748b';
+      const val = gap[s.code]?.clauses?.[c] ?? 0;
+      return `<td class="p-2 text-center">
+        <input type="number" min="0" max="100"
+          id="gap-${s.code}-${c}"
+          value="${val}"
+          class="form-input text-center text-sm font-bold gap-clause-input"
+          data-std="${s.code}" data-clause="${c}"
+          style="width:70px;border-color:${clr}30;color:${clr}"
+          onchange="updateAllGapPreviews()"
+        />
+      </td>`;
+    }).join('');
+
+    // Check if this is a custom clause (not in the default list)
+    const isDefault = [4,5,6,7,8,9,10].includes(c);
+
+    return `<tr class="border-b border-slate-100 gap-clause-row" data-clause="${c}">
+      <td class="p-2">
+        <span class="text-xs font-bold text-slate-700 whitespace-nowrap">البند ${c} — ${clauseAr[c]}</span>
+      </td>
+      ${cells}
+      <td class="p-2 text-center">
+        ${!isDefault ? `<button onclick="removeGapClauseRow(this, ${c})" class="text-red-400 hover:text-red-600 p-1 rounded transition-colors" title="حذف هذا البند">
+          <i class="fas fa-times text-xs"></i>
+        </button>` : '<span class="text-slate-200 text-xs">—</span>'}
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Add new standard option (standards not yet in gap)
+  const allStds  = window.MOCK_DB?.iso_standards || [];
+  const missing  = allStds.filter(s => !gap[s.code]);
+  const addStdOpts = missing.map(s => `<option value="${s.code}">${s.code.replace('_',' ')} — ${s.name}</option>`).join('');
+
+  const html = `<div class="modal open" id="modal-gap-edit">
+  <div class="bg-white rounded-2xl w-full max-w-3xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:92vh;overflow-y:auto">
+
+    <div class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <div class="text-purple-200 text-xs mb-0.5">تعديل بيانات تحليل الفجوة</div>
+        <h3 class="text-white font-bold text-lg"><i class="fas fa-chart-bar ml-2"></i>الامتثال لكل بند لكل معيار (%)</h3>
+      </div>
+      <button onclick="document.getElementById('modal-gap-edit').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="p-6 space-y-4">
+
+      <div class="p-3 bg-blue-50 rounded-xl text-xs text-blue-700 flex items-start gap-2">
+        <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+        <span>أدخل نسبة الامتثال لكل بند (0-100%). الفجوة = 100% ناقص القيمة المدخلة. القيم الأقل من 80% تُعدّ فجوة تحتاج معالجة.</span>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-sm" style="min-width:500px">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="p-2 text-right text-xs font-bold text-slate-600 whitespace-nowrap">البند</th>
+              ${thCols}
+              <th class="p-2 w-8"></th>
+            </tr>
+          </thead>
+          <tbody id="gap-clauses-tbody">${tableRows}</tbody>
+          <tfoot>
+            <tr>
+              <td colspan="${stds.length + 2}" class="p-2">
+                <button onclick="addGapClauseRow()" class="w-full py-2 rounded-lg border-2 border-dashed border-purple-200 text-purple-500 hover:border-purple-400 hover:bg-purple-50 transition-all text-xs font-bold flex items-center justify-center gap-2">
+                  <i class="fas fa-plus"></i> إضافة بند جديد
+                </button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Live preview mini -->
+      <div id="gap-live-preview" class="p-3 bg-slate-50 rounded-xl">
+        <div class="text-xs font-bold text-slate-600 mb-2"><i class="fas fa-eye ml-1 text-purple-400"></i>معاينة المتوسطات</div>
+        <div class="flex flex-wrap gap-2" id="gap-avg-chips"></div>
+      </div>
+
+      <!-- Add standard to gap -->
+      ${addStdOpts ? `<div class="p-3 bg-amber-50 rounded-xl border border-amber-100">
+        <div class="text-xs font-bold text-amber-700 mb-2"><i class="fas fa-plus-circle ml-1"></i>إضافة معيار لتحليل الفجوة</div>
+        <div class="flex gap-2">
+          <select class="form-input flex-1 text-sm" id="gap-add-std">
+            <option value="">-- اختر معيار --</option>
+            ${addStdOpts}
+          </select>
+          <button onclick="addStdToGap()" class="btn btn-primary text-sm px-4">إضافة</button>
+        </div>
+      </div>` : ''}
+
+      <div class="flex gap-3 pt-3 border-t border-slate-100">
+        <button onclick="submitGapEdit()" class="btn btn-primary flex-1" style="background:#7c3aed">
+          <i class="fas fa-save ml-1"></i>حفظ تحليل الفجوة
+        </button>
+        <button onclick="document.getElementById('modal-gap-edit').remove()" class="btn btn-danger px-5">إلغاء</button>
+      </div>
+    </div>
+  </div></div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+  updateAllGapPreviews();
+}
+
+function updateGapPreview(stdCode, clause) {
+  updateAllGapPreviews();
+}
+
+function updateAllGapPreviews() {
+  const gap      = window.MOCK_DB?.gap_analysis || {};
+  const stds     = (window.MOCK_DB?.iso_standards||[]).filter(s => gap[s.code]);
+  const clauses  = [4,5,6,7,8,9,10];
+  const stdColors= {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const chipsEl  = document.getElementById('gap-avg-chips');
+  if (!chipsEl) return;
+
+  chipsEl.innerHTML = stds.map(s => {
+    const clr  = s.color || stdColors[s.code] || '#64748b';
+    // Read current input values
+    const vals = clauses.map(c => {
+      const el = document.getElementById(`gap-${s.code}-${c}`);
+      return el ? (parseInt(el.value)||0) : (gap[s.code]?.clauses?.[c]||0);
+    });
+    const avg  = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+    const gapV = 100-avg;
+    return `<div class="flex items-center gap-2 px-3 py-1.5 rounded-xl" style="background:${clr}12">
+      <span class="text-xs font-bold" style="color:${clr}">${s.code.replace('_',' ')}</span>
+      <span class="text-sm font-black" style="color:${clr}">${avg}%</span>
+      ${gapV>20?`<span class="text-xs text-red-500">فجوة ${gapV}%</span>`:'<span class="text-xs text-green-500">✓</span>'}
+    </div>`;
+  }).join('');
+}
+
+function addStdToGap() {
+  const sel  = document.getElementById('gap-add-std');
+  const code = sel?.value;
+  if (!code) { showToast('❌ اختر معياراً أولاً','error'); return; }
+  if (!window.MOCK_DB.gap_analysis) window.MOCK_DB.gap_analysis = {};
+  window.MOCK_DB.gap_analysis[code] = {clauses:{4:50,5:50,6:50,7:50,8:50,9:50,10:50}};
+  document.getElementById('modal-gap-edit')?.remove();
+  showToast('✅ تم إضافة المعيار — عدّل قيمه الآن','success');
+  openGapEditModal();
+}
+
+function addGapClauseRow() {
+  const tbody = document.getElementById('gap-clauses-tbody');
+  if (!tbody) return;
+
+  // Get current clause numbers to avoid duplicates
+  const existing = Array.from(tbody.querySelectorAll('.gap-clause-row'))
+    .map(r => parseInt(r.dataset.clause));
+  const maxClause = existing.length ? Math.max(...existing) : 10;
+  const newClause = maxClause + 1;
+
+  // Get current standards columns from header
+  const stds = (window.MOCK_DB?.iso_standards||[]).filter(s => window.MOCK_DB?.gap_analysis?.[s.code]);
+  const stdColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+
+  // Build row
+  const cells = stds.map(s => {
+    const clr = s.color || stdColors[s.code] || '#64748b';
+    return `<td class="p-2 text-center">
+      <input type="number" min="0" max="100"
+        id="gap-${s.code}-${newClause}"
+        value="50"
+        class="form-input text-center text-sm font-bold gap-clause-input"
+        data-std="${s.code}" data-clause="${newClause}"
+        style="width:70px;border-color:${clr}30;color:${clr}"
+        onchange="updateAllGapPreviews()"
+      />
+    </td>`;
+  }).join('');
+
+  const tr = document.createElement('tr');
+  tr.className = 'border-b border-slate-100 gap-clause-row';
+  tr.dataset.clause = newClause;
+  tr.innerHTML = `
+    <td class="p-2">
+      <input type="text"
+        id="gap-label-${newClause}"
+        value="البند ${newClause}"
+        class="form-input text-xs font-bold"
+        style="width:130px"
+        placeholder="اسم البند..."
+      />
+    </td>
+    ${cells}
+    <td class="p-2 text-center">
+      <button onclick="removeGapClauseRow(this, ${newClause})" class="text-red-400 hover:text-red-600 p-1 rounded transition-colors" title="حذف">
+        <i class="fas fa-times text-xs"></i>
+      </button>
+    </td>`;
+
+  tbody.appendChild(tr);
+  tr.querySelector('input')?.focus();
+  updateAllGapPreviews();
+}
+
+function removeGapClauseRow(btn, clause) {
+  const row = btn.closest('.gap-clause-row');
+  if (row) {
+    row.style.opacity = '0';
+    row.style.transition = 'opacity 0.2s';
+    setTimeout(() => { row.remove(); updateAllGapPreviews(); }, 200);
+  }
+}
+
+function submitGapEdit() {
+  const gap     = window.MOCK_DB?.gap_analysis || {};
+  const stds    = (window.MOCK_DB?.iso_standards||[]).filter(s => gap[s.code]);
+  const tbody   = document.getElementById('gap-clauses-tbody');
+
+  if (tbody) {
+    // Re-initialize clauses from current DOM rows
+    stds.forEach(s => {
+      if (!gap[s.code]) gap[s.code] = {clauses:{}};
+      gap[s.code].clauses = {};
+    });
+
+    const rows = tbody.querySelectorAll('.gap-clause-row');
+    rows.forEach(row => {
+      const clause = parseInt(row.dataset.clause);
+      // Get label for custom clauses
+      const labelEl = document.getElementById(`gap-label-${clause}`);
+      stds.forEach(s => {
+        const el = document.getElementById(`gap-${s.code}-${clause}`);
+        if (el) {
+          const val = Math.min(100, Math.max(0, parseInt(el.value)||0));
+          gap[s.code].clauses[clause] = val;
+        }
+      });
+    });
+  } else {
+    // Fallback: read from known inputs
+    const clauses = [4,5,6,7,8,9,10];
+    stds.forEach(s => {
+      if (!gap[s.code]) gap[s.code] = {clauses:{}};
+      clauses.forEach(c => {
+        const el = document.getElementById(`gap-${s.code}-${c}`);
+        if (el) gap[s.code].clauses[c] = Math.min(100, Math.max(0, parseInt(el.value)||0));
+      });
+    });
+  }
+
+  window.MOCK_DB.gap_analysis = gap;
+  document.getElementById('modal-gap-edit')?.remove();
+  showToast('✅ تم حفظ تحليل الفجوة بنجاح','success');
+  renderGapAnalysis();
+}
+
+function openRiskModal() { openRiskEdit(null); }
+function openRiskEdit(id) {
+  const risk  = id ? (window.MOCK_DB?.risks||[]).find(r=>r.id===id) : null;
+  const users = (window.MOCK_DB?.users||[]).filter(u=>u.is_active);
+  document.getElementById('modal-risk')?.remove();
+
+  const stdOpts  = (window.MOCK_DB?.iso_standards||[]).map(s=>`<option value="${s.code}" ${risk?.iso===s.code?'selected':''}>${s.code.replace('_',' ')}</option>`).join('');
+  const numOpts  = n => [1,2,3,4,5].map(v=>`<option value="${v}" ${risk&&risk[n]===v?'selected':''}>${v}</option>`).join('');
+
+  // Owners checkboxes (support array of owner names)
+  const ownersList = Array.isArray(risk?.owners) ? risk.owners : (risk?.owner ? [risk.owner] : []);
+  const ownersCbs  = users.map(u=>`
+    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
+      <input type="checkbox" class="risk-owner-cb" value="${u.full_name}" ${ownersList.includes(u.full_name)?'checked':''}
+        style="accent-color:#dc2626" />
+      <span class="text-sm text-slate-700">${u.full_name}</span>
+      <span class="text-xs text-slate-400">${{admin:'مدير نظام',manager:'مدير',engineer:'مهندس',auditor:'مدقق'}[u.role]||u.role}</span>
+    </label>`).join('');
+
+  // Mitigation points
+  const mitPoints = Array.isArray(risk?.mitigation_points) ? risk.mitigation_points : (risk?.mitigation ? [risk.mitigation] : []);
+  const mitRows   = mitPoints.map((pt,i)=>`
+    <div class="flex gap-2 items-center mit-row">
+      <span class="text-green-500 flex-shrink-0 text-xs">◆</span>
+      <input class="form-input text-xs flex-1 mit-input" value="${pt.replace(/"/g,'&quot;')}" placeholder="نقطة معالجة..."/>
+      <button onclick="this.closest('.mit-row').remove()" class="text-red-400 hover:text-red-600 p-1 flex-shrink-0"><i class="fas fa-times text-xs"></i></button>
+    </div>`).join('');
+
+  const html = `<div class="modal open" id="modal-risk">
+  <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:92vh;overflow-y:auto">
+    <div class="bg-gradient-to-r from-red-700 to-red-900 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+      <h3 class="text-white font-bold text-lg"><i class="fas fa-exclamation-triangle ml-2"></i>${risk?'تعديل':'إضافة'} مخاطرة</h3>
+      <button onclick="document.getElementById('modal-risk').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <div><label class="text-sm font-bold text-slate-700 block mb-1">عنوان المخاطرة *</label>
+        <input class="form-input" id="risk-title" value="${(risk?.title||'').replace(/"/g,'&quot;')}" placeholder="وصف المخاطرة بوضوح..."/></div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">الفئة</label>
+          <select class="form-input" id="risk-category">
+            ${['compliance:امتثال','safety:سلامة','quality:جودة','environmental:بيئة','security:أمن','financial:مالي','operational:تشغيلي'].map(c=>{const[v,l]=c.split(':');return`<option value="${v}" ${risk?.category===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">معيار ISO المرتبط</label>
+          <select class="form-input" id="risk-iso">
+            <option value="MULTI" ${risk?.iso==='MULTI'||!risk?'selected':''}>متعدد المعايير</option>
+            ${stdOpts}
+          </select></div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">الاحتمالية <span class="text-slate-400 font-normal">(1-5)</span></label>
+          <select class="form-input" id="risk-probability" onchange="updateRpnPreview()">${numOpts('probability')}</select>
+          <div class="text-xs text-slate-400 mt-1">1=نادر · 5=مؤكد</div>
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">التأثير <span class="text-slate-400 font-normal">(1-5)</span></label>
+          <select class="form-input" id="risk-impact" onchange="updateRpnPreview()">${numOpts('impact')}</select>
+          <div class="text-xs text-slate-400 mt-1">1=ضئيل · 5=كارثي</div>
+        </div>
+        <div>
+          <label class="text-sm font-bold text-slate-700 block mb-1">RPN المحسوب</label>
+          <div id="rpn-preview" class="p-2 rounded-xl text-center font-black text-lg" style="background:#f1f5f9;color:#64748b">—</div>
+          <div class="text-xs text-slate-400 mt-1">ح × ت = RPN</div>
+        </div>
+      </div>
+
+      <div><label class="text-sm font-bold text-slate-700 block mb-1">الحالة</label>
+        <select class="form-input" id="risk-status">
+          ${['open:مفتوحة','mitigated:مُعالجة','monitoring:مراقبة','closed:مغلقة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${risk?.status===v?'selected':''}>${l}</option>`;}).join('')}
+        </select></div>
+
+      <!-- Owners checkboxes -->
+      <div>
+        <label class="text-sm font-bold text-slate-700 block mb-2"><i class="fas fa-users text-slate-400 ml-1"></i>المسؤولون <span class="text-slate-400 font-normal text-xs">(يمكن اختيار أكثر من مسؤول)</span></label>
+        <div class="border border-slate-200 rounded-xl p-3 max-h-36 overflow-y-auto space-y-1">
+          ${ownersCbs || '<div class="text-xs text-slate-400 text-center py-2">لا يوجد مستخدمون نشطون</div>'}
+        </div>
+      </div>
+
+      <!-- Mitigation points -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm font-bold text-slate-700"><i class="fas fa-shield-alt text-green-500 ml-1"></i>خطة المعالجة والتخفيف</label>
+          <button type="button" onclick="addMitigationPoint()" class="btn btn-primary text-xs" style="padding:4px 10px;font-size:11px">
+            <i class="fas fa-plus ml-1"></i>إضافة نقطة
+          </button>
+        </div>
+        <div id="mit-points-list" class="space-y-2">
+          ${mitRows || '<div class="text-xs text-slate-400 text-center py-3" id="mit-empty">لا توجد نقاط بعد — اضغط إضافة نقطة</div>'}
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-3 border-t border-slate-100">
+        <button onclick="submitRisk('${risk?.id||''}')" class="btn btn-primary flex-1" style="background:#dc2626">
+          <i class="fas fa-save ml-1"></i>حفظ المخاطرة
+        </button>
+        <button onclick="document.getElementById('modal-risk').remove()" class="btn btn-danger px-5">إلغاء</button>
+      </div>
+    </div>
+  </div></div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+  updateRpnPreview();
+}
+
+function addMitigationPoint() {
+  const list = document.getElementById('mit-points-list');
+  if (!list) return;
+  const empty = document.getElementById('mit-empty');
+  if (empty) empty.remove();
+  const div = document.createElement('div');
+  div.className = 'flex gap-2 items-center mit-row';
+  div.innerHTML = '<span class="text-green-500 flex-shrink-0 text-xs">◆</span>' +
+    '<input class="form-input text-xs flex-1 mit-input" placeholder="نقطة معالجة أو إجراء تخفيفي..."/>' +
+    '<button onclick="this.closest(\'.mit-row\').remove()" class="text-red-400 hover:text-red-600 p-1 flex-shrink-0"><i class="fas fa-times text-xs"></i></button>';
+  list.appendChild(div);
+  div.querySelector('input')?.focus();
+}
+
+function updateRpnPreview() {
+  const p = parseInt(document.getElementById('risk-probability')?.value)||1;
+  const i = parseInt(document.getElementById('risk-impact')?.value)||1;
+  const rpn = p*i;
+  const clr = rpn>=15?'#dc2626':rpn>=8?'#d97706':rpn>=4?'#3b82f6':'#059669';
+  const lv  = rpn>=15?'حرجة':rpn>=8?'عالية':rpn>=4?'متوسطة':'منخفضة';
+  const el  = document.getElementById('rpn-preview');
+  if (el) { el.textContent = rpn + ' — ' + lv; el.style.background=clr+'18'; el.style.color=clr; }
+}
+
+function submitRisk(id) {
+  const title = document.getElementById('risk-title')?.value?.trim();
+  if (!title) { showToast('❌ يرجى إدخال عنوان المخاطرة','error'); return; }
+
+  // Collect owners
+  const owners = [...document.querySelectorAll('.risk-owner-cb:checked')].map(cb=>cb.value);
+  // Collect mitigation points
+  const mitPoints = [...document.querySelectorAll('.mit-input')].map(el=>el.value.trim()).filter(Boolean);
+
+  const obj = {
+    title,
+    category:          document.getElementById('risk-category')?.value,
+    iso:               document.getElementById('risk-iso')?.value,
+    probability:       parseInt(document.getElementById('risk-probability')?.value)||1,
+    impact:            parseInt(document.getElementById('risk-impact')?.value)||1,
+    status:            document.getElementById('risk-status')?.value,
+    owners,
+    owner:             owners[0] || '',
+    mitigation_points: mitPoints,
+    mitigation:        mitPoints.join(' · '),
+    created_at:        new Date().toISOString(),
+  };
+
+  if (!window.MOCK_DB.risks) window.MOCK_DB.risks = [];
+  if (id) {
+    const idx = window.MOCK_DB.risks.findIndex(r=>r.id===id);
+    if (idx>=0) Object.assign(window.MOCK_DB.risks[idx], obj);
+  } else {
+    window.MOCK_DB.risks.unshift({id:'risk-'+Date.now(), ...obj});
+  }
+  document.getElementById('modal-risk')?.remove();
+  showToast('✅ تم حفظ المخاطرة','success');
+  renderRisks(); renderRiskMatrix();
+}
+
+// ── Risk View Modal ───────────────────────────
+function openRiskView(id) {
+  const risk = (window.MOCK_DB?.risks||[]).find(r=>r.id===id);
+  if (!risk) return;
+  document.getElementById('modal-risk-view')?.remove();
+
+  const rpn    = risk.probability * risk.impact;
+  const lv     = rpn>=15?'critical':rpn>=8?'high':rpn>=4?'medium':'low';
+  const lvClr  = {critical:'#dc2626',high:'#d97706',medium:'#3b82f6',low:'#059669'}[lv];
+  const lvAr   = {critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'}[lv];
+  const stAr   = {open:'مفتوحة',mitigated:'مُعالجة',monitoring:'مراقبة',closed:'مغلقة'}[risk.status]||risk.status;
+  const catAr  = {compliance:'امتثال',safety:'سلامة',quality:'جودة',environmental:'بيئة',security:'أمن',financial:'مالي',operational:'تشغيلي'}[risk.category]||risk.category;
+  const owners = Array.isArray(risk.owners) ? risk.owners : (risk.owner?[risk.owner]:[]);
+  const mitPts = Array.isArray(risk.mitigation_points) ? risk.mitigation_points : (risk.mitigation?[risk.mitigation]:[]);
+
+  const html = `<div class="modal open" id="modal-risk-view">
+  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">
+    <div class="px-6 py-4 flex items-center justify-between sticky top-0 z-10" style="background:${lvClr}">
+      <div>
+        <div class="text-white text-xs opacity-80">مخاطرة — RPN: ${rpn}</div>
+        <h3 class="text-white font-bold text-base leading-tight">${risk.title}</h3>
+      </div>
+      <button onclick="document.getElementById('modal-risk-view').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <!-- Badges -->
+      <div class="flex flex-wrap gap-2">
+        <span class="badge" style="background:${lvClr}18;color:${lvClr}">⚠ ${lvAr}</span>
+        <span class="badge ${risk.status==='open'?'badge-red':risk.status==='mitigated'?'badge-green':'badge-yellow'}">${stAr}</span>
+        <span class="badge badge-gray">${catAr}</span>
+        ${risk.iso&&risk.iso!=='MULTI'?`<span class="badge badge-blue">${risk.iso.replace('_',' ')}</span>`:''}
+      </div>
+
+      <!-- RPN Breakdown -->
+      <div class="p-4 rounded-xl" style="background:${lvClr}08;border:1px solid ${lvClr}20">
+        <div class="text-xs font-bold text-slate-600 mb-3">تقييم المخاطرة</div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="p-3 bg-white rounded-xl shadow-sm">
+            <div class="text-2xl font-black text-slate-700">${risk.probability}</div>
+            <div class="text-xs text-slate-500 mt-1">الاحتمالية</div>
+            <div class="text-xs text-slate-400">من 5</div>
+          </div>
+          <div class="p-3 bg-white rounded-xl shadow-sm">
+            <div class="text-2xl font-black text-slate-700">${risk.impact}</div>
+            <div class="text-xs text-slate-500 mt-1">التأثير</div>
+            <div class="text-xs text-slate-400">من 5</div>
+          </div>
+          <div class="p-3 rounded-xl shadow-sm" style="background:${lvClr}">
+            <div class="text-2xl font-black text-white">${rpn}</div>
+            <div class="text-xs text-white opacity-80 mt-1">RPN</div>
+            <div class="text-xs text-white opacity-70">${lvAr}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Owners -->
+      ${owners.length ? `<div class="p-3 bg-slate-50 rounded-xl">
+        <div class="text-xs font-bold text-slate-600 mb-2"><i class="fas fa-users text-blue-400 ml-1"></i>المسؤولون</div>
+        <div class="flex flex-wrap gap-2">
+          ${owners.map(o=>`<span class="badge badge-blue text-xs">${o}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <!-- Mitigation Points -->
+      ${mitPts.length ? `<div class="p-3 bg-green-50 rounded-xl border border-green-100">
+        <div class="text-xs font-bold text-green-700 mb-2"><i class="fas fa-shield-alt ml-1"></i>خطة المعالجة والتخفيف</div>
+        <div class="space-y-1.5">
+          ${mitPts.map(pt=>`<div class="flex gap-2 text-sm text-slate-700"><span class="text-green-500 flex-shrink-0">◆</span>${pt}</div>`).join('')}
+        </div>
+      </div>` : '<div class="p-3 bg-slate-50 rounded-xl text-xs text-slate-400 text-center">لا توجد خطة معالجة بعد</div>'}
+
+      <div class="flex gap-3 pt-2 border-t border-slate-100">
+        <button onclick="openRiskEdit('${id}'); document.getElementById('modal-risk-view').remove()" class="btn btn-primary flex-1">
+          <i class="fas fa-edit ml-1"></i>تعديل المخاطرة
+        </button>
+        <button onclick="document.getElementById('modal-risk-view').remove()" class="btn btn-danger px-5">إغلاق</button>
+      </div>
+    </div>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+// ── Annual Plan View Modal ────────────────────
+function openAnnualPlanView(id) {
+  const plan = (window.MOCK_DB?.annual_plans||[]).find(p=>p.id===id);
+  if (!plan) return;
+  document.getElementById('modal-plan-view')?.remove();
+
+  const months  = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const stClr   = {completed:'#059669',in_progress:'#d97706',planned:'#3b82f6',delayed:'#dc2626'};
+  const stAr    = {completed:'مكتمل',in_progress:'جارٍ',planned:'مخطط',delayed:'متأخر'};
+  const stBadge = {completed:'badge-green',in_progress:'badge-yellow',planned:'badge-gray',delayed:'badge-red'};
+  const prAr    = {critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
+  const catAr   = {safety:'السلامة',quality:'الجودة',environmental:'البيئة',audit:'التدقيق',training:'التدريب',certification:'الاعتماد'};
+  const color   = stClr[plan.status] || '#3b82f6';
+
+  const html = `<div class="modal open" id="modal-plan-view">
+  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 fade-in shadow-2xl overflow-hidden" style="max-height:90vh;overflow-y:auto">
+    <div class="px-6 py-4 flex items-center justify-between sticky top-0 z-10" style="background:${color}">
+      <div>
+        <div class="text-white text-xs opacity-80">${catAr[plan.category]||plan.category} · ${plan.iso?.replace('_',' ')||'متعدد'}</div>
+        <h3 class="text-white font-bold text-base leading-tight">${plan.title}</h3>
+      </div>
+      <button onclick="document.getElementById('modal-plan-view').remove()" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <div class="flex flex-wrap gap-2">
+        <span class="badge ${stBadge[plan.status]||'badge-gray'}">${stAr[plan.status]||plan.status}</span>
+        <span class="badge badge-gray">${prAr[plan.priority]||plan.priority} الأولوية</span>
+        ${plan.iso&&plan.iso!=='MULTI'?`<span class="badge badge-blue">${plan.iso.replace('_',' ')}</span>`:'<span class="badge badge-gray">متعدد المعايير</span>'}
+      </div>
+
+      <!-- Progress -->
+      <div class="p-4 rounded-xl" style="background:${color}08;border:1px solid ${color}20">
+        <div class="flex justify-between mb-2">
+          <span class="text-sm font-bold text-slate-700">نسبة الإنجاز</span>
+          <span class="text-lg font-black" style="color:${color}">${plan.progress}%</span>
+        </div>
+        <div class="kpi-bar"><div class="kpi-fill" style="width:${plan.progress}%;background:${color}"></div></div>
+      </div>
+
+      <!-- Info grid -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">المسؤول</div>
+          <div class="text-sm font-bold text-slate-800">${Array.isArray(plan.owners)&&plan.owners.length ? plan.owners.join('، ') : (plan.owner||'-')}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">الميزانية</div>
+          <div class="text-sm font-bold text-slate-800">${plan.budget?.toLocaleString('ar-SA')||'-'} ر.س</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">تاريخ البداية</div>
+          <div class="text-sm font-bold text-slate-800">${months[plan.start_month-1]||'-'}</div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs text-slate-500 mb-1">تاريخ النهاية</div>
+          <div class="text-sm font-bold text-slate-800">${months[plan.end_month-1]||'-'}</div>
+        </div>
+      </div>
+
+      ${plan.notes ? `<div class="p-3 bg-blue-50 rounded-xl">
+        <div class="text-xs font-bold text-blue-700 mb-1">ملاحظات</div>
+        <p class="text-sm text-slate-700">${plan.notes}</p>
+      </div>` : ''}
+
+      <div class="flex gap-3 pt-2 border-t border-slate-100">
+        <button onclick="openAnnualPlanEdit('${id}'); document.getElementById('modal-plan-view').remove()" class="btn btn-primary flex-1">
+          <i class="fas fa-edit ml-1"></i>تعديل المبادرة
+        </button>
+        <button onclick="document.getElementById('modal-plan-view').remove()" class="btn btn-danger px-5">إغلاق</button>
+      </div>
+    </div>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function deleteRisk(id) {
+  if (!confirm('حذف هذه المخاطرة؟')) return;
+  window.MOCK_DB.risks = (window.MOCK_DB.risks||[]).filter(r=>r.id!==id);
+  showToast('🗑️ تم الحذف','info');
+  renderRisks(); renderRiskMatrix();
 }
 
 function openOrgEdit() {
@@ -4686,19 +6247,39 @@ async function loadLean() {
     '</tr>';
   });
 
-  // DMAIC tracker HTML
+  // DMAIC tracker HTML — clean stepper without absolute lines
   const dmaicPhases = ['define','measure','analyze','improve','control'];
   let dmaicHtml = '';
   dmaicPhases.forEach((phase, i) => {
-    const cnt = dmaicCounts[phase];
+    const cnt   = dmaicCounts[phase];
     const color = dmaicColor[phase];
-    dmaicHtml += '<div class="flex flex-col items-center flex-1">' +
-      '<div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm mb-1" style="background:' + color + '">' + cnt + '</div>' +
-      '<div class="text-xs font-bold" style="color:' + color + '">' + dmaicAr[phase].toUpperCase() + '</div>' +
-      '<div class="text-xs text-slate-400">' + dmaicAr[phase] + '</div>' +
-      (i < 4 ? '<div class="hidden lg:block absolute" style="width:calc(20% - 2.5rem);height:2px;background:' + color + '30;top:1.25rem;right:calc(' + (80 - i*20) + '% + 1.25rem)"></div>' : '') +
-    '</div>';
+    const isLast = i === dmaicPhases.length - 1;
+    // Each step: circle + label, connector line between steps via flex
+    dmaicHtml +=
+      // Step circle + label
+      '<div class="flex flex-col items-center" style="flex:0 0 auto">' +
+        '<div class="w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-base shadow-sm" style="background:' + color + '">' + cnt + '</div>' +
+        '<div class="text-xs font-bold mt-1.5 text-center" style="color:' + color + '">' + dmaicAr[phase] + '</div>' +
+      '</div>' +
+      // Connector line between steps (not after last)
+      (!isLast ?
+        '<div class="flex-1 flex items-center" style="padding-bottom:22px">' +
+          '<div style="height:3px;width:100%;border-radius:2px;background:linear-gradient(to left,' + dmaicColor[dmaicPhases[i+1]] + '40,' + color + '40)"></div>' +
+        '</div>'
+      : '');
   });
+
+  // Also build DMAIC progress bars HTML
+  const dmaicBarsHtml = dmaicPhases.map(ph =>
+    '<div class="flex items-center gap-3">' +
+      '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + dmaicColor[ph] + '"></div>' +
+      '<div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">' +
+        '<div class="h-full rounded-full" style="width:' + (totalWastes ? Math.round(dmaicCounts[ph]/totalWastes*100) : 0) + '%;background:' + dmaicColor[ph] + '"></div>' +
+      '</div>' +
+      '<span class="text-xs font-bold w-6 text-right" style="color:' + dmaicColor[ph] + '">' + dmaicCounts[ph] + '</span>' +
+      '<span class="text-xs text-slate-500 w-16">' + dmaicAr[ph] + '</span>' +
+    '</div>'
+  ).join('');
 
   document.getElementById('app-content').innerHTML =
     '<div class="fade-in space-y-5">' +
@@ -4726,40 +6307,45 @@ async function loadLean() {
 
       // Lean Score card
       '<div class="card p-5">' +
-        '<h3 class="font-bold text-slate-800 mb-4"><i class="fas fa-tachometer-alt text-green-600 ml-2"></i>مؤشر الرقمنة والتحسين</h3>' +
+        '<h3 class="font-bold text-slate-800 mb-1"><i class="fas fa-tachometer-alt text-green-600 ml-2"></i>مؤشر الرقمنة والتحسين</h3>' +
+        '<p class="text-xs text-slate-400 mb-4">يُحسب من البيانات الحقيقية تلقائياً</p>' +
         '<div class="flex items-center justify-around">' +
           leanGauge(lm.paper_elimination.digitalization_rate, 'معدل الرقمنة', '#059669') +
           leanGauge(lm.improvement_score, 'مؤشر Lean', '#3b82f6') +
         '</div>' +
         '<div class="mt-4 grid grid-cols-2 gap-3">' +
-          '<div class="p-3 bg-green-50 rounded-xl text-center">' +
-            '<div class="font-black text-green-700 text-lg">' + lm.paper_elimination.digital_forms + '/' + lm.paper_elimination.total_inspections + '</div>' +
-            '<div class="text-xs text-slate-500">نماذج رقمية</div>' +
+          '<div class="p-3 bg-green-50 rounded-xl">' +
+            '<div class="font-black text-green-700 text-lg text-center">' + lm.paper_elimination.digital_forms + '/' + lm.paper_elimination.total_inspections + '</div>' +
+            '<div class="text-xs text-slate-500 text-center">تفتيش مكتمل / الإجمالي</div>' +
+            '<div class="text-xs text-slate-400 text-center mt-1">معدل الرقمنة = مكتمل ÷ إجمالي × 100</div>' +
           '</div>' +
-          '<div class="p-3 bg-blue-50 rounded-xl text-center">' +
-            '<div class="font-black text-blue-700 text-lg">' + Number(totalSaving).toLocaleString('ar-SA') + '</div>' +
-            '<div class="text-xs text-slate-500">ريال وفر متوقع</div>' +
+          '<div class="p-3 bg-blue-50 rounded-xl">' +
+            '<div class="font-black text-blue-700 text-lg text-center">' + (lm._detail?.wastes_closed||0) + '/' + (lm._detail?.wastes_total||0) + '</div>' +
+            '<div class="text-xs text-slate-500 text-center">هدر مغلق / الإجمالي</div>' +
+            '<div class="text-xs text-slate-400 text-center mt-1">مؤشر Lean = (مغلق + جارٍ×0.5) ÷ كل الهدر × 100</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mt-3 p-3 bg-slate-50 rounded-xl">' +
+          '<div class="text-xs font-bold text-slate-600 mb-2"><i class="fas fa-info-circle text-blue-400 ml-1"></i>أساس الحساب</div>' +
+          '<div class="grid grid-cols-2 gap-1 text-xs text-slate-500">' +
+            '<div>• التفتيش المكتمل: <b class="text-green-600">' + lm.paper_elimination.digital_forms + '</b></div>' +
+            '<div>• الهدر المغلق: <b class="text-green-600">' + (lm._detail?.wastes_closed||0) + '</b></div>' +
+            '<div>• التفتيش الكلي: <b>' + lm.paper_elimination.total_inspections + '</b></div>' +
+            '<div>• الهدر قيد المعالجة: <b class="text-yellow-600">' + (lm._detail?.wastes_inprog||0) + '</b></div>' +
+            '<div>• المتأخرات الكلية: <b class="text-red-500">' + (lm._detail?.overdue_total||0) + '</b></div>' +
+            '<div>• إجمالي الهدر: <b>' + (lm._detail?.wastes_total||0) + '</b></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
 
       // DMAIC Tracker
       '<div class="card p-5">' +
-        '<h3 class="font-bold text-slate-800 mb-4"><i class="fas fa-project-diagram text-blue-600 ml-2"></i>مسار DMAIC</h3>' +
-        '<div class="relative flex justify-between items-start pt-2">' +
+        '<h3 class="font-bold text-slate-800 mb-5"><i class="fas fa-project-diagram text-blue-600 ml-2"></i>مسار DMAIC</h3>' +
+        '<div class="flex items-start justify-between">' +
           dmaicHtml +
         '</div>' +
         '<div class="mt-5 space-y-2">' +
-          dmaicPhases.map(ph =>
-            '<div class="flex items-center gap-3">' +
-              '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + dmaicColor[ph] + '"></div>' +
-              '<div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">' +
-                '<div class="h-full rounded-full" style="width:' + (totalWastes ? Math.round(dmaicCounts[ph]/totalWastes*100) : 0) + '%;background:' + dmaicColor[ph] + '"></div>' +
-              '</div>' +
-              '<span class="text-xs font-bold w-8 text-right">' + dmaicCounts[ph] + '</span>' +
-              '<span class="text-xs text-slate-500 w-16">' + dmaicAr[ph] + '</span>' +
-            '</div>'
-          ).join('') +
+          dmaicBarsHtml +
         '</div>' +
       '</div>' +
     '</div>' +
