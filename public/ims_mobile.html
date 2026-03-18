@@ -20,10 +20,22 @@
     body{background:#f1f5f9;color:#1e293b;overflow-x:hidden;}
     .topbar{background:linear-gradient(135deg,#1e40af,#3b82f6);padding:calc(var(--safe-top) + 14px) 16px 14px;position:sticky;top:0;z-index:50;}
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;padding:8px 0 calc(var(--safe-bottom) + 8px);z-index:50;display:flex;justify-content:space-around;}
+    /* Bottom Sheet */
+    .bs-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;}
+    .bs-overlay.open{opacity:1;pointer-events:all;}
+    .bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:white;border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,0,.67,0);max-height:90dvh;overflow-y:auto;padding-bottom:calc(var(--safe-bottom) + 16px);}
+    .bottom-sheet.open{transform:translateY(0);}
+    .bs-handle{width:40px;height:4px;background:#e2e8f0;border-radius:2px;margin:12px auto 4px;}
+    .action-row{display:flex;gap:8px;padding:12px 16px 8px;}
+    .action-btn{flex:1;padding:12px;border-radius:14px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;border:none;transition:all .15s;}
+    .action-btn:active{transform:scale(.97);}
+    .icon-btn{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:all .15s;flex-shrink:0;}
+    .icon-btn:active{transform:scale(.92);}
     .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;cursor:pointer;color:#94a3b8;transition:color .2s;}
     .bnav-item.active{color:#1e40af;}
     .bnav-item i{font-size:20px;}
     .bnav-item span{font-size:10px;font-weight:600;}
+    .bnav-badge{position:absolute;top:-4px;left:-4px;min-width:16px;height:16px;background:#dc2626;border-radius:8px;color:white;font-size:9px;font-weight:bold;display:flex;align-items:center;justify-content:center;padding:0 3px;}
     .page{display:none;padding:16px;padding-bottom:80px;}
     .page.active{display:block;}
     .card{background:white;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
@@ -109,16 +121,48 @@
       {id:'nc-005',ref_number:'NC-2025-089',title:'تسرب زيت في خط الأنابيب - القسم D',type:'major',status:'closed',category:'equipment',iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',detected_at:'2026-02-15T08:00:00Z',due_date:'2026-02-28T00:00:00Z',rca_ref:'RCA-2025-089',rca_status:'closed'},
     ],
     rca:[
-      {id:'rca-001',ref_number:'RCA-2026-001',title:'تحليل سبب عدم ارتداء معدات الحماية',status:'in_progress',methodology:'5_whys',nc_ref:'NC-2026-001',project_name:'مشروع مصفاة الرياض',why_1:'لم يكن العامل يعلم بإلزامية المعدات',why_2:'لا توجد لافتات تحذيرية',root_cause:null,target_date:'2026-03-20T00:00:00Z'},
-      {id:'rca-002',ref_number:'RCA-2026-002',title:'تحليل نقص وثائق ضبط الجودة',status:'open',methodology:'ishikawa',nc_ref:'NC-2026-002',project_name:'مشروع مصفاة الرياض',why_1:null,root_cause:null,target_date:'2026-03-25T00:00:00Z'},
-      {id:'rca-003',ref_number:'RCA-2026-003',title:'تحليل عطل منظومة رصد الانبعاثات',status:'open',methodology:'5_whys',nc_ref:'NC-2026-003',project_name:'منشأة تحلية مياه الخبر',why_1:null,root_cause:null,target_date:'2026-03-12T00:00:00Z'},
+      {id:'rca-001',ref_number:'RCA-2026-001',title:'تحليل سبب عدم ارتداء معدات الحماية',status:'in_progress',methodology:'5_whys',nc_ref:'NC-2026-001',project_name:'مشروع مصفاة الرياض',why_1:'لم يكن العامل يعلم بإلزامية المعدات',why_2:'لا توجد لافتات تحذيرية',why_3:null,why_4:null,why_5:null,root_cause:null,target_date:'2026-03-20T00:00:00Z',
+        ishikawa:{man:'نقص التدريب والتوعية',machine:'المعدات غير متاحة في نقاط العمل',method:'لا يوجد إجراء واضح للتحقق',material:'PPE غير مريحة',environment:'ضغط العمل يؤدي للتجاهل',measurement:'لا يوجد نظام رصد'},
+        fmea:[{function:'ارتداء PPE',failure:'عدم الارتداء',effect:'إصابة جسدية',severity:8,occurrence:4,detection:6,action:'تركيب لافتات + تدريب'}],
+        actions:[{type:'corrective',description:'تركيب لافتات تحذيرية في جميع المناطق',assigned_name:'محمد الزهراني',due_date:'2026-03-15T00:00:00Z',status:'in_progress'}]},
+      {id:'rca-002',ref_number:'RCA-2026-002',title:'تحليل نقص وثائق ضبط الجودة',status:'open',methodology:'ishikawa',nc_ref:'NC-2026-002',project_name:'مشروع مصفاة الرياض',why_1:null,why_2:null,why_3:null,why_4:null,why_5:null,root_cause:null,target_date:'2026-03-25T00:00:00Z',
+        ishikawa:{man:'',machine:'',method:'',material:'',environment:'',measurement:''},
+        fmea:[],actions:[]},
+      {id:'rca-003',ref_number:'RCA-2026-003',title:'تحليل عطل منظومة رصد الانبعاثات',status:'open',methodology:'5_whys',nc_ref:'NC-2026-003',project_name:'منشأة تحلية مياه الخبر',why_1:null,why_2:null,why_3:null,why_4:null,why_5:null,root_cause:null,target_date:'2026-03-12T00:00:00Z',
+        ishikawa:{man:'',machine:'',method:'',material:'',environment:'',measurement:''},
+        fmea:[],actions:[]},
     ],
     notifications:[
       {id:'n1',user_id:'usr-eng-001',title:'NC حرجة تتطلب تدخلاً',message:'NC-2026-003 تجاوزت الموعد — عطل منظومة الانبعاثات',priority:'critical',is_read:0,created_at:'2026-03-10T06:00:00Z'},
       {id:'n2',user_id:'usr-eng-001',title:'تفتيش متأخر',message:'INS-2026-005 تجاوز موعده بـ 9 أيام',priority:'high',is_read:0,created_at:'2026-03-09T08:00:00Z'},
       {id:'n3',user_id:'usr-eng-001',title:'تم إغلاق NC بنجاح',message:'NC-2025-089 تم إغلاقها وإتمام الإجراءات',priority:'low',is_read:1,created_at:'2026-03-01T11:00:00Z'},
     ],
-    db_stats:{users:5,projects:4,inspections:6,nonconformances:6,rca_tickets:4,kpi_definitions:10}
+    db_stats:{users:5,projects:4,inspections:6,nonconformances:6,rca_tickets:4,kpi_definitions:10},
+    risks:[
+      {id:'risk-001',title:'عدم إتمام مراجعة ISO 45001 في الموعد',category:'compliance',iso:'ISO_45001',probability:3,impact:4,status:'open',owners:['محمد الزهراني'],mitigation_points:['وضع خطة مراجعة تفصيلية','تحديد مسؤوليات واضحة']},
+      {id:'risk-002',title:'ارتفاع معدل الحوادث فوق الحد',category:'safety',iso:'ISO_45001',probability:2,impact:5,status:'mitigated',owners:['أحمد العمري'],mitigation_points:['تكثيف دوريات السلامة','تدريب المشرفين']},
+      {id:'risk-003',title:'فجوة في توثيق إجراءات الجودة',category:'quality',iso:'ISO_9001',probability:4,impact:3,status:'open',owners:['سارة القحطاني'],mitigation_points:['مراجعة جميع الوثائق خلال 60 يوم']},
+    ],
+    annual_plans:[
+      {id:'ap-001',title:'برنامج رفع الامتثال ISO 45001',category:'safety',iso:'ISO_45001',status:'in_progress',priority:'high',owners:['أحمد العمري','محمد الزهراني'],progress:65,budget:50000,start_month:1,end_month:6,notes:'تدريب الكوادر وتحديث إجراءات السلامة'},
+      {id:'ap-002',title:'مراجعة وثائق نظام الجودة',category:'quality',iso:'ISO_9001',status:'completed',priority:'medium',owners:['سارة القحطاني'],progress:100,budget:20000,start_month:1,end_month:3,notes:'تم إعادة هيكلة جميع الوثائق'},
+      {id:'ap-003',title:'برنامج التحسين البيئي',category:'environmental',iso:'ISO_14001',status:'planned',priority:'medium',owners:['محمد الزهراني'],progress:0,budget:35000,start_month:7,end_month:12,notes:'خفض الانبعاثات بنسبة 20%'},
+      {id:'ap-004',title:'تأهيل وتدريب فريق QHSE',category:'training',iso:'MULTI',status:'in_progress',priority:'medium',owners:['أحمد العمري','فهد الدوسري'],progress:55,budget:80000,start_month:1,end_month:12,notes:'برنامج تدريبي سنوي مستمر'},
+    ],
+    lean_wastes:[
+      {id:'w-001',ref:'LEAN-001',title:'انتظار الموافقات على تصاريح العمل',muda_type:'waiting',priority:'high',status:'open',impact_score:8,estimated_saving:15000,process:'إصدار التصاريح',project_name:'مشروع مصفاة الرياض',dmaic_phase:'define',description:'تأخير في إصدار تصاريح العمل يؤدي لتوقف الفرق'},
+      {id:'w-002',ref:'LEAN-002',title:'إعادة طباعة تقارير التفتيش الورقية',muda_type:'over_processing',priority:'medium',status:'in_progress',impact_score:5,estimated_saving:8000,process:'إعداد التقارير',project_name:'مشروع مصفاة الرياض',dmaic_phase:'measure',description:'تقارير تُطبع ثم تُدخل رقمياً مرة أخرى'},
+      {id:'w-003',ref:'LEAN-003',title:'تنقل المهندسين بين المواقع لتوقيع الوثائق',muda_type:'motion',priority:'high',status:'open',impact_score:7,estimated_saving:20000,process:'اعتماد الوثائق',project_name:'محطة كهرباء جازان',dmaic_phase:'analyze',description:'تنقل غير ضروري لإنجاز مهام يمكن تنفيذها رقمياً'},
+      {id:'w-004',ref:'LEAN-004',title:'مخزون زائد من مستلزمات السلامة منتهية الصلاحية',muda_type:'inventory',priority:'low',status:'closed',impact_score:3,estimated_saving:5000,process:'إدارة المخزون',project_name:'منشأة تحلية مياه الخبر',dmaic_phase:'control',description:'شراء PPE بكميات تتجاوز الحاجة الفعلية'},
+      {id:'w-005',ref:'LEAN-005',title:'عيوب في سجلات الجودة تستلزم إعادة الإدخال',muda_type:'defects',priority:'critical',status:'in_progress',impact_score:9,estimated_saving:25000,process:'توثيق الجودة',project_name:'مشروع مصفاة الرياض',dmaic_phase:'improve',description:'أخطاء في إدخال البيانات تتطلب تصحيح يدوي'},
+    ],
+    tasks:[
+      {id:'task-001',title:'إجراء تفتيش سلامة الوحدة B',type:'inspection',priority:'critical',status:'pending',assigned_to:'usr-eng-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-20T00:00:00Z',iso:'ISO_45001'},
+      {id:'task-002',title:'متابعة إغلاق NC-2026-001',type:'nc',priority:'high',status:'in_progress',assigned_to:'usr-eng-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-20T00:00:00Z',iso:'ISO_45001'},
+      {id:'task-003',title:'إكمال تحليل RCA-2026-002',type:'rca',priority:'high',status:'pending',assigned_to:'usr-aud-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-25T00:00:00Z',iso:'ISO_9001'},
+      {id:'task-004',title:'مراجعة وثائق الجودة — دفعة 458',type:'audit',priority:'medium',status:'pending',assigned_to:'usr-eng-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-22T00:00:00Z',iso:'ISO_9001'},
+      {id:'task-005',title:'تفتيش البيئة — محطة المعالجة',type:'inspection',priority:'medium',status:'pending',assigned_to:'usr-eng-001',project:'منشأة تحلية مياه الخبر',due_date:'2026-03-28T00:00:00Z',iso:'ISO_14001'},
+    ]
   };
   const TOK={};
   window.fetch = async function(url, opts={}) {
@@ -140,12 +184,17 @@
       } else if(path==='/api/auth/logout'){result={success:true};}
       else if(path==='/api/db-stats'){result=MDATA.db_stats;}
       else if(path==='/api/dashboard/overview'||path==='/api/dashboard'){
+        const myTasks = MDATA.tasks||[];
+        const myOpen  = myTasks.filter(t=>t.status!=='completed');
+        const overdue = myOpen.filter(t=>t.due_date&&new Date(t.due_date)<new Date());
         result={summary:{
           projects:{total:4,active:3},
           inspections:{total:MDATA.inspections.length,completed:2,pending:2,overdue:1,avg_score:91},
           nonconformances:{total:MDATA.nonconformances.length,open:4,closed:2,critical:1},
-          rca:{total:3,open:2,closed:1,closure_rate:33}
-        },recent_ncs:MDATA.nonconformances.slice(0,4),notifications:MDATA.notifications.filter(n=>!n.is_read)};
+          rca:{total:3,open:2,closed:1,closure_rate:33},
+          tasks:{total:myOpen.length,overdue:overdue.length},
+          risks:{total:(MDATA.risks||[]).length,open:(MDATA.risks||[]).filter(r=>r.status==='open').length},
+        },recent_ncs:MDATA.nonconformances.slice(0,4),notifications:MDATA.notifications.filter(n=>!n.is_read),my_tasks:myOpen.slice(0,4)};
       } else if(path==='/api/inspections'){
         let d=[...MDATA.inspections];
         if(q.status)d=d.filter(i=>i.status===q.status);
@@ -186,6 +235,26 @@
         result=MDATA.notifications.filter(n=>!uid||n.user_id===uid);
       } else if(path==='/api/dashboard/notifications/read'&&method==='PUT'){
         MDATA.notifications.forEach(n=>n.is_read=1);result={success:true};
+      } else if(path==='/api/lean/wastes'){
+        let d=[...MDATA.lean_wastes];
+        if(q.status)d=d.filter(w=>w.status===q.status);
+        result={data:d,total:d.length};
+      } else if(path.startsWith('/api/lean/wastes/')&&method==='PUT'){
+        const wid=path.split('/')[4];
+        const w=MDATA.lean_wastes.find(x=>x.id===wid);
+        if(w)Object.assign(w,body);result=w||{error:'not found'};
+      } else if(path==='/api/tasks'){
+        let d=[...MDATA.tasks];
+        if(q.assigned_to)d=d.filter(t=>t.assigned_to===q.assigned_to);
+        result={data:d,total:d.length};
+      } else if(path.startsWith('/api/tasks/')&&method==='PUT'){
+        const tid=path.split('/')[3];
+        const t=MDATA.tasks.find(x=>x.id===tid);
+        if(t)Object.assign(t,body);result=t||{error:'غير موجود'};
+      } else if(path==='/api/risks'){
+        result={data:MDATA.risks,total:MDATA.risks.length};
+      } else if(path==='/api/annual-plans'){
+        result={data:MDATA.annual_plans,total:MDATA.annual_plans.length};
       } else {
         result={error:'mock: not found '+path};
       }
@@ -297,7 +366,7 @@
       <div class="space-y-4">
         <!-- Quick Stats -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="card p-4">
+          <div class="card p-4" onclick="mShowPage('m-inspections')" style="cursor:pointer">
             <div class="flex items-center gap-2 mb-1">
               <i class="fas fa-clipboard-check text-blue-500"></i>
               <span class="text-xs text-slate-500">تفتيشاتي</span>
@@ -305,7 +374,7 @@
             <div class="text-2xl font-black text-slate-800" id="m-my-inspections">-</div>
             <div class="text-xs text-slate-400 mt-0.5">هذا الشهر</div>
           </div>
-          <div class="card p-4">
+          <div class="card p-4" onclick="mShowPage('m-nc')" style="cursor:pointer">
             <div class="flex items-center gap-2 mb-1">
               <i class="fas fa-exclamation-triangle text-red-500"></i>
               <span class="text-xs text-slate-500">NC المسندة</span>
@@ -313,44 +382,55 @@
             <div class="text-2xl font-black text-red-600" id="m-my-ncs">-</div>
             <div class="text-xs text-slate-400 mt-0.5">مفتوحة</div>
           </div>
-          <div class="card p-4">
+          <div class="card p-4" onclick="mShowPage('m-tasks')" style="cursor:pointer;position:relative">
             <div class="flex items-center gap-2 mb-1">
-              <i class="fas fa-chart-line text-green-500"></i>
-              <span class="text-xs text-slate-500">متوسط الامتثال</span>
+              <i class="fas fa-tasks text-amber-500"></i>
+              <span class="text-xs text-slate-500">مهامي المعلّقة</span>
             </div>
-            <div class="text-2xl font-black text-green-600" id="m-compliance">-</div>
-            <div class="text-xs text-slate-400 mt-0.5">نسبة مئوية</div>
+            <div class="text-2xl font-black text-amber-600" id="m-my-tasks">-</div>
+            <div class="text-xs text-red-500 mt-0.5" id="m-tasks-overdue-label"></div>
           </div>
-          <div class="card p-4">
+          <div class="card p-4" onclick="mShowPage('m-risks')" style="cursor:pointer">
             <div class="flex items-center gap-2 mb-1">
-              <i class="fas fa-search text-purple-500"></i>
-              <span class="text-xs text-slate-500">RCA معلّقة</span>
+              <i class="fas fa-shield-alt text-red-400"></i>
+              <span class="text-xs text-slate-500">مخاطر مفتوحة</span>
             </div>
-            <div class="text-2xl font-black text-purple-600" id="m-my-rcas">-</div>
-            <div class="text-xs text-slate-400 mt-0.5">تنتظر تحليل</div>
+            <div class="text-2xl font-black text-red-500" id="m-my-risks">-</div>
+            <div class="text-xs text-slate-400 mt-0.5">تحتاج متابعة</div>
           </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="card p-4">
           <h3 class="font-bold text-slate-800 mb-3 text-sm"><i class="fas fa-bolt text-yellow-500 mr-2"></i>إجراءات سريعة</h3>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-4 gap-2">
             <button onclick="startNewInspection()" class="p-3 bg-blue-50 rounded-xl text-center active:bg-blue-100 transition-colors">
               <i class="fas fa-plus-circle text-blue-600 text-xl block mb-1"></i>
-              <span class="text-xs font-semibold text-blue-800">تفتيش جديد</span>
+              <span class="text-xs font-semibold text-blue-800">تفتيش</span>
             </button>
             <button onclick="openNCForm()" class="p-3 bg-red-50 rounded-xl text-center active:bg-red-100 transition-colors">
               <i class="fas fa-exclamation-triangle text-red-600 text-xl block mb-1"></i>
-              <span class="text-xs font-semibold text-red-800">تسجيل NC</span>
+              <span class="text-xs font-semibold text-red-800">NC جديدة</span>
             </button>
             <button onclick="openCameraPage()" class="p-3 bg-green-50 rounded-xl text-center active:bg-green-100 transition-colors">
               <i class="fas fa-camera text-green-600 text-xl block mb-1"></i>
-              <span class="text-xs font-semibold text-green-800">التقاط صورة</span>
+              <span class="text-xs font-semibold text-green-800">كاميرا</span>
             </button>
             <button onclick="mShowPage('m-rca')" class="p-3 bg-purple-50 rounded-xl text-center active:bg-purple-100 transition-colors">
               <i class="fas fa-search text-purple-600 text-xl block mb-1"></i>
-              <span class="text-xs font-semibold text-purple-800">تحليل RCA</span>
+              <span class="text-xs font-semibold text-purple-800">RCA</span>
             </button>
+          </div>
+        </div>
+
+        <!-- My Tasks Widget -->
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-tasks text-amber-500 mr-2"></i>مهامي العاجلة</h3>
+            <button onclick="mShowPage('m-tasks')" class="text-blue-500 text-xs">عرض الكل</button>
+          </div>
+          <div id="m-home-tasks">
+            <div class="text-center py-3 text-slate-400 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>تحميل...</div>
           </div>
         </div>
 
@@ -589,7 +669,92 @@
       </div>
     </div>
 
-    <!-- ─── NOTIFICATIONS ─── -->
+    <!-- ─── TASKS (المهام الموكلة) ─── -->
+    <div class="page" id="m-tasks">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between mb-1">
+          <h2 class="font-bold text-slate-800">مهامي</h2>
+          <div class="flex gap-2">
+            <button onclick="filterTasks('all')" class="task-filter-btn active px-3 py-1 rounded-full text-xs font-bold bg-blue-600 text-white">الكل</button>
+            <button onclick="filterTasks('pending')" class="task-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">معلّقة</button>
+            <button onclick="filterTasks('overdue')" class="task-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600">متأخرة</button>
+          </div>
+        </div>
+        <div id="m-tasks-list">
+          <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RISKS (المخاطر) ─── -->
+    <div class="page" id="m-risks">
+      <div class="space-y-3">
+        <div class="flex items-center gap-3 mb-1">
+          <button onclick="mShowPage('m-more')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-arrow-right text-slate-600 text-sm"></i>
+          </button>
+          <h2 class="font-bold text-slate-800">إدارة المخاطر</h2>
+        </div>
+        <!-- Summary -->
+        <div class="grid grid-cols-3 gap-2" id="risks-summary"></div>
+        <!-- List -->
+        <div id="m-risks-list">
+          <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+        </div>
+        <!-- Detail panel -->
+        <div id="risk-detail-panel" style="display:none">
+          <button onclick="document.getElementById('risk-detail-panel').style.display='none';document.getElementById('m-risks-list').style.display=''"
+                  class="flex items-center gap-2 text-blue-600 text-sm mb-3">
+            <i class="fas fa-arrow-right"></i> رجوع
+          </button>
+          <div id="risk-detail-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ANNUAL PLANS (الخطة السنوية) ─── -->
+    <div class="page" id="m-plans">
+      <div class="space-y-3">
+        <div class="flex items-center gap-3 mb-1">
+          <button onclick="mShowPage('m-more')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-arrow-right text-slate-600 text-sm"></i>
+          </button>
+          <h2 class="font-bold text-slate-800">الخطة السنوية</h2>
+        </div>
+        <!-- Summary -->
+        <div class="grid grid-cols-3 gap-2" id="plans-summary"></div>
+        <!-- Plans list -->
+        <div id="m-plans-list">
+          <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
+        </div>
+      </div>
+    </div>
+    <!-- ─── LEAN WASTE ─── -->
+    <div class="page" id="m-lean">
+      <div class="space-y-3">
+        <div class="flex items-center gap-3 mb-1">
+          <button onclick="mShowPage('m-more')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-arrow-right text-slate-600 text-sm"></i>
+          </button>
+          <h2 class="font-bold text-slate-800">تحليل الهدر — Lean</h2>
+        </div>
+        <div class="grid grid-cols-4 gap-2" id="lean-summary"></div>
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <button onclick="filterLean('')" class="lean-filter px-3 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white whitespace-nowrap" data-f="">الكل</button>
+          <button onclick="filterLean('open')" class="lean-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap" data-f="open">مفتوح</button>
+          <button onclick="filterLean('in_progress')" class="lean-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap" data-f="in_progress">جارٍ</button>
+          <button onclick="filterLean('closed')" class="lean-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap" data-f="closed">مغلق</button>
+        </div>
+        <div id="m-lean-list"><div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div></div>
+        <div id="lean-detail-panel" style="display:none">
+          <button onclick="document.getElementById('lean-detail-panel').style.display='none';document.getElementById('m-lean-list').style.display=''" class="flex items-center gap-2 text-blue-600 text-sm mb-3">
+            <i class="fas fa-arrow-right"></i> رجوع
+          </button>
+          <div id="lean-detail-content"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="page" id="m-notifications">
       <div class="space-y-2" id="m-notifs-list">
         <div class="pull-refresh"><i class="fas fa-spinner fa-spin mr-2"></i>تحميل...</div>
@@ -604,35 +769,66 @@
           <div class="space-y-2">
             <button onclick="mShowPage('m-rca')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-purple-50 active:bg-purple-100 transition-colors">
               <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-search text-purple-600"></i></div>
-              <div class="text-right">
+              <div class="text-right flex-1">
                 <div class="font-semibold text-slate-800 text-sm">تحليل الأسباب RCA</div>
                 <div class="text-xs text-slate-500">5 Whys & Ishikawa</div>
               </div>
-              <i class="fas fa-chevron-left text-slate-300 mr-auto text-xs"></i>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+            </button>
+            <button onclick="mShowPage('m-risks')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-red-50 active:bg-red-100 transition-colors">
+              <div class="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center"><i class="fas fa-shield-alt text-red-600"></i></div>
+              <div class="text-right flex-1">
+                <div class="font-semibold text-slate-800 text-sm">إدارة المخاطر</div>
+                <div class="text-xs text-slate-500">سجل المخاطر وخطط المعالجة</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+            </button>
+            <button onclick="mShowPage('m-plans')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-green-50 active:bg-green-100 transition-colors">
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-calendar-alt text-green-600"></i></div>
+              <div class="text-right flex-1">
+                <div class="font-semibold text-slate-800 text-sm">الخطة السنوية</div>
+                <div class="text-xs text-slate-500">متابعة المبادرات والتقدم</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
             </button>
             <button onclick="mShowPage('m-notifications')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-amber-50 active:bg-amber-100 transition-colors">
               <div class="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center"><i class="fas fa-bell text-amber-600"></i></div>
-              <div class="text-right">
+              <div class="text-right flex-1">
                 <div class="font-semibold text-slate-800 text-sm">الإشعارات</div>
                 <div class="text-xs text-slate-500">التنبيهات والتحديثات</div>
               </div>
-              <span class="badge badge-red mr-auto" id="m-notif-badge-more">0</span>
+              <span class="badge badge-red" id="m-notif-badge-more">0</span>
             </button>
-            <button onclick="mShowPage('m-users')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-blue-50 active:bg-blue-100 transition-colors">
-              <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center"><i class="fas fa-users text-blue-600"></i></div>
-              <div class="text-right">
+            <button onclick="mShowPage('m-lean')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-teal-50 active:bg-teal-100 transition-colors">
+              <div class="w-9 h-9 bg-teal-100 rounded-xl flex items-center justify-center"><i class="fas fa-recycle text-teal-600"></i></div>
+              <div class="text-right flex-1">
+                <div class="font-semibold text-slate-800 text-sm">تحليل الهدر Lean</div>
+                <div class="text-xs text-slate-500">MUDA · DMAIC · Six Sigma</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+            </button>
+              <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center"><i class="fas fa-camera text-blue-600"></i></div>
+              <div class="text-right flex-1">
+                <div class="font-semibold text-slate-800 text-sm">الكاميرا الميدانية</div>
+                <div class="text-xs text-slate-500">التقاط الصور وربطها</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+            </button>
+            <button onclick="mShowPage('m-users')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-indigo-50 active:bg-indigo-100 transition-colors">
+              <div class="w-9 h-9 bg-indigo-100 rounded-xl flex items-center justify-center"><i class="fas fa-users text-indigo-600"></i></div>
+              <div class="text-right flex-1">
                 <div class="font-semibold text-slate-800 text-sm">أعضاء الفريق</div>
                 <div class="text-xs text-slate-500">قائمة المستخدمين</div>
               </div>
-              <i class="fas fa-chevron-left text-slate-300 mr-auto text-xs"></i>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
             </button>
-            <button onclick="mShowPage('m-profile')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-green-50 active:bg-green-100 transition-colors">
-              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-user-circle text-green-600"></i></div>
-              <div class="text-right">
+            <button onclick="mShowPage('m-profile')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-slate-50 active:bg-slate-100 transition-colors">
+              <div class="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center"><i class="fas fa-user-circle text-slate-600"></i></div>
+              <div class="text-right flex-1">
                 <div class="font-semibold text-slate-800 text-sm">الملف الشخصي</div>
                 <div class="text-xs text-slate-500">معلوماتي وإعداداتي</div>
               </div>
-              <i class="fas fa-chevron-left text-slate-300 mr-auto text-xs"></i>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
             </button>
           </div>
         </div>
@@ -641,7 +837,7 @@
         <div class="card p-4">
           <h3 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-info-circle text-slate-400 mr-2"></i>معلومات التطبيق</h3>
           <div class="space-y-2 text-sm">
-            <div class="flex justify-between text-slate-600"><span>الإصدار</span><span class="font-mono font-bold">v1.0.0</span></div>
+            <div class="flex justify-between text-slate-600"><span>الإصدار</span><span class="font-mono font-bold">v2.0.0</span></div>
             <div class="flex justify-between text-slate-600"><span>المعايير</span><span class="text-xs">9001 · 45001 · 14001 · 27001</span></div>
             <div class="flex justify-between text-slate-600"><span>حالة الشبكة</span><span id="m-network-status" class="badge badge-green">متصل</span></div>
             <div class="flex justify-between text-slate-600"><span>آخر مزامنة</span><span id="m-last-sync" class="text-xs text-slate-400">-</span></div>
@@ -779,14 +975,16 @@
     <div class="bnav-item active" onclick="mShowPage('m-home')" id="nav-m-home">
       <i class="fas fa-home"></i><span>الرئيسية</span>
     </div>
+    <div class="bnav-item" onclick="mShowPage('m-tasks')" id="nav-m-tasks" style="position:relative">
+      <i class="fas fa-tasks"></i>
+      <span>مهامي</span>
+      <span class="bnav-badge" id="tasks-nav-badge" style="display:none">0</span>
+    </div>
     <div class="bnav-item" onclick="mShowPage('m-inspections')" id="nav-m-inspections">
       <i class="fas fa-clipboard-check"></i><span>التفتيش</span>
     </div>
     <div class="bnav-item" onclick="mShowPage('m-nc')" id="nav-m-nc">
       <i class="fas fa-exclamation-triangle"></i><span>NC</span>
-    </div>
-    <div class="bnav-item" onclick="openCameraPage()" id="nav-m-camera">
-      <i class="fas fa-camera"></i><span>الكاميرا</span>
     </div>
     <div class="bnav-item" onclick="mShowPage('m-more')" id="nav-m-more">
       <i class="fas fa-th-large"></i><span>المزيد</span>
@@ -835,6 +1033,7 @@ async function mobileLogin() {
       loadInspectionsList();
       loadNCList();
       loadRCAList();
+      loadTasksList();
       loadNotifications_m();
       startGPS();
     } else {
@@ -847,7 +1046,7 @@ async function mobileLogin() {
     document.getElementById('m-user-name').textContent = demoUser.full_name;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-app').style.display = 'block';
-    loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadNotifications_m();
+    loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadTasksList(); loadNotifications_m();
     startGPS();
   } finally {
     btn.disabled = false;
@@ -880,22 +1079,22 @@ function mShowPage(pageId) {
   if (page) page.classList.add('active');
   const nav = document.getElementById('nav-' + pageId);
   if (nav) nav.classList.add('active');
-  // For pages inside "more", keep more nav active
-  const morePages = ['m-users', 'm-profile', 'm-rca', 'm-notifications'];
+  const morePages = ['m-users', 'm-profile', 'm-rca', 'm-notifications', 'm-risks', 'm-plans', 'm-camera', 'm-lean'];
   if (morePages.includes(pageId)) {
-    const moreNav = document.getElementById('nav-m-more');
-    if (moreNav) moreNav.classList.add('active');
+    document.getElementById('nav-m-more')?.classList.add('active');
   }
   mState.currentPage = pageId;
-  // Refresh data on navigate
-  if (pageId === 'm-home') loadHomeStats();
-  if (pageId === 'm-nc') loadNCList();
-  if (pageId === 'm-rca') loadRCAList();
+  if (pageId === 'm-home')          loadHomeStats();
+  if (pageId === 'm-tasks')         loadTasksList();
+  if (pageId === 'm-nc')            loadNCList();
+  if (pageId === 'm-rca')           loadRCAList();
   if (pageId === 'm-notifications') loadNotifications_m();
-  if (pageId === 'm-users') loadMobileUsers();
-  if (pageId === 'm-profile') loadProfile();
-  if (pageId === 'm-camera') { if (!mState.cameraStream) startCamera(); }
-  // Scroll to top
+  if (pageId === 'm-users')         loadMobileUsers();
+  if (pageId === 'm-profile')       loadProfile();
+  if (pageId === 'm-risks')         loadRisksList();
+  if (pageId === 'm-plans')         loadPlansList();
+  if (pageId === 'm-lean')          loadLeanList();
+  if (pageId === 'm-camera')        { if (!mState.cameraStream) startCamera(); }
   window.scrollTo(0, 0);
 }
 
@@ -918,9 +1117,48 @@ async function loadHomeStats() {
     const data = await mFetch('/api/dashboard/overview');
     const s = data.summary;
     document.getElementById('m-my-inspections').textContent = s?.inspections?.total || 0;
-    document.getElementById('m-my-ncs').textContent = s?.nonconformances?.open || 0;
-    document.getElementById('m-compliance').textContent = (s?.inspections?.avg_score || 0) + '%';
-    document.getElementById('m-my-rcas').textContent = s?.rca?.open || 0;
+    document.getElementById('m-my-ncs').textContent         = s?.nonconformances?.open || 0;
+    document.getElementById('m-my-tasks').textContent       = s?.tasks?.total || 0;
+    document.getElementById('m-my-risks').textContent       = s?.risks?.open || 0;
+
+    const overdue = s?.tasks?.overdue || 0;
+    const overdueEl = document.getElementById('m-tasks-overdue-label');
+    if (overdueEl) overdueEl.textContent = overdue > 0 ? overdue + ' متأخرة' : '';
+
+    // Update nav badge
+    const navBadge = document.getElementById('tasks-nav-badge');
+    const pending  = s?.tasks?.total || 0;
+    if (navBadge) {
+      navBadge.style.display = pending > 0 ? 'flex' : 'none';
+      navBadge.textContent   = pending > 9 ? '9+' : pending;
+    }
+
+    // Home tasks widget
+    const tasksEl = document.getElementById('m-home-tasks');
+    const myTasks = data.my_tasks || [];
+    if (tasksEl) {
+      if (!myTasks.length) {
+        tasksEl.innerHTML = '<p class="text-slate-400 text-xs text-center py-2">لا توجد مهام معلّقة ✅</p>';
+      } else {
+        tasksEl.innerHTML = myTasks.map(t => {
+          const isOverdue = t.due_date && new Date(t.due_date) < new Date() && t.status !== 'completed';
+          const typeIcon = {inspection:'clipboard-check',nc:'exclamation-triangle',rca:'search',audit:'file-search'}[t.type] || 'tasks';
+          const typeClr  = {inspection:'blue',nc:'red',rca:'purple',audit:'amber'}[t.type] || 'slate';
+          return `<div class="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0" onclick="mShowPage('m-tasks')">
+            <div class="w-8 h-8 rounded-xl bg-${typeClr}-50 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-${typeIcon} text-${typeClr}-500 text-xs"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-slate-800 truncate">${t.title}</div>
+              <div class="text-xs ${isOverdue?'text-red-500 font-bold':'text-slate-400'}">${t.project} ${isOverdue?'· متأخرة':''}</div>
+            </div>
+            <span class="badge ${t.priority==='critical'?'badge-red':t.priority==='high'?'badge-yellow':'badge-blue'} text-xs flex-shrink-0">
+              ${t.priority==='critical'?'حرجة':t.priority==='high'?'عالية':'متوسطة'}
+            </span>
+          </div>`;
+        }).join('');
+      }
+    }
 
     // Recent activity
     const el = document.getElementById('m-recent-activity');
@@ -1201,239 +1439,1344 @@ async function submitNC_mobile() {
   }
 }
 
-// ── Camera ────────────────────────────────────────
-async function startCamera() {
-  try {
-    const constraints = { video: { facingMode: mState.cameraFacing, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false };
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    mState.cameraStream = stream;
-    const video = document.getElementById('camera-video');
-    video.srcObject = stream;
-    video.style.display = 'block';
-    document.getElementById('cam-placeholder').style.display = 'none';
-    document.getElementById('cam-overlay').style.display = 'block';
-    document.getElementById('shutter-btn').style.display = 'flex';
-    document.getElementById('switch-cam-btn').style.display = 'flex';
-    document.getElementById('stop-cam-btn').style.display = 'flex';
-  } catch(e) {
-    mToast('تعذّر الوصول للكاميرا: ' + e.message, 'error');
+// ══════════════════════════════════════════════
+// BOTTOM SHEET ENGINE
+// ══════════════════════════════════════════════
+function openBS(html) {
+  document.getElementById('bs-content').innerHTML = html;
+  document.getElementById('bs-overlay').classList.add('open');
+  document.getElementById('bottom-sheet').classList.add('open');
+}
+function closeBS() {
+  document.getElementById('bs-overlay').classList.remove('open');
+  document.getElementById('bottom-sheet').classList.remove('open');
+}
+
+// ── Tasks ─────────────────────────────────────────
+let _tasksFilter = 'all';
+
+function filterTasks(f) {
+  _tasksFilter = f;
+  document.querySelectorAll('.task-filter-btn').forEach(b => {
+    const isActive = b.getAttribute('onclick').includes("'"+f+"'");
+    b.className = isActive
+      ? 'task-filter-btn active px-3 py-1 rounded-full text-xs font-bold '+(f==='overdue'?'bg-red-600 text-white':'bg-blue-600 text-white')
+      : 'task-filter-btn px-3 py-1 rounded-full text-xs font-bold '+(f==='overdue'?'bg-red-100 text-red-600':'bg-slate-100 text-slate-600');
+  });
+  loadTasksList();
+}
+
+async function loadTasksList() {
+  const data  = await mFetch('/api/tasks');
+  const el    = document.getElementById('m-tasks-list');
+  if (!el) return;
+  let tasks   = data.data || [];
+  const now   = new Date();
+  if (_tasksFilter==='pending') tasks = tasks.filter(t=>t.status==='pending');
+  if (_tasksFilter==='overdue') tasks = tasks.filter(t=>t.due_date&&new Date(t.due_date)<now&&t.status!=='completed');
+
+  if (!tasks.length) {
+    el.innerHTML=`<div class="card p-6 text-center"><i class="fas fa-check-circle text-green-400 text-3xl mb-2 block"></i>
+      <p class="text-slate-500 text-sm">${_tasksFilter==='overdue'?'لا توجد مهام متأخرة ✅':'لا توجد مهام معلّقة'}</p></div>`;
+    return;
   }
+
+  const typeIcon={inspection:'clipboard-check',nc:'exclamation-triangle',rca:'search',audit:'file-search'};
+  const typeClr ={inspection:'#3b82f6',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
+  const typeLbl ={inspection:'تفتيش',nc:'NC',rca:'RCA',audit:'تدقيق'};
+  const priClr  ={critical:'badge-red',high:'badge-yellow',medium:'badge-blue',low:'badge-gray'};
+  const priLbl  ={critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
+
+  el.innerHTML = tasks.map(t=>{
+    const isOverdue = t.due_date&&new Date(t.due_date)<now&&t.status!=='completed';
+    const daysLeft  = t.due_date?Math.ceil((new Date(t.due_date)-now)/86400000):null;
+    const clr       = typeClr[t.type]||'#64748b';
+    const ic        = typeIcon[t.type]||'tasks';
+    return `<div class="card p-4 mb-3" style="border-right:3px solid ${clr}">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${clr}15">
+          <i class="fas fa-${ic} text-sm" style="color:${clr}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${t.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${t.project||''} · ${t.iso?.replace('_','')||''}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap items-center">
+            <span class="badge ${priClr[t.priority]||'badge-gray'} text-xs">${priLbl[t.priority]||''}</span>
+            <span class="badge badge-gray text-xs">${typeLbl[t.type]||t.type}</span>
+            ${isOverdue?'<span class="badge badge-red text-xs"><i class="fas fa-clock ml-1"></i>متأخرة</span>':
+              daysLeft!==null?`<span class="text-xs ${daysLeft<=2?'text-red-500 font-bold':'text-slate-400'}">${daysLeft>0?'باقي '+daysLeft+' يوم':'اليوم'}</span>`:''}
+          </div>
+        </div>
+        <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
+          <button onclick="viewTask('${t.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+          <button onclick="editTask('${t.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function stopCamera() {
-  if (mState.cameraStream) {
-    mState.cameraStream.getTracks().forEach(t => t.stop());
-    mState.cameraStream = null;
-  }
-  const video = document.getElementById('camera-video');
-  video.srcObject = null;
-  video.style.display = 'none';
-  document.getElementById('cam-placeholder').style.display = 'flex';
-  document.getElementById('cam-overlay').style.display = 'none';
-  document.getElementById('shutter-btn').style.display = 'none';
-  document.getElementById('switch-cam-btn').style.display = 'none';
-  document.getElementById('stop-cam-btn').style.display = 'none';
-}
-
-async function switchCamera() {
-  mState.cameraFacing = mState.cameraFacing === 'environment' ? 'user' : 'environment';
-  stopCamera();
-  await startCamera();
-}
-
-function capturePhoto() {
-  const video  = document.getElementById('camera-video');
-  const canvas = document.getElementById('camera-canvas');
-  if (!video.videoWidth) { mToast('الكاميرا غير جاهزة بعد', 'error'); return; }
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0);
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-  mState.capturedPhotos.push(dataUrl);
-  renderCapturedPhotos();
-  // Flash effect
-  const overlay = document.getElementById('cam-overlay');
-  overlay.style.background = 'rgba(255,255,255,0.6)';
-  setTimeout(() => { overlay.style.background = ''; }, 150);
-  mToast('📸 تم التقاط الصورة', 'success');
-}
-
-function uploadFromGallery(e) {
-  const files = Array.from(e.target.files);
-  files.forEach(file => {
-    if (file.size > 5 * 1024 * 1024) { mToast('الصورة أكبر من 5MB', 'error'); return; }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      mState.capturedPhotos.push(ev.target.result);
-      renderCapturedPhotos();
-    };
-    reader.readAsDataURL(file);
+function viewTask(id) {
+  mFetch('/api/tasks').then(data=>{
+    const t   = (data.data||[]).find(x=>x.id===id);
+    if (!t) return;
+    const typeClr={inspection:'#3b82f6',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
+    const typeLbl={inspection:'تفتيش',nc:'NC',rca:'RCA',audit:'تدقيق'};
+    const priClr={critical:'#dc2626',high:'#d97706',medium:'#3b82f6',low:'#059669'};
+    const priLbl={critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
+    const stLbl={pending:'معلّقة',in_progress:'جارية',completed:'مكتملة'};
+    const stClr={pending:'#d97706',in_progress:'#3b82f6',completed:'#059669'};
+    const clr   = typeClr[t.type]||'#64748b';
+    const now   = new Date();
+    const isOverdue = t.due_date&&new Date(t.due_date)<now&&t.status!=='completed';
+    openBS(`
+      <div class="px-4 pb-4 space-y-4">
+        <div class="flex items-start gap-3 mt-2">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:${clr}15">
+            <i class="fas fa-${({inspection:'clipboard-check',nc:'exclamation-triangle',rca:'search',audit:'file-search'}[t.type])||'tasks'} text-xl" style="color:${clr}"></i>
+          </div>
+          <div class="flex-1">
+            <div class="font-bold text-slate-800 text-base leading-tight">${t.title}</div>
+            <div class="text-xs text-slate-400 mt-1">${t.project||''}</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 rounded-xl" style="background:${clr}10">
+            <div class="text-xs text-slate-500 mb-1">النوع</div>
+            <div class="font-bold text-sm" style="color:${clr}">${typeLbl[t.type]||t.type}</div>
+          </div>
+          <div class="p-3 rounded-xl" style="background:${priClr[t.priority]||'#64748b'}10">
+            <div class="text-xs text-slate-500 mb-1">الأولوية</div>
+            <div class="font-bold text-sm" style="color:${priClr[t.priority]||'#64748b'}">${priLbl[t.priority]||''}</div>
+          </div>
+          <div class="p-3 rounded-xl" style="background:${stClr[t.status]||'#64748b'}10">
+            <div class="text-xs text-slate-500 mb-1">الحالة</div>
+            <div class="font-bold text-sm" style="color:${stClr[t.status]||'#64748b'}">${stLbl[t.status]||t.status}</div>
+          </div>
+          <div class="p-3 rounded-xl" style="background:${isOverdue?'#fee2e2':'#f0fdf4'}">
+            <div class="text-xs text-slate-500 mb-1">الموعد</div>
+            <div class="font-bold text-sm ${isOverdue?'text-red-600':''}">${t.due_date?new Date(t.due_date).toLocaleDateString('ar-SA'):'—'}</div>
+          </div>
+        </div>
+        ${isOverdue?'<div class="p-3 bg-red-50 rounded-xl text-sm text-red-700 font-bold"><i class="fas fa-clock ml-2"></i>هذه المهمة متأخرة</div>':''}
+        <!-- Quick status change -->
+        <div>
+          <div class="text-xs font-bold text-slate-600 mb-2">تغيير الحالة السريع</div>
+          <div class="grid grid-cols-3 gap-2">
+            ${['pending','in_progress','completed'].map(s=>`
+            <button onclick="updateTaskStatus('${id}','${s}')"
+              class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
+              style="border-color:${stClr[s]};background:${t.status===s?stClr[s]:'white'};color:${t.status===s?'white':stClr[s]}">
+              ${stLbl[s]}
+            </button>`).join('')}
+          </div>
+        </div>
+        <div class="action-row">
+          <button onclick="editTask('${id}');closeBS()" class="action-btn" style="background:#fef3c7;color:#d97706">
+            <i class="fas fa-edit"></i>تعديل
+          </button>
+          <button onclick="quickCompleteTask('${id}')" class="action-btn" style="background:#d1fae5;color:#059669">
+            <i class="fas fa-check"></i>إنهاء المهمة
+          </button>
+        </div>
+      </div>`);
   });
 }
 
-function renderCapturedPhotos() {
-  const section = document.getElementById('captured-photos-section');
-  const grid    = document.getElementById('captured-photos-grid');
-  if (!grid) return;
-  if (mState.capturedPhotos.length === 0) { section.style.display = 'none'; return; }
-  section.style.display = '';
-  grid.innerHTML = mState.capturedPhotos.map((p, i) => `
-    <div class="relative">
-      <img src="${p}" class="photo-thumb w-full aspect-square object-cover"/>
-      <button onclick="removePhoto(${i})" class="absolute -top-1.5 -left-1.5 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">×</button>
-    </div>
-  `).join('');
-}
-
-function removePhoto(i) {
-  mState.capturedPhotos.splice(i, 1);
-  renderCapturedPhotos();
-}
-
-async function uploadCapturedPhotos() {
-  const entityType = document.getElementById('photo-entity-type').value;
-  const entityId   = document.getElementById('photo-entity-id').value.trim();
-  const caption    = document.getElementById('photo-caption').value.trim();
-  if (!entityId) { mToast('أدخل رقم التفتيش أو NC', 'error'); return; }
-  if (!mState.capturedPhotos.length) { mToast('لا توجد صور للرفع', 'error'); return; }
-
-  mToast('جاري رفع ' + mState.capturedPhotos.length + ' صورة...', 'info');
-  let uploaded = 0;
-  for (const photo of mState.capturedPhotos) {
-    try {
-      await mFetch('/api/uploads/photo', 'POST', {
-        image_base64: photo, entity_type: entityType, entity_id: entityId,
-        caption: caption || null, latitude: mState.gps.lat, longitude: mState.gps.lng
-      });
-      uploaded++;
-    } catch(e) {}
-  }
-  mToast('✅ تم رفع ' + uploaded + ' صورة بنجاح', 'success');
-  mState.capturedPhotos = [];
-  renderCapturedPhotos();
-}
-
-function openCameraPage() { mShowPage('m-camera'); if (!mState.cameraStream) startCamera(); }
-
-function openCameraForInspection() {
-  // Take photos and store in wizardPhotos
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
-  input.onchange = e => {
-    Array.from(e.target.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        mState.wizardPhotos.push(ev.target.result);
-        document.getElementById('wi-photos').innerHTML = mState.wizardPhotos.map((p, i) => `
-          <div class="relative"><img src="${p}" class="photo-thumb"/><button onclick="mState.wizardPhotos.splice(${i},1);document.getElementById('wi-photos').children[${i}]?.remove()" class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs">×</button></div>
-        `).join('');
-        mToast('📸 تمت إضافة الصورة', 'success');
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-  input.click();
-}
-
-function openCameraForNC() {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
-  input.onchange = e => {
-    Array.from(e.target.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        mState.ncPhotos.push(ev.target.result);
-        const prev = document.getElementById('nc-photos-preview');
-        prev.innerHTML = mState.ncPhotos.map((p, i) => `
-          <div class="relative"><img src="${p}" class="photo-thumb"/><button onclick="mState.ncPhotos.splice(${i},1);this.parentElement.remove()" class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs">×</button></div>
-        `).join('');
-        mToast('📸 تمت إضافة الصورة', 'success');
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-  input.click();
-}
-
-// ── RCA ───────────────────────────────────────────
-async function loadRCAList() {
-  const data = await mFetch('/api/rca?status=open&limit=10');
-  const el   = document.getElementById('m-rca-list');
-  if (!el) return;
-  const items = data.data || [];
-  if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تذاكر RCA مفتوحة</div>'; return; }
-  el.innerHTML = items.map(r => `
-    <div class="card p-4 mb-3 cursor-pointer active:bg-slate-50" onclick="showRCADetail('${r.id}')">
-      <div class="flex items-start justify-between gap-2">
-        <div class="flex-1">
-          <div class="text-xs font-mono text-purple-500 mb-1">${r.ref_number}</div>
-          <div class="font-semibold text-slate-800 text-sm">${r.title}</div>
-          <div class="text-xs text-slate-400 mt-1">NC: ${r.nc_ref} · ${r.project_name}</div>
+function editTask(id) {
+  mFetch('/api/tasks').then(data=>{
+    const t   = (data.data||[]).find(x=>x.id===id);
+    if (!t) return;
+    const typeClr={inspection:'#3b82f6',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
+    const clr   = typeClr[t.type]||'#64748b';
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:${clr}15">
+            <i class="fas fa-edit text-sm" style="color:${clr}"></i>
+          </div>
+          <div class="font-bold text-slate-800">تعديل المهمة</div>
         </div>
-        <div class="flex flex-col items-end gap-1">
-          <span class="badge ${r.status==='closed'?'badge-green':r.status==='in_progress'?'badge-yellow':'badge-red'} text-xs">${r.status==='closed'?'مغلق':r.status==='in_progress'?'جارٍ':'مفتوح'}</span>
-          <i class="fas fa-chevron-left text-slate-300 text-xs mt-1"></i>
+        <div>
+          <div class="text-xs font-bold text-slate-600 mb-1">العنوان</div>
+          <input class="form-input" id="et-title" value="${(t.title||'').replace(/"/g,'&quot;')}"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+            <select class="form-input text-sm" id="et-status">
+              ${['pending:معلّقة','in_progress:جارية','completed:مكتملة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${t.status===v?'selected':''}>${l}</option>`;}).join('')}
+            </select>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-600 mb-1">الأولوية</div>
+            <select class="form-input text-sm" id="et-priority">
+              ${['critical:حرجة','high:عالية','medium:متوسطة','low:منخفضة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${t.priority===v?'selected':''}>${l}</option>`;}).join('')}
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="text-xs font-bold text-slate-600 mb-1">الموعد</div>
+          <input class="form-input text-sm" type="date" id="et-due" value="${t.due_date?t.due_date.substring(0,10):''}"/>
+        </div>
+        <div>
+          <div class="text-xs font-bold text-slate-600 mb-1">ملاحظة / رد</div>
+          <textarea class="form-input text-sm" rows="3" id="et-note" placeholder="أضف ملاحظتك أو ردّك على المهمة...">${t.note||''}</textarea>
+        </div>
+        <button onclick="saveTaskEdit('${id}')" class="btn-full btn-primary">
+          <i class="fas fa-save"></i> حفظ التعديلات
+        </button>
+      </div>`);
+  });
+}
+
+async function saveTaskEdit(id) {
+  const title    = document.getElementById('et-title')?.value?.trim();
+  const status   = document.getElementById('et-status')?.value;
+  const priority = document.getElementById('et-priority')?.value;
+  const due_date = document.getElementById('et-due')?.value;
+  const note     = document.getElementById('et-note')?.value?.trim();
+  if (!title) { mToast('العنوان مطلوب','error'); return; }
+  await mFetch(`/api/tasks/${id}`, 'PUT', {title, status, priority, due_date:due_date||null, note,
+    ...(status==='completed'?{completed_at:new Date().toISOString()}:{})});
+  closeBS(); mToast('✅ تم حفظ التعديلات','success');
+  loadTasksList(); loadHomeStats();
+}
+
+async function updateTaskStatus(id, status) {
+  await mFetch(`/api/tasks/${id}`, 'PUT', {status, ...(status==='completed'?{completed_at:new Date().toISOString()}:{})});
+  mToast('✅ الحالة: '+{pending:'معلّقة',in_progress:'جارية',completed:'مكتملة'}[status],'success');
+  closeBS(); loadTasksList(); loadHomeStats();
+}
+
+async function quickCompleteTask(id) {
+  await mFetch(`/api/tasks/${id}`, 'PUT', {status:'completed',completed_at:new Date().toISOString()});
+  closeBS(); mToast('✅ تم إنهاء المهمة','success');
+  loadTasksList(); loadHomeStats();
+}
+
+async function completeTask(id) { await quickCompleteTask(id); }
+
+function openTaskAction(id) {
+  mFetch('/api/tasks').then(data=>{
+    const t=(data.data||[]).find(x=>x.id===id);
+    if(!t) return;
+    if(t.type==='inspection') startNewInspection();
+    else if(t.type==='nc') mShowPage('m-nc');
+    else if(t.type==='rca') mShowPage('m-rca');
+    else mShowPage('m-inspections');
+  });
+}
+
+// ── Risks ─────────────────────────────────────────
+async function loadRisksList() {
+  const data  = await mFetch('/api/risks');
+  const risks = data.data || [];
+  const el    = document.getElementById('m-risks-list');
+  const sumEl = document.getElementById('risks-summary');
+  if (!el) return;
+
+  const getRpn = r => r.probability * r.impact;
+  const crit   = risks.filter(r=>getRpn(r)>=15).length;
+  const mitg   = risks.filter(r=>r.status==='mitigated'||r.status==='closed').length;
+
+  if (sumEl) sumEl.innerHTML = [
+    {v:risks.length,l:'إجمالي',c:'#3b82f6'},
+    {v:crit,        l:'حرجة',  c:'#dc2626'},
+    {v:mitg,        l:'معالجة',c:'#059669'},
+  ].map(k=>`<div class="card p-3 text-center"><div class="text-xl font-black" style="color:${k.c}">${k.v}</div><div class="text-xs text-slate-500">${k.l}</div></div>`).join('');
+
+  if (!risks.length) { el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد مخاطر</div>'; return; }
+
+  const sorted = risks.slice().sort((a,b)=>getRpn(b)-getRpn(a));
+  const lvClr  = rpn=>rpn>=15?'#dc2626':rpn>=8?'#d97706':'#3b82f6';
+  const lvAr   = rpn=>rpn>=15?'حرجة':rpn>=8?'عالية':'متوسطة';
+
+  el.innerHTML = sorted.map(r=>{
+    const rpn  = getRpn(r);
+    const clr  = lvClr(rpn);
+    const owns = Array.isArray(r.owners)?r.owners.join('، '):(r.owners||'—');
+    return `<div class="card p-4 mb-3">
+      <div class="flex items-start gap-3">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-sm" style="background:${clr}">${rpn}</div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${r.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${r.category||''} · ${r.iso?.replace('_',' ')||''}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap">
+            <span class="badge text-xs" style="background:${clr}15;color:${clr}">${lvAr(rpn)}</span>
+            <span class="badge ${r.status==='open'?'badge-red':r.status==='mitigated'?'badge-green':'badge-yellow'} text-xs">
+              ${r.status==='open'?'مفتوحة':r.status==='mitigated'?'معالجة':'مراقبة'}
+            </span>
+          </div>
+          <div class="text-xs text-slate-400 mt-1"><i class="fas fa-user ml-1"></i>${owns}</div>
+        </div>
+        <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
+          <button onclick="viewRisk('${r.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+          <button onclick="editRisk('${r.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+
+function viewRisk(id) {
+  mFetch('/api/risks').then(data=>{
+    const r   = (data.data||[]).find(x=>x.id===id);
+    if (!r) return;
+    const rpn  = r.probability * r.impact;
+    const clr  = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#3b82f6';
+    const lv   = rpn>=15?'حرجة':rpn>=8?'عالية':'متوسطة';
+    const owns = Array.isArray(r.owners)?r.owners:(r.owners?[r.owners]:[]);
+    const mits = Array.isArray(r.mitigation_points)?r.mitigation_points:(r.mitigation?[r.mitigation]:[]);
+    openBS(`
+      <div class="px-4 pb-4 space-y-4">
+        <div class="p-4 rounded-2xl text-center mt-2" style="background:${clr}12">
+          <div class="text-5xl font-black mb-1" style="color:${clr}">${rpn}</div>
+          <div class="font-bold text-sm" style="color:${clr}">${lv} · RPN</div>
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <div class="bg-white rounded-xl p-2 shadow-sm"><div class="text-lg font-black text-slate-700">${r.probability}</div><div class="text-xs text-slate-400">احتمالية</div></div>
+            <div class="bg-white rounded-xl p-2 shadow-sm"><div class="text-lg font-black text-slate-700">${r.impact}</div><div class="text-xs text-slate-400">تأثير</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="font-bold text-slate-800 text-sm">${r.title}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap">
+            <span class="badge badge-gray text-xs">${r.category||'—'}</span>
+            <span class="badge badge-blue text-xs">${r.iso?.replace('_',' ')||'—'}</span>
+            <span class="badge ${r.status==='open'?'badge-red':'badge-green'} text-xs">${r.status==='open'?'مفتوحة':'معالجة'}</span>
+          </div>
+        </div>
+        ${owns.length?`<div class="p-3 bg-blue-50 rounded-xl">
+          <div class="text-xs font-bold text-blue-700 mb-1"><i class="fas fa-users ml-1"></i>المسؤولون</div>
+          <div class="flex flex-wrap gap-1">${owns.map(o=>`<span class="badge badge-blue text-xs">${o}</span>`).join('')}</div>
+        </div>`:''}
+        ${mits.length?`<div class="p-3 bg-green-50 rounded-xl">
+          <div class="text-xs font-bold text-green-700 mb-2"><i class="fas fa-shield-alt ml-1"></i>خطة المعالجة</div>
+          <div class="space-y-1">${mits.map(m=>`<div class="flex gap-2 text-sm text-slate-700"><span class="text-green-500">◆</span>${m}</div>`).join('')}</div>
+        </div>`:''}
+        <div>
+          <div class="text-xs font-bold text-slate-600 mb-2">تغيير الحالة</div>
+          <div class="grid grid-cols-3 gap-2">
+            ${[['open','مفتوحة','#dc2626'],['mitigated','معالجة','#059669'],['monitoring','مراقبة','#d97706']].map(([s,l,c])=>`
+            <button onclick="updateRiskStatus('${id}','${s}')"
+              class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
+              style="border-color:${c};background:${r.status===s?c:'white'};color:${r.status===s?'white':c}">${l}</button>`).join('')}
+          </div>
+        </div>
+        <button onclick="editRisk('${id}');closeBS()" class="btn-full" style="background:#fef3c7;color:#d97706;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700">
+          <i class="fas fa-edit ml-2"></i>تعديل المخاطرة
+        </button>
+      </div>`);
+  });
+}
+
+function editRisk(id) {
+  mFetch('/api/risks').then(data=>{
+    const r = (data.data||[]).find(x=>x.id===id);
+    if (!r) return;
+    const mits = Array.isArray(r.mitigation_points)?r.mitigation_points:(r.mitigation?[r.mitigation]:[]);
+    const mitsHtml = mits.map((m,i)=>`<div class="flex gap-2 items-center mit-r">
+      <span class="text-green-500 flex-shrink-0 text-xs">◆</span>
+      <input class="form-input text-sm flex-1 mit-inp" value="${m.replace(/"/g,'&quot;')}" placeholder="نقطة معالجة..."/>
+      <button onclick="this.closest('.mit-r').remove()" class="text-red-400 text-xs p-1"><i class="fas fa-times"></i></button>
+    </div>`).join('');
+
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center"><i class="fas fa-shield-alt text-red-500 text-sm"></i></div>
+          <div class="font-bold text-slate-800">تعديل المخاطرة</div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">عنوان المخاطرة *</div>
+          <input class="form-input" id="er-title" value="${(r.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">الاحتمالية (1-5)</div>
+            <select class="form-input text-sm" id="er-prob">
+              ${[1,2,3,4,5].map(v=>`<option value="${v}" ${r.probability===v?'selected':''}>${v}</option>`).join('')}
+            </select></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">التأثير (1-5)</div>
+            <select class="form-input text-sm" id="er-imp">
+              ${[1,2,3,4,5].map(v=>`<option value="${v}" ${r.impact===v?'selected':''}>${v}</option>`).join('')}
+            </select></div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+          <select class="form-input text-sm" id="er-status">
+            ${['open:مفتوحة','mitigated:معالجة','monitoring:مراقبة','closed:مغلقة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${r.status===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <div class="text-xs font-bold text-slate-600">خطة المعالجة</div>
+            <button onclick="addMitRow()" class="text-xs text-green-600 font-bold"><i class="fas fa-plus ml-1"></i>إضافة</button>
+          </div>
+          <div id="mit-rows" class="space-y-2">${mitsHtml||'<div class="text-xs text-slate-400 text-center py-2" id="mit-empty">لا توجد نقاط — اضغط إضافة</div>'}</div>
+        </div>
+        <button onclick="saveRiskEdit('${id}')" class="btn-full btn-danger">
+          <i class="fas fa-save"></i> حفظ المخاطرة
+        </button>
+      </div>`);
+  });
+}
+
+function addMitRow() {
+  const c = document.getElementById('mit-rows');
+  if (!c) return;
+  const em = document.getElementById('mit-empty');
+  if (em) em.remove();
+  c.insertAdjacentHTML('beforeend',`<div class="flex gap-2 items-center mit-r">
+    <span class="text-green-500 flex-shrink-0 text-xs">◆</span>
+    <input class="form-input text-sm flex-1 mit-inp" placeholder="نقطة معالجة..."/>
+    <button onclick="this.closest('.mit-r').remove()" class="text-red-400 text-xs p-1"><i class="fas fa-times"></i></button>
+  </div>`);
+  c.querySelector('.mit-r:last-child input')?.focus();
+}
+
+async function saveRiskEdit(id) {
+  const title = document.getElementById('er-title')?.value?.trim();
+  if (!title) { mToast('العنوان مطلوب','error'); return; }
+  const mits = [...document.querySelectorAll('.mit-inp')].map(el=>el.value.trim()).filter(Boolean);
+  const prob = parseInt(document.getElementById('er-prob')?.value)||1;
+  const imp  = parseInt(document.getElementById('er-imp')?.value)||1;
+  await mFetch(`/api/risks/${id||'x'}`, 'PUT', {title, probability:prob, impact:imp,
+    status:document.getElementById('er-status')?.value, mitigation_points:mits, mitigation:mits.join(' · ')});
+  closeBS(); mToast('✅ تم حفظ المخاطرة','success'); loadRisksList();
+}
+
+async function updateRiskStatus(id, status) {
+  await mFetch(`/api/risks/${id||'x'}`, 'PUT', {status});
+  mToast('✅ تم تحديث الحالة','success');
+  closeBS(); loadRisksList();
+}
+
+function showRiskDetail(id) { viewRisk(id); }
+
+// ── Lean ─────────────────────────────────────────
+let _leanFilter = '';
+
+function filterLean(f) {
+  _leanFilter = f;
+  document.querySelectorAll('.lean-filter').forEach(b=>{
+    const isActive = b.dataset.f===f;
+    b.className='lean-filter px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap '+(isActive?
+      (f==='open'?'bg-red-600 text-white':f==='in_progress'?'bg-yellow-500 text-white':f==='closed'?'bg-green-600 text-white':'bg-blue-600 text-white')
+      :'bg-slate-100 text-slate-600');
+  });
+  loadLeanList();
+}
+
+async function loadLeanList() {
+  const data   = await mFetch('/api/lean/wastes');
+  let wastes   = data.data||[];
+  const sumEl  = document.getElementById('lean-summary');
+  const listEl = document.getElementById('m-lean-list');
+  if (!listEl) return;
+
+  const openW = wastes.filter(w=>w.status==='open').length;
+  const inPW  = wastes.filter(w=>w.status==='in_progress').length;
+  const saving= wastes.reduce((s,w)=>s+(w.estimated_saving||0),0);
+
+  if (sumEl) sumEl.innerHTML=[
+    {v:wastes.length,l:'إجمالي',c:'#3b82f6'},
+    {v:openW,l:'مفتوح',c:'#dc2626'},
+    {v:inPW,l:'جارٍ',c:'#d97706'},
+    {v:(saving/1000).toFixed(0)+'K',l:'وفر ر.س',c:'#059669'},
+  ].map(k=>`<div class="card p-3 text-center"><div class="text-lg font-black" style="color:${k.c}">${k.v}</div><div class="text-xs text-slate-500">${k.l}</div></div>`).join('');
+
+  if (_leanFilter) wastes=wastes.filter(w=>w.status===_leanFilter);
+
+  if (!wastes.length) { listEl.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد سجلات هدر</div>'; return; }
+
+  const mudaAr ={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
+  const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#2563eb',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#64748b'};
+  const mudaIc ={defects:'exclamation-triangle',waiting:'clock',overproduction:'copy',motion:'walking',inventory:'boxes',over_processing:'cogs',transportation:'truck',skills:'user-slash'};
+  const stBadge={open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
+  const stLbl  ={open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
+  const dmaicAr={define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
+  const dmaicCl={define:'#3b82f6',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#64748b'};
+  const priBadge={critical:'badge-red',high:'badge-yellow',medium:'badge-blue',low:'badge-gray'};
+  const priLbl ={critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
+
+  listEl.innerHTML=wastes.map(w=>{
+    const mClr=mudaClr[w.muda_type]||'#64748b';
+    const dClr=dmaicCl[w.dmaic_phase]||'#64748b';
+    return `<div class="card p-4 mb-3">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${mClr}15">
+          <i class="fas fa-${mudaIc[w.muda_type]||'circle'} text-sm" style="color:${mClr}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-mono mb-0.5" style="color:${mClr}">${w.ref}</div>
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${w.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${w.process||''}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap items-center">
+            <span class="badge text-xs" style="background:${mClr}15;color:${mClr}">${mudaAr[w.muda_type]||w.muda_type}</span>
+            <span class="badge ${stBadge[w.status]||'badge-gray'} text-xs">${stLbl[w.status]||w.status}</span>
+            <span class="text-xs font-bold" style="color:${dClr}">${dmaicAr[w.dmaic_phase]||''}</span>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <div class="font-black text-sm" style="color:${w.impact_score>=8?'#dc2626':w.impact_score>=5?'#d97706':'#059669'}">${w.impact_score}/10</div>
+          <div class="flex gap-1.5">
+            <button onclick="viewLean('${w.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+            <button onclick="editLean('${w.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function viewLean(id) {
+  mFetch('/api/lean/wastes').then(data=>{
+    const w=(data.data||[]).find(x=>x.id===id);
+    if(!w) return;
+    const mudaAr={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
+    const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#2563eb',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#64748b'};
+    const dmaicAr={define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
+    const dmaicCl={define:'#3b82f6',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#64748b'};
+    const stClr  ={open:'#dc2626',in_progress:'#d97706',closed:'#059669'};
+    const stLbl  ={open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
+    const dmaicSteps=['define','measure','analyze','improve','control'];
+    const mClr=mudaClr[w.muda_type]||'#64748b';
+
+    openBS(`
+      <div class="px-4 pb-4 space-y-4">
+        <div class="flex items-start gap-3 mt-2">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:${mClr}15">
+            <i class="fas fa-recycle text-xl" style="color:${mClr}"></i>
+          </div>
+          <div class="flex-1">
+            <div class="text-xs font-mono mb-0.5" style="color:${mClr}">${w.ref}</div>
+            <div class="font-bold text-slate-800 text-sm leading-tight">${w.title}</div>
+            <div class="text-xs text-slate-400">${w.process||''} · ${w.project_name||''}</div>
+          </div>
+        </div>
+        ${w.description?`<p class="text-sm text-slate-600 p-3 bg-slate-50 rounded-xl">${w.description}</p>`:''}
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 rounded-xl text-center" style="background:${mClr}10">
+            <div class="font-bold text-sm" style="color:${mClr}">${mudaAr[w.muda_type]||w.muda_type}</div>
+            <div class="text-xs text-slate-400 mt-0.5">نوع الهدر</div>
+          </div>
+          <div class="p-3 rounded-xl text-center" style="background:${w.impact_score>=8?'#fee2e2':w.impact_score>=5?'#fef3c7':'#f0fdf4'}">
+            <div class="text-xl font-black" style="color:${w.impact_score>=8?'#dc2626':w.impact_score>=5?'#d97706':'#059669'}">${w.impact_score}/10</div>
+            <div class="text-xs text-slate-400">درجة التأثير</div>
+          </div>
+          <div class="p-3 rounded-xl text-center bg-green-50">
+            <div class="font-black text-green-700 text-sm">${(w.estimated_saving||0).toLocaleString('ar-SA')}</div>
+            <div class="text-xs text-slate-400">وفر متوقع ر.س</div>
+          </div>
+          <div class="p-3 rounded-xl text-center" style="background:${stClr[w.status]||'#64748b'}10">
+            <div class="font-bold text-sm" style="color:${stClr[w.status]||'#64748b'}">${stLbl[w.status]||w.status}</div>
+            <div class="text-xs text-slate-400">الحالة</div>
+          </div>
+        </div>
+        <!-- DMAIC stepper -->
+        <div class="p-3 bg-slate-50 rounded-xl">
+          <div class="text-xs font-bold text-slate-600 mb-2">مرحلة DMAIC</div>
+          <div class="flex items-center gap-1">
+            ${dmaicSteps.map((ph,i,arr)=>{
+              const isA=ph===w.dmaic_phase;
+              const isPast=arr.indexOf(ph)<arr.indexOf(w.dmaic_phase);
+              const c=dmaicCl[ph];
+              return `<div class="flex items-center flex-1">
+                <div class="flex-1 flex flex-col items-center">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:${isA||isPast?c:c+'40'}">${isPast&&!isA?'✓':isA?'●':'○'}</div>
+                  <div class="text-xs mt-0.5 font-${isA?'bold':'normal'}" style="color:${isA?c:'#94a3b8'}">${dmaicAr[ph]}</div>
+                </div>
+                ${i<4?`<div class="h-0.5 flex-1 mx-1 mb-4" style="background:${dmaicCl[arr[i+1]]}40"></div>`:''}
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+        <!-- Status buttons -->
+        <div>
+          <div class="text-xs font-bold text-slate-600 mb-2">تغيير الحالة</div>
+          <div class="grid grid-cols-3 gap-2">
+            ${Object.entries(stLbl).map(([s,l])=>`
+            <button onclick="updateLeanStatus('${id}','${s}')"
+              class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
+              style="border-color:${stClr[s]};background:${w.status===s?stClr[s]:'white'};color:${w.status===s?'white':stClr[s]}">${l}</button>`).join('')}
+          </div>
+        </div>
+        <button onclick="editLean('${id}');closeBS()" class="btn-full" style="background:#fef3c7;color:#d97706;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700">
+          <i class="fas fa-edit ml-2"></i>تعديل الهدر
+        </button>
+      </div>`);
+  });
+}
+
+function editLean(id) {
+  mFetch('/api/lean/wastes').then(data=>{
+    const w=(data.data||[]).find(x=>x.id===id);
+    if(!w) return;
+    const mudaTypes=['defects','waiting','overproduction','motion','inventory','over_processing','transportation','skills'];
+    const mudaAr={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
+    const dmaicPhases=['define','measure','analyze','improve','control'];
+    const dmaicAr={define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
+
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-teal-100 flex items-center justify-center"><i class="fas fa-recycle text-teal-500 text-sm"></i></div>
+          <div class="font-bold text-slate-800">تعديل سجل الهدر</div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">العنوان *</div>
+          <input class="form-input" id="el-title" value="${(w.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">الوصف</div>
+          <textarea class="form-input text-sm" rows="2" id="el-desc">${w.description||''}</textarea></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">نوع الهدر</div>
+            <select class="form-input text-sm" id="el-muda">
+              ${mudaTypes.map(m=>`<option value="${m}" ${w.muda_type===m?'selected':''}>${mudaAr[m]}</option>`).join('')}
+            </select></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">مرحلة DMAIC</div>
+            <select class="form-input text-sm" id="el-dmaic">
+              ${dmaicPhases.map(p=>`<option value="${p}" ${w.dmaic_phase===p?'selected':''}>${dmaicAr[p]}</option>`).join('')}
+            </select></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">درجة التأثير (1-10)</div>
+            <input class="form-input text-sm" type="number" min="1" max="10" id="el-impact" value="${w.impact_score||5}"/></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">الوفر المتوقع ر.س</div>
+            <input class="form-input text-sm" type="number" id="el-saving" value="${w.estimated_saving||0}"/></div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+          <select class="form-input text-sm" id="el-status">
+            ${['open:مفتوح','in_progress:جارٍ','closed:مغلق'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${w.status===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <button onclick="saveLeanEdit('${id}')" class="btn-full" style="background:#0891b2;color:white;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:700">
+          <i class="fas fa-save ml-2"></i>حفظ التعديلات
+        </button>
+      </div>`);
+  });
+}
+
+async function saveLeanEdit(id) {
+  const title = document.getElementById('el-title')?.value?.trim();
+  if (!title) { mToast('العنوان مطلوب','error'); return; }
+  await mFetch(`/api/lean/wastes/${id}`, 'PUT', {
+    title, description:document.getElementById('el-desc')?.value?.trim(),
+    muda_type: document.getElementById('el-muda')?.value,
+    dmaic_phase:document.getElementById('el-dmaic')?.value,
+    impact_score:parseInt(document.getElementById('el-impact')?.value)||5,
+    estimated_saving:parseInt(document.getElementById('el-saving')?.value)||0,
+    status:document.getElementById('el-status')?.value,
+  });
+  closeBS(); mToast('✅ تم حفظ الهدر','success'); loadLeanList();
+}
+
+async function updateLeanStatus(id, status) {
+  await mFetch(`/api/lean/wastes/${id}`, 'PUT', {status});
+  mToast('✅ الحالة: '+{open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'}[status],'success');
+  closeBS(); loadLeanList();
+}
+
+function showLeanDetail(id) { viewLean(id); }
+
+// ── RCA List ─────────────────────────────────────
+async function loadRCAList() {
+  const data  = await mFetch('/api/rca');
+  const el    = document.getElementById('m-rca-list');
+  const panel = document.getElementById('rca-detail-panel');
+  if (!el) return;
+  if (panel) panel.style.display = 'none';
+  el.style.display = '';
+  const items = data.data || [];
+  if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تذاكر RCA</div>'; return; }
+
+  const methLbl  = {'5_whys':'5 Whys','ishikawa':'Ishikawa','fmea':'FMEA','dmaic':'DMAIC'};
+  const methClr  = {'5_whys':'#3b82f6','ishikawa':'#7c3aed','fmea':'#dc2626','dmaic':'#059669'};
+  const stBadge  = {open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
+  const stLbl    = {open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
+
+  el.innerHTML = items.map(r => {
+    const mClr = methClr[r.methodology]||'#64748b';
+    return `<div class="card p-4 mb-3">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${mClr}15">
+          <i class="fas fa-search text-sm" style="color:${mClr}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-mono mb-0.5" style="color:${mClr}">${r.ref_number}</div>
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${r.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">NC: ${r.nc_ref||'—'} · ${r.project_name||'—'}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap">
+            <span class="badge ${stBadge[r.status]||'badge-gray'} text-xs">${stLbl[r.status]||r.status}</span>
+            <span class="badge text-xs" style="background:${mClr}15;color:${mClr}">${methLbl[r.methodology]||r.methodology}</span>
+            ${r.target_date?`<span class="text-xs text-slate-400">${new Date(r.target_date).toLocaleDateString('ar-SA')}</span>`:''}
+          </div>
+        </div>
+        <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
+          <button onclick="showRCADetail('${r.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+          <button onclick="editRCAMethod('${r.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function showRCADetail(id) {
-  const r = await mFetch(`/api/rca/${id}`);
-  document.getElementById('m-rca-list').style.display = 'none';
-  document.getElementById('rca-detail-panel').style.display = '';
+  const r   = await mFetch(`/api/rca/${id}`);
+  const panel = document.getElementById('rca-detail-panel');
+  const list  = document.getElementById('m-rca-list');
+  if (panel) { panel.style.display = ''; list.style.display = 'none'; }
+
+  const methLbl = {'5_whys':'5 Whys','ishikawa':'Ishikawa','fmea':'FMEA','dmaic':'DMAIC'};
+  const stClr   = {open:'#dc2626',in_progress:'#d97706',closed:'#059669'};
+  const stLbl   = {open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
+  const clr     = stClr[r.status]||'#64748b';
+
+  const methods = [
+    {id:'5whys',    label:'5 Whys',    icon:'question-circle'},
+    {id:'ishikawa', label:'Ishikawa',  icon:'project-diagram'},
+    {id:'fmea',     label:'FMEA',      icon:'table'},
+    {id:'actions',  label:'الإجراءات', icon:'tasks'},
+  ];
+
+  const defaultTab = r.methodology==='ishikawa'?'ishikawa':r.methodology==='fmea'?'fmea':'5whys';
+
   document.getElementById('rca-detail-content').innerHTML = `
-    <div class="card p-5 space-y-4">
-      <div>
-        <span class="text-xs font-mono text-purple-500">${r.ref_number}</span>
-        <h2 class="font-bold text-slate-800 mt-1">${r.title}</h2>
-        <p class="text-xs text-slate-400 mt-1">NC: ${r.nc_ref} · ${r.project_name}</p>
-      </div>
-      <div class="border-t pt-4">
-        <h4 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-question-circle text-blue-400 mr-2"></i>تحليل 5 Whys</h4>
-        ${[1,2,3,4,5].map(n => `
-          <div class="flex gap-3 mb-3">
-            <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${n}</div>
-            <textarea class="form-input text-sm flex-1" rows="2" id="m-why-${n}" placeholder="لماذا؟ (Why ${n})">${r['why_'+n] || ''}</textarea>
-          </div>
-        `).join('')}
-        <div class="mt-2">
-          <label class="text-xs font-semibold text-amber-700 block mb-1"><i class="fas fa-bullseye mr-1"></i>السبب الجذري</label>
-          <textarea class="form-input text-sm" rows="2" id="m-root-cause" placeholder="السبب الجذري النهائي">${r.root_cause || ''}</textarea>
+    <div class="space-y-4">
+      <!-- Header -->
+      <div class="card p-4" style="border-right:4px solid ${clr}">
+        <div class="text-xs font-mono mb-0.5" style="color:${clr}">${r.ref_number}</div>
+        <div class="font-bold text-slate-800 text-sm leading-tight">${r.title}</div>
+        <div class="text-xs text-slate-400 mt-1">NC: ${r.nc_ref||'—'} · ${r.project_name||'—'}</div>
+        <div class="flex gap-2 mt-2 flex-wrap">
+          <span class="badge text-xs" style="background:${clr}20;color:${clr}">${stLbl[r.status]||r.status}</span>
+          <span class="badge badge-blue text-xs">${methLbl[r.methodology]||r.methodology}</span>
+          ${r.target_date?`<span class="text-xs text-slate-400">الموعد: ${new Date(r.target_date).toLocaleDateString('ar-SA')}</span>`:''}
         </div>
-        <button onclick="saveRCA_mobile('${id}')" class="btn-full btn-primary mt-4">
-          <i class="fas fa-save"></i> حفظ التحليل
-        </button>
       </div>
-      ${r.actions?.length ? `
-      <div class="border-t pt-4">
-        <h4 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-tasks text-green-500 mr-2"></i>الإجراءات التصحيحية</h4>
-        ${r.actions.map(a => `
-          <div class="flex items-start gap-2 mb-2 p-3 bg-slate-50 rounded-xl">
-            <i class="fas fa-wrench text-blue-400 mt-1 text-sm"></i>
-            <div class="flex-1">
-              <div class="text-sm font-medium text-slate-800">${a.description}</div>
-              <div class="text-xs text-slate-400 mt-0.5">${a.assigned_name || '-'}</div>
+
+      <!-- Method Tabs -->
+      <div class="flex gap-2 overflow-x-auto pb-1">
+        ${methods.map(m=>`<button onclick="switchRCATab('${m.id}')"
+          class="rca-tab-btn flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border-2"
+          id="rca-tab-${m.id}"
+          style="border-color:${m.id===defaultTab?'#3b82f6':'#e2e8f0'};background:${m.id===defaultTab?'#3b82f6':'white'};color:${m.id===defaultTab?'white':'#64748b'}">
+          <i class="fas fa-${m.icon} text-xs"></i>${m.label}
+        </button>`).join('')}
+      </div>
+
+      <!-- 5 Whys Panel -->
+      <div id="rca-panel-5whys" ${defaultTab!=='5whys'?'style="display:none"':''}>
+        <div class="card p-4 space-y-3">
+          <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-question-circle text-blue-400 ml-2"></i>تحليل 5 Whys</h4>
+          ${[1,2,3,4,5].map(n=>`<div class="flex gap-3">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-xs mt-1" style="background:${n<=2?'#3b82f6':n<=4?'#7c3aed':'#dc2626'}">${n}</div>
+            <div class="flex-1"><div class="text-xs text-slate-400 mb-1">لماذا؟ (Why ${n})</div>
+              <textarea class="form-input text-sm" rows="2" id="m-why-${n}" placeholder="السبب...">${r['why_'+n]||''}</textarea></div>
+          </div>`).join('')}
+          <div class="p-3 rounded-xl" style="background:#fef3c7;border:1px solid #d97706">
+            <div class="text-xs font-bold text-amber-700 mb-1"><i class="fas fa-bullseye ml-1"></i>السبب الجذري النهائي</div>
+            <textarea class="form-input text-sm" rows="2" id="m-root-cause" placeholder="السبب الجذري...">${r.root_cause||''}</textarea>
+          </div>
+          <button onclick="saveRCA_mobile('${id}')" class="btn-full btn-primary"><i class="fas fa-save"></i> حفظ 5 Whys</button>
+        </div>
+      </div>
+
+      <!-- Ishikawa Panel -->
+      <div id="rca-panel-ishikawa" ${defaultTab!=='ishikawa'?'style="display:none"':''}>
+        <div class="card p-4 space-y-3">
+          <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-project-diagram text-purple-500 ml-2"></i>Ishikawa — 6M</h4>
+          ${[
+            {key:'man',label:'الإنسان',color:'#3b82f6',icon:'user'},
+            {key:'machine',label:'الآلة',color:'#7c3aed',icon:'cogs'},
+            {key:'method',label:'الأسلوب',color:'#059669',icon:'clipboard-list'},
+            {key:'material',label:'المواد',color:'#d97706',icon:'boxes'},
+            {key:'environment',label:'البيئة',color:'#0891b2',icon:'leaf'},
+            {key:'measurement',label:'القياس',color:'#dc2626',icon:'ruler'},
+          ].map(c=>`<div class="p-3 rounded-xl" style="background:${c.color}08;border:1px solid ${c.color}20">
+            <div class="text-xs font-bold mb-1 flex items-center gap-1.5" style="color:${c.color}">
+              <i class="fas fa-${c.icon}"></i>${c.label}
+            </div>
+            <textarea class="form-input text-sm" rows="2" id="ish-${c.key}" placeholder="أسباب من جهة ${c.label}...">${r.ishikawa?.[c.key]||''}</textarea>
+          </div>`).join('')}
+          <button onclick="saveIshikawa_mobile('${id}')" class="btn-full btn-primary" style="background:#7c3aed"><i class="fas fa-save"></i> حفظ Ishikawa</button>
+        </div>
+      </div>
+
+      <!-- FMEA Panel -->
+      <div id="rca-panel-fmea" ${defaultTab!=='fmea'?'style="display:none"':''}>
+        <div class="card p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-table text-red-500 ml-2"></i>FMEA</h4>
+            <button onclick="addFMEARow('${id}')" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-xl text-xs font-bold"><i class="fas fa-plus ml-1"></i>إضافة</button>
+          </div>
+          <div id="fmea-rows-container">
+            ${(r.fmea||[]).length?(r.fmea||[]).map((f,i)=>buildFMEARow(f,i)).join(''):
+              '<div class="text-center text-slate-400 text-xs py-4" id="fmea-empty">اضغط إضافة لبدء FMEA</div>'}
+          </div>
+          <button onclick="saveFMEA_mobile('${id}')" class="btn-full btn-danger"><i class="fas fa-save"></i> حفظ FMEA</button>
+        </div>
+      </div>
+
+      <!-- Actions Panel -->
+      <div id="rca-panel-actions" ${defaultTab!=='actions'?'style="display:none"':''}>
+        <div class="card p-4 space-y-3">
+          <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-tasks text-green-500 ml-2"></i>الإجراءات التصحيحية والوقائية</h4>
+          ${(r.actions||[]).length?(r.actions||[]).map(a=>`
+          <div class="p-3 bg-slate-50 rounded-xl flex items-start gap-3">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${a.type==='corrective'?'bg-red-100':'bg-blue-100'}">
+              <i class="fas fa-${a.type==='corrective'?'wrench':'shield-alt'} text-xs ${a.type==='corrective'?'text-red-500':'text-blue-500'}"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-bold ${a.type==='corrective'?'text-red-600':'text-blue-600'} mb-0.5">${a.type==='corrective'?'تصحيحي':'وقائي'}</div>
+              <div class="text-sm text-slate-800">${a.description}</div>
+              <div class="text-xs text-slate-400 mt-0.5">${a.assigned_name||'—'}</div>
             </div>
             <span class="badge ${a.status==='completed'?'badge-green':'badge-yellow'} text-xs">${a.status==='completed'?'مكتمل':'جارٍ'}</span>
+          </div>`).join(''):'<p class="text-slate-400 text-xs text-center py-3">لا توجد إجراءات</p>'}
+          <div class="border-t pt-3 space-y-2">
+            <div class="text-xs font-bold text-slate-600">إضافة إجراء جديد</div>
+            <select class="form-input text-sm" id="action-type"><option value="corrective">تصحيحي</option><option value="preventive">وقائي</option></select>
+            <textarea class="form-input text-sm" rows="2" id="action-desc" placeholder="وصف الإجراء..."></textarea>
+            <input class="form-input text-sm" id="action-owner" placeholder="المسؤول"/>
+            <input class="form-input text-sm" type="date" id="action-date"/>
+            <button onclick="addRCAAction('${id}')" class="btn-full btn-success text-sm"><i class="fas fa-plus"></i> إضافة الإجراء</button>
           </div>
-        `).join('')}
-      </div>` : ''}
+        </div>
+      </div>
+    </div>`;
+
+  switchRCATab(defaultTab);
+}
+
+function editRCAMethod(id) {
+  mFetch(`/api/rca/${id}`).then(r=>{
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center"><i class="fas fa-search text-purple-500 text-sm"></i></div>
+          <div class="font-bold text-slate-800">تعديل RCA</div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+          <select class="form-input text-sm" id="er-rca-status">
+            ${['open:مفتوح','in_progress:جارٍ','closed:مغلق'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${r.status===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">المنهجية</div>
+          <select class="form-input text-sm" id="er-rca-meth">
+            ${['5_whys:5 Whys','ishikawa:Ishikawa','fmea:FMEA'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${r.methodology===v?'selected':''}>${l}</option>`;}).join('')}
+          </select></div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">الموعد النهائي</div>
+          <input class="form-input text-sm" type="date" id="er-rca-date" value="${r.target_date?r.target_date.substring(0,10):''}"/></div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">السبب الجذري</div>
+          <textarea class="form-input text-sm" rows="2" id="er-rca-cause" placeholder="السبب الجذري...">${r.root_cause||''}</textarea></div>
+        <button onclick="saveRCAEdit('${id}')" class="btn-full btn-primary"><i class="fas fa-save"></i> حفظ</button>
+      </div>`);
+  });
+}
+
+async function saveRCAEdit(id) {
+  await mFetch(`/api/rca/${id}`, 'PUT', {
+    status:      document.getElementById('er-rca-status')?.value,
+    methodology: document.getElementById('er-rca-meth')?.value,
+    target_date: document.getElementById('er-rca-date')?.value||null,
+    root_cause:  document.getElementById('er-rca-cause')?.value?.trim()||null,
+  });
+  closeBS(); mToast('✅ تم حفظ RCA','success'); loadRCAList();
+}
+
+function switchRCATab(tab) {
+  ['5whys','ishikawa','fmea','actions'].forEach(t=>{
+    const panel = document.getElementById('rca-panel-'+t);
+    const btn   = document.getElementById('rca-tab-'+t);
+    if (panel) panel.style.display = t===tab?'':'none';
+    if (btn) { btn.style.background=t===tab?'#3b82f6':'white'; btn.style.color=t===tab?'white':'#64748b'; btn.style.borderColor=t===tab?'#3b82f6':'#e2e8f0'; }
+  });
+}
+
+function buildFMEARow(f, i) {
+  const rpn=(f.severity||1)*(f.occurrence||1)*(f.detection||1);
+  const clr=rpn>=200?'#dc2626':rpn>=100?'#d97706':'#059669';
+  return `<div class="p-3 rounded-xl border border-slate-200 space-y-2" id="fmea-row-${i}">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-bold text-slate-600">سجل #${i+1}</span>
+      <div class="flex items-center gap-2">
+        <span class="font-black text-sm" id="fmea-rpn-display-${i}" style="color:${clr}">RPN:${rpn}</span>
+        <button onclick="document.getElementById('fmea-row-${i}').remove()" class="text-red-400 text-xs p-1"><i class="fas fa-times"></i></button>
+      </div>
     </div>
-  `;
+    <input class="form-input text-sm" id="fmea-func-${i}" value="${f.function||''}" placeholder="الوظيفة"/>
+    <input class="form-input text-sm" id="fmea-fail-${i}" value="${f.failure||''}" placeholder="نمط الفشل"/>
+    <input class="form-input text-sm" id="fmea-eff-${i}"  value="${f.effect||''}"  placeholder="التأثير"/>
+    <div class="grid grid-cols-3 gap-2">
+      <div><div class="text-xs text-slate-400 mb-1">S</div><input class="form-input text-sm text-center" type="number" min="1" max="10" id="fmea-s-${i}" value="${f.severity||5}" onchange="updateRPN(${i})"/></div>
+      <div><div class="text-xs text-slate-400 mb-1">O</div><input class="form-input text-sm text-center" type="number" min="1" max="10" id="fmea-o-${i}" value="${f.occurrence||5}" onchange="updateRPN(${i})"/></div>
+      <div><div class="text-xs text-slate-400 mb-1">D</div><input class="form-input text-sm text-center" type="number" min="1" max="10" id="fmea-d-${i}" value="${f.detection||5}" onchange="updateRPN(${i})"/></div>
+    </div>
+    <input class="form-input text-sm" id="fmea-act-${i}" value="${f.action||''}" placeholder="الإجراء التصحيحي"/>
+  </div>`;
+}
+
+function updateRPN(i) {
+  const s=parseInt(document.getElementById(`fmea-s-${i}`)?.value)||1;
+  const o=parseInt(document.getElementById(`fmea-o-${i}`)?.value)||1;
+  const d=parseInt(document.getElementById(`fmea-d-${i}`)?.value)||1;
+  const rpn=s*o*d;
+  const clr=rpn>=200?'#dc2626':rpn>=100?'#d97706':'#059669';
+  const el=document.getElementById(`fmea-rpn-display-${i}`);
+  if(el){el.textContent='RPN:'+rpn;el.style.color=clr;}
+}
+
+function addFMEARow() {
+  const c=document.getElementById('fmea-rows-container');
+  if(!c) return;
+  const em=document.getElementById('fmea-empty');
+  if(em) em.remove();
+  const idx=c.children.length;
+  c.insertAdjacentHTML('beforeend',buildFMEARow({severity:5,occurrence:5,detection:5},idx));
 }
 
 async function saveRCA_mobile(id) {
-  const whys = {};
-  [1,2,3,4,5].forEach(n => { whys['why_'+n] = document.getElementById('m-why-'+n)?.value || null; });
-  await mFetch(`/api/rca/${id}`, 'PUT', {
-    ...whys,
-    root_cause: document.getElementById('m-root-cause')?.value || null,
-    status: 'in_progress'
+  const whys={};
+  [1,2,3,4,5].forEach(n=>{whys['why_'+n]=document.getElementById('m-why-'+n)?.value||null;});
+  await mFetch(`/api/rca/${id}`,'PUT',{...whys,root_cause:document.getElementById('m-root-cause')?.value||null,status:'in_progress'});
+  mToast('✅ تم حفظ 5 Whys','success');
+}
+
+async function saveIshikawa_mobile(id) {
+  const ish={};
+  ['man','machine','method','material','environment','measurement'].forEach(k=>{ish[k]=document.getElementById('ish-'+k)?.value||'';});
+  await mFetch(`/api/rca/${id}`,'PUT',{ishikawa:ish,status:'in_progress'});
+  mToast('✅ تم حفظ Ishikawa','success');
+}
+
+async function saveFMEA_mobile(id) {
+  const rows=[];
+  document.querySelectorAll('[id^="fmea-row-"]').forEach((row,i)=>{
+    const idx=row.id.replace('fmea-row-','');
+    rows.push({function:document.getElementById(`fmea-func-${idx}`)?.value||'',failure:document.getElementById(`fmea-fail-${idx}`)?.value||'',effect:document.getElementById(`fmea-eff-${idx}`)?.value||'',severity:parseInt(document.getElementById(`fmea-s-${idx}`)?.value)||1,occurrence:parseInt(document.getElementById(`fmea-o-${idx}`)?.value)||1,detection:parseInt(document.getElementById(`fmea-d-${idx}`)?.value)||1,action:document.getElementById(`fmea-act-${idx}`)?.value||''});
   });
-  mToast('✅ تم حفظ التحليل', 'success');
+  await mFetch(`/api/rca/${id}`,'PUT',{fmea:rows,status:'in_progress'});
+  mToast('✅ تم حفظ FMEA ('+rows.length+' سجلات)','success');
+}
+
+async function addRCAAction(id) {
+  const desc=document.getElementById('action-desc')?.value?.trim();
+  if(!desc){mToast('أدخل وصف الإجراء','error');return;}
+  const r=await mFetch(`/api/rca/${id}`);
+  const actions=r.actions||[];
+  actions.push({type:document.getElementById('action-type')?.value||'corrective',description:desc,assigned_name:document.getElementById('action-owner')?.value?.trim()||'—',due_date:document.getElementById('action-date')?.value||null,status:'in_progress'});
+  await mFetch(`/api/rca/${id}`,'PUT',{actions});
+  mToast('✅ تم إضافة الإجراء','success');
+  document.getElementById('action-desc').value='';
+  document.getElementById('action-owner').value='';
+  document.getElementById('action-date').value='';
+  showRCADetail(id);
+}
+
+// ── Annual Plans ──────────────────────────────────
+async function loadPlansList() {
+  const data  = await mFetch('/api/annual-plans');
+  const plans = data.data||[];
+  const el    = document.getElementById('m-plans-list');
+  const sumEl = document.getElementById('plans-summary');
+  if (!el) return;
+
+  const done  = plans.filter(p=>p.status==='completed').length;
+  const inProg= plans.filter(p=>p.status==='in_progress').length;
+  const avgP  = plans.length?Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length):0;
+
+  if (sumEl) sumEl.innerHTML=[
+    {v:plans.length,l:'إجمالي',c:'#3b82f6'},
+    {v:inProg,      l:'جارية', c:'#d97706'},
+    {v:done,        l:'مكتملة',c:'#059669'},
+  ].map(k=>`<div class="card p-3 text-center"><div class="text-xl font-black" style="color:${k.c}">${k.v}</div><div class="text-xs text-slate-500">${k.l}</div></div>`).join('');
+
+  if (!plans.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد مبادرات</div>';return;}
+
+  const stClr  ={completed:'#059669',in_progress:'#d97706',planned:'#3b82f6',delayed:'#dc2626'};
+  const stLbl  ={completed:'مكتملة',in_progress:'جارية',planned:'مخطط',delayed:'متأخرة'};
+  const stBadge={completed:'badge-green',in_progress:'badge-yellow',planned:'badge-gray',delayed:'badge-red'};
+  const months =['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+  el.innerHTML=plans.map(p=>{
+    const clr  =stClr[p.status]||'#64748b';
+    const owns =Array.isArray(p.owners)?p.owners.join('، '):(p.owner||'—');
+    return `<div class="card p-4 mb-3" style="border-right:3px solid ${clr}">
+      <div class="flex items-start gap-3 mb-2">
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${p.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${months[p.start_month-1]||''} — ${months[p.end_month-1]||''} · ${p.iso?.replace('_',' ')||'متعدد'}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap">
+            <span class="badge ${stBadge[p.status]||'badge-gray'} text-xs">${stLbl[p.status]||p.status}</span>
+            <span class="badge ${p.priority==='critical'?'badge-red':p.priority==='high'?'badge-yellow':'badge-blue'} text-xs">
+              ${p.priority==='critical'?'حرجة':p.priority==='high'?'عالية':'متوسطة'}
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <div class="text-xl font-black" style="color:${clr}">${p.progress}%</div>
+          <div class="flex gap-1.5">
+            <button onclick="viewPlan('${p.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+            <button onclick="editPlan('${p.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
+          </div>
+        </div>
+      </div>
+      <div style="height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden">
+        <div style="width:${p.progress}%;height:100%;background:${clr};border-radius:3px"></div>
+      </div>
+      <div class="text-xs text-slate-400 mt-1.5"><i class="fas fa-users ml-1"></i>${owns}</div>
+    </div>`;
+  }).join('');
+}
+
+function viewPlan(id) {
+  mFetch('/api/annual-plans').then(data=>{
+    const p=(data.data||[]).find(x=>x.id===id);
+    if(!p) return;
+    const stClr={completed:'#059669',in_progress:'#d97706',planned:'#3b82f6',delayed:'#dc2626'};
+    const stLbl={completed:'مكتملة',in_progress:'جارية',planned:'مخطط',delayed:'متأخرة'};
+    const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    const clr=stClr[p.status]||'#3b82f6';
+    const owns=Array.isArray(p.owners)?p.owners:(p.owner?[p.owner]:[]);
+    openBS(`
+      <div class="px-4 pb-4 space-y-4">
+        <div class="mt-2">
+          <div class="font-bold text-slate-800 text-base leading-tight">${p.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${months[p.start_month-1]||''} — ${months[p.end_month-1]||''}</div>
+          <div class="flex gap-2 mt-2 flex-wrap">
+            <span class="badge text-xs" style="background:${clr}20;color:${clr}">${stLbl[p.status]||p.status}</span>
+            <span class="badge badge-blue text-xs">${p.iso?.replace('_',' ')||'متعدد'}</span>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl" style="background:${clr}10;border:1px solid ${clr}20">
+          <div class="flex justify-between mb-2"><span class="text-sm font-bold text-slate-700">نسبة الإنجاز</span><span class="text-xl font-black" style="color:${clr}">${p.progress}%</span></div>
+          <div style="height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden">
+            <div style="width:${p.progress}%;height:100%;background:${clr};border-radius:5px;transition:width .5s"></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الميزانية</div><div class="font-bold text-sm text-slate-800">${(p.budget||0).toLocaleString('ar-SA')} ر.س</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الأولوية</div><div class="font-bold text-sm text-slate-800">${p.priority==='critical'?'حرجة':p.priority==='high'?'عالية':'متوسطة'}</div></div>
+        </div>
+        ${owns.length?`<div class="p-3 bg-blue-50 rounded-xl"><div class="text-xs font-bold text-blue-700 mb-1"><i class="fas fa-users ml-1"></i>المسؤولون</div><div class="flex flex-wrap gap-1">${owns.map(o=>`<span class="badge badge-blue text-xs">${o}</span>`).join('')}</div></div>`:''}
+        ${p.notes?`<p class="text-sm text-slate-600 p-3 bg-slate-50 rounded-xl">${p.notes}</p>`:''}
+        <!-- Quick status -->
+        <div><div class="text-xs font-bold text-slate-600 mb-2">تغيير الحالة</div>
+          <div class="grid grid-cols-2 gap-2">
+            ${Object.entries(stLbl).map(([s,l])=>`<button onclick="updatePlanStatus('${id}','${s}')"
+              class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
+              style="border-color:${stClr[s]};background:${p.status===s?stClr[s]:'white'};color:${p.status===s?'white':stClr[s]}">${l}</button>`).join('')}
+          </div>
+        </div>
+        <button onclick="editPlan('${id}');closeBS()" class="btn-full" style="background:#fef3c7;color:#d97706;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700">
+          <i class="fas fa-edit ml-2"></i>تعديل المبادرة
+        </button>
+      </div>`);
+  });
+}
+
+function editPlan(id) {
+  mFetch('/api/annual-plans').then(data=>{
+    const p=(data.data||[]).find(x=>x.id===id);
+    if(!p) return;
+    const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    const mOpts =months.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center"><i class="fas fa-calendar-alt text-green-500 text-sm"></i></div>
+          <div class="font-bold text-slate-800">تعديل المبادرة</div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">العنوان *</div>
+          <input class="form-input" id="ep-title" value="${(p.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+            <select class="form-input text-sm" id="ep-status">
+              ${['planned:مخطط','in_progress:جارية','completed:مكتملة','delayed:متأخرة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${p.status===v?'selected':''}>${l}</option>`;}).join('')}
+            </select></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">نسبة الإنجاز %</div>
+            <input class="form-input text-sm" type="number" min="0" max="100" id="ep-progress" value="${p.progress||0}"/></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">شهر البداية</div>
+            <select class="form-input text-sm" id="ep-start">${months.map((m,i)=>`<option value="${i+1}" ${p.start_month===(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">شهر النهاية</div>
+            <select class="form-input text-sm" id="ep-end">${months.map((m,i)=>`<option value="${i+1}" ${p.end_month===(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">ملاحظات</div>
+          <textarea class="form-input text-sm" rows="2" id="ep-notes">${p.notes||''}</textarea></div>
+        <button onclick="savePlanEdit('${id}')" class="btn-full btn-success"><i class="fas fa-save"></i> حفظ المبادرة</button>
+      </div>`);
+  });
+}
+
+async function savePlanEdit(id) {
+  const title=document.getElementById('ep-title')?.value?.trim();
+  if(!title){mToast('العنوان مطلوب','error');return;}
+  await mFetch(`/api/annual-plans/${id||'x'}`,'PUT',{
+    title, status:document.getElementById('ep-status')?.value,
+    progress:parseInt(document.getElementById('ep-progress')?.value)||0,
+    start_month:parseInt(document.getElementById('ep-start')?.value),
+    end_month:parseInt(document.getElementById('ep-end')?.value),
+    notes:document.getElementById('ep-notes')?.value?.trim(),
+  });
+  closeBS(); mToast('✅ تم حفظ المبادرة','success'); loadPlansList();
+}
+
+async function updatePlanStatus(id, status) {
+  await mFetch(`/api/annual-plans/${id||'x'}`,'PUT',{status,
+    ...(status==='completed'?{progress:100}:{})});
+  closeBS(); mToast('✅ تم تحديث الحالة','success'); loadPlansList();
+}
+
+// ── Inspections View/Edit ─────────────────────────
+async function loadInspectionsList() {
+  const data  = await mFetch('/api/inspections?limit=15');
+  const el    = document.getElementById('m-insp-list');
+  if (!el) return;
+  const items = data.data||[];
+  if (!items.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تفتيشات</div>';return;}
+
+  const stClr={completed:'#059669',in_progress:'#d97706',pending:'#3b82f6',overdue:'#dc2626'};
+  const stLbl={completed:'مكتمل',in_progress:'جارٍ',pending:'معلق',overdue:'متأخر'};
+
+  el.innerHTML=items.map(i=>`
+    <div class="card p-4 mb-3">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${i.result==='pass'?'bg-green-100':i.result==='fail'?'bg-red-100':'bg-blue-100'}">
+          <i class="fas fa-${i.result==='pass'?'check-circle text-green-600':i.result==='fail'?'times-circle text-red-600':'clipboard-check text-blue-600'} text-sm"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${i.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${i.ref_number} · ${i.project_name||'—'}</div>
+          <div class="flex gap-2 mt-1.5 items-center flex-wrap">
+            <span class="badge text-xs" style="background:${(stClr[i.status]||'#64748b')}15;color:${stClr[i.status]||'#64748b'}">${stLbl[i.status]||i.status}</span>
+            ${i.compliance_score!=null?`<span class="font-black text-sm" style="color:${i.compliance_score>=80?'#059669':'#dc2626'}">${i.compliance_score}%</span>`:''}
+          </div>
+        </div>
+        <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
+          <button onclick="viewInspection('${i.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+          <button onclick="editInspection('${i.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function viewInspection(id) {
+  mFetch('/api/inspections').then(data=>{
+    const i=(data.data||[]).find(x=>x.id===id);
+    if(!i) return;
+    const stClr={completed:'#059669',in_progress:'#d97706',pending:'#3b82f6',overdue:'#dc2626'};
+    const stLbl={completed:'مكتمل',in_progress:'جارٍ',pending:'معلق',overdue:'متأخر'};
+    const clr=stClr[i.status]||'#3b82f6';
+    openBS(`
+      <div class="px-4 pb-4 space-y-4">
+        <div class="flex items-start gap-3 mt-2">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${i.result==='pass'?'bg-green-100':i.result==='fail'?'bg-red-100':'bg-blue-100'}">
+            <i class="fas fa-${i.result==='pass'?'check-circle text-green-500':i.result==='fail'?'times-circle text-red-500':'clipboard-check text-blue-500'} text-xl"></i>
+          </div>
+          <div class="flex-1">
+            <div class="font-bold text-slate-800 text-sm leading-tight">${i.title}</div>
+            <div class="text-xs text-slate-400 mt-0.5">${i.ref_number} · ${i.project_name||'—'}</div>
+          </div>
+        </div>
+        ${i.compliance_score!=null?`
+        <div class="p-4 rounded-xl text-center" style="background:${i.compliance_score>=80?'#f0fdf4':'#fef2f2'}">
+          <div class="text-4xl font-black" style="color:${i.compliance_score>=80?'#059669':'#dc2626'}">${i.compliance_score}%</div>
+          <div class="text-xs text-slate-500 mt-1">نسبة الامتثال</div>
+          <div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-top:8px">
+            <div style="width:${i.compliance_score}%;height:100%;background:${i.compliance_score>=80?'#059669':'#dc2626'};border-radius:4px"></div>
+          </div>
+        </div>`:
+        '<div class="p-3 bg-slate-50 rounded-xl text-center text-slate-400 text-sm">لم يتم التفتيش بعد</div>'}
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الحالة</div><div class="font-bold text-sm" style="color:${clr}">${stLbl[i.status]||i.status}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الموقع</div><div class="font-bold text-sm text-slate-800">${i.location_name||'—'}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المعيار</div><div class="font-bold text-sm text-slate-800">${i.iso_standard?.replace('_',' ')||'—'}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المسؤول</div><div class="font-bold text-sm text-slate-800">${i.assigned_name||'—'}</div></div>
+        </div>
+        <!-- Quick status -->
+        <div><div class="text-xs font-bold text-slate-600 mb-2">تغيير الحالة السريع</div>
+          <div class="grid grid-cols-2 gap-2">
+            ${['pending','in_progress','completed','overdue'].map(s=>`<button onclick="updateInspStatus('${id}','${s}')"
+              class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
+              style="border-color:${stClr[s]||'#64748b'};background:${i.status===s?stClr[s]||'#64748b':'white'};color:${i.status===s?'white':stClr[s]||'#64748b'}">${stLbl[s]}</button>`).join('')}
+          </div>
+        </div>
+        <button onclick="editInspection('${id}');closeBS()" class="btn-full" style="background:#fef3c7;color:#d97706;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700">
+          <i class="fas fa-edit ml-2"></i>تعديل التفتيش
+        </button>
+      </div>`);
+  });
+}
+
+function editInspection(id) {
+  mFetch('/api/inspections').then(data=>{
+    const i=(data.data||[]).find(x=>x.id===id);
+    if(!i) return;
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center"><i class="fas fa-clipboard-check text-blue-500 text-sm"></i></div>
+          <div class="font-bold text-slate-800">تعديل التفتيش</div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">العنوان</div>
+          <input class="form-input" id="ei-title" value="${(i.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+            <select class="form-input text-sm" id="ei-status">
+              ${['pending:معلق','in_progress:جارٍ','completed:مكتمل','overdue:متأخر'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${i.status===v?'selected':''}>${l}</option>`;}).join('')}
+            </select></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">النتيجة</div>
+            <select class="form-input text-sm" id="ei-result">
+              <option value="" ${!i.result?'selected':''}>—</option>
+              <option value="pass" ${i.result==='pass'?'selected':''}>✅ ناجح</option>
+              <option value="fail" ${i.result==='fail'?'selected':''}>❌ فاشل</option>
+              <option value="partial" ${i.result==='partial'?'selected':''}>⚠️ جزئي</option>
+            </select></div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">نسبة الامتثال %</div>
+          <input class="form-input text-sm" type="number" min="0" max="100" id="ei-score" value="${i.compliance_score??''}"/></div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">ملاحظات</div>
+          <textarea class="form-input text-sm" rows="2" id="ei-notes">${i.notes||''}</textarea></div>
+        <button onclick="saveInspEdit('${id}')" class="btn-full btn-primary"><i class="fas fa-save"></i> حفظ التفتيش</button>
+      </div>`);
+  });
+}
+
+async function saveInspEdit(id) {
+  const score = document.getElementById('ei-score')?.value;
+  await mFetch(`/api/inspections/${id}`,'PUT',{
+    title:  document.getElementById('ei-title')?.value?.trim(),
+    status: document.getElementById('ei-status')?.value,
+    result: document.getElementById('ei-result')?.value||null,
+    compliance_score: score!==''&&score!=null?parseFloat(score):null,
+    notes:  document.getElementById('ei-notes')?.value?.trim(),
+  });
+  closeBS(); mToast('✅ تم حفظ التفتيش','success'); loadInspectionsList();
+}
+
+async function updateInspStatus(id, status) {
+  await mFetch(`/api/inspections/${id}`,'PUT',{status,
+    ...(status==='completed'?{completed_at:new Date().toISOString()}:{})});
+  closeBS(); mToast('✅ تم تحديث الحالة','success'); loadInspectionsList();
+}
+
+// ── NC View/Edit ──────────────────────────────────
+async function loadNCList() {
+  const data  = await mFetch('/api/nonconformances?status=open&limit=10');
+  const el    = document.getElementById('m-nc-list');
+  if (!el) return;
+  const items = data.data||[];
+  if (!items.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد NCs مفتوحة</div>';return;}
+
+  el.innerHTML=items.map(n=>`
+    <div class="card p-4 mb-3 border-r-4 ${n.type==='critical'?'border-red-500':n.type==='major'?'border-orange-400':'border-yellow-400'}">
+      <div class="flex items-start gap-3">
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-mono text-blue-500 mb-1">${n.ref_number}</div>
+          <div class="font-semibold text-slate-800 text-sm leading-tight">${n.title}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${n.project_name||'—'} · ${n.iso_standard?.replace('_',' ')||''}</div>
+          <div class="flex gap-2 mt-1.5 flex-wrap">
+            <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'} text-xs">${n.type==='critical'?'حرجة':n.type==='major'?'رئيسية':'ثانوية'}</span>
+            <span class="badge ${n.status==='open'?'badge-red':n.status==='in_progress'?'badge-yellow':'badge-green'} text-xs">${n.status==='open'?'مفتوحة':n.status==='in_progress'?'جارية':'مغلقة'}</span>
+          </div>
+          ${n.rca_ref?`<div class="mt-1.5 text-xs bg-purple-50 rounded-lg px-2 py-1 text-purple-700"><i class="fas fa-search ml-1"></i>RCA: ${n.rca_ref}</div>`:''}
+        </div>
+        <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
+          <button onclick="viewNC('${n.id}')" class="icon-btn" style="background:#dbeafe"><i class="fas fa-eye text-xs" style="color:#3b82f6"></i></button>
+          <button onclick="editNC('${n.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function viewNC(id) {
+  mFetch('/api/nonconformances').then(data=>{
+    const n=(data.data||[]).find(x=>x.id===id);
+    if(!n) return;
+    const tClr={critical:'#dc2626',major:'#d97706',minor:'#3b82f6'};
+    const tLbl={critical:'حرجة',major:'رئيسية',minor:'ثانوية'};
+    const sLbl={open:'مفتوحة',in_progress:'جارية',closed:'مغلقة'};
+    const sBadge={open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
+    const clr=tClr[n.type]||'#64748b';
+    const now=new Date();
+    const isOverdue=n.due_date&&new Date(n.due_date)<now&&n.status!=='closed';
+    openBS(`
+      <div class="px-4 pb-4 space-y-4">
+        <div class="p-3 rounded-xl mt-2" style="background:${clr}10;border-right:4px solid ${clr}">
+          <div class="text-xs font-mono mb-1" style="color:${clr}">${n.ref_number}</div>
+          <div class="font-bold text-slate-800 text-sm">${n.title}</div>
+          <div class="text-xs text-slate-400 mt-1">${n.project_name||'—'}</div>
+          <div class="flex gap-2 mt-2 flex-wrap">
+            <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'} text-xs">${tLbl[n.type]||n.type}</span>
+            <span class="badge ${sBadge[n.status]||'badge-gray'} text-xs">${sLbl[n.status]||n.status}</span>
+            ${isOverdue?'<span class="badge badge-red text-xs"><i class="fas fa-clock ml-1"></i>متأخرة</span>':''}
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الفئة</div><div class="font-bold text-sm text-slate-800">${n.category||'—'}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المعيار</div><div class="font-bold text-sm text-slate-800">${n.iso_standard?.replace('_',' ')||'—'}</div></div>
+          <div class="p-3 ${isOverdue?'bg-red-50':'bg-slate-50'} rounded-xl"><div class="text-xs text-slate-500 mb-1">الموعد</div><div class="font-bold text-sm ${isOverdue?'text-red-600':'text-slate-800'}">${n.due_date?new Date(n.due_date).toLocaleDateString('ar-SA'):'—'}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المسؤول</div><div class="font-bold text-sm text-slate-800">${n.assigned_name||'—'}</div></div>
+        </div>
+        ${n.rca_ref?`<div class="p-3 bg-purple-50 rounded-xl flex items-center gap-2"><i class="fas fa-search text-purple-500"></i><div><div class="text-xs font-bold text-purple-700">${n.rca_ref}</div><div class="text-xs text-slate-400">تحليل RCA مرتبط</div></div></div>`:''}
+        <!-- Quick status -->
+        <div><div class="text-xs font-bold text-slate-600 mb-2">تغيير الحالة</div>
+          <div class="grid grid-cols-3 gap-2">
+            ${['open','in_progress','closed'].map(s=>`<button onclick="updateNCStatus('${id}','${s}')"
+              class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
+              style="border-color:${{open:'#dc2626',in_progress:'#d97706',closed:'#059669'}[s]};background:${n.status===s?{open:'#dc2626',in_progress:'#d97706',closed:'#059669'}[s]:'white'};color:${n.status===s?'white':{open:'#dc2626',in_progress:'#d97706',closed:'#059669'}[s]}">${sLbl[s]}</button>`).join('')}
+          </div>
+        </div>
+        <button onclick="editNC('${id}');closeBS()" class="btn-full" style="background:#fef3c7;color:#d97706;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700">
+          <i class="fas fa-edit ml-2"></i>تعديل NC
+        </button>
+      </div>`);
+  });
+}
+
+function editNC(id) {
+  mFetch('/api/nonconformances').then(data=>{
+    const n=(data.data||[]).find(x=>x.id===id);
+    if(!n) return;
+    openBS(`
+      <div class="px-4 pb-4 space-y-3">
+        <div class="flex items-center gap-2 mt-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center"><i class="fas fa-exclamation-triangle text-red-500 text-sm"></i></div>
+          <div class="font-bold text-slate-800">تعديل NC</div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">العنوان *</div>
+          <input class="form-input" id="en-title" value="${(n.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><div class="text-xs font-bold text-slate-600 mb-1">النوع</div>
+            <select class="form-input text-sm" id="en-type">
+              ${['critical:حرجة','major:رئيسية','minor:ثانوية'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${n.type===v?'selected':''}>${l}</option>`;}).join('')}
+            </select></div>
+          <div><div class="text-xs font-bold text-slate-600 mb-1">الحالة</div>
+            <select class="form-input text-sm" id="en-status">
+              ${['open:مفتوحة','in_progress:جارية','closed:مغلقة'].map(s=>{const[v,l]=s.split(':');return`<option value="${v}" ${n.status===v?'selected':''}>${l}</option>`;}).join('')}
+            </select></div>
+        </div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">الموعد النهائي</div>
+          <input class="form-input text-sm" type="date" id="en-due" value="${n.due_date?n.due_date.substring(0,10):''}"/></div>
+        <div><div class="text-xs font-bold text-slate-600 mb-1">ملاحظات الإغلاق</div>
+          <textarea class="form-input text-sm" rows="2" id="en-notes" placeholder="ملاحظات عند الإغلاق...">${n.closing_notes||''}</textarea></div>
+        <button onclick="saveNCEdit('${id}')" class="btn-full btn-danger"><i class="fas fa-save"></i> حفظ NC</button>
+      </div>`);
+  });
+}
+
+async function saveNCEdit(id) {
+  const title=document.getElementById('en-title')?.value?.trim();
+  if(!title){mToast('العنوان مطلوب','error');return;}
+  const status=document.getElementById('en-status')?.value;
+  await mFetch(`/api/nonconformances/${id||'x'}`,'PUT',{
+    title, type:document.getElementById('en-type')?.value,
+    status, due_date:document.getElementById('en-due')?.value||null,
+    closing_notes:document.getElementById('en-notes')?.value?.trim(),
+    ...(status==='closed'?{closed_at:new Date().toISOString()}:{})
+  });
+  closeBS(); mToast('✅ تم حفظ NC','success'); loadNCList();
+}
+
+async function updateNCStatus(id, status) {
+  await mFetch(`/api/nonconformances/${id||'x'}`,'PUT',{status,
+    ...(status==='closed'?{closed_at:new Date().toISOString()}:{})});
+  closeBS(); mToast('✅ تم تحديث الحالة','success'); loadNCList();
 }
 
 // ── Notifications ─────────────────────────────────
@@ -1725,7 +3068,7 @@ window.addEventListener('load', async () => {
         document.getElementById('main-app').style.display = 'block';
         mState.user = user;
         document.getElementById('m-user-name').textContent = user.full_name || 'مستخدم';
-        loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadNotifications_m();
+        loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadTasksList(); loadNotifications_m();
         startGPS();
         return;
       }
@@ -1737,5 +3080,12 @@ window.addEventListener('load', async () => {
   }
 });
 </script>
+<!-- ══════ BOTTOM SHEET ══════ -->
+<div class="bs-overlay" id="bs-overlay" onclick="closeBS()"></div>
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="bs-handle"></div>
+  <div id="bs-content"></div>
+</div>
+
 </body>
 </html>
