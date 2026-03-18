@@ -165,40 +165,41 @@
     ]
   };
 
-  // ── Sync from shared localStorage (written by web app) ──
-  try {
-    const _shared = localStorage.getItem('IMS_SHARED_DB');
-    if (_shared) {
-      const _parsed = JSON.parse(_shared);
-      // Merge mutable collections from web app into mobile MDATA
-      ['tasks','annual_plans','risks','nonconformances','inspections',
-       'rca','lean_wastes','iso_standards','org_profile'].forEach(k => {
-        // rca_tickets in web = rca in mobile
-        const webKey = k === 'rca' ? 'rca_tickets' : k;
-        if (_parsed[webKey] !== undefined && Array.isArray(_parsed[webKey]) && _parsed[webKey].length > 0) {
-          MDATA[k] = _parsed[webKey];
-        } else if (_parsed[k] !== undefined) {
-          MDATA[k] = _parsed[k];
-        }
-      });
-      console.log('[Mobile Sync] ✅ Loaded shared data from web app');
-    }
-  } catch(e) { console.warn('[Mobile Sync] Could not load shared data:', e); }
+  // ── Define globals BEFORE fetch intercept ──
+  window.MDATA   = MDATA;
+  window._TOK    = {};
 
-  // ── Save mobile mutations back to localStorage ──
-  function _mSyncDB() {
+  // ── Apply localStorage sync ──
+  try {
+    const _sh = localStorage.getItem('IMS_SHARED_DB');
+    if (_sh) {
+      const _p = JSON.parse(_sh);
+      if (_p.tasks          && _p.tasks.length)          MDATA.tasks          = _p.tasks;
+      if (_p.annual_plans   && _p.annual_plans.length)   MDATA.annual_plans   = _p.annual_plans;
+      if (_p.risks          && _p.risks.length)          MDATA.risks          = _p.risks;
+      if (_p.nonconformances&& _p.nonconformances.length)MDATA.nonconformances= _p.nonconformances;
+      if (_p.inspections    && _p.inspections.length)    MDATA.inspections    = _p.inspections;
+      if (_p.rca_tickets    && _p.rca_tickets.length)    MDATA.rca            = _p.rca_tickets;
+      if (_p.lean_wastes    && _p.lean_wastes.length)    MDATA.lean_wastes    = _p.lean_wastes;
+      console.log('[Mobile] ✅ Loaded', Object.keys(_p).join(', '));
+    }
+  } catch(e) { console.warn('[Mobile] Sync error:', e); }
+
+  // ── Save mutations back to localStorage ──
+  window._mSyncDB = function() {
     try {
-      const _saved = localStorage.getItem('IMS_SHARED_DB');
-      const base   = _saved ? JSON.parse(_saved) : {};
-      // Write back mobile mutations
-      base.tasks           = MDATA.tasks || [];
-      base.nonconformances = MDATA.nonconformances || [];
-      base.inspections     = MDATA.inspections || [];
-      base.rca_tickets     = MDATA.rca || [];
-      base.lean_wastes     = MDATA.lean_wastes || [];
+      const saved = localStorage.getItem('IMS_SHARED_DB');
+      const base  = saved ? JSON.parse(saved) : {};
+      base.tasks           = MDATA.tasks           || [];
+      base.nonconformances = MDATA.nonconformances  || [];
+      base.inspections     = MDATA.inspections      || [];
+      base.rca_tickets     = MDATA.rca              || [];
+      base.lean_wastes     = MDATA.lean_wastes      || [];
       localStorage.setItem('IMS_SHARED_DB', JSON.stringify(base));
     } catch(e) {}
-  }
+  };
+
+  // ── Intercept fetch ──
   window.fetch = async function(url, opts={}) {
     if(typeof url==='string' && url.includes('/api/')) {
       const u=new URL(url,'http://localhost'), path=u.pathname, q=Object.fromEntries(u.searchParams);
@@ -210,10 +211,10 @@
       if(path==='/api/auth/login'&&method==='POST'){
         const u2=MDATA.users.find(x=>x.email===body?.email);
         if(!u2){result={error:'بيانات غير صحيحة'};}
-        else{const tk='mob-'+u2.id;TOK[tk]=u2;result={success:true,token:tk,user:{id:u2.id,email:u2.email,full_name:u2.full_name,role:u2.role,department:u2.department}};}
+        else{const tk='mob-'+u2.id;window._TOK[tk]=u2;result={success:true,token:tk,user:{id:u2.id,email:u2.email,full_name:u2.full_name,role:u2.role,department:u2.department}};}
       } else if(path==='/api/auth/me'){
         const tk=(window._mLastAuth||'').replace('Bearer ','');
-        const uu=TOK[tk]||MDATA.users[2];
+        const uu=window._TOK[tk]||MDATA.users[2];
         result={id:uu.id,email:uu.email,full_name:uu.full_name,role:uu.role,department:uu.department};
       } else if(path==='/api/auth/logout'){result={success:true};}
       else if(path==='/api/db-stats'){result=MDATA.db_stats;}
@@ -279,10 +280,15 @@
         if(w)Object.assign(w,body);result=w||{error:'not found'};
       } else if(path==='/api/tasks'){
         let d=[...MDATA.tasks];
-        // Filter by assigned_to — use logged-in user if not specified
-        const myId = (window._mLastAuth||'').replace('Bearer mob-','');
-        const filterUser = q.assigned_to || myId || null;
-        if(filterUser) d=d.filter(t=>t.assigned_to===filterUser||!t.assigned_to);
+        // Filter by current user - extract user ID from auth token
+        const authHeader = (window._mLastAuth||'').replace('Bearer mob-','').replace('Bearer ','');
+        const myId = authHeader && authHeader !== '' ? authHeader : null;
+        if(q.assigned_to) {
+          d = d.filter(t=>t.assigned_to===q.assigned_to);
+        } else if(myId && myId.startsWith('usr-')) {
+          // Show tasks assigned to this user OR unassigned tasks
+          d = d.filter(t=>!t.assigned_to || t.assigned_to===myId);
+        }
         if(q.status) d=d.filter(t=>t.status===q.status);
         result={data:d,total:d.length};
       } else if(path.startsWith('/api/tasks/')&&method==='PUT'){
@@ -298,11 +304,12 @@
       }
       const ok=!result?.error;
       // Sync mutations back to shared localStorage
-      if (method !== 'GET' && typeof _mSyncDB === 'function') _mSyncDB();
+      if (method !== 'GET' && typeof window._mSyncDB === 'function') window._mSyncDB();
       return {ok,status:ok?200:404,json:async()=>result,text:async()=>JSON.stringify(result)};
     }
     return _rf(url,opts);
   };
+
   console.log('[Mobile Mock] ✅ Active');
 })();
 </script>
@@ -3103,8 +3110,14 @@ window.addEventListener('offline', updateOnlineStatus);
 function syncFromWebApp() {
   try {
     const _shared = localStorage.getItem('IMS_SHARED_DB');
-    if (!_shared) { mToast('⚠️ لا توجد بيانات مشتركة بعد — افتح النظام الرئيسي أولاً', 'warning'); return; }
+    if (!_shared) {
+      mToast('⚠️ افتح النظام الرئيسي أولاً لتوليد البيانات', 'warning');
+      return;
+    }
     const _parsed = JSON.parse(_shared);
+    const MDATA   = window.MDATA;
+    if (!MDATA) { mToast('❌ خطأ: بيانات التطبيق غير محملة', 'error'); return; }
+
     let updated = 0;
     const map = {
       tasks:           'tasks',
@@ -3116,12 +3129,10 @@ function syncFromWebApp() {
       lean_wastes:     'lean_wastes',
     };
     Object.entries(map).forEach(([webKey, mobileKey]) => {
-      if (_parsed[webKey] !== undefined) {
-        const src = Array.isArray(_parsed[webKey]) ? _parsed[webKey] : [];
-        if (JSON.stringify(MDATA[mobileKey]) !== JSON.stringify(src)) {
-          MDATA[mobileKey] = src;
-          updated++;
-        }
+      const src = _parsed[webKey];
+      if (src !== undefined && Array.isArray(src)) {
+        MDATA[mobileKey] = src;
+        updated++;
       }
     });
 
@@ -3129,22 +3140,22 @@ function syncFromWebApp() {
     const syncEl = document.getElementById('m-last-sync');
     if (syncEl) syncEl.textContent = new Date().toLocaleTimeString('ar-SA');
 
-    if (updated > 0) {
-      mToast('✅ تمت المزامنة — تم تحديث ' + updated + ' قوائم', 'success');
-      // Refresh current page
-      loadHomeStats();
-      if (mState.currentPage === 'm-tasks')    loadTasksList();
-      if (mState.currentPage === 'm-nc')       loadNCList();
-      if (mState.currentPage === 'm-rca')      loadRCAList();
-      if (mState.currentPage === 'm-risks')    loadRisksList();
-      if (mState.currentPage === 'm-plans')    loadPlansList();
-      if (mState.currentPage === 'm-lean')     loadLeanList();
-      if (mState.currentPage === 'm-inspections') loadInspectionsList();
-    } else {
-      mToast('✅ البيانات محدّثة بالفعل', 'info');
-    }
+    mToast('✅ تمت المزامنة — ' + updated + ' قوائم محدّثة', 'success');
+
+    // Refresh current page data
+    loadHomeStats();
+    const p = mState.currentPage;
+    if (p === 'm-tasks')       loadTasksList();
+    if (p === 'm-nc')          loadNCList();
+    if (p === 'm-rca')         loadRCAList();
+    if (p === 'm-risks')       loadRisksList();
+    if (p === 'm-plans')       loadPlansList();
+    if (p === 'm-lean')        loadLeanList();
+    if (p === 'm-inspections') loadInspectionsList();
+
   } catch(e) {
     mToast('❌ خطأ في المزامنة: ' + e.message, 'error');
+    console.error('syncFromWebApp error:', e);
   }
 }
 
