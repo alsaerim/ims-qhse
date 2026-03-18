@@ -1003,14 +1003,6 @@
         <i class="fas fa-bell text-lg"></i>
         <span class="notification-dot" id="notif-dot" style="display:none"></span>
       </button>
-      <!-- New NC Button -->
-      <button onclick="openNewNCModal()" class="btn btn-danger text-sm">
-        <i class="fas fa-plus"></i> NC جديدة
-      </button>
-      <!-- New Inspection -->
-      <button onclick="openNewInspectionModal()" class="btn btn-primary text-sm">
-        <i class="fas fa-plus"></i> تفتيش جديد
-      </button>
     </div>
   </div>
 
@@ -1851,12 +1843,17 @@ async function loadInspections() {
   const data = await apiFetch('/api/inspections');
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-4">
-    <!-- ISO Tabs -->
-    <div class="flex gap-1 border-b border-slate-200">
-      <div class="tab active" onclick="filterInspections(this, '')">الكل</div>
-      <div class="tab" onclick="filterInspections(this, 'ISO_45001')">ISO 45001 - السلامة</div>
-      <div class="tab" onclick="filterInspections(this, 'ISO_9001')">ISO 9001 - الجودة</div>
-      <div class="tab" onclick="filterInspections(this, 'ISO_14001')">ISO 14001 - البيئة</div>
+    <!-- ISO Tabs + New Button -->
+    <div class="flex items-center justify-between border-b border-slate-200">
+      <div class="flex gap-1">
+        <div class="tab active" onclick="filterInspections(this, '')">الكل</div>
+        <div class="tab" onclick="filterInspections(this, 'ISO_45001')">ISO 45001 - السلامة</div>
+        <div class="tab" onclick="filterInspections(this, 'ISO_9001')">ISO 9001 - الجودة</div>
+        <div class="tab" onclick="filterInspections(this, 'ISO_14001')">ISO 14001 - البيئة</div>
+      </div>
+      <button onclick="openNewInspectionModal()" class="btn btn-primary text-sm mb-1 flex-shrink-0">
+        <i class="fas fa-plus ml-1"></i>تفتيش جديد
+      </button>
     </div>
     <div id="inspections-list">
       ${renderInspectionsList(data.data || [])}
@@ -2177,11 +2174,16 @@ async function loadNonConformances() {
   document.getElementById('nc-count-badge').textContent = data.data?.filter(n => n.status === 'open').length || 0;
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-4">
-    <div class="grid grid-cols-4 gap-4 mb-2">
-      ${ncSumCard('مفتوحة', data.data?.filter(n=>n.status==='open').length||0, 'badge-red')}
-      ${ncSumCard('قيد المعالجة', data.data?.filter(n=>n.status==='in_progress').length||0, 'badge-yellow')}
-      ${ncSumCard('مغلقة', data.data?.filter(n=>n.status==='closed').length||0, 'badge-green')}
-      ${ncSumCard('حرجة', data.data?.filter(n=>n.type==='critical').length||0, 'badge-red')}
+    <div class="flex items-center justify-between">
+      <div class="grid grid-cols-4 gap-4 flex-1 ml-4">
+        ${ncSumCard('مفتوحة', data.data?.filter(n=>n.status==='open').length||0, 'badge-red')}
+        ${ncSumCard('قيد المعالجة', data.data?.filter(n=>n.status==='in_progress').length||0, 'badge-yellow')}
+        ${ncSumCard('مغلقة', data.data?.filter(n=>n.status==='closed').length||0, 'badge-green')}
+        ${ncSumCard('حرجة', data.data?.filter(n=>n.type==='critical').length||0, 'badge-red')}
+      </div>
+      <button onclick="openNewNCModal()" class="btn btn-danger text-sm flex-shrink-0">
+        <i class="fas fa-plus ml-1"></i>NC جديدة
+      </button>
     </div>
     <div class="card overflow-hidden">
       <table class="w-full text-sm">
