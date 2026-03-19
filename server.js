@@ -30,7 +30,7 @@ function sendPage(res, filename) {
 
 // ── Page Routes ─────────────────────────────
 app.get('/',             (req, res) => sendPage(res, 'ims_landing.html'));
-app.get('/dashboard',    (req, res) => sendPage(res, 'ims_qhse_integrated.html'));
+app.get('/dashboard',    (req, res) => sendPage(res, 'ims_qhse_9.html'));
 app.get('/mobile',       (req, res) => sendPage(res, 'ims_mobile.html'));
 app.get('/mobile-login', (req, res) => sendPage(res, 'ims_mobile_login.html'));
 app.get('/advisory',     (req, res) => sendPage(res, 'advisory_council.html'));
