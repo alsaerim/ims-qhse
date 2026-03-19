@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMS QHSE — نظام إدارة الامتثال المتكامل</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',sans-serif;}
+:root{
+  --blue:#1e40af; --blue2:#3b82f6; --green:#059669;
+  --dark:#0f172a; --dark2:#1e293b;
+}
+body{background:#f1f5f9;color:#1e293b;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;right:0;left:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:flex;align-items:center;justify-content:center;}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nav-links a{font-size:14px;color:rgba(255,255,255,.7);transition:color .2s;font-weight:500;}
+.nav-links a:hover{color:white;}
+.nav-cta{display:flex;gap:10px;}
+.btn-ghost{padding:8px 18px;border-radius:9px;font-size:13px;font-weight:700;border:1.5px solid rgba(255,255,255,.2);color:white;background:transparent;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{background:rgba(255,255,255,.1);}
+.btn-solid{padding:8px 20px;border-radius:9px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(59,130,246,.35);}
+.btn-solid:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.5);}
+
+/* ── HERO ── */
+.hero{min-height:100vh;background:linear-gradient(160deg,var(--dark) 0%,#162554 60%,#1e1b4b 100%);display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:999px;font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:24px;}
+.hero h1{font-size:clamp(32px,5vw,62px);font-weight:900;color:white;line-height:1.15;margin-bottom:20px;}
+.hero h1 span{background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:17px;color:rgba(255,255,255,.65);max-width:580px;margin:0 auto 36px;line-height:1.7;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
+.btn-hero-primary{padding:14px 32px;border-radius:14px;font-size:15px;font-weight:800;background:linear-gradient(135deg,var(--blue),#6366f1);color:white;border:none;cursor:pointer;transition:all .2s;box-shadow:0 8px 30px rgba(99,102,241,.4);}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(99,102,241,.55);}
+.btn-hero-ghost{padding:14px 28px;border-radius:14px;font-size:15px;font-weight:700;background:rgba(255,255,255,.08);color:white;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s;}
+.btn-hero-ghost:hover{background:rgba(255,255,255,.14);}
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-size:28px;font-weight:900;color:white;}
+.hero-stat-lbl{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
+
+/* ── ISO BADGES ── */
+.iso-strip{background:white;border-bottom:1px solid #e2e8f0;padding:16px 24px;}
+.iso-strip-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;}
+.iso-badge{display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:10px;font-size:12px;font-weight:700;border:1.5px solid;}
+
+/* ── SECTIONS ── */
+section{padding:80px 24px;}
+.section-inner{max-width:1200px;margin:0 auto;}
+.section-header{text-align:center;margin-bottom:56px;}
+.section-tag{display:inline-block;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;background:#dbeafe;color:#1d4ed8;margin-bottom:14px;}
+.section-header h2{font-size:clamp(26px,3.5vw,40px);font-weight:900;color:#1e293b;margin-bottom:12px;}
+.section-header p{font-size:15px;color:#64748b;max-width:520px;margin:0 auto;line-height:1.7;}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+.feature-card{background:white;border-radius:20px;padding:28px;border:1px solid #e2e8f0;transition:all .25s;position:relative;overflow:hidden;}
+.feature-card::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;border-radius:50%;opacity:.05;transform:translate(30%,-30%);}
+.feature-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.1);border-color:transparent;}
+.feat-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.feat-icon i{font-size:22px;color:white;}
+.feature-card h3{font-size:16px;font-weight:800;color:#1e293b;margin-bottom:8px;}
+.feature-card p{font-size:13px;color:#64748b;line-height:1.6;}
+.feat-tag{display:inline-block;margin-top:12px;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;align-items:start;}
+.pricing-card{background:white;border-radius:22px;padding:30px;border:2px solid #e2e8f0;transition:all .25s;position:relative;}
+.pricing-card.popular{border-color:var(--blue);box-shadow:0 16px 48px rgba(30,64,175,.15);}
+.popular-badge{position:absolute;top:-14px;right:50%;transform:translateX(50%);background:linear-gradient(135deg,var(--blue),#6366f1);color:white;padding:4px 18px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;}
+.pricing-name{font-size:18px;font-weight:800;color:#1e293b;margin-bottom:4px;}
+.pricing-desc{font-size:12px;color:#94a3b8;margin-bottom:20px;}
+.pricing-price{margin-bottom:4px;}
+.pricing-price .amount{font-size:36px;font-weight:900;color:#1e293b;}
+.pricing-price .currency{font-size:14px;color:#64748b;}
+.pricing-price .period{font-size:12px;color:#94a3b8;}
+.pricing-yearly{font-size:11px;color:#059669;font-weight:700;margin-bottom:20px;}
+.pricing-features{list-style:none;margin-bottom:24px;space-y:8px;}
+.pricing-features li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#475569;padding:5px 0;border-bottom:1px solid #f8fafc;}
+.pricing-features li i{color:#059669;margin-top:2px;flex-shrink:0;}
+.pricing-features li.disabled{color:#94a3b8;}
+.pricing-features li.disabled i{color:#cbd5e1;}
+.btn-plan{width:100%;padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;border:none;}
+.btn-plan-outline{background:white;border:2px solid #e2e8f0;color:#1e293b;}
+.btn-plan-outline:hover{border-color:var(--blue);color:var(--blue);}
+.btn-plan-primary{background:linear-gradient(135deg,var(--blue),#6366f1);color:white;box-shadow:0 6px 20px rgba(30,64,175,.3);}
+.btn-plan-primary:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(30,64,175,.45);}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{width:100%;border-collapse:collapse;background:white;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.compare-table th,.compare-table td{padding:14px 16px;text-align:center;font-size:13px;border-bottom:1px solid #f1f5f9;}
+.compare-table th{background:#f8fafc;font-weight:800;color:#334155;}
+.compare-table th:first-child,.compare-table td:first-child{text-align:right;font-weight:600;color:#1e293b;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table .highlight{background:#eff6ff;}
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.testimonial-card{background:white;border-radius:18px;padding:24px;border:1px solid #e2e8f0;}
+.test-text{font-size:14px;color:#475569;line-height:1.7;margin-bottom:16px;font-style:italic;}
+.test-author{display:flex;align-items:center;gap:10px;}
+.test-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;}
+.test-name{font-size:13px;font-weight:700;color:#1e293b;}
+.test-role{font-size:11px;color:#94a3b8;}
+.stars{color:#f59e0b;font-size:12px;margin-bottom:8px;}
+
+/* ── CTA ── */
+.cta-section{background:linear-gradient(135deg,var(--dark),#162554);padding:80px 24px;text-align:center;}
+.cta-section h2{font-size:clamp(24px,3.5vw,42px);font-weight:900;color:white;margin-bottom:14px;}
+.cta-section p{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:32px;}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);padding:48px 24px 24px;}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;margin-top:12px;}
+.footer-col h4{font-size:13px;font-weight:800;color:white;margin-bottom:14px;}
+.footer-col a{display:block;font-size:12px;color:rgba(255,255,255,.4);margin-bottom:8px;transition:color .2s;}
+.footer-col a:hover{color:rgba(255,255,255,.8);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-bottom p{font-size:12px;color:rgba(255,255,255,.3);}
+
+/* ── LOGIN MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.login-modal{background:white;border-radius:24px;width:100%;max-width:440px;margin:16px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.3);}
+.login-header{background:linear-gradient(135deg,var(--dark),#162554);padding:28px 28px 24px;}
+.login-tabs{display:flex;gap:4px;background:rgba(255,255,255,.1);border-radius:10px;padding:4px;margin-top:16px;}
+.login-tab{flex:1;padding:7px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.6);transition:all .2s;}
+.login-tab.active{background:white;color:#1e293b;}
+.login-body{padding:28px;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;}
+.form-group input,.form-group select{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:'Tajawal',sans-serif;transition:border-color .2s;outline:none;}
+.form-group input:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),#6366f1);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Tajawal',sans-serif;margin-top:4px;}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(30,64,175,.4);}
+.login-footer-txt{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px;}
+.login-footer-txt a{color:var(--blue);font-weight:700;}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#94a3b8;font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0;}
+.error-msg{background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;border:1px solid #fecaca;display:none;}
+.success-msg{background:#f0fdf4;color:#059669;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;border:1px solid #bbf7d0;display:none;}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hero-stats{gap:24px;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .footer-brand{grid-column:1/-1;}
+}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeInUp .5s ease forwards;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.float{animation:float 4s ease-in-out infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- ═══════ NAVBAR ═══════ -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="logo-icon"><i class="fas fa-shield-alt" style="color:white;font-size:18px;"></i></div>
+      <div>
+        <div style="font-weight:900;color:white;font-size:16px;">IMS QHSE</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">نظام الامتثال المتكامل</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#features">المميزات</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#mobile-app">تطبيق الجوال</a>
+      <a href="#compare">المقارنة</a>
+      <a href="#testimonials">العملاء</a>
+    </div>
+    <div class="nav-cta">
+      <a href="ims_mobile_login.html" class="btn-ghost" style="font-size:12px;display:flex;align-items:center;gap:5px;"><i class="fas fa-mobile-alt" style="font-size:11px;"></i>تطبيق الجوال</a>
+      <button class="btn-ghost" onclick="openLogin('login')">تسجيل الدخول</button>
+      <button class="btn-solid" onclick="openLogin('register')">ابدأ مجاناً <i class="fas fa-arrow-left" style="font-size:11px;margin-right:5px;"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero" id="home">
+  <div style="max-width:800px;position:relative;z-index:1;">
+    <div class="hero-badge fade-up"><i class="fas fa-certificate" style="font-size:11px;"></i>معتمد لمعايير ISO 9001 · 45001 · 14001 · 27001</div>
+    <h1 class="fade-up" style="animation-delay:.1s;">
+      أدِر <span>الامتثال والجودة</span><br>بذكاء لا مثيل له
+    </h1>
+    <p class="fade-up" style="animation-delay:.2s;">
+      منصة IMS QHSE الأولى عربياً لإدارة معايير ISO بشكل متكامل.
+      تفتيش · عدم مطابقة · تحليل مخاطر · تحليل الفجوة · Lean Six Sigma —
+      كل شيء في مكان واحد.
+    </p>
+    <div class="hero-btns fade-up" style="animation-delay:.3s;">
+      <button class="btn-hero-primary" onclick="openLogin('register')">
+        <i class="fas fa-rocket" style="margin-left:8px;"></i>ابدأ تجربتك المجانية 14 يوم
+      </button>
+      <button class="btn-hero-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+        <i class="fas fa-play-circle" style="margin-left:6px;"></i>شاهد كيف يعمل
+      </button>
+    </div>
+    <div class="hero-stats fade-up" style="animation-delay:.4s;">
+      <div class="hero-stat"><div class="hero-stat-num">+500</div><div class="hero-stat-lbl">شركة تستخدمه</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">98%</div><div class="hero-stat-lbl">رضا العملاء</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">4 معايير</div><div class="hero-stat-lbl">ISO مدعومة</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">24/7</div><div class="hero-stat-lbl">دعم فني</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ ISO STRIP ═══════ -->
+<div class="iso-strip">
+  <div class="iso-strip-inner">
+    <span style="font-size:12px;color:#94a3b8;font-weight:600;">معايير مدعومة:</span>
+    <div class="iso-badge" style="color:#1d4ed8;border-color:#bfdbfe;background:#eff6ff;"><i class="fas fa-award" style="font-size:11px;"></i>ISO 9001 الجودة</div>
+    <div class="iso-badge" style="color:#059669;border-color:#6ee7b7;background:#f0fdf4;"><i class="fas fa-hard-hat" style="font-size:11px;"></i>ISO 45001 السلامة</div>
+    <div class="iso-badge" style="color:#d97706;border-color:#fcd34d;background:#fffbeb;"><i class="fas fa-leaf" style="font-size:11px;"></i>ISO 14001 البيئة</div>
+    <div class="iso-badge" style="color:#7c3aed;border-color:#c4b5fd;background:#f5f3ff;"><i class="fas fa-shield-alt" style="font-size:11px;"></i>ISO 27001 أمن المعلومات</div>
+    <div style="margin-right:auto;font-size:11px;color:#94a3b8;">+ معايير مخصصة</div>
+  </div>
+</div>
+
+<!-- ═══════ FEATURES ═══════ -->
+<section id="features" style="background:white;">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">المميزات</span>
+      <h2>كل ما تحتاجه في منصة واحدة</h2>
+      <p>من التفتيش الميداني إلى تقارير المراجعة — منصة IMS QHSE تغطي دورة الامتثال بالكامل</p>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card" style="--c:#3b82f6;">
+        <div class="feat-icon" style="background:linear-gradient(135deg,#1e40af,#3b82f6);"><i class="fas fa-clipboard-check"></i></div>
+        <h3>إدارة التفتيش والمراجعة</h3>
+        <p>جدولة وتنفيذ وتوثيق عمليات التفتيش بقوائم تحقق ذكية. نتائج فورية ومرفقات صور مباشرة من الميدان.</p>
+        <span class="feat-tag" style="background:#dbeafe;color:#1d4ed8;">ISO 9001 · 45001 · 14001</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444);"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3>إدارة عدم المطابقة NC</h3>
+        <p>تسجيل وتتبع حالات NC مع ربط تلقائي بتحليل الأسباب الجذرية RCA. تنبيهات ذكية للمواعيد النهائية.</p>
+        <span class="feat-tag" style="background:#fee2e2;color:#dc2626;">تحليل RCA تلقائي</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);"><i class="fas fa-chart-bar"></i>
+        </div>
+        <h3>تحليل الفجوة Gap Analysis</h3>
+        <p>استبيان ذكي بـ 100+ سؤال لكل معيار ISO. نتائج فورية تُضاف تلقائياً لمخطط الفجوة مع خارطة طريق للامتثال.</p>
+        <span class="feat-tag" style="background:#ede9fe;color:#7c3aed;">AI-Powered Assessment</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background:linear-gradient(135deg,#d97706,#fbbf24);"><i class="fas fa-shield-alt"></i></div>
+        <h3>إدارة المخاطر ISO 31000</h3>
+        <p>مصفوفة المخاطر التفاعلية مع حساب RPN تلقائي. خطط معالجة وتتبع مباشر لكل خطر بما يتوافق مع ISO 31000.</p>
+        <span class="feat-tag" style="background:#fef3c7;color:#d97706;">Risk Matrix + COSO</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background:linear-gradient(135deg,#059669,#34d399);"><i class="fas fa-recycle"></i></div>
+        <h3>Lean Six Sigma & Muda</h3>
+        <p>تحديد وتحليل أنواع الهدر السبعة. مؤشر Lean مباشر ومنهجية DMAIC مدمجة لدعم التحسين المستمر.</p>
+        <span class="feat-tag" style="background:#d1fae5;color:#059669;">DMAIC · 7 Types of Waste</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background:linear-gradient(135deg,#0891b2,#06b6d4);"><i class="fas fa-mobile-alt"></i></div>
+        <h3>تطبيق جوال PWA</h3>
+        <p>تطبيق متكامل للميدان يعمل بدون إنترنت. تصوير الحوادث، قوائم التفتيش، ومزامنة فورية مع النظام الرئيسي.</p>
+        <span class="feat-tag" style="background:#e0f2fe;color:#0369a1;">iOS · Android · Offline</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PRICING ═══════ -->
+<section id="pricing" style="background:#f8fafc;">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag" style="background:#d1fae5;color:#059669;">الأسعار</span>
+      <h2>استثمار يُحقق عائداً حقيقياً</h2>
+      <p>وفّر تكاليف الاستشارات والمراجعات بنسبة تصل إلى 70% مقارنةً بالحلول التقليدية</p>
+    </div>
+
+    <!-- Billing toggle -->
+    <div style="display:flex;justify-content:center;margin-bottom:36px;">
+      <div style="display:flex;background:white;border-radius:12px;padding:4px;border:1px solid #e2e8f0;gap:4px;">
+        <button id="bill-monthly" onclick="setBilling('monthly')" style="padding:8px 20px;border-radius:9px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:#1e40af;color:white;transition:all .2s;">شهري</button>
+        <button id="bill-yearly"  onclick="setBilling('yearly')"  style="padding:8px 20px;border-radius:9px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
+          سنوي <span style="background:#d1fae5;color:#059669;padding:1px 7px;border-radius:6px;font-size:10px;margin-right:4px;">وفّر 16%</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="pricing-card">
+        <div style="width:44px;height:44px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <i class="fas fa-seedling" style="color:#64748b;font-size:20px;"></i>
+        </div>
+        <div class="pricing-name">المبتدئ</div>
+        <div class="pricing-desc">للشركات الناشئة والصغيرة</div>
+        <div class="pricing-price">
+          <span class="amount" id="price-starter">299</span>
+          <span class="currency"> ر.س</span>
+          <span class="period"> / شهر</span>
+        </div>
+        <div class="pricing-yearly" id="yearly-starter" style="display:none;">يُوفّر 598 ر.س سنوياً</div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i>5 مستخدمين</li>
+          <li><i class="fas fa-check"></i>2 مشاريع</li>
+          <li><i class="fas fa-check"></i>ISO 9001 فقط</li>
+          <li><i class="fas fa-check"></i>تفتيش وNC أساسي</li>
+          <li><i class="fas fa-check"></i>تطبيق الجوال</li>
+          <li><i class="fas fa-check"></i>تقارير PDF</li>
+          <li class="disabled"><i class="fas fa-times"></i>تحليل الفجوة المتقدم</li>
+          <li class="disabled"><i class="fas fa-times"></i>ربط API خارجي</li>
+        </ul>
+        <button class="btn-plan btn-plan-outline" onclick="openLogin('register')">ابدأ مجاناً</button>
+      </div>
+
+      <!-- Professional -->
+      <div class="pricing-card popular">
+        <div class="popular-badge">⭐ الأكثر طلباً</div>
+        <div style="width:44px;height:44px;border-radius:12px;background:#dbeafe;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <i class="fas fa-rocket" style="color:#1e40af;font-size:20px;"></i>
+        </div>
+        <div class="pricing-name" style="color:#1e40af;">الاحترافي</div>
+        <div class="pricing-desc">للشركات المتوسطة والكبيرة</div>
+        <div class="pricing-price">
+          <span class="amount" id="price-pro">799</span>
+          <span class="currency"> ر.س</span>
+          <span class="period"> / شهر</span>
+        </div>
+        <div class="pricing-yearly" id="yearly-pro" style="display:none;">يُوفّر 1,598 ر.س سنوياً</div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i>25 مستخدماً</li>
+          <li><i class="fas fa-check"></i>10 مشاريع</li>
+          <li><i class="fas fa-check"></i>ISO 9001 + 45001 + 14001</li>
+          <li><i class="fas fa-check"></i>تحليل RCA و Lean Six Sigma</li>
+          <li><i class="fas fa-check"></i>تحليل الفجوة المتقدم</li>
+          <li><i class="fas fa-check"></i>خارطة المشاريع التفاعلية</li>
+          <li><i class="fas fa-check"></i>ربط API (Odoo, ERPNext)</li>
+          <li><i class="fas fa-check"></i>مؤشرات KPI متقدمة</li>
+        </ul>
+        <button class="btn-plan btn-plan-primary" onclick="openLogin('register')">ابدأ التجربة المجانية</button>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="pricing-card">
+        <div style="width:44px;height:44px;border-radius:12px;background:#ede9fe;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <i class="fas fa-building" style="color:#7c3aed;font-size:20px;"></i>
+        </div>
+        <div class="pricing-name" style="color:#7c3aed;">المؤسسي</div>
+        <div class="pricing-desc">للمؤسسات والشركات الكبرى</div>
+        <div class="pricing-price">
+          <span class="amount" id="price-ent">1,999</span>
+          <span class="currency"> ر.س</span>
+          <span class="period"> / شهر</span>
+        </div>
+        <div class="pricing-yearly" id="yearly-ent" style="display:none;">يُوفّر 3,998 ر.س سنوياً</div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i>مستخدمون غير محدودون</li>
+          <li><i class="fas fa-check"></i>مشاريع غير محدودة</li>
+          <li><i class="fas fa-check"></i>جميع معايير ISO + 27001</li>
+          <li><i class="fas fa-check"></i>SSO / LDAP</li>
+          <li><i class="fas fa-check"></i>SLA 99.9% uptime</li>
+          <li><i class="fas fa-check"></i>نشر On-Premise</li>
+          <li><i class="fas fa-check"></i>مدير حساب مخصص</li>
+          <li><i class="fas fa-check"></i>تدريب ميداني مخصص</li>
+        </ul>
+        <button class="btn-plan btn-plan-outline" style="border-color:#7c3aed;color:#7c3aed;" onclick="openLogin('register')">تواصل معنا</button>
+      </div>
+
+    </div>
+
+    <!-- Guarantee -->
+    <div style="text-align:center;margin-top:32px;padding:20px;background:white;border-radius:16px;border:1px solid #e2e8f0;max-width:480px;margin-left:auto;margin-right:auto;">
+      <i class="fas fa-shield-check" style="color:#059669;font-size:22px;margin-bottom:8px;display:block;"></i>
+      <div style="font-weight:800;font-size:14px;color:#1e293b;margin-bottom:4px;">ضمان استرداد كامل خلال 14 يوماً</div>
+      <div style="font-size:12px;color:#64748b;">لا توجد رسوم خفية · إلغاء في أي وقت · دعم فني مجاني</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ COMPARE ═══════ -->
+<section id="compare" style="background:white;">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag" style="background:#ede9fe;color:#7c3aed;">المقارنة</span>
+      <h2>لماذا IMS QHSE؟</h2>
+      <p>قارن بين الباقات واختر ما يناسب حجم عملك</p>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:240px;">الميزة</th>
+            <th>المبتدئ</th>
+            <th class="highlight" style="color:#1e40af;">الاحترافي ⭐</th>
+            <th>المؤسسي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>عدد المستخدمين</td><td>5</td><td class="highlight" style="font-weight:700;">25</td><td>غير محدود</td></tr>
+          <tr><td>عدد المشاريع</td><td>2</td><td class="highlight" style="font-weight:700;">10</td><td>غير محدود</td></tr>
+          <tr><td>معايير ISO</td><td>ISO 9001</td><td class="highlight" style="font-weight:700;">9001+45001+14001</td><td>جميعها + 27001</td></tr>
+          <tr><td>تحليل الفجوة</td><td>أساسي</td><td class="highlight">✅ متقدم</td><td>✅ متقدم</td></tr>
+          <tr><td>تحليل RCA + Lean</td><td>❌</td><td class="highlight">✅</td><td>✅</td></tr>
+          <tr><td>ربط API (Odoo, SAP)</td><td>❌</td><td class="highlight">✅</td><td>✅</td></tr>
+          <tr><td>تطبيق الجوال</td><td>✅</td><td class="highlight">✅</td><td>✅</td></tr>
+          <tr><td>مجلس استشاري AI</td><td>❌</td><td class="highlight">✅</td><td>✅</td></tr>
+          <tr><td>SSO / LDAP</td><td>❌</td><td class="highlight">❌</td><td>✅</td></tr>
+          <tr><td>SLA / Uptime</td><td>95%</td><td class="highlight">99%</td><td>99.9%</td></tr>
+          <tr><td>الدعم الفني</td><td>بريد إلكتروني</td><td class="highlight">أولوية 24h</td><td>مدير حساب مخصص</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ TESTIMONIALS ═══════ -->
+<section id="testimonials" style="background:#f8fafc;">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag" style="background:#fef3c7;color:#d97706;">آراء العملاء</span>
+      <h2>ثقة أكثر من 500 شركة</h2>
+      <p>من قطاع النفط والطاقة إلى الصناعة والبنية التحتية — IMS QHSE يخدم المؤسسات الرائدة</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">"وفّرنا أكثر من 40% من وقت إعداد تقارير الامتثال. أصبح التدقيق الخارجي لـ ISO 45001 سهلاً جداً بفضل التقارير الجاهزة Audit-Ready."</p>
+        <div class="test-author">
+          <div class="test-avatar" style="background:#1e40af;">خا</div>
+          <div><div class="test-name">خالد الشمري</div><div class="test-role">مدير QHSE · أرامكو</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">"ميزة تحليل الفجوة رائعة! أعطتنا خارطة طريق واضحة لتحقيق ISO 14001 في أقل من 6 أشهر بدلاً من سنة كاملة."</p>
+        <div class="test-author">
+          <div class="test-avatar" style="background:#059669;">سا</div>
+          <div><div class="test-name">سارة المالكي</div><div class="test-role">مديرة الجودة · SABIC</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">"التطبيق الجوال غيّر طريقة عمل مفتشينا الميدانيين. الآن كل شيء رقمي وفوري — لا ورق ولا تأخير في الإبلاغ."</p>
+        <div class="test-author">
+          <div class="test-avatar" style="background:#d97706;">أح</div>
+          <div><div class="test-name">أحمد بن علي</div><div class="test-role">مدير السلامة · الكهرباء السعودية</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ MOBILE APP ═══════ -->
+<section id="mobile-app" style="background:white;">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+
+      <!-- Left: Phone mockup with real app screens -->
+      <div style="display:flex;justify-content:center;position:relative;">
+        <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+        <!-- Phone frame -->
+        <div class="float" style="width:230px;background:#0f172a;border-radius:38px;padding:10px;box-shadow:0 32px 80px rgba(15,23,42,.4),0 0 0 1px rgba(255,255,255,.08);position:relative;z-index:1;">
+          <!-- Dynamic island notch -->
+          <div style="width:90px;height:22px;background:#0f172a;border-radius:0 0 14px 14px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#1e293b;"></div>
+            <div style="width:20px;height:8px;border-radius:4px;background:#1e293b;"></div>
+          </div>
+          <!-- Screen -->
+          <div style="background:#f1f5f9;border-radius:28px;overflow:hidden;height:460px;position:relative;">
+
+            <!-- Top bar -->
+            <div style="background:linear-gradient(135deg,#1e40af,#3b82f6);padding:12px 14px 10px;display:flex;align-items:center;gap:8px;">
+              <div style="width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-shield-alt" style="color:white;font-size:12px;"></i>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:800;color:white;">IMS QHSE</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.6);">مرحباً، محمد الزهراني</div>
+              </div>
+              <div style="position:relative;">
+                <i class="fas fa-bell" style="color:white;font-size:13px;"></i>
+                <div style="position:absolute;top:-4px;left:-4px;width:12px;height:12px;background:#dc2626;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;color:white;font-weight:900;">3</div>
+              </div>
+            </div>
+
+            <!-- Content area -->
+            <div style="padding:10px;overflow:hidden;">
+
+              <!-- KPI row -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+                <div style="background:white;border-radius:10px;padding:8px 10px;border:1px solid #e2e8f0;">
+                  <div style="font-size:16px;font-weight:900;color:#1e40af;">4</div>
+                  <div style="font-size:8px;color:#94a3b8;">تفتيشاتي</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:8px 10px;border:1px solid #fee2e2;">
+                  <div style="font-size:16px;font-weight:900;color:#dc2626;">2</div>
+                  <div style="font-size:8px;color:#94a3b8;">NC مفتوحة</div>
+                </div>
+              </div>
+
+              <!-- Inspection card -->
+              <div style="background:white;border-radius:10px;padding:10px;margin-bottom:6px;border:1px solid #e2e8f0;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                  <div style="width:24px;height:24px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-clipboard-check" style="color:#1e40af;font-size:10px;"></i>
+                  </div>
+                  <div style="font-size:10px;font-weight:700;color:#1e293b;flex:1;">تفتيش السلامة - الوحدة A</div>
+                  <span style="background:#fef3c7;color:#d97706;padding:2px 6px;border-radius:5px;font-size:8px;font-weight:700;">جارٍ</span>
+                </div>
+                <div style="height:4px;background:#f1f5f9;border-radius:2px;overflow:hidden;">
+                  <div style="width:65%;height:100%;background:#1e40af;border-radius:2px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:3px;">
+                  <span style="font-size:8px;color:#94a3b8;">65% مكتمل</span>
+                  <span style="font-size:8px;color:#d97706;">اليوم 14:00</span>
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <div style="background:linear-gradient(135deg,#1e40af,#3b82f6);border-radius:10px;padding:9px;text-align:center;cursor:pointer;">
+                  <i class="fas fa-plus" style="color:white;font-size:12px;display:block;margin-bottom:2px;"></i>
+                  <span style="font-size:9px;color:white;font-weight:700;">تفتيش جديد</span>
+                </div>
+                <div style="background:linear-gradient(135deg,#dc2626,#ef4444);border-radius:10px;padding:9px;text-align:center;cursor:pointer;">
+                  <i class="fas fa-exclamation-triangle" style="color:white;font-size:12px;display:block;margin-bottom:2px;"></i>
+                  <span style="font-size:9px;color:white;font-weight:700;">بلّغ NC</span>
+                </div>
+              </div>
+
+              <!-- Camera preview strip -->
+              <div style="margin-top:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-camera" style="color:white;font-size:14px;"></i>
+                <div>
+                  <div style="font-size:9px;font-weight:800;color:white;">تصوير الحوادث</div>
+                  <div style="font-size:8px;color:rgba(255,255,255,.7);">GPS تلقائي + رفع فوري</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bottom nav -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;padding:6px 0;display:flex;justify-content:space-around;">
+              <div style="text-align:center;color:#1e40af;">
+                <i class="fas fa-home" style="font-size:14px;display:block;"></i>
+                <span style="font-size:7px;font-weight:700;">الرئيسية</span>
+              </div>
+              <div style="text-align:center;color:#94a3b8;">
+                <i class="fas fa-clipboard-check" style="font-size:14px;display:block;"></i>
+                <span style="font-size:7px;">تفتيش</span>
+              </div>
+              <div style="text-align:center;color:#94a3b8;">
+                <i class="fas fa-exclamation-triangle" style="font-size:14px;display:block;"></i>
+                <span style="font-size:7px;">NC</span>
+              </div>
+              <div style="text-align:center;color:#94a3b8;">
+                <i class="fas fa-chart-bar" style="font-size:14px;display:block;"></i>
+                <span style="font-size:7px;">تقارير</span>
+              </div>
+              <div style="text-align:center;color:#94a3b8;">
+                <i class="fas fa-user" style="font-size:14px;display:block;"></i>
+                <span style="font-size:7px;">حسابي</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PWA badge -->
+        <div style="position:absolute;bottom:20px;right:10px;background:white;border-radius:12px;padding:8px 12px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px;z-index:2;">
+          <div style="width:28px;height:28px;border-radius:8px;background:#1e40af;display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-mobile-alt" style="color:white;font-size:12px;"></i>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:800;color:#1e293b;">PWA App</div>
+            <div style="font-size:8px;color:#059669;">يعمل بدون إنترنت</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Content -->
+      <div>
+        <span class="section-tag" style="background:#e0f2fe;color:#0369a1;">
+          <i class="fas fa-mobile-alt" style="font-size:10px;margin-left:4px;"></i>تطبيق الجوال PWA
+        </span>
+        <h2 style="font-size:clamp(24px,3.5vw,38px);font-weight:900;color:#1e293b;margin:14px 0 16px;line-height:1.2;">
+          التفتيش الميداني<br>في راحة يدك
+        </h2>
+        <p style="font-size:15px;color:#64748b;line-height:1.7;margin-bottom:28px;">
+          تطبيق PWA متكامل يعمل حتى بدون إنترنت. صوّر الحوادث، عبّئ قوائم التفتيش، وأبلغ عن NC — كل شيء يُزامَن فوراً مع نظام IMS QHSE عند عودة الاتصال.
+        </p>
+
+        <!-- Features grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px;">
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="width:34px;height:34px;border-radius:9px;background:#fee2e220;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-wifi" style="color:#dc2626;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:#1e293b;">يعمل بدون إنترنت</div>
+              <div style="font-size:11px;color:#94a3b8;">Offline-First PWA</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="width:34px;height:34px;border-radius:9px;background:#ede9fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-camera" style="color:#7c3aed;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:#1e293b;">تصوير الحوادث</div>
+              <div style="font-size:11px;color:#94a3b8;">بالكاميرا مباشرة</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="width:34px;height:34px;border-radius:9px;background:#d1fae5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-clipboard-list" style="color:#059669;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:#1e293b;">قوائم تفتيش ذكية</div>
+              <div style="font-size:11px;color:#94a3b8;">أكثر من 50 قالب</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="width:34px;height:34px;border-radius:9px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-bell" style="color:#d97706;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:#1e293b;">إشعارات فورية</div>
+              <div style="font-size:11px;color:#94a3b8;">Push Notifications</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="width:34px;height:34px;border-radius:9px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-map-marker-alt" style="color:#1e40af;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:#1e293b;">GPS تلقائي</div>
+              <div style="font-size:11px;color:#94a3b8;">تحديد موقع التفتيش</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="width:34px;height:34px;border-radius:9px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-sync" style="color:#0891b2;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:#1e293b;">مزامنة فورية</div>
+              <div style="font-size:11px;color:#94a3b8;">مع النظام الرئيسي</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CTA buttons -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="ims_mobile_login.html"
+            style="display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:linear-gradient(135deg,#1e40af,#4f46e5);color:white;border-radius:14px;font-size:14px;font-weight:800;box-shadow:0 6px 20px rgba(30,64,175,.3);transition:all .2s;text-decoration:none;"
+            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 28px rgba(30,64,175,.45)'"
+            onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(30,64,175,.3)'">
+            <i class="fas fa-mobile-alt" style="font-size:18px;"></i>
+            <div>
+              <div style="font-size:9px;opacity:.75;font-weight:400;">تسجيل الدخول للتطبيق</div>
+              <div>افتح تطبيق الجوال</div>
+            </div>
+          </a>
+          <a href="ims_mobile_login.html"
+            style="display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:white;color:#1e40af;border:2px solid #dbeafe;border-radius:14px;font-size:13px;font-weight:800;transition:all .2s;text-decoration:none;"
+            onmouseover="this.style.borderColor='#3b82f6';this.style.background='#eff6ff'"
+            onmouseout="this.style.borderColor='#dbeafe';this.style.background='white'">
+            <i class="fas fa-user-plus" style="font-size:14px;"></i>انضم كعضو
+          </a>
+        </div>
+
+        <!-- Member CTA -->
+        <div style="margin-top:20px;padding:14px 16px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;display:flex;align-items:center;gap:10px;">
+          <i class="fas fa-users" style="color:#059669;font-size:16px;flex-shrink:0;"></i>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#059669;">أنت موظف وتريد الدخول للتطبيق؟</div>
+            <div style="font-size:11px;color:#334155;">احصل على رمز الشركة من مديرك وسجّل حسابك مجاناً.</div>
+          </div>
+          <a href="ims_mobile_login.html" style="padding:7px 14px;background:#059669;color:white;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;white-space:nowrap;">
+            سجّل الآن
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ CTA ═══════ -->
+<div class="cta-section">
+  <div style="max-width:600px;margin:0 auto;position:relative;z-index:1;">
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.3);border-radius:999px;font-size:11px;font-weight:700;color:#a5b4fc;margin-bottom:18px;">
+      <i class="fas fa-clock" style="font-size:10px;"></i>تجربة مجانية 14 يوماً · لا بطاقة ائتمانية
+    </div>
+    <h2>جاهز لرفع مستوى الامتثال لديك؟</h2>
+    <p>انضم إلى مئات الشركات التي تستخدم IMS QHSE لتحقيق وصون معايير ISO بكل سهولة وكفاءة.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-hero-primary" onclick="openLogin('register')">
+        <i class="fas fa-rocket" style="margin-left:8px;"></i>ابدأ تجربتك المجانية الآن
+      </button>
+      <button class="btn-hero-ghost" onclick="openLogin('login')">
+        تسجيل الدخول <i class="fas fa-arrow-left" style="font-size:11px;margin-right:6px;"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:12px;">
+          <div class="logo-icon"><i class="fas fa-shield-alt" style="color:white;font-size:18px;"></i></div>
+          <div>
+            <div style="font-weight:900;color:white;font-size:16px;">IMS QHSE</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.4);">نظام الامتثال المتكامل</div>
+          </div>
+        </div>
+        <p>المنصة الأولى عربياً لإدارة معايير ISO بشكل متكامل وذكي. من التفتيش إلى التقارير — كل شيء في مكان واحد.</p>
+      </div>
+      <div class="footer-col">
+        <h4>المنتج</h4>
+        <a href="#features">المميزات</a>
+        <a href="#pricing">الأسعار</a>
+        <a href="#compare">المقارنة</a>
+        <a href="ims_mobile_login.html">تطبيق الجوال</a>
+      </div>
+      <div class="footer-col">
+        <h4>الموارد</h4>
+        <a href="#">الوثائق</a>
+        <a href="#">دليل البدء السريع</a>
+        <a href="#">مدونة ISO</a>
+        <a href="#">الأسئلة الشائعة</a>
+      </div>
+      <div class="footer-col">
+        <h4>الشركة</h4>
+        <a href="#">من نحن</a>
+        <a href="#">تواصل معنا</a>
+        <a href="#">سياسة الخصوصية</a>
+        <a href="#">الشروط والأحكام</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 IMS QHSE. جميع الحقوق محفوظة.</p>
+      <div style="display:flex;gap:16px;">
+        <a href="#" style="color:rgba(255,255,255,.3);font-size:16px;"><i class="fab fa-twitter"></i></a>
+        <a href="#" style="color:rgba(255,255,255,.3);font-size:16px;"><i class="fab fa-linkedin"></i></a>
+        <a href="#" style="color:rgba(255,255,255,.3);font-size:16px;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════ LOGIN MODAL ═══════ -->
+<div class="modal-overlay" id="login-overlay" onclick="if(event.target===this)closeLogin()">
+  <div class="login-modal">
+    <div class="login-header">
+      <div class="nav-logo">
+        <div class="logo-icon"><i class="fas fa-shield-alt" style="color:white;font-size:16px;"></i></div>
+        <div>
+          <div style="font-weight:900;color:white;font-size:15px;">IMS QHSE</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);">بوابة الشركات</div>
+        </div>
+        <button onclick="closeLogin()" style="margin-right:auto;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:18px;"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="login-tabs">
+        <button class="login-tab active" id="tab-login"    onclick="switchTab('login')">تسجيل الدخول</button>
+        <button class="login-tab"         id="tab-register" onclick="switchTab('register')">حساب جديد</button>
+      </div>
+    </div>
+    <div class="login-body">
+
+      <!-- Login Form -->
+      <div id="form-login">
+        <div id="err-login" class="error-msg"></div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="login-email" placeholder="company@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="login-pass" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <a href="#" style="font-size:12px;color:#3b82f6;font-weight:600;">نسيت كلمة المرور؟</a>
+        </div>
+        <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt" style="margin-left:8px;"></i>دخول</button>
+        <div style="margin-top:14px;padding:12px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;">
+          <div style="font-size:11px;color:#059669;font-weight:700;margin-bottom:6px;"><i class="fas fa-info-circle ml-1"></i>بيانات تجريبية</div>
+          <div style="font-size:11px;color:#334155;line-height:1.6;">
+            admin@ims-qhse.com / أي كلمة مرور<br>
+            manager@ims-qhse.com / أي كلمة مرور
+          </div>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="form-register" style="display:none;">
+        <div id="err-register" class="error-msg"></div>
+        <div id="suc-register" class="success-msg"></div>
+        <div class="form-group">
+          <label>اسم الشركة</label>
+          <input type="text" id="reg-company" placeholder="شركة الامتثال للخدمات الصناعية"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label>الاسم الكامل</label>
+            <input type="text" id="reg-name" placeholder="أحمد العمري"/>
+          </div>
+          <div class="form-group">
+            <label>رقم الجوال</label>
+            <input type="tel" id="reg-phone" placeholder="+966 5x xxx xxxx"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="reg-email" placeholder="admin@company.com"/>
+        </div>
+        <div class="form-group">
+          <label>الباقة</label>
+          <select id="reg-plan">
+            <option value="trial">تجربة مجانية 14 يوماً</option>
+            <option value="starter">المبتدئ — 299 ر.س/شهر</option>
+            <option value="professional">الاحترافي — 799 ر.س/شهر</option>
+            <option value="enterprise">المؤسسي — 1,999 ر.س/شهر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="reg-pass" placeholder="8 أحرف على الأقل"/>
+        </div>
+        <button class="btn-login" onclick="doRegister()" style="background:linear-gradient(135deg,#059669,#34d399);">
+          <i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً
+        </button>
+        <div class="login-footer-txt">بالتسجيل توافق على <a href="#">الشروط والأحكام</a> و<a href="#">سياسة الخصوصية</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Billing Toggle ──
+function setBilling(type) {
+  const prices = { starter: [299, 2990], pro: [799, 7990], ent: [1999, 19990] };
+  const isYear = type === 'yearly';
+  document.getElementById('price-starter').textContent = isYear ? (2990/12).toFixed(0) : 299;
+  document.getElementById('price-pro').textContent     = isYear ? (7990/12).toFixed(0) : 799;
+  document.getElementById('price-ent').textContent     = isYear ? (19990/12).toFixed(0) : '1,999';
+  ['starter','pro','ent'].forEach(k => {
+    document.getElementById('yearly-'+k).style.display = isYear ? 'block' : 'none';
+  });
+  document.getElementById('bill-monthly').style.background = isYear ? 'transparent' : '#1e40af';
+  document.getElementById('bill-monthly').style.color      = isYear ? '#64748b' : 'white';
+  document.getElementById('bill-yearly').style.background  = isYear ? '#1e40af' : 'transparent';
+  document.getElementById('bill-yearly').style.color       = isYear ? 'white' : '#64748b';
+}
+
+// ── Modal ──
+function openLogin(tab) {
+  document.getElementById('login-overlay').classList.add('open');
+  switchTab(tab || 'login');
+}
+function closeLogin() {
+  document.getElementById('login-overlay').classList.remove('open');
+}
+function switchTab(tab) {
+  document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',    tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+}
+
+// ── Login ──
+function doLogin() {
+  const email   = document.getElementById('login-email').value.trim();
+  const pass    = document.getElementById('login-pass').value;
+  const err     = document.getElementById('err-login');
+  const btn     = document.querySelector('#form-login .btn-login');
+  if (!email || !pass) { showErr(err,'يرجى تعبئة جميع الحقول'); return; }
+
+  // Demo: accept any email ending with registered domains
+  const validEmails = ['admin@ims-qhse.com','manager@ims-qhse.com','engineer@ims-qhse.com','auditor@ims-qhse.com'];
+  if (!validEmails.includes(email)) { showErr(err,'البريد الإلكتروني غير مسجل في النظام'); return; }
+
+  err.style.display = 'none';
+  btn.innerHTML  = '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none"/><path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>جاري التحقق...</span>';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    localStorage.setItem('ims_token', 'demo-token');
+    localStorage.setItem('ims_user_email', email);
+    btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم الدخول! جاري التحويل...';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    setTimeout(() => { window.location.href = 'ims_qhse_integrated.html'; }, 700);
+  }, 1000);
+}
+
+// ── Register ──
+function doRegister() {
+  const company = document.getElementById('reg-company').value.trim();
+  const name    = document.getElementById('reg-name').value.trim();
+  const email   = document.getElementById('reg-email').value.trim();
+  const pass    = document.getElementById('reg-pass').value;
+  const err     = document.getElementById('err-register');
+  const suc     = document.getElementById('suc-register');
+  const btn     = document.querySelector('#form-register .btn-login');
+
+  if (!company || !name || !email || !pass) { showErr(err,'يرجى تعبئة جميع الحقول المطلوبة'); return; }
+  if (!email.includes('@')) { showErr(err,'يرجى إدخال بريد إلكتروني صحيح'); return; }
+  if (pass.length < 8) { showErr(err,'كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
+
+  err.style.display = 'none';
+  btn.innerHTML = '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none"/><path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>جاري إنشاء الحساب...</span>';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    suc.style.display = 'block';
+    suc.innerHTML = `✅ مرحباً <strong>${name}</strong>! تم إنشاء حساب <strong>${company}</strong> بنجاح. جاري تحضير لوحة التحكم...`;
+    btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم! جاري التحويل...';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    localStorage.setItem('ims_token', 'demo-token');
+    localStorage.setItem('ims_user_email', email);
+    localStorage.setItem('ims_company', company);
+    setTimeout(() => { window.location.href = 'ims_qhse_integrated.html'; }, 1500);
+  }, 1200);
+}
+
+function showErr(el, msg) {
+  el.textContent   = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ── Smooth scroll ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) { e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+// ── Navbar scroll effect ──
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  nav.style.background = window.scrollY > 20
+    ? 'rgba(15,23,42,0.98)'
+    : 'rgba(15,23,42,0.95)';
+});
+</script>
+</body>
+</html>

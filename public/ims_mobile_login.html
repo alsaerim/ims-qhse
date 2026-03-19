@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="IMS QHSE"/>
+<meta name="theme-color" content="#1e40af"/>
+<title>IMS QHSE — دخول التطبيق</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',sans-serif;-webkit-tap-highlight-color:transparent;}
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
+
+body{
+  min-height:100dvh;
+  background:linear-gradient(160deg,#0f172a 0%,#1e3a8a 55%,#312e81 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 20px);
+  overflow-x:hidden;
+}
+
+/* ── Background pattern ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+/* ── Card ── */
+.card{
+  width:100%;max-width:380px;
+  background:rgba(255,255,255,.96);
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.4);
+  position:relative;z-index:1;
+}
+
+/* ── Header ── */
+.card-header{
+  background:linear-gradient(135deg,#1e40af,#4f46e5);
+  padding:32px 28px 28px;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.card-header::before{
+  content:'';position:absolute;top:-30px;left:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.card-header::after{
+  content:'';position:absolute;bottom:-20px;right:-20px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.app-icon{
+  width:72px;height:72px;border-radius:22px;
+  background:rgba(255,255,255,.2);
+  border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;position:relative;z-index:1;
+  box-shadow:0 8px 24px rgba(0,0,0,.2);
+}
+.app-icon i{font-size:30px;color:white;}
+.card-header h1{font-size:22px;font-weight:900;color:white;margin-bottom:4px;position:relative;z-index:1;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.65);position:relative;z-index:1;}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.15);border-radius:12px;padding:4px;margin-top:18px;position:relative;z-index:1;}
+.tab-btn{flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:transparent;color:rgba(255,255,255,.65);transition:all .2s;font-family:'Tajawal',sans-serif;}
+.tab-btn.active{background:white;color:#1e40af;}
+
+/* ── Body ── */
+.card-body{padding:24px 24px 28px;}
+
+/* ── Form ── */
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:5px;}
+.input-wrap{position:relative;}
+.input-wrap i{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:14px;pointer-events:none;}
+.form-input{
+  width:100%;padding:12px 38px 12px 14px;
+  border:1.5px solid #e2e8f0;border-radius:12px;
+  font-size:14px;font-family:'Tajawal',sans-serif;
+  transition:all .2s;outline:none;background:white;
+  color:#1e293b;
+}
+.form-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+
+/* ── Button ── */
+.btn-login{
+  width:100%;padding:14px;margin-top:4px;
+  background:linear-gradient(135deg,#1e40af,#4f46e5);
+  color:white;border:none;border-radius:14px;
+  font-size:15px;font-weight:800;cursor:pointer;
+  font-family:'Tajawal',sans-serif;
+  transition:all .2s;
+  box-shadow:0 6px 20px rgba(30,64,175,.35);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login:active{transform:scale(.97);}
+
+/* ── Error/Success ── */
+.alert{padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:12px;display:none;font-weight:600;}
+.alert-error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+.alert-success{background:#f0fdf4;color:#059669;border:1px solid #bbf7d0;}
+
+/* ── Demo hint ── */
+.demo-hint{
+  margin-top:14px;padding:12px 14px;
+  background:#f8fafc;border-radius:12px;
+  border:1px solid #e2e8f0;
+}
+.demo-hint-title{font-size:11px;font-weight:800;color:#64748b;margin-bottom:6px;}
+.demo-user{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px;background:white;border-radius:9px;
+  border:1px solid #e2e8f0;margin-bottom:5px;cursor:pointer;
+  transition:border-color .15s;
+}
+.demo-user:hover{border-color:#3b82f6;}
+.demo-user:last-child{margin-bottom:0;}
+.demo-user-info{flex:1;}
+.demo-user-name{font-size:12px;font-weight:700;color:#1e293b;}
+.demo-user-role{font-size:10px;color:#94a3b8;}
+.demo-user-email{font-size:10px;color:#3b82f6;direction:ltr;text-align:left;}
+.user-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0;margin-left:8px;}
+
+/* ── Register fields ── */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.role-chip{
+  padding:10px 8px;border-radius:10px;border:1.5px solid #e2e8f0;
+  text-align:center;cursor:pointer;transition:all .15s;
+  font-size:12px;font-weight:600;color:#64748b;
+}
+.role-chip.selected{border-color:#1e40af;background:#eff6ff;color:#1e40af;}
+.role-chip i{display:block;font-size:18px;margin-bottom:4px;}
+
+/* ── Footer ── */
+.page-footer{
+  margin-top:20px;text-align:center;
+  font-size:11px;color:rgba(255,255,255,.35);
+  position:relative;z-index:1;
+}
+.page-footer a{color:rgba(255,255,255,.55);font-weight:600;}
+
+/* ── Loading spinner ── */
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp .4s ease;}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<div class="card">
+  <!-- Header -->
+  <div class="card-header">
+    <div class="app-icon"><i class="fas fa-shield-alt"></i></div>
+    <h1>IMS QHSE</h1>
+    <p>تطبيق الميدان · Field Inspection App</p>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-login"    onclick="switchTab('login')">دخول الأعضاء</button>
+      <button class="tab-btn"         id="tab-register" onclick="switchTab('register')">انضم للفريق</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="card-body">
+
+    <!-- ── LOGIN ── -->
+    <div id="form-login">
+      <div class="alert alert-error" id="err-login"></div>
+
+      <div class="form-group">
+        <label>البريد الإلكتروني أو اسم المستخدم</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope"></i>
+          <input class="form-input" type="email" id="login-email" placeholder="engineer@company.com"
+            inputmode="email" autocomplete="email"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock" id="pass-icon" style="cursor:pointer;" onclick="togglePass()"></i>
+          <input class="form-input" type="password" id="login-pass" placeholder="••••••••"
+            autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')doMobileLogin()"/>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#64748b;">
+          <input type="checkbox" id="remember-me" style="width:14px;height:14px;accent-color:#1e40af;"/>
+          تذكرني
+        </label>
+        <a href="#" style="font-size:12px;color:#3b82f6;font-weight:600;">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button class="btn-login" id="login-btn" onclick="doMobileLogin()">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>دخول</span>
+      </button>
+
+      <!-- Demo Users -->
+      <div class="demo-hint">
+        <div class="demo-hint-title"><i class="fas fa-users" style="margin-left:4px;"></i>حسابات تجريبية — انقر للدخول السريع</div>
+        <div class="demo-user" onclick="quickLogin('engineer@ims-qhse.com','محمد الزهراني')">
+          <div class="user-avatar" style="background:#059669;">مح</div>
+          <div class="demo-user-info">
+            <div class="demo-user-name">محمد الزهراني</div>
+            <div class="demo-user-role">مهندس عمليات</div>
+          </div>
+          <div class="demo-user-email">engineer@ims-qhse.com</div>
+        </div>
+        <div class="demo-user" onclick="quickLogin('auditor@ims-qhse.com','سارة القحطاني')">
+          <div class="user-avatar" style="background:#d97706;">سا</div>
+          <div class="demo-user-info">
+            <div class="demo-user-name">سارة القحطاني</div>
+            <div class="demo-user-role">مدقق جودة</div>
+          </div>
+          <div class="demo-user-email">auditor@ims-qhse.com</div>
+        </div>
+        <div class="demo-user" onclick="quickLogin('engineer2@ims-qhse.com','فهد الدوسري')">
+          <div class="user-avatar" style="background:#dc2626;">فه</div>
+          <div class="demo-user-info">
+            <div class="demo-user-name">فهد الدوسري</div>
+            <div class="demo-user-role">مهندس سلامة</div>
+          </div>
+          <div class="demo-user-email">engineer2@ims-qhse.com</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REGISTER ── -->
+    <div id="form-register" style="display:none;">
+      <div class="alert alert-error"   id="err-register"></div>
+      <div class="alert alert-success" id="suc-register"></div>
+
+      <div class="form-group">
+        <label>الاسم الكامل</label>
+        <div class="input-wrap">
+          <i class="fas fa-user"></i>
+          <input class="form-input" type="text" id="reg-name" placeholder="محمد الزهراني"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope"></i>
+          <input class="form-input" type="email" id="reg-email" placeholder="mohammed@company.com" inputmode="email"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>الدور الوظيفي</label>
+        <div class="role-grid" id="role-grid">
+          <div class="role-chip selected" data-role="engineer" onclick="selectRole(this)"><i class="fas fa-hard-hat"></i>مهندس</div>
+          <div class="role-chip" data-role="auditor"  onclick="selectRole(this)"><i class="fas fa-search"></i>مدقق</div>
+          <div class="role-chip" data-role="manager"  onclick="selectRole(this)"><i class="fas fa-user-tie"></i>مدير</div>
+          <div class="role-chip" data-role="inspector" onclick="selectRole(this)"><i class="fas fa-clipboard-check"></i>مفتش</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>رمز الشركة</label>
+        <div class="input-wrap">
+          <i class="fas fa-building"></i>
+          <input class="form-input" type="text" id="reg-code" placeholder="IMS-2026-XXX (احصل عليه من مدير النظام)"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock"></i>
+          <input class="form-input" type="password" id="reg-pass" placeholder="8 أحرف على الأقل"/>
+        </div>
+      </div>
+
+      <button class="btn-login" id="reg-btn" onclick="doMobileRegister()" style="background:linear-gradient(135deg,#059669,#10b981);">
+        <i class="fas fa-user-plus"></i>
+        <span>انضم للفريق</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="page-footer">
+  <div style="margin-bottom:6px;">
+    <a href="ims_landing.html">الصفحة الرئيسية</a> ·
+    <a href="#">الدعم الفني</a> ·
+    <a href="#">الخصوصية</a>
+  </div>
+  <div>© 2026 IMS QHSE · نسخة الجوال 2.4.1</div>
+</div>
+
+<script>
+// ── Tab switch ──
+function switchTab(tab) {
+  document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',    tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+}
+
+// ── Role select ──
+function selectRole(el) {
+  document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── Toggle password ──
+let passVisible = false;
+function togglePass() {
+  passVisible = !passVisible;
+  const inp  = document.getElementById('login-pass');
+  const icon = document.getElementById('pass-icon');
+  inp.type   = passVisible ? 'text' : 'password';
+  icon.className = passVisible ? 'fas fa-eye-slash' : 'fas fa-lock';
+}
+
+// ── Quick login from demo ──
+function quickLogin(email, name) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-pass').value  = 'demo123';
+  doMobileLogin();
+}
+
+// ── Login ──
+function doMobileLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('err-login');
+  const btn   = document.getElementById('login-btn');
+
+  if (!email || !pass) { showAlert(err,'يرجى تعبئة جميع الحقول'); return; }
+
+  const validUsers = [
+    'admin@ims-qhse.com','manager@ims-qhse.com',
+    'engineer@ims-qhse.com','auditor@ims-qhse.com','engineer2@ims-qhse.com'
+  ];
+
+  if (!validUsers.includes(email)) { showAlert(err,'البريد الإلكتروني غير مسجل'); return; }
+
+  // Loading state
+  err.style.display = 'none';
+  btn.innerHTML = '<div class="spinner"></div><span>جاري التحقق...</span>';
+  btn.disabled  = true;
+
+  setTimeout(() => {
+    localStorage.setItem('ims_token','demo-token');
+    localStorage.setItem('ims_mobile_user', email);
+    btn.innerHTML = '<i class="fas fa-check-circle"></i><span>تم الدخول!</span>';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    setTimeout(() => { window.location.href = 'ims_mobile.html'; }, 700);
+  }, 1200);
+}
+
+// ── Register ──
+function doMobileRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const code  = document.getElementById('reg-code').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const role  = document.querySelector('.role-chip.selected')?.dataset?.role || 'engineer';
+  const err   = document.getElementById('err-register');
+  const suc   = document.getElementById('suc-register');
+  const btn   = document.getElementById('reg-btn');
+
+  if (!name || !email || !pass) { showAlert(err,'يرجى تعبئة الحقول المطلوبة'); return; }
+  if (pass.length < 8) { showAlert(err,'كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
+
+  err.style.display = 'none';
+  btn.innerHTML = '<div class="spinner"></div><span>جاري الإنشاء...</span>';
+  btn.disabled  = true;
+
+  setTimeout(() => {
+    btn.disabled  = false;
+    btn.innerHTML = '<i class="fas fa-user-plus"></i><span>انضم للفريق</span>';
+    suc.style.display = 'block';
+    suc.textContent   = `✅ تم إنشاء حسابك يا ${name.split(' ')[0]}! في انتظار موافقة المدير.`;
+    document.getElementById('reg-name').value  = '';
+    document.getElementById('reg-email').value = '';
+    document.getElementById('reg-pass').value  = '';
+    document.getElementById('reg-code').value  = '';
+  }, 1400);
+}
+
+function showAlert(el, msg) {
+  el.textContent   = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── Auto-restore session ──
+if (localStorage.getItem('ims_token') && localStorage.getItem('ims_mobile_user')) {
+  window.location.href = 'ims_mobile.html';
+}
+</script>
+</body>
+</html>
