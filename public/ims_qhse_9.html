@@ -862,7 +862,7 @@
 
   // ── Intercept fetch ──
   window.fetch = async function(url, opts = {}) {
-    if (typeof url === 'string' && url.includes('/api/') && !url.includes('railway.app')) {
+    if (typeof url === 'string' && url.includes('/api/')) {
       // Store auth header for /api/auth/me
       const auth = opts.headers?.Authorization || opts.headers?.['Authorization'] || '';
       if (auth) window._mockLastAuthHeader = auth;
@@ -974,7 +974,7 @@
     <div class="nav-item" onclick="navigate('subscription')">
       <i class="fas fa-crown w-4"></i><span class="sidebar-label">الاشتراكات والفواتير</span>
     </div>
-    <div class="nav-item" onclick="location.href='https://ims-qhse-production.up.railway.app/ims_mobile.html'" title="فتح تطبيق الجوال">
+    <div class="nav-item" onclick="location.href='/mobile'" title="فتح تطبيق الجوال">
       <i class="fas fa-mobile-alt w-4"></i><span class="sidebar-label">تطبيق الجوال</span>
       <i class="fas fa-external-link-alt text-xs mr-auto opacity-50 sidebar-label"></i>
     </div>
@@ -9350,7 +9350,7 @@ async function logout() {
   localStorage.removeItem('ims_mobile_user');
   state.currentUser = null;
   showToast('تم تسجيل الخروج بنجاح', 'info');
-  setTimeout(() => { window.location.href = 'ims_landing.html'; }, 1000);
+  setTimeout(() => { window.location.href = '/'; }, 1000);
 }
 
 // ── Users Management ──────────────────────────
