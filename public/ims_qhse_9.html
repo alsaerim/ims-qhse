@@ -9487,8 +9487,8 @@ async function loadUsers() {
 }
 
 function renderUsersTable(usersArr) {
-  const roleAr = {admin:'مدير النظام',manager:'مدير المشروع',engineer:'مهندس',auditor:'مراجع',viewer:'مشاهد'};
-  const roleColor = {admin:'badge-red',manager:'badge-blue',engineer:'badge-green',auditor:'badge-yellow',viewer:'badge-gray'};
+  const roleAr = {ADMIN:'مدير النظام',TENANT_ADMIN:'مدير النظام',MANAGER:'مدير المشروع',ENGINEER:'مهندس',AUDITOR:'مراجع',VIEWER:'مشاهد',admin:'مدير النظام',manager:'مدير المشروع',engineer:'مهندس',auditor:'مراجع',viewer:'مشاهد'};
+  const roleColor = {ADMIN:'badge-red',TENANT_ADMIN:'badge-red',MANAGER:'badge-blue',ENGINEER:'badge-green',AUDITOR:'badge-yellow',VIEWER:'badge-gray',admin:'badge-red',manager:'badge-blue',engineer:'badge-green',auditor:'badge-yellow',viewer:'badge-gray'};
   if (!usersArr.length) return '<div class="p-10 text-center text-slate-400"><i class="fas fa-users text-4xl mb-3 block"></i>لا يوجد مستخدمون</div>';
   return `
   <table class="w-full text-sm">
@@ -9524,8 +9524,8 @@ function renderUsersTable(usersArr) {
         <td class="p-4 text-slate-500 text-xs">${u.department || '-'}</td>
         <td class="p-4 text-xs text-slate-400">${u.last_login ? timeAgo(u.last_login) : 'لم يسجل دخول'}</td>
         <td class="p-4">
-          <span class="badge ${u.is_active ? 'badge-green' : 'badge-red'}">
-            ${u.is_active ? 'نشط' : 'معطّل'}
+          <span class="badge ${u.status === 'ACTIVE' ? 'badge-green' : 'badge-red'}">
+            ${u.status === 'ACTIVE' ? 'نشط' : 'معطّل'}
           </span>
         </td>
         <td class="p-4">
