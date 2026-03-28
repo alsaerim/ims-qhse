@@ -4941,9 +4941,12 @@ function submitGapAssessment(stdId, stdCode, stdColor) {
 }
 
 async function loadOrganization() {
-  const [org, standards] = await Promise.all([
+  const [_orgRes, _stdRes] = await Promise.all([
     apiFetch('/api/org/profile'),
     apiFetch('/api/org/iso/standards')
+  ]);
+  const org = Array.isArray(_orgRes) ? _orgRes : (_orgRes?.data || _orgRes || {});
+  const standards = Array.isArray(_stdRes) ? _stdRes : (_stdRes?.data || _stdRes || []);
   ]);
 
   const stdColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
