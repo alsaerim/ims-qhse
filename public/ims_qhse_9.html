@@ -862,7 +862,7 @@
 
   // ── Intercept fetch ──
   window.fetch = async function(url, opts = {}) {
-    if (typeof url === 'string' && url.includes('/api/')) {
+    if (typeof url === 'string' && url.includes('/api/') && !url.includes('railway.app')) {
       // Store auth header for /api/auth/me
       const auth = opts.headers?.Authorization || opts.headers?.['Authorization'] || '';
       if (auth) window._mockLastAuthHeader = auth;
