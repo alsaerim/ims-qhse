@@ -9305,7 +9305,11 @@ async function apiFetch(url, method = 'GET', body = null) {
     try { const errData = await res.json(); errMsg = errData.error || errMsg; } catch {}
     throw new Error(errMsg);
   }
-  return res.json();
+  const json = await res.json();
+  if (isReal && json && json.success !== undefined) {
+    return json.data !== undefined ? json.data : json;
+  }
+  return json;
 }
 
 // ── Helpers ───────────────────────────────────
