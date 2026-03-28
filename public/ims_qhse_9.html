@@ -9368,7 +9368,8 @@ async function logout() {
 
 // ── Users Management ──────────────────────────
 async function loadUsers() {
-  const data = await apiFetch('/api/users');
+  const _usersRes = await apiFetch('/api/users');
+const data = { data: Array.isArray(_usersRes) ? _usersRes : (_usersRes.data || []) };
   const roleAr = {admin:'مدير النظام',manager:'مدير المشروع',engineer:'مهندس',auditor:'مراجع',viewer:'مشاهد'};
   const roleColor = {admin:'badge-red',manager:'badge-blue',engineer:'badge-green',auditor:'badge-yellow',viewer:'badge-gray'};
 
@@ -9562,15 +9563,15 @@ async function loadUserRoleStats() {
 }
 
 async function searchUsers(val) {
-  const data = await apiFetch(`/api/users?search=${encodeURIComponent(val)}`);
+  const _sRes = await apiFetch(`/api/users?search=${encodeURIComponent(val)}`);
   const wrap = document.getElementById('users-table-wrap');
-  if (wrap) wrap.innerHTML = renderUsersTable(data.data || []);
+  if (wrap) wrap.innerHTML = renderUsersTable(Array.isArray(_sRes) ? _sRes : (_sRes.data || []));
 }
 
 async function filterUserRole(role) {
-  const data = await apiFetch(`/api/users${role ? '?role='+role : ''}`);
+  const _rRes = await apiFetch(`/api/users${role ? '?role='+role : ''}`);
   const wrap = document.getElementById('users-table-wrap');
-  if (wrap) wrap.innerHTML = renderUsersTable(data.data || []);
+  if (wrap) wrap.innerHTML = renderUsersTable(Array.isArray(_rRes) ? _rRes : (_rRes.data || []));
 }
 
 let _pendingAvatar = null;
