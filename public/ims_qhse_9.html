@@ -9285,12 +9285,21 @@ async function submitInspection(e) {
 // ── API Helper ────────────────────────────────
 async function apiFetch(url, method = 'GET', body = null) {
   const token = localStorage.getItem('ims_token') || 'demo-token';
+  const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org'];
+  const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
+  let fullUrl;
+  if (isReal) {
+    const path = url.replace('/api/', '/');
+    fullUrl = 'https://ims-qhse-backend-production.up.railway.app/api/v1' + path;
+  } else {
+    fullUrl = url;
+  }
   const opts = {
     method,
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
   };
   if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(API + url, opts);
+  const res = await fetch(fullUrl, opts);
   if (!res.ok) {
     let errMsg = 'خطأ ' + res.status;
     try { const errData = await res.json(); errMsg = errData.error || errMsg; } catch {}
