@@ -4303,7 +4303,6 @@ function orgNodeSave(nodeId) {
   n.icon   = document.getElementById('on-icon-val')?.value     || n.icon;
   document.getElementById('org-node-modal')?.remove();
   orgChartRefresh();
-  saveOrgSettings();
   showToast('✅ تم حفظ العقدة', 'success');
 }
 
@@ -4325,7 +4324,6 @@ function orgNodeDelete(nodeId) {
   }
   removeWithChildren(nodeId);
   orgChartRefresh();
-  saveOrgSettings();
   showToast('تم الحذف', 'error');
 }
 
@@ -4550,7 +4548,6 @@ function orgSavePolicyEdit(sid) {
   tmp.innerHTML = orgPolicyCard(newData);
   const newCard = tmp.firstElementChild;
   card.replaceWith(newCard);
-  saveOrgSettings();
   showToast('✅ تم حفظ السياسة', 'success');
 }
 
@@ -7150,21 +7147,6 @@ function submitRisk(id) {
     window.MOCK_DB.risks.unshift({id:'risk-'+Date.now(), ...obj});
   }
   // Save to real backend
-  const riskApiBody = {
-    title: obj.title,
-    category: obj.category,
-    iso_standard: obj.iso,
-    probability: obj.probability,
-    impact: obj.impact,
-    status: obj.status || 'open',
-    owner: obj.owner,
-    mitigation: obj.mitigation,
-  };
-  if (id) {
-    apiFetch(`/api/risks/${id}`, 'PUT', riskApiBody).catch(e => console.error(e));
-  } else {
-    apiFetch('/api/risks', 'POST', riskApiBody).catch(e => console.error(e));
-  }
   const riskApiBody = {
     title: obj.title,
     category: obj.category,
