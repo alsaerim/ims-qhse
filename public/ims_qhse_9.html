@@ -4303,6 +4303,7 @@ function orgNodeSave(nodeId) {
   n.icon   = document.getElementById('on-icon-val')?.value     || n.icon;
   document.getElementById('org-node-modal')?.remove();
   orgChartRefresh();
+  saveOrgSettings();
   showToast('✅ تم حفظ العقدة', 'success');
 }
 
@@ -4324,6 +4325,7 @@ function orgNodeDelete(nodeId) {
   }
   removeWithChildren(nodeId);
   orgChartRefresh();
+  saveOrgSettings();
   showToast('تم الحذف', 'error');
 }
 
@@ -4548,6 +4550,7 @@ function orgSavePolicyEdit(sid) {
   tmp.innerHTML = orgPolicyCard(newData);
   const newCard = tmp.firstElementChild;
   card.replaceWith(newCard);
+  saveOrgSettings();
   showToast('✅ تم حفظ السياسة', 'success');
 }
 
@@ -4556,10 +4559,13 @@ function orgAddPolicy() {
   if (!list) return;
   const newP = { title:'سياسة جديدة', iso:'ISO 9001', date:new Date().toISOString().slice(0,10),
     owner:'—', status:'مسودة', color:'#64748b', icon:'fa-file-contract', text:'أدخل نص السياسة هنا...' };
+  if (!window._orgPolicies) window._orgPolicies = [];
+  window._orgPolicies.unshift(newP);
   const tmp = document.createElement('div');
   tmp.innerHTML = orgPolicyCard(newP);
   list.prepend(tmp.firstElementChild);
   const sid = list.firstElementChild?.id;
+  saveOrgSettings();
   if (sid) setTimeout(() => orgEditPolicy(sid), 80);
 }
 
@@ -7135,6 +7141,38 @@ function submitRisk(id) {
   } else {
     window.MOCK_DB.risks.unshift({id:'risk-'+Date.now(), ...obj});
   }
+  // Save to real backend
+  const apiBody = {
+    title: obj.title,
+    category: obj.category,
+    iso_standard: obj.iso,
+    probability: obj.probability,
+    impact: obj.impact,
+    status: obj.status || 'open',
+    owner: obj.owner,
+    mitigation: obj.mitigation,
+  };
+  if (id) {
+    apiFetch(`/api/risks/${id}`, 'PUT', apiBody).catch(e => console.error(e));
+  } else {
+    apiFetch('/api/risks', 'POST', apiBody).catch(e => console.error(e));
+  }
+  // Save to real backend
+  const apiBody = {
+    title: obj.title,
+    category: obj.category,
+    iso_standard: obj.iso,
+    probability: obj.probability,
+    impact: obj.impact,
+    status: obj.status || 'open',
+    owner: obj.owner,
+    mitigation: obj.mitigation,
+  };
+  if (id) {
+    apiFetch(`/api/risks/${id}`, 'PUT', apiBody).catch(e => console.error(e));
+  } else {
+    apiFetch('/api/risks', 'POST', apiBody).catch(e => console.error(e));
+  }
   document.getElementById('modal-risk')?.remove();
   showToast('✅ تم حفظ المخاطرة','success');
   renderRisks(); renderRiskMatrix();
@@ -9282,6 +9320,20 @@ async function submitInspection(e) {
 }
 
 // ── API Helper ────────────────────────────────
+// ── Auto Save Org Data ──────────────────────
+async function saveOrgSettings(extraData = {}) {
+  try {
+    await apiFetch('/api/org/profile', 'PUT', {
+      ...extraData,
+      org_chart:       window._orgNodes,
+      policies:        window._orgPolicies || [],
+      comparison_rows: window._comparisonRows || [],
+    });
+  } catch(e) {
+    console.error('Failed to save org data:', e);
+  }
+}
+
 async function apiFetch(url, method = 'GET', body = null) {
   const token = localStorage.getItem('ims_token') || 'demo-token';
   const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org'];
