@@ -4945,6 +4945,17 @@ async function loadOrganization() {
   const org = _o || {};
   const standards = org.iso_standards || [];
 
+  // Load saved data from backend into memory
+  if (org.org_chart && org.org_chart.length > 0) {
+    window._orgNodes = org.org_chart;
+  }
+  if (org.policies && org.policies.length > 0) {
+    window._orgPolicies = org.policies;
+  }
+  if (org.comparison_rows && org.comparison_rows.length > 0) {
+    window._comparisonRows = org.comparison_rows;
+  }
+
   const stdColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
   const stdIcons  = {ISO_9001:'award',ISO_45001:'hard-hat',ISO_14001:'leaf',ISO_27001:'shield-alt'};
   const objStatus = {good:'badge-green',in_progress:'badge-blue',warning:'badge-yellow',critical:'badge-red'};
