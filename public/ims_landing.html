@@ -911,20 +911,36 @@ function doLogin() {
   if (!email || !pass) { showErr(err,'يرجى تعبئة جميع الحقول'); return; }
 
   // Demo: accept any email ending with registered domains
-  const validEmails = ['admin@ims-qhse.com','manager@ims-qhse.com','engineer@ims-qhse.com','auditor@ims-qhse.com'];
-  if (!validEmails.includes(email)) { showErr(err,'البريد الإلكتروني غير مسجل في النظام'); return; }
+  
 
   err.style.display = 'none';
   btn.innerHTML  = '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none"/><path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>جاري التحقق...</span>';
   btn.disabled = true;
 
-  setTimeout(() => {
-    localStorage.setItem('ims_token', 'demo-token');
-    localStorage.setItem('ims_user_email', email);
-    btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم الدخول! جاري التحويل...';
-    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
-    setTimeout(() => { window.location.href = 'ims_qhse_integrated.html'; }, 700);
-  }, 1000);
+  fetch('https://ims-qhse-backend-production.up.railway.app/api/v1/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: pass })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.success && res.data && res.data.access_token) {
+      localStorage.setItem('ims_token', res.data.access_token);
+      localStorage.setItem('ims_user_email', email);
+      btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم الدخول! جاري التحويل...';
+      btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+      setTimeout(() => { window.location.href = '/dashboard'; }, 700);
+    } else {
+      btn.innerHTML = 'دخول';
+      btn.disabled = false;
+      showErr(err, res.data?.message || 'بيانات الدخول غير صحيحة');
+    }
+  })
+  .catch(() => {
+    btn.innerHTML = 'دخول';
+    btn.disabled = false;
+    showErr(err, 'خطأ في الاتصال بالخادم');
+  });
 }
 
 // ── Register ──
