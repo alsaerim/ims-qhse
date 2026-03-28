@@ -7135,6 +7135,22 @@ function submitRisk(id) {
   } else {
     window.MOCK_DB.risks.unshift({id:'risk-'+Date.now(), ...obj});
   }
+  // Save to real backend
+  const riskApiBody = {
+    title: obj.title,
+    category: obj.category,
+    iso_standard: obj.iso,
+    probability: obj.probability,
+    impact: obj.impact,
+    status: obj.status || 'open',
+    owner: obj.owner,
+    mitigation: obj.mitigation,
+  };
+  if (id) {
+    apiFetch(`/api/risks/${id}`, 'PUT', riskApiBody).catch(e => console.error(e));
+  } else {
+    apiFetch('/api/risks', 'POST', riskApiBody).catch(e => console.error(e));
+  }
   document.getElementById('modal-risk')?.remove();
   showToast('✅ تم حفظ المخاطرة','success');
   renderRisks(); renderRiskMatrix();
