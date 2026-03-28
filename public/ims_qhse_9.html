@@ -5187,7 +5187,7 @@ async function loadOrganization() {
                 <!-- Procedures with edit -->
                 <div>
                   <div class="flex items-center justify-between mb-2">
-                    <div class="text-xs font-bold text-slate-700">الإجراءات المرتبطة (${std.procedures.length})</div>
+                    <div class="text-xs font-bold text-slate-700">الإجراءات المرتبطة (${(std.procedures||[]).length})</div>
                     <button onclick="openAddProcedureModal('${std.id}','${color}')"
                       class="text-xs px-2 py-1 rounded-lg font-bold flex items-center gap-1 transition-all"
                       style="background:${color}15;color:${color}">
@@ -5195,7 +5195,7 @@ async function loadOrganization() {
                     </button>
                   </div>
                   <div class="space-y-1" id="proc-list-${std.id}">
-                    ${std.procedures.map(p => {
+                    ${(std.procedures||[]).map(p => {
                       const statusMap = {active:'نشط',review:'مراجعة',draft:'مسودة',retired:'متقاعد'};
                       const badgeMap  = {active:'badge-green',review:'badge-yellow',draft:'badge-gray',retired:'badge-red'};
                       return `
