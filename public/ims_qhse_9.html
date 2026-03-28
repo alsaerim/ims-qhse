@@ -9309,6 +9309,19 @@ async function submitInspection(e) {
 }
 
 // ── API Helper ────────────────────────────────
+async function saveOrgSettings(extraData = {}) {
+  try {
+    await apiFetch('/api/org/profile', 'PUT', {
+      ...extraData,
+      org_chart:       window._orgNodes,
+      policies:        window._orgPolicies || [],
+      comparison_rows: window._comparisonRows || [],
+    });
+  } catch(e) {
+    console.error('Failed to save org data:', e);
+  }
+}
+
 async function apiFetch(url, method = 'GET', body = null) {
   const token = localStorage.getItem('ims_token') || 'demo-token';
   const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org'];
