@@ -1974,7 +1974,20 @@ function filterProjectsTable() {
 
 async function openProjectDetail(id) {
   state.currentProject = id;
-  const p = await apiFetch(`/api/projects/${id}`);
+  const _pRes = await apiFetch(`/api/projects/${id}`);
+  const p = {
+    ..._pRes,
+    name:        _pRes.metadata?.name        || _pRes.title,
+    code:        _pRes.ref_number,
+    client_name: _pRes.metadata?.client      || _pRes.metadata?.client_name,
+    city:        _pRes.metadata?.city        || _pRes.location_name,
+    description: _pRes.metadata?.description || _pRes.notes,
+    status:      (_pRes.metadata?.status     || _pRes.status || 'active').toLowerCase(),
+    start_date:  _pRes.metadata?.start_date  || _pRes.scheduled_at,
+    end_date:    _pRes.metadata?.end_date,
+    avg_compliance: _pRes.compliance_score   || 0,
+    open_ncs:    _pRes._count?.non_conformances || 0,
+  };
   const sL={active:'نشط',completed:'مكتمل',on_hold:'موقوف مؤقتاً',cancelled:'ملغى'};
   const sB={active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red'};
   const projInspections=(window._mockInspections||[]).filter(i=>i.project_id===id).slice(0,5);
