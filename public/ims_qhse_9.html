@@ -2159,7 +2159,8 @@ async function updateProjectStatus(id, newStatus) {
 
 // ── Inspections ───────────────────────────────
 async function loadInspections() {
-  const data = await apiFetch('/api/inspections');
+  const _inspRes = await apiFetch('/api/audits');
+const data = { data: (Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || [])).map(a => ({...a, ref_number: a.ref_number, title: a.title, status: a.status?.toLowerCase(), result: a.result?.toLowerCase(), compliance_score: a.compliance_score, type: a.type, location_name: a.location_name, iso_standard: a.iso_standard?.code || a.iso_standard_id, scheduled_at: a.scheduled_at, completed_at: a.completed_at, notes: a.notes, assigned_name: a.assignee?.full_name, project_name: a.project?.title})) };
 
   // Build dynamic ISO tabs from active certified standards
   const certified  = window.MOCK_DB?.org_profile?.certified_standards || [];
@@ -2206,9 +2207,10 @@ async function filterInspections(el, iso) {
     if (el) el.classList.add('active');
   }
 
-  const url = iso ? `/api/inspections?iso_standard=${iso}` : '/api/inspections';
-  const data = await apiFetch(url);
-  document.getElementById('inspections-list').innerHTML = renderInspectionsList(data.data || []);
+  const url = iso ? `/api/audits?iso_standard=${iso}` : '/api/audits';
+  const _r = await apiFetch(url);
+  const mapped = (Array.isArray(_r) ? _r : (_r?.data || [])).map(a => ({...a, status: a.status?.toLowerCase(), result: a.result?.toLowerCase(), assigned_name: a.assignee?.full_name}));
+  document.getElementById('inspections-list').innerHTML = renderInspectionsList(mapped);
 }
 
 function renderInspectionsList(items) {
@@ -2462,12 +2464,9 @@ function openInspEdit(id) {
 }
 
 async function quickUpdateInspStatus(id, status) {
-  const insps = window.MOCK_DB?.inspections || [];
-  const insp  = insps.find(x => x.id === id);
-  if (insp) {
-    insp.status = status;
-    if (status === 'completed' && !insp.completed_at) insp.completed_at = new Date().toISOString();
-  }
+  try {
+    await apiFetch(`/api/audits/${id}`, 'PUT', { status: status.toUpperCase() });
+  } catch(e) { console.error(e); }
   showToast('✅ تم تحديث الحالة: ' + inspStatusAr(status), 'success');
   document.getElementById('modal-insp-detail')?.remove();
   loadInspections();
@@ -2503,7 +2502,18 @@ async function submitInspEdit(id) {
   };
 
   try {
-    await apiFetch('/api/inspections/' + id, 'PUT', body);
+    await apiFetch('/api/audits/' + id, 'PUT', {
+      title: body.title,
+      status: body.status?.toUpperCase(),
+      result: body.result?.toUpperCase() || null,
+      compliance_score: body.compliance_score,
+      type: body.type,
+      location_name: body.location_name,
+      iso_standard: body.iso_standard,
+      scheduled_at: body.scheduled_at,
+      completed_at: body.completed_at,
+      notes: body.notes,
+    });
     document.getElementById('modal-insp-edit')?.remove();
     showToast('✅ تم حفظ التعديلات بنجاح', 'success');
     loadInspections();
