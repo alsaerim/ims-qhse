@@ -1878,9 +1878,11 @@ function updateParetoChart() {
 
 // ── Projects ─────────────────────────────────
 async function loadProjects() {
-  const data = await apiFetch('/api/projects');
-  const statusLabels = {active:'نشط',completed:'مكتمل',on_hold:'موقوف',cancelled:'ملغى'};
-  const statusBadge  = {active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red'};
+  const _projRes = await apiFetch('/api/projects');
+  const projList = Array.isArray(_projRes) ? _projRes : (_projRes?.data || []);
+  const data = { data: projList.map(p => ({...p, name: p.name || p.title, status: (p.metadata?.status || p.status || 'active').toLowerCase()})) };
+  const statusLabels = {active:'نشط',completed:'مكتمل',on_hold:'موقوف',cancelled:'ملغى',draft:'مسودة'};
+  const statusBadge  = {active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red',draft:'badge-gray'};
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-4">
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
