@@ -2160,7 +2160,14 @@ async function updateProjectStatus(id, newStatus) {
 // ── Inspections ───────────────────────────────
 async function loadInspections() {
   const _inspRes = await apiFetch('/api/audits');
-const data = { data: (Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || [])).map(a => ({...a, ref_number: a.ref_number, title: a.title, status: a.status?.toLowerCase(), result: a.result?.toLowerCase(), compliance_score: a.compliance_score, type: a.type, location_name: a.location_name, iso_standard: a.iso_standard?.code || a.iso_standard_id, scheduled_at: a.scheduled_at, completed_at: a.completed_at, notes: a.notes, assigned_name: a.assignee?.full_name, project_name: a.project?.title})) };
+const data = { data: (Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || [])).map(a => ({
+  ...a,
+  status: (a.status || 'draft').toLowerCase(),
+  result: a.result ? a.result.toLowerCase() : null,
+  iso_standard: a.iso_standard?.code || null,
+  assigned_name: a.assignee?.full_name || 'غير محدد',
+  project_name: a.iso_standard?.name || 'غير محدد',
+})) };
 
   // Build dynamic ISO tabs from active certified standards
   const certified  = window.MOCK_DB?.org_profile?.certified_standards || [];
