@@ -2160,7 +2160,8 @@ async function updateProjectStatus(id, newStatus) {
 // ── Inspections ───────────────────────────────
 async function loadInspections() {
   const _inspRes = await apiFetch('/api/audits');
-const data = { data: (Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || [])).map(a => ({
+const _inspArr = Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || []);
+const data = { data: _inspArr.filter(a => a.type !== 'project').map(a => ({
   ...a,
   status: (a.status || 'draft').toLowerCase(),
   result: a.result ? a.result.toLowerCase() : null,
