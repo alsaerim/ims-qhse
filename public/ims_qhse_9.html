@@ -2214,7 +2214,7 @@ async function filterInspections(el, iso) {
     if (el) el.classList.add('active');
   }
 
-  const url = iso ? `/api/audits?iso_standard=${iso}` : '/api/audits';
+  const url = iso ? `/api/audits?iso_standard=${iso}&type=!project` : '/api/audits?type=!project';
   const _r = await apiFetch(url);
   const mapped = (Array.isArray(_r) ? _r : (_r?.data || [])).map(a => ({...a, status: a.status?.toLowerCase(), result: a.result?.toLowerCase(), assigned_name: a.assignee?.full_name}));
   document.getElementById('inspections-list').innerHTML = renderInspectionsList(mapped);
@@ -2486,8 +2486,12 @@ async function openInspEdit(id) {
 async function quickUpdateInspStatus(id, status) {
   try {
     await apiFetch(`/api/audits/${id}`, 'PUT', { status: status.toUpperCase() });
-  } catch(e) { console.error(e); }
-  showToast('✅ تم تحديث الحالة: ' + inspStatusAr(status), 'success');
+    showToast('✅ تم تحديث الحالة: ' + inspStatusAr(status), 'success');
+    document.getElementById('modal-insp-detail')?.remove();
+    setTimeout(() => loadInspections(), 500);
+  } catch(e) {
+    showToast('❌ خطأ في تحديث الحالة', 'error');
+  }
   document.getElementById('modal-insp-detail')?.remove();
   loadInspections();
 }
@@ -9349,7 +9353,7 @@ async function submitInspection(e) {
       if (lbl) { lbl.style.background=''; lbl.style.borderColor=''; }
     });
     showToast('✅ تم جدولة التفتيش بنجاح', 'success');
-    loadInspections();
+    setTimeout(() => loadInspections(), 500);
   } catch (err) {
     showToast('❌ خطأ في حفظ البيانات', 'error');
   }
