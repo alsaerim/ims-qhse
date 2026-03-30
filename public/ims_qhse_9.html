@@ -2250,9 +2250,16 @@ function renderInspectionsList(items) {
 }
 
 // ── Inspection Detail ─────────────────────────
-function openInspDetail(id) {
-  const insps = window.MOCK_DB?.inspections || [];
-  const i = insps.find(x => x.id === id);
+async function openInspDetail(id) {
+  const _r = await apiFetch(`/api/audits/${id}`);
+  const i = {
+    ..._r,
+    status: (_r.status || 'draft').toLowerCase(),
+    result: _r.result ? _r.result.toLowerCase() : null,
+    iso_standard: _r.iso_standard?.code || null,
+    assigned_name: _r.assignee?.full_name || 'غير محدد',
+    project_name: _r.iso_standard?.name || 'غير محدد',
+  };
   if (!i) return;
 
   const resultMap  = {pass:'✅ ناجح', fail:'❌ فاشل', partial:'⚠️ جزئي'};
@@ -2352,11 +2359,17 @@ function openInspDetail(id) {
 }
 
 // ── Inspection Edit ───────────────────────────
-function openInspEdit(id) {
-  const insps    = window.MOCK_DB?.inspections || [];
-  const projects = window.MOCK_DB?.projects    || [];
-  const users    = window.MOCK_DB?.users       || [];
-  const i = insps.find(x => x.id === id);
+async function openInspEdit(id) {
+  const _r = await apiFetch(`/api/audits/${id}`);
+  const i = {
+    ..._r,
+    status: (_r.status || 'draft').toLowerCase(),
+    result: _r.result ? _r.result.toLowerCase() : null,
+    iso_standard: _r.iso_standard?.code || null,
+    assigned_name: _r.assignee?.full_name || 'غير محدد',
+  };
+  const projects = window.MOCK_DB?.projects || [];
+  const users    = window.MOCK_DB?.users    || [];
   if (!i) return;
 
   const projOpts = projects.map(p => `<option value="${p.id}" ${p.id===i.project_id?'selected':''}>${p.name}</option>`).join('');
