@@ -9344,7 +9344,13 @@ async function submitInspection(e) {
 
   data.project_id = state.currentProject;
   try {
-    await apiFetch('/api/inspections', 'POST', data);
+    await apiFetch('/api/audits', 'POST', {
+      title: data.title,
+      type: data.type || 'routine',
+      iso_standard: data.iso_standard,
+      scheduled_at: data.scheduled_at,
+      location_name: data.location_name,
+    });
     closeModal('modal-inspection');
     e.target.reset();
     // Reset checkbox styles
@@ -12117,8 +12123,8 @@ function updateSidebarISO() {
     window._mockUsers = usersData.data || [];
   } catch(e) {}
   try {
-    const inspData = await apiFetch('/api/inspections?limit=100');
-    window._mockInspections = inspData.data || [];
+    const inspData = await apiFetch('/api/audits');
+    window._mockInspections = Array.isArray(inspData) ? inspData : (inspData?.data || []);
   } catch(e) {}
   try {
     const ncData2 = await apiFetch('/api/nonconformances?limit=100');
