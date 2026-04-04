@@ -864,7 +864,7 @@
   window.fetch = async function(url, opts = {}) {
     const REAL_PREFIXES_MOCK = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org'];
     const isRealUrl = typeof url === 'string' && (url.includes('railway.app') || REAL_PREFIXES_MOCK.some(p => url.startsWith(p)));
-    if (typeof url === 'string' && url.includes('/api/') && !isRealUrl) {
+    if (false && typeof url === 'string' && url.includes('/api/') && !isRealUrl) {
       // Store auth header for /api/auth/me
       const auth = opts.headers?.Authorization || opts.headers?.['Authorization'] || '';
       if (auth) window._mockLastAuthHeader = auth;
