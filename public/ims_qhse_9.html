@@ -9199,25 +9199,16 @@ function openNewNCModal() {
   const sel = document.getElementById('nc-project-select');
   if (sel) {
     // Try window.MOCK_DB first (synchronous), else fallback to API
-    const projects = (window.MOCK_DB && window.MOCK_DB.projects) ? window.MOCK_DB.projects : [];
-    if (projects.length > 0) {
-      sel.innerHTML = '<option value="">-- اختر المشروع --</option>' +
-        projects.map(p =>
-          '<option value="' + p.id + '"' + (state.currentProject === p.id ? ' selected' : '') + '>' + p.name + '</option>'
-        ).join('');
-    } else {
-      // Async fallback
-      sel.innerHTML = '<option value="">جاري التحميل...</option>';
+    sel.innerHTML = '<option value="">جاري التحميل...</option>';
       apiFetch('/api/projects').then(data => {
-        const list = data.data || [];
+        const list = Array.isArray(data) ? data : (data?.data || []);
         sel.innerHTML = '<option value="">-- اختر المشروع --</option>' +
           list.map(p =>
-            '<option value="' + p.id + '"' + (state.currentProject === p.id ? ' selected' : '') + '>' + p.name + '</option>'
+            '<option value="' + p.id + '"' + (state.currentProject === p.id ? ' selected' : '') + '>' + (p.metadata?.name || p.title || p.name) + '</option>'
           ).join('');
       }).catch(() => {
         sel.innerHTML = '<option value="">-- اختر المشروع --</option>';
       });
-    }
   }
   document.getElementById('modal-nc').classList.add('open');
 }
