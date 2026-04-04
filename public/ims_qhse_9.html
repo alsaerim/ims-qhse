@@ -2160,15 +2160,19 @@ async function updateProjectStatus(id, newStatus) {
 // ── Inspections ───────────────────────────────
 async function loadInspections() {
   const _inspRes = await apiFetch('/api/audits');
-const _inspArr = Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || []);
-const data = { data: _inspArr.filter(a => a.type !== 'project').map(a => ({
-  ...a,
-  status: (a.status || 'draft').toLowerCase(),
-  result: a.result ? a.result.toLowerCase() : null,
-  iso_standard: a.iso_standard?.code || null,
-  assigned_name: a.assignee?.full_name || 'غير محدد',
-  project_name: a.iso_standard?.name || 'غير محدد',
-})) };
+  const _inspArr = Array.isArray(_inspRes) ? _inspRes : (_inspRes?.data || []);
+  // جلب المعايير المعتمدة من المنظمة
+  const _orgRes = await apiFetch('/api/org/profile');
+  const _certifiedStds = _orgRes?.settings?.certified_standards || _orgRes?.certified_standards || [];
+  const data = { data: _inspArr.filter(a => a.type !== 'project').map(a => ({
+    ...a,
+    status: (a.status || 'draft').toLowerCase(),
+    result: a.result ? a.result.toLowerCase() : null,
+    iso_standard: a.iso_standard?.code || null,
+    assigned_name: a.assignee?.full_name || 'غير محدد',
+    project_name: a.iso_standard?.name || 'غير محدد',
+  })) };
+  window._certifiedStandards = _certifiedStds;
 
   // Build dynamic ISO tabs from active certified standards
   const certified  = window.MOCK_DB?.org_profile?.certified_standards || [];
