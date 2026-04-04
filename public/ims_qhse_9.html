@@ -2486,7 +2486,7 @@ async function openInspEdit(id) {
 
 async function quickUpdateInspStatus(id, status) {
   try {
-    await apiFetch(`/api/audits/${id}`, 'PUT', { status: status.toUpperCase() });
+    await apiFetch(`/api/audits/${id}`, 'PUT', { status: status === 'pending' ? 'SCHEDULED' : status === 'in_progress' ? 'IN_PROGRESS' : status === 'completed' ? 'COMPLETED' : status === 'overdue' ? 'IN_PROGRESS' : status === 'cancelled' ? 'CANCELLED' : 'DRAFT' });
     showToast('✅ تم تحديث الحالة: ' + inspStatusAr(status), 'success');
     document.getElementById('modal-insp-detail')?.remove();
     setTimeout(() => loadInspections(), 500);
