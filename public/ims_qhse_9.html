@@ -7629,7 +7629,21 @@ async function deleteObjective(id) {
 
 // ── Map ───────────────────────────────────────
 async function loadMap() {
-  const projects = await apiFetch('/api/dashboard/map');
+  const _mapRes = await apiFetch('/api/projects');
+  const projects = (Array.isArray(_mapRes) ? _mapRes : (_mapRes?.data || [])).map(p => ({
+    ...p,
+    name: p.metadata?.name || p.title,
+    city: p.location_name || p.metadata?.location || '-',
+    client_name: p.metadata?.client_name || '',
+    status: (p.metadata?.status || p.status || 'active').toLowerCase(),
+    avg_compliance: p.compliance_score || 0,
+    latitude: p.metadata?.latitude || 24.7136,
+    longitude: p.metadata?.longitude || 46.6753,
+    iso_9001: p.metadata?.iso_9001 || 0,
+    iso_45001: p.metadata?.iso_45001 || 0,
+    iso_14001: p.metadata?.iso_14001 || 0,
+    open_nc_count: p._count?.non_conformances || 0,
+  }));
   const clrFor   = v => v>=90?'#059669':v>=75?'#d97706':'#dc2626';
   const lblFor   = v => v>=90?'ممتاز':v>=75?'جيد':'يحتاج تحسين';
 
