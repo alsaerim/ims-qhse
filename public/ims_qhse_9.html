@@ -2298,6 +2298,9 @@ function renderInspectionsList(items) {
         <button onclick="openInspEdit('${i.id}')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="تعديل">
           <i class="fas fa-edit text-xs"></i>
         </button>
+        <button onclick="deleteInspection('${i.id}','${i.title}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="حذف">
+          <i class="fas fa-trash text-xs"></i>
+        </button>
       </div>
     </div>`).join('')}
   </div>`;
@@ -2536,7 +2539,16 @@ async function openInspEdit(id) {
 
   document.body.insertAdjacentHTML('beforeend', html);
 }
-
+async function deleteInspection(id, title) {
+  if (!confirm(`هل أنت متأكد من حذف "${title}"؟`)) return;
+  try {
+    await apiFetch(`/api/audits/${id}`, 'DELETE');
+    showToast('✅ تم حذف التفتيش', 'success');
+    setTimeout(() => loadInspections(), 500);
+  } catch(e) {
+    showToast('❌ فشل الحذف', 'error');
+  }
+}
 async function quickUpdateInspStatus(id, status) {
   try {
     await apiFetch(`/api/audits/${id}`, 'PUT', { status: status === 'pending' ? 'SCHEDULED' : status === 'in_progress' ? 'IN_PROGRESS' : status === 'completed' ? 'COMPLETED' : status === 'overdue' ? 'IN_PROGRESS' : status === 'cancelled' ? 'CANCELLED' : 'DRAFT' });
