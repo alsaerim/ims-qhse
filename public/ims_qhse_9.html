@@ -1992,6 +1992,7 @@ function renderProjectsTable(projects, sL, sB) {
           <button onclick="openProjectDetail('${p.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg" title="تفاصيل"><i class="fas fa-eye"></i></button>
           <button onclick="editProject('${p.id}')" class="p-1.5 text-green-500 hover:bg-green-50 rounded-lg" title="تعديل"><i class="fas fa-edit"></i></button>
           <button onclick="updateProjectStatus('${p.id}','${p.status==='active'?'on_hold':'active'}')" class="p-1.5 text-orange-500 hover:bg-orange-50 rounded-lg" title="${p.status==='active'?'إيقاف':'تفعيل'}"><i class="fas fa-${p.status==='active'?'pause':'play'}"></i></button>
+          <button onclick="deleteProject('${p.id}','${p.name}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="حذف"><i class="fas fa-trash"></i></button>
         </div></td>
       </tr>`).join('')}
     </tbody></table>`;
@@ -2184,7 +2185,16 @@ longitude: document.getElementById('proj-city').selectedOptions[0]?.dataset?.lng
     btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> حفظ المشروع';
   }
 }
-
+async function deleteProject(id, name) {
+  if (!confirm(`هل أنت متأكد من حذف المشروع "${name}"؟`)) return;
+  try {
+    await apiFetch(`/api/projects/${id}`, 'DELETE');
+    showToast('✅ تم حذف المشروع', 'success');
+    loadProjects();
+  } catch(e) {
+    showToast('❌ فشل حذف المشروع', 'error');
+  }
+}
 async function updateProjectStatus(id, newStatus) {
   const sL={active:'نشط',completed:'مكتمل',on_hold:'موقوف مؤقتاً',cancelled:'ملغى'};
   try {
