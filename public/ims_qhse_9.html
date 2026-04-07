@@ -3795,11 +3795,11 @@ async function markRCAClosed(id) {
 
 // ── KPIs ─────────────────────────────────────
 async function loadKPIs() {
-  const _kpiRes = await apiFetch('/api/kpis');
+  const _kpiRes = await apiFetch('/api/kpis').catch(() => []);
   const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
     ...k,
-    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= k.warning_threshold ? 'warning' : 'critical',
-    latest_value: k.current_value,
+    status_level: (k.current_value || k.latest_value || 0) >= k.target_value ? 'good' : (k.current_value || k.latest_value || 0) >= (k.warning_threshold||0) ? 'warning' : 'critical',
+    latest_value: k.current_value || k.latest_value || 0,
   }));
   const categories = [...new Set(kpis.map(k => k.category))];
   const catAr = { quality: 'الجودة', safety: 'السلامة', environmental: 'البيئة', compliance: 'الامتثال', operational: 'التشغيل' };
