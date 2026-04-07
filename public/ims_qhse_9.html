@@ -3795,7 +3795,12 @@ async function markRCAClosed(id) {
 
 // ── KPIs ─────────────────────────────────────
 async function loadKPIs() {
-  const kpis = await apiFetch('/api/dashboard/kpis-live');
+  const _kpiRes = await apiFetch('/api/kpis');
+  const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
+    ...k,
+    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= k.warning_threshold ? 'warning' : 'critical',
+    latest_value: k.current_value,
+  }));
   const categories = [...new Set(kpis.map(k => k.category))];
   window._kpisList = kpis;
   const catAr = { quality: 'الجودة', safety: 'السلامة', environmental: 'البيئة', compliance: 'الامتثال', operational: 'التشغيل' };
@@ -3833,7 +3838,12 @@ async function loadKPIs() {
 
 // ── KPIs ─────────────────────────────────────
 async function loadKPIs() {
-  const kpis = await apiFetch('/api/dashboard/kpis-live');
+  const _kpiRes = await apiFetch('/api/kpis');
+  const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
+    ...k,
+    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= (k.warning_threshold||0) ? 'warning' : 'critical',
+    latest_value: k.current_value,
+  }));
   const catAr    = {quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'};
   const catColors = {quality:'#3b82f6',safety:'#059669',environmental:'#d97706',compliance:'#7c3aed',operational:'#64748b'};
   const catIcons  = {quality:'award',safety:'hard-hat',environmental:'leaf',compliance:'check-double',operational:'cogs'};
