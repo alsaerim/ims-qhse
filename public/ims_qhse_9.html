@@ -3795,13 +3795,9 @@ async function markRCAClosed(id) {
 
 // ── KPIs ─────────────────────────────────────
 async function loadKPIs() {
-  const _kpiRes = await apiFetch('/api/kpis');
-  const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
-    ...k,
-    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= k.warning_threshold ? 'warning' : 'critical',
-    latest_value: k.current_value,
-  }));
+  const kpis = await apiFetch('/api/dashboard/kpis-live');
   const categories = [...new Set(kpis.map(k => k.category))];
+  window._kpisList = kpis;
   const catAr = { quality: 'الجودة', safety: 'السلامة', environmental: 'البيئة', compliance: 'الامتثال', operational: 'التشغيل' };
   const catColors = { quality: '#3b82f6', safety: '#059669', environmental: '#d97706', compliance: '#7c3aed', operational: '#64748b' };
   
@@ -4118,7 +4114,7 @@ function openKPIModal() {
 }
 
 function openKPIEdit(id) {
-  const kpi = (window.MOCK_DB?.kpis || []).find(k => k.id === id);
+  const kpi = (window._kpisList || []).find(k => k.id === id);
   if (!kpi) return;
   document.getElementById('kpi-edit-id').value = kpi.id;
   document.getElementById('kpi-modal-title').innerHTML = '<i class="fas fa-edit ml-2"></i>تعديل المؤشر';
@@ -4172,9 +4168,9 @@ async function deleteKPI(id) {
 }
 
 async function openKPIDetail(id) {
-  const kpi = (window.MOCK_DB?.kpis || []).find(k => k.id === id);
+  const kpi = (window._kpisList || []).find(k => k.id === id);
   if (!kpi) return;
-  const hist = (window.MOCK_DB?.kpi_history || {})[id] || [];
+  const hist = [];
   const color = kpi.status_level==='good' ? '#059669' : kpi.status_level==='warning' ? '#d97706' : '#dc2626';
   const isoColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#64748b'};
   const isoC = isoColors[kpi.iso_standard] || '#64748b';
