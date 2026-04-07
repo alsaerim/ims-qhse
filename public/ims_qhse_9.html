@@ -1054,7 +1054,44 @@
         </div>
         <div>
           <label class="text-sm font-medium text-slate-700 block mb-1">المدينة</label>
-          <input class="form-input" type="text" id="proj-city" placeholder="الرياض"/>
+          <select class="form-input" id="proj-city">
+            <option value="">-- اختر المدينة --</option>
+            <option value="الرياض" data-lat="24.7136" data-lng="46.6753">الرياض</option>
+            <option value="جدة" data-lat="21.4858" data-lng="39.1925">جدة</option>
+            <option value="مكة المكرمة" data-lat="21.3891" data-lng="39.8579">مكة المكرمة</option>
+            <option value="المدينة المنورة" data-lat="24.5247" data-lng="39.5692">المدينة المنورة</option>
+            <option value="الدمام" data-lat="26.4207" data-lng="50.0888">الدمام</option>
+            <option value="الخبر" data-lat="26.2172" data-lng="50.1971">الخبر</option>
+            <option value="الظهران" data-lat="26.2794" data-lng="50.1086">الظهران</option>
+            <option value="الأحساء" data-lat="25.3689" data-lng="49.5870">الأحساء</option>
+            <option value="القطيف" data-lat="26.5200" data-lng="50.0100">القطيف</option>
+            <option value="تبوك" data-lat="28.3998" data-lng="36.5715">تبوك</option>
+            <option value="أبها" data-lat="18.2164" data-lng="42.5053">أبها</option>
+            <option value="خميس مشيط" data-lat="18.3000" data-lng="42.7333">خميس مشيط</option>
+            <option value="جازان" data-lat="16.8892" data-lng="42.5611">جازان</option>
+            <option value="نجران" data-lat="17.4924" data-lng="44.1277">نجران</option>
+            <option value="حائل" data-lat="27.5114" data-lng="41.7208">حائل</option>
+            <option value="الجوف" data-lat="29.7925" data-lng="40.0945">الجوف</option>
+            <option value="سكاكا" data-lat="29.9697" data-lng="40.2002">سكاكا</option>
+            <option value="عرعر" data-lat="30.9753" data-lng="41.0381">عرعر</option>
+            <option value="بريدة" data-lat="26.3260" data-lng="43.9750">بريدة</option>
+            <option value="عنيزة" data-lat="26.0924" data-lng="43.9952">عنيزة</option>
+            <option value="الرس" data-lat="25.8624" data-lng="43.5072">الرس</option>
+            <option value="ينبع" data-lat="24.0896" data-lng="38.0618">ينبع</option>
+            <option value="الطائف" data-lat="21.2854" data-lng="40.4146">الطائف</option>
+            <option value="الباحة" data-lat="20.0129" data-lng="41.4677">الباحة</option>
+            <option value="بيشة" data-lat="19.9993" data-lng="42.6048">بيشة</option>
+            <option value="القنفذة" data-lat="19.1268" data-lng="41.0795">القنفذة</option>
+            <option value="الليث" data-lat="20.1540" data-lng="40.2700">الليث</option>
+            <option value="رابغ" data-lat="22.7966" data-lng="39.0334">رابغ</option>
+            <option value="وادي الدواسر" data-lat="20.5020" data-lng="45.1996">وادي الدواسر</option>
+            <option value="الخرج" data-lat="24.1550" data-lng="47.3013">الخرج</option>
+            <option value="المجمعة" data-lat="25.9044" data-lng="45.3467">المجمعة</option>
+            <option value="الزلفي" data-lat="26.2991" data-lng="44.8072">الزلفي</option>
+            <option value="شقراء" data-lat="25.2477" data-lng="45.2660">شقراء</option>
+            <option value="الدوادمي" data-lat="24.4977" data-lng="44.3892">الدوادمي</option>
+            <option value="القويعية" data-lat="24.0647" data-lng="45.2747">القويعية</option>
+          </select>
         </div>
       </div>
       <div>
@@ -2123,7 +2160,9 @@ async function submitProject(e) {
     name: document.getElementById('proj-name').value.trim(),
     code: document.getElementById('proj-code').value.trim(),
     client_name: document.getElementById('proj-client').value.trim(),
-    city: document.getElementById('proj-city').value.trim(),
+    city: document.getElementById('proj-city').value,
+latitude: document.getElementById('proj-city').selectedOptions[0]?.dataset?.lat || null,
+longitude: document.getElementById('proj-city').selectedOptions[0]?.dataset?.lng || null,
     description: document.getElementById('proj-desc').value.trim(),
     status: document.getElementById('proj-status').value,
     manager_id: document.getElementById('proj-manager')?.value||'usr-mgr-001',
