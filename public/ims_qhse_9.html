@@ -3795,11 +3795,11 @@ async function markRCAClosed(id) {
 
 // ── KPIs ─────────────────────────────────────
 async function loadKPIs() {
-  const _kpiRes = await apiFetch('/api/kpis').catch(() => []);
+  const _kpiRes = await apiFetch('/api/kpis');
   const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
     ...k,
-    status_level: (k.current_value || k.latest_value || 0) >= k.target_value ? 'good' : (k.current_value || k.latest_value || 0) >= (k.warning_threshold||0) ? 'warning' : 'critical',
-    latest_value: k.current_value || k.latest_value || 0,
+    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= k.warning_threshold ? 'warning' : 'critical',
+    latest_value: k.current_value,
   }));
   const categories = [...new Set(kpis.map(k => k.category))];
   const catAr = { quality: 'الجودة', safety: 'السلامة', environmental: 'البيئة', compliance: 'الامتثال', operational: 'التشغيل' };
@@ -4117,9 +4117,8 @@ function openKPIModal() {
   document.getElementById('modal-kpi').classList.add('open');
 }
 
-async function openKPIEdit(id) {
-  const _r = await apiFetch('/api/kpis/' + id);
-  const kpi = _r?.data || _r;
+function openKPIEdit(id) {
+  const kpi = (window.MOCK_DB?.kpis || []).find(k => k.id === id);
   if (!kpi) return;
   document.getElementById('kpi-edit-id').value = kpi.id;
   document.getElementById('kpi-modal-title').innerHTML = '<i class="fas fa-edit ml-2"></i>تعديل المؤشر';
@@ -4173,11 +4172,9 @@ async function deleteKPI(id) {
 }
 
 async function openKPIDetail(id) {
-  const _r = await apiFetch('/api/kpis/' + id);
-  const kpi = _r?.data || _r;
+  const kpi = (window.MOCK_DB?.kpis || []).find(k => k.id === id);
   if (!kpi) return;
-  const _histR = await apiFetch('/api/kpis/' + id + '/history').catch(() => []);
-  const hist = Array.isArray(_histR) ? _histR : (_histR?.data || []);
+  const hist = (window.MOCK_DB?.kpi_history || {})[id] || [];
   const color = kpi.status_level==='good' ? '#059669' : kpi.status_level==='warning' ? '#d97706' : '#dc2626';
   const isoColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#64748b'};
   const isoC = isoColors[kpi.iso_standard] || '#64748b';
