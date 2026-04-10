@@ -520,6 +520,13 @@ window.hydrateGlobalData = async function() {
               <option value="audit">مراجعة</option>
             </select>
           </div>
+          <div>
+            <label class="text-sm font-medium text-slate-700 block mb-1">المشروع</label>
+            <select class="form-input" name="project_id" id="insp-project-select">
+              <option value="">-- بدون مشروع --</option>
+            </select>
+          </div>
+        </div>
         <div>
           <label class="text-sm font-medium text-slate-700 block mb-2">معيار الأيزو المطبَّق <span class="text-red-500">*</span></label>
           <div id="insp-iso-checkboxes" class="flex flex-wrap gap-2">
@@ -1906,8 +1913,14 @@ async function submitInspEdit(id) {
 
 // ── Non-Conformances ──────────────────────────
 async function loadNonConformances() {
-  const data = await apiFetch('/api/nonconformances');
-  const ncList = (data.data || data || []).map(n => ({...n, status: (n.status||'').toLowerCase(), type: (n.type||'').toLowerCase()}));
+  let ncList = [];
+  try {
+    const data = await apiFetch('/api/nonconformances');
+    const raw = Array.isArray(data) ? data : (data?.data || []);
+    ncList = raw.map(n => ({...n, status: (n.status||'OPEN').toLowerCase(), type: (n.type||'MINOR').toLowerCase()}));
+  } catch(e) {
+    console.error('[NC Load Error]', e);
+  }
   document.getElementById('nc-count-badge').textContent = ncList.filter(n => n.status === 'open').length || 0;
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-4">
@@ -8568,6 +8581,15 @@ function openNewInspectionModal() {
   const modal = document.getElementById('modal-inspection');
   if (!modal) return;
 
+  // Populate project dropdown
+  const projSel = modal.querySelector('#insp-project-select');
+  if (projSel) {
+    const projects = window.MOCK_DB?.projects || [];
+    projSel.innerHTML = '<option value="">-- بدون مشروع --</option>' +
+      projects.map(p => `<option value="${p.id}">${p.name || p.title || ''}</option>`).join('');
+    if (state.currentProject) projSel.value = state.currentProject;
+  }
+
   // Rebuild ISO checkboxes dynamically from active standards
   const container = modal.querySelector('#insp-iso-checkboxes');
   if (container) {
@@ -8695,6 +8717,7 @@ async function submitInspection(e) {
       title: data.title,
       type: data.type || 'routine',
       iso_standard: data.iso_standard,
+      project_id: data.project_id || state.currentProject || null,
       scheduled_at: data.scheduled_at,
       location_name: data.location_name,
     });
