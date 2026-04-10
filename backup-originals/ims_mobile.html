@@ -1053,7 +1053,7 @@
 // ═══════════════════════════════════════════════════
 // IMS QHSE MOBILE APP
 // ═══════════════════════════════════════════════════
-const MAPI = 'https://ims-qhse-backend-production.up.railway.app';
+const MAPI = '';
 let mState = {
   user: null, currentPage: 'm-home',
   gps: { lat: null, lng: null },
@@ -1073,19 +1073,16 @@ async function mobileLogin() {
   try {
     const email = document.getElementById('m-email').value;
     const pass  = document.getElementById('m-pass').value;
-    const res   = await fetch(MAPI + '/api/v1/auth/login', {
+    const res   = await fetch(MAPI + '/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: pass })
     });
     const data = await res.json();
-    const d = data.data || data;
-    if (d.access_token) {
-      mState.user = d.user;
-      localStorage.setItem('ims_token', d.access_token);
-      if (d.refresh_token) localStorage.setItem('ims_refresh_token', d.refresh_token);
-      if (d.user) localStorage.setItem('ims_user', JSON.stringify(d.user));
-      document.getElementById('m-user-name').textContent = d.user?.full_name || 'مستخدم';
+    if (data.token) {
+      mState.user = data.user;
+      localStorage.setItem('ims_token', data.token);
+      document.getElementById('m-user-name').textContent = data.user.full_name;
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
       // Sync shared data from web app first
@@ -1101,7 +1098,15 @@ async function mobileLogin() {
       mToast('❌ ' + (data.error || 'بيانات غير صحيحة'), 'error');
     }
   } catch(e) {
-    mToast('❌ خطأ في الاتصال بالخادم', 'error');
+    // Demo mode — allow any login
+    const demoUser = { id: 'usr-eng-001', full_name: 'محمد الزهراني', role: 'engineer', email: document.getElementById('m-email').value };
+    mState.user = demoUser;
+    document.getElementById('m-user-name').textContent = demoUser.full_name;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    syncFromWebApp();
+    loadHomeStats(); loadInspectionsList(); loadNCList(); loadRCAList(); loadTasksList(); loadNotifications_m();
+    startGPS();
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
@@ -1116,16 +1121,13 @@ function mobileLogout() {
   document.getElementById('login-screen').style.display = 'flex';
 }
 
-function mToken() { return localStorage.getItem('ims_token') || ''; }
+function mToken() { return localStorage.getItem('ims_token') || 'demo'; }
 
 async function mFetch(url, method='GET', body=null) {
-  const apiUrl = url.replace(/^\/api\//, '/api/v1/');
   const opts = { method, headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+mToken() } };
   if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(MAPI + apiUrl, opts);
-  if (r.status === 401) { mobileLogout(); throw new Error('غير مصرح'); }
-  const json = await r.json();
-  return (json.data !== undefined) ? json.data : json;
+  const r = await fetch(MAPI + url, opts);
+  return r.json();
 }
 
 // ── Navigation ────────────────────────────────────
@@ -3169,11 +3171,10 @@ window.addEventListener('load', async () => {
   if (token) {
     try {
       // Validate token with API
-      const res = await fetch(MAPI + '/api/v1/auth/me', {
+      const res = await fetch(MAPI + '/api/auth/me', {
         headers: { 'Authorization': 'Bearer ' + token }
       });
-      const json = await res.json();
-      const user = json.data || json;
+      const user = await res.json();
       if (user && user.id) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';

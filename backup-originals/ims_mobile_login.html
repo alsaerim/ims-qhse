@@ -219,7 +219,7 @@ body::before{
             <div class="demo-user-name">محمد الزهراني</div>
             <div class="demo-user-role">مهندس عمليات</div>
           </div>
-          <div class="demo-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9ccc7cec0c7ccccdbe9c0c4da84d8c1dacc87cac6c4">[email&#160;protected]</a></div>
+          <div class="demo-user-email">engineer@ims-qhse.com</div>
         </div>
         <div class="demo-user" onclick="quickLogin('auditor@ims-qhse.com','سارة القحطاني')">
           <div class="user-avatar" style="background:#d97706;">سا</div>
@@ -227,7 +227,7 @@ body::before{
             <div class="demo-user-name">سارة القحطاني</div>
             <div class="demo-user-role">مدقق جودة</div>
           </div>
-          <div class="demo-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8cedf9e8e5f8e3fecce5e1ffa1fde4ffe9a2efe3e1">[email&#160;protected]</a></div>
+          <div class="demo-user-email">auditor@ims-qhse.com</div>
         </div>
         <div class="demo-user" onclick="quickLogin('engineer2@ims-qhse.com','فهد الدوسري')">
           <div class="user-avatar" style="background:#dc2626;">فه</div>
@@ -235,7 +235,7 @@ body::before{
             <div class="demo-user-name">فهد الدوسري</div>
             <div class="demo-user-role">مهندس سلامة</div>
           </div>
-          <div class="demo-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6f0a010806010a0a1d5d2f06021c421e071c0a410c0002">[email&#160;protected]</a></div>
+          <div class="demo-user-email">engineer2@ims-qhse.com</div>
         </div>
       </div>
     </div>
@@ -306,7 +306,7 @@ body::before{
   <div>© 2026 IMS QHSE · نسخة الجوال 2.4.1</div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ── Tab switch ──
 function switchTab(tab) {
   document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
@@ -338,8 +338,6 @@ function quickLogin(email, name) {
   doMobileLogin();
 }
 
-const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
-
 // ── Login ──
 function doMobileLogin() {
   const email = document.getElementById('login-email').value.trim();
@@ -349,36 +347,25 @@ function doMobileLogin() {
 
   if (!email || !pass) { showAlert(err,'يرجى تعبئة جميع الحقول'); return; }
 
+  const validUsers = [
+    'admin@ims-qhse.com','manager@ims-qhse.com',
+    'engineer@ims-qhse.com','auditor@ims-qhse.com','engineer2@ims-qhse.com'
+  ];
+
+  if (!validUsers.includes(email)) { showAlert(err,'البريد الإلكتروني غير مسجل'); return; }
+
+  // Loading state
   err.style.display = 'none';
   btn.innerHTML = '<div class="spinner"></div><span>جاري التحقق...</span>';
   btn.disabled  = true;
 
-  fetch(API + '/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password: pass })
-  })
-  .then(r => r.json())
-  .then(res => {
-    const d = res.data || res;
-    if (d.access_token) {
-      localStorage.setItem('ims_token', d.access_token);
-      if (d.refresh_token) localStorage.setItem('ims_refresh_token', d.refresh_token);
-      if (d.user) localStorage.setItem('ims_user', JSON.stringify(d.user));
-      btn.innerHTML = '<i class="fas fa-check-circle"></i><span>تم الدخول!</span>';
-      btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
-      setTimeout(() => { window.location.href = '/mobile'; }, 700);
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>تسجيل الدخول</span>';
-      showAlert(err, d.message || res.message || 'بيانات الدخول غير صحيحة');
-    }
-  })
-  .catch(() => {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>تسجيل الدخول</span>';
-    showAlert(err, 'خطأ في الاتصال بالخادم');
-  });
+  setTimeout(() => {
+    localStorage.setItem('ims_token','demo-token');
+    localStorage.setItem('ims_mobile_user', email);
+    btn.innerHTML = '<i class="fas fa-check-circle"></i><span>تم الدخول!</span>';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    setTimeout(() => { window.location.href = 'ims_mobile.html'; }, 700);
+  }, 1200);
 }
 
 // ── Register ──
@@ -405,4 +392,22 @@ function doMobileRegister() {
     suc.style.display = 'block';
     suc.textContent   = `✅ تم إنشاء حسابك يا ${name.split(' ')[0]}! في انتظار موافقة المدير.`;
     document.getElementById('reg-name').value  = '';
-    document.getElementById('reg-ema
+    document.getElementById('reg-email').value = '';
+    document.getElementById('reg-pass').value  = '';
+    document.getElementById('reg-code').value  = '';
+  }, 1400);
+}
+
+function showAlert(el, msg) {
+  el.textContent   = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── Auto-restore session ──
+if (localStorage.getItem('ims_token') && localStorage.getItem('ims_mobile_user')) {
+  window.location.href = 'ims_mobile.html';
+}
+</script>
+</body>
+</html>

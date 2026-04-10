@@ -817,9 +817,10 @@ footer{background:var(--dark);padding:48px 24px 24px;}
         </div>
         <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt" style="margin-left:8px;"></i>دخول</button>
         <div style="margin-top:14px;padding:12px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;">
-          <div style="font-size:11px;color:#059669;font-weight:700;margin-bottom:6px;"><i class="fas fa-info-circle ml-1"></i>للتجربة</div>
+          <div style="font-size:11px;color:#059669;font-weight:700;margin-bottom:6px;"><i class="fas fa-info-circle ml-1"></i>بيانات تجريبية</div>
           <div style="font-size:11px;color:#334155;line-height:1.6;">
-            سجّل حساب شركة جديد من تبويب "حساب جديد" وابدأ فوراً
+            admin@ims-qhse.com / أي كلمة مرور<br>
+            manager@ims-qhse.com / أي كلمة مرور
           </div>
         </div>
       </div>
@@ -901,8 +902,6 @@ function switchTab(tab) {
   document.getElementById('tab-register').classList.toggle('active', tab==='register');
 }
 
-const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
-
 // ── Login ──
 function doLogin() {
   const email   = document.getElementById('login-email').value.trim();
@@ -911,35 +910,34 @@ function doLogin() {
   const btn     = document.querySelector('#form-login .btn-login');
   if (!email || !pass) { showErr(err,'يرجى تعبئة جميع الحقول'); return; }
 
+  // Demo: accept any email ending with registered domains
+  
+
   err.style.display = 'none';
   btn.innerHTML  = '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none"/><path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>جاري التحقق...</span>';
   btn.disabled = true;
 
-  fetch(API + '/auth/login', {
+  fetch('https://ims-qhse-backend-production.up.railway.app/api/v1/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password: pass })
   })
   .then(r => r.json())
   .then(res => {
-    // NestJS TransformInterceptor wraps response: { success, data: { access_token, refresh_token, user, tenant } }
-    const d = res.data || res;
-    if (d.access_token) {
-      localStorage.setItem('ims_token', d.access_token);
-      if (d.refresh_token) localStorage.setItem('ims_refresh_token', d.refresh_token);
-      if (d.user)   localStorage.setItem('ims_user', JSON.stringify(d.user));
-      if (d.tenant) localStorage.setItem('ims_tenant', JSON.stringify(d.tenant));
+    if (res.success && res.data && res.data.access_token) {
+      localStorage.setItem('ims_token', res.data.access_token);
+      localStorage.setItem('ims_user_email', email);
       btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم الدخول! جاري التحويل...';
       btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
-      setTimeout(() => { window.location.href = '/app'; }, 700);
+      setTimeout(() => { window.location.href = '/dashboard'; }, 700);
     } else {
-      btn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-left:8px;"></i>دخول';
+      btn.innerHTML = 'دخول';
       btn.disabled = false;
-      showErr(err, d.message || res.message || 'بيانات الدخول غير صحيحة');
+      showErr(err, res.data?.message || 'بيانات الدخول غير صحيحة');
     }
   })
   .catch(() => {
-    btn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-left:8px;"></i>دخول';
+    btn.innerHTML = 'دخول';
     btn.disabled = false;
     showErr(err, 'خطأ في الاتصال بالخادم');
   });
@@ -950,7 +948,6 @@ function doRegister() {
   const company = document.getElementById('reg-company').value.trim();
   const name    = document.getElementById('reg-name').value.trim();
   const email   = document.getElementById('reg-email').value.trim();
-  const phone   = document.getElementById('reg-phone')?.value.trim() || '';
   const pass    = document.getElementById('reg-pass').value;
   const err     = document.getElementById('err-register');
   const suc     = document.getElementById('suc-register');
@@ -961,39 +958,19 @@ function doRegister() {
   if (pass.length < 8) { showErr(err,'كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
 
   err.style.display = 'none';
-  suc.style.display = 'none';
   btn.innerHTML = '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none"/><path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>جاري إنشاء الحساب...</span>';
   btn.disabled = true;
 
-  fetch(API + '/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ company_name: company, full_name: name, email, password: pass, phone })
-  })
-  .then(r => r.json())
-  .then(res => {
-    const d = res.data || res;
-    if (d.access_token) {
-      localStorage.setItem('ims_token', d.access_token);
-      if (d.refresh_token) localStorage.setItem('ims_refresh_token', d.refresh_token);
-      if (d.user)   localStorage.setItem('ims_user', JSON.stringify(d.user));
-      if (d.tenant) localStorage.setItem('ims_tenant', JSON.stringify(d.tenant));
-      suc.style.display = 'block';
-      suc.innerHTML = '✅ مرحباً <strong>' + name + '</strong>! تم إنشاء حساب <strong>' + company + '</strong> بنجاح. جاري تحضير لوحة التحكم...';
-      btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم! جاري التحويل...';
-      btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
-      setTimeout(() => { window.location.href = '/app'; }, 1500);
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً';
-      showErr(err, d.message || res.message || 'خطأ في إنشاء الحساب');
-    }
-  })
-  .catch(() => {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً';
-    showErr(err, 'خطأ في الاتصال بالخادم');
-  });
+  setTimeout(() => {
+    suc.style.display = 'block';
+    suc.innerHTML = `✅ مرحباً <strong>${name}</strong>! تم إنشاء حساب <strong>${company}</strong> بنجاح. جاري تحضير لوحة التحكم...`;
+    btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم! جاري التحويل...';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    localStorage.setItem('ims_token', 'demo-token');
+    localStorage.setItem('ims_user_email', email);
+    localStorage.setItem('ims_company', company);
+    setTimeout(() => { window.location.href = 'ims_qhse_integrated.html'; }, 1500);
+  }, 1200);
 }
 
 function showErr(el, msg) {
@@ -1002,24 +979,22 @@ function showErr(el, msg) {
   el.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-// ── Auto-redirect if already logged in ──
-(function() {
-  const token = localStorage.getItem('ims_token');
-  if (token) {
-    fetch(API + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } })
-      .then(r => r.json())
-      .then(res => { if ((res.data && res.data.id) || res.id) window.location.href = '/app'; })
-      .catch(() => {});
-  }
-})();
-
 // ── Smooth scroll ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const id = a.getAttribute('href').slice(1);
     const el = document.getElementById(id);
-    if (el) { e.preventDefault(); el.scrollIntoView({ behavior:'smooth' }); }
+    if (el) { e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
   });
-});</script>
+});
+
+// ── Navbar scroll effect ──
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  nav.style.background = window.scrollY > 20
+    ? 'rgba(15,23,42,0.98)'
+    : 'rgba(15,23,42,0.95)';
+});
+</script>
 </body>
 </html>

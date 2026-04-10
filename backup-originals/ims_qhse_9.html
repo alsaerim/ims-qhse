@@ -9462,9 +9462,8 @@ async function saveOrgSettings(extraData = {}) {
 }
 
 async function apiFetch(url, method = 'GET', body = null) {
-  const token = localStorage.getItem('ims_token');
-  if (!token) { window.location.href = '/'; return; }
-  const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health'];
+  const token = localStorage.getItem('ims_token') || 'demo-token';
+  const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org'];
   const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
   let fullUrl;
   if (isReal) {
@@ -9479,14 +9478,9 @@ async function apiFetch(url, method = 'GET', body = null) {
   };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(fullUrl, opts);
-  if (res.status === 401) {
-    localStorage.removeItem('ims_token');
-    window.location.href = '/';
-    return;
-  }
   if (!res.ok) {
     let errMsg = 'خطأ ' + res.status;
-    try { const errData = await res.json(); errMsg = errData.message || errData.error || errMsg; } catch {}
+    try { const errData = await res.json(); errMsg = errData.error || errMsg; } catch {}
     throw new Error(errMsg);
   }
   const json = await res.json();
@@ -12178,28 +12172,21 @@ function updateSidebarISO() {
 }
 
 (async function init() {
-  // Auth guard — redirect to landing if no token
-  const token = localStorage.getItem('ims_token');
-  if (!token) { window.location.href = '/'; return; }
-
   // Validate token and load user info
-  try {
-    const user = await apiFetch('/api/auth/me');
-    if (user && user.id) {
-      state.currentUser = user;
-      document.getElementById('user-name').textContent = user.full_name || 'مدير النظام';
-      document.getElementById('user-role').textContent = user.role || '';
-      const av = document.getElementById('user-avatar');
-      if (av) av.textContent = user.full_name?.charAt(0) || 'م';
-    } else {
-      localStorage.removeItem('ims_token');
-      window.location.href = '/';
-      return;
-    }
-  } catch (e) {
-    localStorage.removeItem('ims_token');
-    window.location.href = '/';
-    return;
+  const token = localStorage.getItem('ims_token');
+  if (token) {
+    try {
+      const user = await apiFetch('/api/auth/me');
+      if (user && user.id) {
+        state.currentUser = user;
+        document.getElementById('user-name').textContent = user.full_name || 'مدير النظام';
+        document.getElementById('user-role').textContent = user.role || '';
+        const av = document.getElementById('user-avatar');
+        if (av) av.textContent = user.full_name?.charAt(0) || 'م';
+      } else {
+        localStorage.removeItem('ims_token');
+      }
+    } catch (e) {}
   }
 
   // Load NC count for badge
