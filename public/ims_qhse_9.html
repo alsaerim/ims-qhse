@@ -1723,15 +1723,28 @@ async function openInspEdit(id) {
     ..._r,
     status: (_r.status || 'draft').toLowerCase(),
     result: _r.result ? _r.result.toLowerCase() : null,
-    iso_standard: _r.iso_standard?.code || null,
+    iso_standard: _r.iso_standard?.code || _r.iso_standard_id || _r.iso_standard || null,
+    assigned_to: _r.assigned_to_id || _r.assigned_to || null,
+    project_id: _r.project_id || null,
     assigned_name: _r.assignee?.full_name || 'غير محدد',
   };
-  const projects = window.MOCK_DB?.projects || [];
-  const users    = window.MOCK_DB?.users    || [];
-  if (!i) return;
 
-  const projOpts = projects.map(p => `<option value="${p.id}" ${p.id===i.project_id?'selected':''}>${p.name}</option>`).join('');
-  const userOpts = users.filter(u=>u.is_active).map(u => `<option value="${u.id}" ${u.id===i.assigned_to?'selected':''}>${u.full_name}</option>`).join('');
+  // Load projects, users from API if MOCK_DB is empty
+  let projects = window.MOCK_DB?.projects || [];
+  let users = window.MOCK_DB?.users || [];
+  if (!projects.length) {
+    try { const r = await apiFetch('/api/projects'); projects = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  }
+  if (!users.length) {
+    try { const r = await apiFetch('/api/users'); users = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  }
+
+  const projOpts = projects.map(p => `<option value="${p.id}" ${p.id===i.project_id?'selected':''}>${p.name||p.title||''}</option>`).join('');
+  const userOpts = users.filter(u => (u.status||'').toUpperCase()==='ACTIVE' || u.is_active).map(u => `<option value="${u.id}" ${u.id===i.assigned_to?'selected':''}>${u.full_name}</option>`).join('');
+
+  // Build ISO options from active standards
+  const isoOpts = buildActiveISOOptions(false);
+
 
   const statusOpts = [
     ['pending','قيد الانتظار'], ['in_progress','جارٍ'],
@@ -1808,7 +1821,7 @@ async function openInspEdit(id) {
           <label class="text-sm font-bold text-slate-700 block mb-1">معيار ISO</label>
           <select class="form-input" id="inspe-iso">
             <option value="">-- بدون --</option>
-            ${((window.MOCK_DB?.iso_standards||[]).filter(function(s){var c=window.MOCK_DB?.org_profile?.certified_standards||[];return !c.length||c.includes(s.code);})).map(s=>`<option value="${s.code}" ${s.code===i.iso_standard?'selected':''}>${s.code.replace('_',' ')}</option>`).join('')}
+            ${isoOpts}
           </select>
         </div>
       </div>
@@ -1839,6 +1852,11 @@ async function openInspEdit(id) {
   </div></div>`;
 
   document.body.insertAdjacentHTML('beforeend', html);
+  // Set selected ISO standard
+  if (i.iso_standard) {
+    const isoSel = document.getElementById('inspe-iso');
+    if (isoSel) isoSel.value = i.iso_standard;
+  }
 }
 async function deleteInspection(id, title) {
   if (!confirm(`هل أنت متأكد من حذف "${title}"؟`)) return;
