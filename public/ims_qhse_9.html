@@ -138,7 +138,7 @@ window.hydrateGlobalData = async function() {
     get('/users'),
     get('/projects'),
     get('/audits'),
-    get('/non-conformances'),
+    get('/nonconformances'),
     get('/risks'),
     get('/kpis'),
     get('/org/profile'),
@@ -8670,29 +8670,33 @@ function populateISOSelects(container) {
 async function submitNC(e) {
   e.preventDefault();
   const form = new FormData(e.target);
-  const data = Object.fromEntries(form.entries());
+  const raw = Object.fromEntries(form.entries());
   // Use selected project from dropdown
   const projSel = document.getElementById('nc-project-select');
-  if (projSel && projSel.value) {
-    data.project_id = projSel.value;
-    const selOpt = projSel.options[projSel.selectedIndex];
-    data.project_name = selOpt ? selOpt.textContent : '';
-    state.currentProject = data.project_id;
-  } else {
-    data.project_id = state.currentProject;
-  }
-  if (!data.project_id) {
+  const project_id = projSel?.value || state.currentProject || null;
+  if (!project_id) {
     showToast('❌ يرجى اختيار المشروع', 'error');
     return;
   }
+  // Send only fields the NestJS DTO expects
+  const body = {
+    title: raw.title,
+    description: raw.description || null,
+    type: (raw.type || 'MINOR').toUpperCase(),
+    category: raw.category || null,
+    iso_standard: raw.iso_standard || null,
+    project_id: project_id,
+    due_date: raw.due_date || null,
+  };
   try {
-    const result = await apiFetch('/api/nonconformances', 'POST', data);
+    const result = await apiFetch('/api/nonconformances', 'POST', body);
     closeModal('modal-nc');
     e.target.reset();
-    showToast(`✅ تم تسجيل NC وإنشاء ${result.rca_ref} تلقائياً`, 'success');
+    showToast('✅ تم تسجيل حالة عدم المطابقة بنجاح', 'success');
     loadNonConformances();
   } catch (err) {
-    showToast('❌ خطأ في حفظ البيانات', 'error');
+    console.error('[NC Submit Error]', err);
+    showToast('❌ ' + (err.message || 'خطأ في حفظ البيانات'), 'error');
   }
 }
 
@@ -8715,11 +8719,12 @@ async function submitInspection(e) {
   try {
     await apiFetch('/api/audits', 'POST', {
       title: data.title,
-      type: data.type || 'routine',
+      type: (data.type || 'routine').toUpperCase(),
+      iso_standard_id: null,
       iso_standard: data.iso_standard,
       project_id: data.project_id || state.currentProject || null,
-      scheduled_at: data.scheduled_at,
-      location_name: data.location_name,
+      scheduled_at: data.scheduled_at || null,
+      location_name: data.location_name || null,
     });
     closeModal('modal-inspection');
     e.target.reset();
@@ -8757,9 +8762,7 @@ async function apiFetch(url, method = 'GET', body = null) {
   const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
   let fullUrl;
   if (isReal) {
-    let path = url.replace('/api/', '/');
-    // Remap frontend paths to NestJS controller paths
-    path = path.replace(/^\/nonconformances/, '/non-conformances');
+    const path = url.replace('/api/', '/');
     fullUrl = 'https://ims-qhse-backend-production.up.railway.app/api/v1' + path;
   } else {
     fullUrl = url;
