@@ -1253,7 +1253,7 @@ function renderProjectsTable(projects, sL, sB) {
     <tbody>
       ${projects.map(p=>`
       <tr class="table-row border-b border-slate-100 cursor-pointer" onclick="openProjectDetail('${p.id}')">
-        <td class="p-4"><div class="font-semibold text-slate-800">${p.name}</div><div class="text-xs text-slate-400">${p.code} · ${p.city||'-'}</div></td>
+        <td class="p-4"><div class="font-semibold text-slate-800">${p.name||p.title||''}</div><div class="text-xs text-slate-400">${p.ref_number||p.code||''} · ${p.city||p.location_name||'-'}</div></td>
         <td class="p-4 text-slate-600 text-sm">${p.client_name||'-'}</td>
         <td class="p-4"><span class="badge ${sB[p.status]||'badge-gray'}">${sL[p.status]||p.status}</span></td>
         <td class="p-4"><div class="flex items-center gap-2">
@@ -1426,7 +1426,23 @@ function openProjectModal(p) {
 }
 
 async function editProject(id) {
-  const p = await apiFetch(`/api/projects/${id}`);
+  const raw = await apiFetch(`/api/projects/${id}`);
+  const p = {
+    id: raw.id,
+    name: raw.name || raw.title || '',
+    code: raw.ref_number || raw.code || '',
+    client_name: raw.client_name || raw.metadata?.client_name || '',
+    city: raw.city || raw.location_name || raw.metadata?.city || '',
+    description: raw.description || raw.notes || raw.metadata?.description || '',
+    status: (raw.status || 'active').toLowerCase(),
+    iso_9001: raw.iso_9001 || raw.metadata?.iso_9001 || false,
+    iso_45001: raw.iso_45001 || raw.metadata?.iso_45001 || false,
+    iso_14001: raw.iso_14001 || raw.metadata?.iso_14001 || false,
+    iso_27001: raw.iso_27001 || raw.metadata?.iso_27001 || false,
+    start_date: raw.start_date || raw.scheduled_at || raw.metadata?.start_date || '',
+    end_date: raw.end_date || raw.metadata?.end_date || '',
+    manager_id: raw.manager_id || raw.assigned_to_id || '',
+  };
   openProjectModal(p);
 }
 
@@ -1891,15 +1907,16 @@ async function submitInspEdit(id) {
 // ── Non-Conformances ──────────────────────────
 async function loadNonConformances() {
   const data = await apiFetch('/api/nonconformances');
-  document.getElementById('nc-count-badge').textContent = data.data?.filter(n => n.status === 'open').length || 0;
+  const ncList = (data.data || data || []).map(n => ({...n, status: (n.status||'').toLowerCase(), type: (n.type||'').toLowerCase()}));
+  document.getElementById('nc-count-badge').textContent = ncList.filter(n => n.status === 'open').length || 0;
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-4">
     <div class="flex items-center justify-between">
       <div class="grid grid-cols-4 gap-4 flex-1 ml-4">
-        ${ncSumCard('مفتوحة', data.data?.filter(n=>n.status==='open').length||0, 'badge-red')}
-        ${ncSumCard('قيد المعالجة', data.data?.filter(n=>n.status==='in_progress').length||0, 'badge-yellow')}
-        ${ncSumCard('مغلقة', data.data?.filter(n=>n.status==='closed').length||0, 'badge-green')}
-        ${ncSumCard('حرجة', data.data?.filter(n=>n.type==='critical').length||0, 'badge-red')}
+        ${ncSumCard('مفتوحة', ncList.filter(n=>n.status==='open').length||0, 'badge-red')}
+        ${ncSumCard('قيد المعالجة', ncList.filter(n=>n.status==='in_progress').length||0, 'badge-yellow')}
+        ${ncSumCard('مغلقة', ncList.filter(n=>n.status==='closed').length||0, 'badge-green')}
+        ${ncSumCard('حرجة', ncList.filter(n=>n.type==='critical').length||0, 'badge-red')}
       </div>
       <button onclick="openNewNCModal()" class="btn btn-danger text-sm flex-shrink-0">
         <i class="fas fa-plus ml-1"></i>NC جديدة
@@ -1920,15 +1937,15 @@ async function loadNonConformances() {
           </tr>
         </thead>
         <tbody>
-          ${(data.data || []).map(n => `
+          ${(ncList).map(n => `
           <tr class="table-row border-b border-slate-100">
             <td class="p-3 font-mono text-xs text-blue-600">${n.ref_number}</td>
             <td class="p-3">
-              <div class="font-medium text-slate-800">${n.title.substring(0,50)}${n.title.length>50?'...':''}</div>
+              <div class="font-medium text-slate-800">${(n.title||'').substring(0,50)}${(n.title||'').length>50?'...':''}</div>
               <div class="text-xs text-slate-400">${n.category || ''} · ${n.iso_standard || ''}</div>
             </td>
-            <td class="p-3"><span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'}">${ncTypeAr(n.type)}</span></td>
-            <td class="p-3 text-slate-600 text-xs">${n.project_name}</td>
+            <td class="p-3"><span class="badge ${(n.type||'').toLowerCase()==='critical'?'badge-red':(n.type||'').toLowerCase()==='major'?'badge-yellow':'badge-blue'}">${ncTypeAr(n.type)}</span></td>
+            <td class="p-3 text-slate-600 text-xs">${n.project_name||n.project?.name||'-'}</td>
             <td class="p-3">
               ${n.rca_ref ? `<span class="text-xs font-mono text-purple-600">${n.rca_ref}</span><br><span class="badge badge-${n.rca_status==='closed'?'green':n.rca_status==='in_progress'?'yellow':'red'}" style="font-size:9px">${n.rca_status||'open'}</span>` : '<span class="text-xs text-red-500">⚠ مطلوب</span>'}
             </td>
@@ -8717,7 +8734,9 @@ async function apiFetch(url, method = 'GET', body = null) {
   const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
   let fullUrl;
   if (isReal) {
-    const path = url.replace('/api/', '/');
+    let path = url.replace('/api/', '/');
+    // Remap frontend paths to NestJS controller paths
+    path = path.replace(/^\/nonconformances/, '/non-conformances');
     fullUrl = 'https://ims-qhse-backend-production.up.railway.app/api/v1' + path;
   } else {
     fullUrl = url;
@@ -8757,9 +8776,9 @@ function timeAgo(dateStr) {
   return `منذ ${Math.floor(d/30)} أشهر`;
 }
 
-function ncTypeAr(t) { return {critical:'حرجة',major:'رئيسية',minor:'ثانوية',observation:'ملاحظة',opportunity:'فرصة'}[t] || t; }
-function ncStatusAr(s) { return {open:'مفتوحة',under_investigation:'قيد التحقيق',in_progress:'قيد المعالجة',pending_verification:'بانتظار التحقق',closed:'مغلقة',cancelled:'ملغاة'}[s] || s; }
-function ncStatusBadge(s) { return {open:'badge-red',under_investigation:'badge-yellow',in_progress:'badge-yellow',pending_verification:'badge-blue',closed:'badge-green',cancelled:'badge-gray'}[s] || 'badge-gray'; }
+function ncTypeAr(t) { t=(t||'').toLowerCase(); return {critical:'حرجة',major:'رئيسية',minor:'ثانوية',observation:'ملاحظة',opportunity:'فرصة'}[t] || t; }
+function ncStatusAr(s) { s=(s||'').toLowerCase(); return {open:'مفتوحة',under_investigation:'قيد التحقيق',in_progress:'قيد المعالجة',pending_verification:'بانتظار التحقق',closed:'مغلقة',cancelled:'ملغاة',overdue:'متأخرة'}[s] || s; }
+function ncStatusBadge(s) { s=(s||'').toLowerCase(); return {open:'badge-red',under_investigation:'badge-yellow',in_progress:'badge-yellow',pending_verification:'badge-blue',closed:'badge-green',cancelled:'badge-gray',overdue:'badge-red'}[s] || 'badge-gray'; }
 function inspStatusAr(s) { return {pending:'قيد الانتظار',in_progress:'جارٍ',completed:'مكتمل',cancelled:'ملغى',overdue:'متأخر'}[s] || s; }
 
 function showToast(msg, type = 'info') {
