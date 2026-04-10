@@ -3072,56 +3072,17 @@ async function markRCAClosed(id) {
 }
 
 // ── KPIs ─────────────────────────────────────
-async function loadKPIs() {
-  const _kpiRes = await apiFetch('/api/kpis');
-  const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
-    ...k,
-    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= k.warning_threshold ? 'warning' : 'critical',
-    latest_value: k.current_value,
-  }));
-  const categories = [...new Set(kpis.map(k => k.category))];
-  window._kpisList = kpis;
-  const catAr = { quality: 'الجودة', safety: 'السلامة', environmental: 'البيئة', compliance: 'الامتثال', operational: 'التشغيل' };
-  const catColors = { quality: '#3b82f6', safety: '#059669', environmental: '#d97706', compliance: '#7c3aed', operational: '#64748b' };
-  
-  document.getElementById('app-content').innerHTML = `
-  <div class="fade-in space-y-6">
-    <div class="card p-4 bg-gradient-to-r from-blue-50 to-purple-50">
-      <div class="flex items-center gap-3">
-        <i class="fas fa-chart-line text-blue-600 text-2xl"></i>
-        <div>
-          <div class="font-bold text-slate-800">مؤشرات الأداء الرئيسية - Live</div>
-          <div class="text-sm text-slate-500">مقارنة بين المواقع · تتبع لحظي · ISO 9001/45001/14001</div>
-        </div>
-      </div>
-    </div>
-    
-    ${categories.map(cat => {
-      const catKpis = kpis.filter(k => k.category === cat);
-      const color = catColors[cat] || '#64748b';
-      return `
-      <div class="card p-5">
-        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <div class="w-3 h-6 rounded-sm" style="background:${color}"></div>
-          ${catAr[cat] || cat}
-          <span class="badge badge-blue text-xs">${catKpis[0]?.iso_standard || ''}</span>
-        </h3>
-        <div class="grid gap-4">
-          ${catKpis.map(k => renderKPIRow(k)).join('')}
-        </div>
-      </div>`;
-    }).join('')}
-  </div>`;
-}
-
 // ── KPIs ─────────────────────────────────────
 async function loadKPIs() {
   const _kpiRes = await apiFetch('/api/kpis');
   const kpis = (Array.isArray(_kpiRes) ? _kpiRes : (_kpiRes?.data || [])).map(k => ({
     ...k,
-    status_level: k.current_value >= k.target_value ? 'good' : k.current_value >= (k.warning_threshold||0) ? 'warning' : 'critical',
-    latest_value: k.current_value,
+    latest_value: k.latest_value ?? 0,
+    target_value: k.target_value ?? 0,
+    warning_threshold: k.warning_threshold ?? 0,
+    status_level: (k.latest_value ?? 0) >= (k.target_value ?? 0) ? 'good' : (k.latest_value ?? 0) >= (k.warning_threshold ?? 0) ? 'warning' : 'critical',
   }));
+  window._kpisList = kpis;
   const catAr    = {quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'};
   const catColors = {quality:'#3b82f6',safety:'#059669',environmental:'#d97706',compliance:'#7c3aed',operational:'#64748b'};
   const catIcons  = {quality:'award',safety:'hard-hat',environmental:'leaf',compliance:'check-double',operational:'cogs'};
@@ -3256,7 +3217,16 @@ async function loadKPIs() {
         <div class="grid grid-cols-3 gap-4">
           <div>
             <label class="text-sm font-medium text-slate-700 block mb-1">الوحدة</label>
-            <input class="form-input" type="text" id="kpi-unit" placeholder="% أو عدد" />
+            <select class="form-input" id="kpi-unit">
+              <option value="%">نسبة مئوية (%)</option>
+              <option value="عدد">عدد</option>
+              <option value="يوم">يوم</option>
+              <option value="ساعة">ساعة</option>
+              <option value="ر.س">ريال (ر.س)</option>
+              <option value="درجة">درجة</option>
+              <option value="مرة">مرة</option>
+              <option value="">بدون وحدة</option>
+            </select>
           </div>
           <div>
             <label class="text-sm font-medium text-slate-700 block mb-1">الهدف</label>
@@ -3302,8 +3272,9 @@ async function loadKPIs() {
 }
 
 function renderKPIRow(k) {
-  const val    = k.latest_value;
-  const target = k.target_value;
+  const val    = k.latest_value ?? 0;
+  const target = k.target_value ?? 0;
+  const warn   = k.warning_threshold ?? 0;
   const pct    = target > 0 ? Math.min(100, Math.max(0, (val / target) * 100)) : 0;
   const color  = k.status_level==='good' ? '#059669' : k.status_level==='warning' ? '#d97706' : k.status_level==='critical' ? '#dc2626' : '#94a3b8';
   const icon   = k.status_level==='good' ? 'check-circle' : k.status_level==='warning' ? 'exclamation-circle' : k.status_level==='critical' ? 'times-circle' : 'question-circle';
@@ -3324,7 +3295,7 @@ function renderKPIRow(k) {
           <div class="flex-1">
             <div class="flex justify-between text-xs text-slate-500 mb-1">
               <span>القيمة الحالية: <b style="color:${color}">${val} ${k.unit||''}</b></span>
-              <span>الهدف: ${target} ${k.unit||''} | حد التحذير: ${k.warning_threshold}</span>
+              <span>الهدف: ${target} ${k.unit||''} | حد التحذير: ${warn}</span>
             </div>
             <div class="kpi-bar">
               <div class="kpi-fill" style="width:${pct}%;background:${color}"></div>
@@ -3467,7 +3438,7 @@ async function openKPIDetail(id) {
   header.style.background = color;
   document.getElementById('kpi-detail-title').textContent = kpi.name;
 
-  const pct = kpi.target_value > 0 ? Math.min(100, (kpi.latest_value / kpi.target_value) * 100) : 0;
+  const pct = kpi.target_value > 0 ? Math.min(100, ((kpi.latest_value ?? 0) / kpi.target_value) * 100) : 0;
   const trend = hist.length >= 2 ? (hist[hist.length-1].val - hist[hist.length-2].val) : 0;
   const trendIcon = trend > 0 ? 'arrow-up' : trend < 0 ? 'arrow-down' : 'minus';
   const trendColor = trend > 0 ? '#059669' : trend < 0 ? '#dc2626' : '#94a3b8';
@@ -3476,11 +3447,11 @@ async function openKPIDetail(id) {
     <div class="space-y-5">
       <div class="grid grid-cols-3 gap-3">
         <div class="p-3 bg-slate-50 rounded-xl text-center">
-          <div class="text-2xl font-black" style="color:${color}">${kpi.latest_value}</div>
+          <div class="text-2xl font-black" style="color:${color}">${kpi.latest_value ?? 0}</div>
           <div class="text-xs text-slate-500">${kpi.unit || ''} حالياً</div>
         </div>
         <div class="p-3 bg-slate-50 rounded-xl text-center">
-          <div class="text-2xl font-black text-slate-700">${kpi.target_value}</div>
+          <div class="text-2xl font-black text-slate-700">${kpi.target_value ?? 0}</div>
           <div class="text-xs text-slate-500">${kpi.unit || ''} الهدف</div>
         </div>
         <div class="p-3 bg-slate-50 rounded-xl text-center">
@@ -11499,4 +11470,4 @@ function updateSidebarISO() {
 })();
 </script>
 </body>
-</html> 
+</html>
