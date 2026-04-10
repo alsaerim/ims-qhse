@@ -1399,7 +1399,7 @@ async function openProjectDetail(id) {
   </div>`;
 }
 
-function openProjectModal(p) {
+async function openProjectModal(p) {
   const isEdit = p && p.id;
   // Reset form first
   document.getElementById('form-project').reset();
@@ -1421,13 +1421,27 @@ function openProjectModal(p) {
     if(p.start_date) document.getElementById('proj-start').value = p.start_date.split('T')[0];
     if(p.end_date) document.getElementById('proj-end').value = p.end_date.split('T')[0];
   }
-  // Populate manager dropdown
+  // Populate manager dropdown from API
   const mgr = document.getElementById('proj-manager');
   if(mgr) {
-    const users = window._mockUsers || [];
-    const managers = users.filter(u=>u.role==='manager'||u.role==='admin');
-    mgr.innerHTML = managers.map(u=>`<option value="${u.id}" ${p?.manager_id===u.id?'selected':''}>${u.full_name}</option>`).join('');
-    if(!managers.length) mgr.innerHTML = '<option value="usr-mgr-001">أحمد العمري</option>';
+    mgr.innerHTML = '<option value="">جاري التحميل...</option>';
+    let users = window.MOCK_DB?.users || [];
+    if (!users.length) {
+      try { const r = await apiFetch('/api/users'); users = Array.isArray(r) ? r : (r?.data || []); } catch(e) { users = []; }
+    }
+    const eligible = users.filter(u => {
+      const role = (u.role||'').toUpperCase();
+      const active = (u.status||'').toUpperCase() === 'ACTIVE' || u.is_active;
+      return active && (role === 'TENANT_ADMIN' || role === 'MANAGER' || role === 'ADMIN');
+    });
+    if (eligible.length) {
+      mgr.innerHTML = '<option value="">-- اختر مدير المشروع --</option>' +
+        eligible.map(u => `<option value="${u.id}" ${p?.manager_id===u.id?'selected':''}>${u.full_name} (${u.role})</option>`).join('');
+    } else {
+      mgr.innerHTML = '<option value="">-- لا يوجد مدراء --</option>' +
+        users.filter(u => (u.status||'').toUpperCase() === 'ACTIVE' || u.is_active)
+          .map(u => `<option value="${u.id}" ${p?.manager_id===u.id?'selected':''}>${u.full_name}</option>`).join('');
+    }
   }
   document.getElementById('modal-project').classList.add('open');
 }
