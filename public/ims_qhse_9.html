@@ -1202,7 +1202,33 @@ function updateParetoChart() {
 async function loadProjects() {
   const _projRes = await apiFetch('/api/projects');
   const projList = Array.isArray(_projRes) ? _projRes : (_projRes?.data || []);
-  const data = { data: projList.map(p => ({...p, name: p.name || p.title, status: (p.metadata?.status || p.status || 'active').toLowerCase()})) };
+
+  // Load audits to calculate compliance per project
+  let allAudits = [];
+  try {
+    const aRes = await apiFetch('/api/audits');
+    allAudits = Array.isArray(aRes) ? aRes : (aRes?.data || []);
+  } catch(e) {}
+
+  // Load NCs to count open NCs per project
+  let allNCs = [];
+  try {
+    const nRes = await apiFetch('/api/nonconformances');
+    allNCs = Array.isArray(nRes) ? nRes : (nRes?.data || []);
+  } catch(e) {}
+
+  const data = { data: projList.map(p => {
+    const projAudits = allAudits.filter(a => a.project_id === p.id && a.compliance_score);
+    const avgComp = projAudits.length ? Math.round(projAudits.reduce((s, a) => s + (+a.compliance_score || 0), 0) / projAudits.length) : 0;
+    const openNCs = allNCs.filter(n => n.project_id === p.id && (n.status||'').toUpperCase() !== 'CLOSED').length;
+    return {
+      ...p,
+      name: p.name || p.title,
+      status: (p.metadata?.status || p.status || 'active').toLowerCase(),
+      avg_compliance: avgComp,
+      open_ncs: openNCs,
+    };
+  }) };
   const statusLabels = {active:'نشط',completed:'مكتمل',on_hold:'موقوف',cancelled:'ملغى',draft:'مسودة'};
   const statusBadge  = {active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red',draft:'badge-gray'};
   document.getElementById('app-content').innerHTML = `
