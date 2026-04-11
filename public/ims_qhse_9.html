@@ -7530,12 +7530,10 @@ async function loadLean() {
         '<div class="mt-3 p-3 bg-slate-50 rounded-xl">' +
           '<div class="text-xs font-bold text-slate-600 mb-2"><i class="fas fa-info-circle text-blue-400 ml-1"></i>أساس الحساب</div>' +
           '<div class="grid grid-cols-2 gap-1 text-xs text-slate-500">' +
-            '<div>• التفتيش المكتمل: <b class="text-green-600">' + lm.paper_elimination.digital_forms + '</b></div>' +
-            '<div>• الهدر المغلق: <b class="text-green-600">' + (lm._detail?.wastes_closed||0) + '</b></div>' +
-            '<div>• التفتيش الكلي: <b>' + lm.paper_elimination.total_inspections + '</b></div>' +
-            '<div>• الهدر قيد المعالجة: <b class="text-yellow-600">' + (lm._detail?.wastes_inprog||0) + '</b></div>' +
-            '<div>• المتأخرات الكلية: <b class="text-red-500">' + (lm._detail?.overdue_total||0) + '</b></div>' +
-            '<div>• إجمالي الهدر: <b>' + (lm._detail?.wastes_total||0) + '</b></div>' +
+            '<div>• هدر مُعالج: <b class="text-green-600">' + closedWastes + '</b></div>' +
+            '<div>• هدر مفتوح: <b class="text-red-600">' + openWastes + '</b></div>' +
+            '<div>• قيد المعالجة: <b class="text-yellow-600">' + inProgress + '</b></div>' +
+            '<div>• إجمالي الهدر: <b>' + totalWastes + '</b></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
