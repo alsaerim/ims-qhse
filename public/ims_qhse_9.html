@@ -2402,26 +2402,37 @@ async function submitNCEdit(id) {
 
 // ── RCA / Lean Six Sigma ──────────────────────
 // ── New RCA Modal ─────────────────────────────
-function openNewRCAModal() {
+async function openNewRCAModal() {
   document.getElementById('modal-new-rca')?.remove();
 
+  // Load data from API
   var projects = window.MOCK_DB?.projects || [];
   var users    = window.MOCK_DB?.users    || [];
   var ncs      = window.MOCK_DB?.nonconformances || [];
 
+  if (!projects.length) {
+    try { var r = await apiFetch('/api/projects'); projects = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  }
+  if (!users.length) {
+    try { var r2 = await apiFetch('/api/users'); users = Array.isArray(r2) ? r2 : (r2?.data || []); } catch(e) {}
+  }
+  if (!ncs.length) {
+    try { var r3 = await apiFetch('/api/nonconformances'); ncs = Array.isArray(r3) ? r3 : (r3?.data || []); } catch(e) {}
+  }
+
   var projOpts = '<option value="">-- اختر المشروع --</option>';
   projects.forEach(function(p){
-    projOpts += '<option value="'+p.id+'">'+p.name+'</option>';
+    projOpts += '<option value="'+p.id+'">'+(p.name||p.title||'')+'</option>';
   });
 
   var userOpts = '<option value="">-- اختر المسؤول --</option>';
-  users.filter(function(u){return u.is_active;}).forEach(function(u){
+  users.filter(function(u){return (u.status||'').toUpperCase()==='ACTIVE' || u.is_active;}).forEach(function(u){
     userOpts += '<option value="'+u.id+'">'+u.full_name+'</option>';
   });
 
   var ncOpts = '<option value="">-- اختر NC مرتبطة (اختياري) --</option>';
-  ncs.filter(function(n){return n.status !== 'closed';}).forEach(function(n){
-    ncOpts += '<option value="'+n.id+'" data-ref="'+n.ref_number+'" data-desc="'+(n.title||'').replace(/"/g,'&quot;')+'">'+n.ref_number+' — '+n.title.substring(0,50)+'</option>';
+  ncs.filter(function(n){return (n.status||'').toUpperCase() !== 'CLOSED';}).forEach(function(n){
+    ncOpts += '<option value="'+n.id+'" data-ref="'+(n.ref_number||'')+'" data-desc="'+((n.title||'').replace(/"/g,'&quot;'))+'">'+(n.ref_number||'')+' — '+(n.title||'').substring(0,50)+'</option>';
   });
 
   var methOpts = [
@@ -7343,12 +7354,13 @@ function buildProjectCard(p, clrFor) {
 
 // ── Lean / Muda ───────────────────────────────
 async function loadLean() {
-  const [reportData, wastesData] = await Promise.all([
-    apiFetch('/api/reports/lean-waste/' + state.currentProject),
-    apiFetch('/api/lean/wastes')
-  ]);
-  const lm = reportData.lean_metrics;
-  const wastes = wastesData.data || [];
+  let wastes = [];
+  try {
+    const wastesData = await apiFetch('/api/lean/wastes');
+    wastes = Array.isArray(wastesData) ? wastesData : (wastesData?.data || []);
+    wastes = wastes.map(w => ({...w, status: (w.status||'').toLowerCase()}));
+  } catch(e) { console.error('[Lean]', e); }
+  const lm = {};
 
   // Compute summary stats
   const totalWastes = wastes.length;
@@ -7635,7 +7647,7 @@ async function loadLean() {
               '<label class="text-sm font-medium text-slate-700 block mb-1">المشروع</label>' +
               '<select class="form-input" id="w-project">' +
                 '<option value="">-- اختر --</option>' +
-                (window.MOCK_DB ? window.MOCK_DB.projects.map(p => '<option value="' + p.id + '" data-name="' + p.name + '">' + p.name + '</option>').join('') : '') +
+                ((window.MOCK_DB?.projects||[]).map(p => '<option value="' + p.id + '" data-name="' + (p.name||p.title||'') + '">' + (p.name||p.title||'') + '</option>').join('') || '') +
               '</select>' +
             '</div>' +
           '</div>' +
@@ -7713,21 +7725,15 @@ function openWasteModal() {
 
 async function submitWaste() {
   const projSel = document.getElementById('w-project');
-  const projName = projSel.options[projSel.selectedIndex]?.dataset?.name || '';
   const body = {
     title: document.getElementById('w-title').value.trim(),
     muda_type: document.getElementById('w-muda-type').value,
     description: document.getElementById('w-desc').value.trim(),
     process: document.getElementById('w-process').value.trim(),
-    project_id: projSel.value,
-    project_name: projName,
+    project_id: projSel?.value || null,
     impact_score: parseInt(document.getElementById('w-impact').value) || 5,
-    frequency: document.getElementById('w-freq').value,
     dmaic_phase: document.getElementById('w-dmaic').value,
-    root_cause: document.getElementById('w-root').value.trim(),
-    proposed_action: document.getElementById('w-action').value.trim(),
     estimated_saving: parseInt(document.getElementById('w-saving').value) || 0,
-    detected_by: state.currentUser?.full_name || 'مدير النظام',
     priority: document.getElementById('w-impact').value >= 8 ? 'critical' : document.getElementById('w-impact').value >= 6 ? 'high' : 'medium'
   };
   if (!body.title) { showToast('❌ يرجى إدخال عنوان الهدر', 'error'); return; }
@@ -7743,9 +7749,14 @@ async function submitWaste() {
 }
 
 async function openWasteDetail(id) {
-  const wastes = window.MOCK_DB?.lean_wastes || [];
-  const w = wastes.find(x => x.id === id);
-  if (!w) return;
+  let w;
+  try {
+    w = await apiFetch('/api/lean/wastes/' + id);
+    w = {...w, status: (w.status||'').toLowerCase()};
+  } catch(e) {
+    showToast('❌ خطأ في تحميل البيانات', 'error');
+    return;
+  }
   const mudaTypeAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط في الإنتاج',motion:'الحركة الزائدة',inventory:'المخزون الزائد',over_processing:'المعالجة الزائدة',transportation:'النقل الزائد',skills:'إهدار المهارات'};
   const dmaicColor = {define:'#3b82f6',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#64748b'};
   const dmaicAr = {define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
@@ -7825,10 +7836,21 @@ async function updateWasteStatus(id, status) {
   }
 }
 
-function openWasteEdit(id) {
-  const wastes = window.MOCK_DB?.lean_wastes || [];
-  const w = wastes.find(x => x.id === id);
-  if (!w) return;
+async function openWasteEdit(id) {
+  let w;
+  try {
+    w = await apiFetch('/api/lean/wastes/' + id);
+    w = {...w, status: (w.status||'').toLowerCase()};
+  } catch(e) {
+    showToast('❌ خطأ في تحميل البيانات', 'error');
+    return;
+  }
+
+  // Load projects from API
+  let projects = window.MOCK_DB?.projects || [];
+  if (!projects.length) {
+    try { const r = await apiFetch('/api/projects'); projects = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  }
 
   const mudaTypeAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط في الإنتاج',motion:'الحركة الزائدة',inventory:'المخزون الزائد',over_processing:'المعالجة الزائدة',transportation:'النقل الزائد',skills:'إهدار المهارات'};
   const dmaicAr    = {define:'تعريف (Define)',measure:'قياس (Measure)',analyze:'تحليل (Analyze)',improve:'تحسين (Improve)',control:'تحكم (Control)'};
@@ -7843,8 +7865,8 @@ function openWasteEdit(id) {
     document.body.appendChild(editModal);
   }
 
-  const projectOptions = (window.MOCK_DB?.projects || []).map(p =>
-    '<option value="' + p.id + '" data-name="' + p.name + '"' + (p.id === w.project_id ? ' selected' : '') + '>' + p.name + '</option>'
+  const projectOptions = projects.map(p =>
+    '<option value="' + p.id + '" data-name="' + (p.name||p.title||'') + '"' + (p.id === w.project_id ? ' selected' : '') + '>' + (p.name||p.title||'') + '</option>'
   ).join('');
 
   const mudaOptions = Object.entries(mudaTypeAr).map(([k,v]) =>
