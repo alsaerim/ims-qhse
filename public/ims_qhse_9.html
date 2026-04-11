@@ -1286,7 +1286,7 @@ function renderProjectsTable(projects, sL, sB) {
     <tbody>
       ${projects.map(p=>`
       <tr class="table-row border-b border-slate-100 cursor-pointer" onclick="openProjectDetail('${p.id}')">
-        <td class="p-4"><div class="font-semibold text-slate-800">${p.name||p.title||''}</div><div class="text-xs text-slate-400">${p.ref_number||p.code||''} · ${p.city||p.location_name||'-'}</div></td>
+        <td class="p-4"><div class="font-semibold text-slate-800">${p.name||p.title||''}</div><div class="text-xs text-slate-400">${p.ref_number||p.code||''}${(p.city||p.location_name) ? ' · ' + (p.city||p.location_name) : ''}</div></td>
         <td class="p-4 text-slate-600 text-sm">${p.client_name||'-'}</td>
         <td class="p-4"><span class="badge ${sB[p.status]||'badge-gray'}">${sL[p.status]||p.status}</span></td>
         <td class="p-4"><div class="flex items-center gap-2">
@@ -1327,34 +1327,45 @@ async function openProjectDetail(id) {
   const p = {
     ..._pRes,
     name:        _pRes.metadata?.name        || _pRes.title,
-    code:        _pRes.ref_number,
-    client_name: _pRes.metadata?.client      || _pRes.metadata?.client_name,
-    city:        _pRes.metadata?.city        || _pRes.location_name,
-    description: _pRes.metadata?.description || _pRes.notes,
-    status:      (_pRes.metadata?.status     || _pRes.status || 'active').toLowerCase(),
-    start_date:  _pRes.metadata?.start_date  || _pRes.scheduled_at,
-    end_date:    _pRes.metadata?.end_date,
-    avg_compliance: _pRes.compliance_score   || 0,
-    open_ncs:    _pRes._count?.non_conformances || 0,
+    code:        _pRes.ref_number || '',
+    client_name: _pRes.client_name || _pRes.metadata?.client_name || '',
+    city:        _pRes.city || _pRes.location_name || _pRes.metadata?.city || '',
+    description: _pRes.description || _pRes.notes || _pRes.metadata?.description || '',
+    status:      (_pRes.metadata?.status || _pRes.status || 'active').toLowerCase(),
+    start_date:  _pRes.start_date || _pRes.metadata?.start_date || _pRes.scheduled_at,
+    end_date:    _pRes.end_date || _pRes.metadata?.end_date,
+    iso_9001:    _pRes.iso_9001 || _pRes.metadata?.iso_9001 || false,
+    iso_45001:   _pRes.iso_45001 || _pRes.metadata?.iso_45001 || false,
+    iso_14001:   _pRes.iso_14001 || _pRes.metadata?.iso_14001 || false,
+    iso_27001:   _pRes.iso_27001 || _pRes.metadata?.iso_27001 || false,
   };
   const sL={active:'نشط',completed:'مكتمل',on_hold:'موقوف مؤقتاً',cancelled:'ملغى'};
   const sB={active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red'};
 
   // Load inspections and NCs for this project from API
-  let projInspections = [];
-  let projNCs = [];
+  let allProjInspections = [];
+  let allProjNCs = [];
   try {
     const inspRes = await apiFetch('/api/audits?project_id=' + id);
-    projInspections = (Array.isArray(inspRes) ? inspRes : (inspRes?.data || []))
+    allProjInspections = (Array.isArray(inspRes) ? inspRes : (inspRes?.data || []))
       .map(i => ({...i, status: (i.status||'').toLowerCase(), type: (i.type||'').toLowerCase()}))
-      .slice(0, 5);
+      .filter(i => i.project_id === id);
   } catch(e) {}
   try {
     const ncRes = await apiFetch('/api/nonconformances?project_id=' + id);
-    projNCs = (Array.isArray(ncRes) ? ncRes : (ncRes?.data || []))
+    allProjNCs = (Array.isArray(ncRes) ? ncRes : (ncRes?.data || []))
       .map(n => ({...n, status: (n.status||'').toLowerCase(), type: (n.type||'').toLowerCase()}))
-      .slice(0, 4);
+      .filter(n => n.project_id === id);
   } catch(e) {}
+
+  // Calculate compliance from ALL inspections
+  const scoredAudits = allProjInspections.filter(a => a.compliance_score);
+  p.avg_compliance = scoredAudits.length ? Math.round(scoredAudits.reduce((s, a) => s + (+a.compliance_score || 0), 0) / scoredAudits.length) : 0;
+  p.open_ncs = allProjNCs.filter(n => n.status !== 'closed').length;
+
+  // Limit for display
+  const projInspections = allProjInspections.slice(0, 5);
+  const projNCs = allProjNCs.slice(0, 4);
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-5">
     <div class="flex items-center gap-2 text-sm">
@@ -1370,7 +1381,7 @@ async function openProjectDetail(id) {
           </div>
           <div>
             <h2 class="text-xl font-bold text-slate-800">${p.name}</h2>
-            <div class="text-sm text-slate-500 mt-1">${p.code} · ${p.client_name||'-'} · ${p.city||'-'}</div>
+            <div class="text-sm text-slate-500 mt-1">${p.code}${p.client_name ? ' · ' + p.client_name : ''}${p.city ? ' · ' + p.city : ''}</div>
             <div class="flex gap-2 mt-2 flex-wrap">
               <span class="badge ${sB[p.status]||'badge-gray'} text-sm">${sL[p.status]||p.status}</span>
               ${p.iso_9001?'<span class="badge badge-blue">ISO 9001</span>':''}
