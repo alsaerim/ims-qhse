@@ -1313,8 +1313,22 @@ async function openProjectDetail(id) {
   };
   const sL={active:'نشط',completed:'مكتمل',on_hold:'موقوف مؤقتاً',cancelled:'ملغى'};
   const sB={active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red'};
-  const projInspections=(window._mockInspections||[]).filter(i=>i.project_id===id).slice(0,5);
-  const projNCs=(window._mockNCs||[]).filter(n=>n.project_id===id).slice(0,4);
+
+  // Load inspections and NCs for this project from API
+  let projInspections = [];
+  let projNCs = [];
+  try {
+    const inspRes = await apiFetch('/api/audits?project_id=' + id);
+    projInspections = (Array.isArray(inspRes) ? inspRes : (inspRes?.data || []))
+      .map(i => ({...i, status: (i.status||'').toLowerCase(), type: (i.type||'').toLowerCase()}))
+      .slice(0, 5);
+  } catch(e) {}
+  try {
+    const ncRes = await apiFetch('/api/nonconformances?project_id=' + id);
+    projNCs = (Array.isArray(ncRes) ? ncRes : (ncRes?.data || []))
+      .map(n => ({...n, status: (n.status||'').toLowerCase(), type: (n.type||'').toLowerCase()}))
+      .slice(0, 4);
+  } catch(e) {}
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-5">
     <div class="flex items-center gap-2 text-sm">
