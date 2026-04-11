@@ -2574,19 +2574,19 @@ async function submitNewRCA() {
 
   var body = {
     title,
-    nc_description: desc,
-    methodology:    document.getElementById('rca-new-methodology')?.value || '5_whys',
+    description:    desc,
+    type:           document.getElementById('rca-new-methodology')?.value || 'five_whys',
     nc_id:          ncId   || null,
-    nc_ref:         ncRef  || null,
-    project_id:     projSel ? projSel.value : '',
-    assigned_to:    userSel ? userSel.value : '',
-    target_date:    document.getElementById('rca-new-date')?.value || null,
+    project_id:     projSel ? (projSel.value || null) : null,
+    assigned_to_id: userSel ? (userSel.value || null) : null,
+    due_date:       document.getElementById('rca-new-date')?.value || null,
   };
 
   try {
-    var newRCA = await apiFetch('/api/rca', 'POST', body);
+    var result = await apiFetch('/api/rca', 'POST', body);
+    var newRCA = result.data || result;
     document.getElementById('modal-new-rca')?.remove();
-    showToast('✅ تم إنشاء التحليل — ' + newRCA.ref_number, 'success');
+    showToast('✅ تم إنشاء التحليل — ' + (newRCA.ref_number || ''), 'success');
     // Reload list first, then open the detail
     await loadRCA();
     loadRCADetail(newRCA.id);
@@ -2601,14 +2601,14 @@ async function loadRCA() {
 
   var resp;
   try { resp = await apiFetch('/api/rca'); } catch(e) { resp = {data:[]}; }
-  var rcas = resp.data || [];
+  var rcas = (resp.data || []).map(function(r) { return Object.assign({}, r, { status: (r.status||'').toLowerCase() }); });
 
   // ── إحصاءات ──
   var total   = rcas.length;
   var openC   = rcas.filter(function(r){return r.status==='open';}).length;
   var inProg  = rcas.filter(function(r){return r.status==='in_progress';}).length;
   var closed  = rcas.filter(function(r){return r.status==='closed';}).length;
-  var overdue = rcas.filter(function(r){return r.target_date && new Date(r.target_date)<new Date() && r.status!=='closed';}).length;
+  var overdue = rcas.filter(function(r){return r.due_date && new Date(r.due_date)<new Date() && r.status!=='closed';}).length;
 
   var totalActs=0, doneActs=0;
   rcas.forEach(function(r){ (r.actions||[]).forEach(function(a){ totalActs++; if(a.status==='completed') doneActs++; }); });
@@ -7511,22 +7511,20 @@ async function loadLean() {
 
       // Lean Score card
       '<div class="card p-5">' +
-        '<h3 class="font-bold text-slate-800 mb-1"><i class="fas fa-tachometer-alt text-green-600 ml-2"></i>مؤشر الرقمنة والتحسين</h3>' +
+        '<h3 class="font-bold text-slate-800 mb-1"><i class="fas fa-tachometer-alt text-green-600 ml-2"></i>مؤشر التحسين المستمر</h3>' +
         '<p class="text-xs text-slate-400 mb-4">يُحسب من البيانات الحقيقية تلقائياً</p>' +
         '<div class="flex items-center justify-around">' +
-          leanGauge(lm.paper_elimination.digitalization_rate, 'معدل الرقمنة', '#059669') +
-          leanGauge(lm.improvement_score, 'مؤشر Lean', '#3b82f6') +
+          leanGauge(totalWastes > 0 ? Math.round((closedWastes + inProgress * 0.5) / totalWastes * 100) : 0, 'مؤشر Lean', '#3b82f6') +
+          leanGauge(totalWastes > 0 ? Math.round(closedWastes / totalWastes * 100) : 0, 'نسبة الإغلاق', '#059669') +
         '</div>' +
         '<div class="mt-4 grid grid-cols-2 gap-3">' +
           '<div class="p-3 bg-green-50 rounded-xl">' +
-            '<div class="font-black text-green-700 text-lg text-center">' + lm.paper_elimination.digital_forms + '/' + lm.paper_elimination.total_inspections + '</div>' +
-            '<div class="text-xs text-slate-500 text-center">تفتيش مكتمل / الإجمالي</div>' +
-            '<div class="text-xs text-slate-400 text-center mt-1">معدل الرقمنة = مكتمل ÷ إجمالي × 100</div>' +
+            '<div class="font-black text-green-700 text-lg text-center">' + closedWastes + '/' + totalWastes + '</div>' +
+            '<div class="text-xs text-slate-500 text-center">هدر مُعالج / الإجمالي</div>' +
           '</div>' +
           '<div class="p-3 bg-blue-50 rounded-xl">' +
-            '<div class="font-black text-blue-700 text-lg text-center">' + (lm._detail?.wastes_closed||0) + '/' + (lm._detail?.wastes_total||0) + '</div>' +
-            '<div class="text-xs text-slate-500 text-center">هدر مغلق / الإجمالي</div>' +
-            '<div class="text-xs text-slate-400 text-center mt-1">مؤشر Lean = (مغلق + جارٍ×0.5) ÷ كل الهدر × 100</div>' +
+            '<div class="font-black text-blue-700 text-lg text-center">' + (totalSaving > 0 ? (totalSaving/1000).toFixed(0) + 'K' : '0') + ' ر.س</div>' +
+            '<div class="text-xs text-slate-500 text-center">الوفر المالي المتوقع</div>' +
           '</div>' +
         '</div>' +
         '<div class="mt-3 p-3 bg-slate-50 rounded-xl">' +
