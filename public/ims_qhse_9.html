@@ -2171,21 +2171,36 @@ function openNCDetail(id) {
 }
 
 // ── NC Edit (تعديل كامل) ──────────────────────
-function openNCEdit(id) {
-  const ncs = window.MOCK_DB?.nonconformances || [];
-  const n = ncs.find(x => x.id === id);
-  if (!n) return;
+async function openNCEdit(id) {
+  // Load NC from API
+  let n;
+  try {
+    const raw = await apiFetch('/api/nonconformances/' + id);
+    n = { ...raw, status: (raw.status||'').toLowerCase(), type: (raw.type||'').toLowerCase() };
+  } catch(e) {
+    showToast('❌ خطأ في تحميل البيانات', 'error');
+    return;
+  }
 
-  const projects = window.MOCK_DB?.projects || [];
-  const users    = window.MOCK_DB?.users    || [];
+  // Load projects and users from API
+  let projects = window.MOCK_DB?.projects || [];
+  let users = window.MOCK_DB?.users || [];
+  if (!projects.length) {
+    try { const r = await apiFetch('/api/projects'); projects = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  }
+  if (!users.length) {
+    try { const r = await apiFetch('/api/users'); users = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  }
 
   const projectOpts = projects.map(p =>
-    `<option value="${p.id}" ${p.id === n.project_id ? 'selected' : ''}>${p.name}</option>`
+    `<option value="${p.id}" ${p.id === n.project_id ? 'selected' : ''}>${p.name||p.title||''}</option>`
   ).join('');
 
-  const userOpts = users.map(u =>
-    `<option value="${u.id}" ${u.id === n.assigned_to ? 'selected' : ''}>${u.full_name}</option>`
+  const userOpts = users.filter(u => (u.status||'').toUpperCase() === 'ACTIVE' || u.is_active).map(u =>
+    `<option value="${u.id}" ${u.id === (n.assigned_to_id||n.assigned_to) ? 'selected' : ''}>${u.full_name}</option>`
   ).join('');
+
+  const isoOpts = buildActiveISOOptions(false);
 
   const statusOpts = [
     ['open','مفتوحة'],['under_investigation','قيد التحقيق'],
@@ -2202,11 +2217,6 @@ function openNCEdit(id) {
     ['safety','السلامة'],['quality','الجودة'],['environmental','البيئة'],
     ['process','العمليات'],['documentation','الوثائق'],['equipment','المعدات']
   ].map(([v,l]) => `<option value="${v}" ${v === n.category ? 'selected' : ''}>${l}</option>`).join('');
-
-  const isoOpts = [
-    ['ISO_45001','ISO 45001 - السلامة'],['ISO_9001','ISO 9001 - الجودة'],
-    ['ISO_14001','ISO 14001 - البيئة'],['ISO_27001','ISO 27001 - الأمن']
-  ].map(([v,l]) => `<option value="${v}" ${v === n.iso_standard ? 'selected' : ''}>${l}</option>`).join('');
 
   let modal = document.getElementById('modal-nc-edit');
   if (!modal) {
@@ -2316,6 +2326,12 @@ function openNCEdit(id) {
 
   modal.classList.add('open');
 
+  // Set selected ISO
+  if (n.iso_standard) {
+    const isoSel = document.getElementById('nce-iso');
+    if (isoSel) isoSel.value = n.iso_standard;
+  }
+
   // Show/hide close notes when status changes
   document.getElementById('nce-status').addEventListener('change', function() {
     const sec = document.getElementById('nce-close-section');
@@ -2363,18 +2379,15 @@ async function submitNCEdit(id) {
 
   const body = {
     title,
-    description:   document.getElementById('nce-desc')?.value?.trim(),
-    status:        document.getElementById('nce-status')?.value,
-    type:          document.getElementById('nce-type')?.value,
-    category:      document.getElementById('nce-category')?.value,
-    iso_standard:  document.getElementById('nce-iso')?.value,
-    project_id:    projSel?.value,
-    project_name:  projName,
-    assigned_to:   userSel?.value,
-    assigned_name: userName,
-    location:      document.getElementById('nce-location')?.value?.trim(),
-    due_date:      document.getElementById('nce-due')?.value || null,
-    close_notes:   document.getElementById('nce-close-notes')?.value?.trim(),
+    description:    document.getElementById('nce-desc')?.value?.trim(),
+    status:         (document.getElementById('nce-status')?.value || '').toUpperCase(),
+    type:           (document.getElementById('nce-type')?.value || '').toUpperCase(),
+    category:       document.getElementById('nce-category')?.value,
+    iso_standard:   document.getElementById('nce-iso')?.value,
+    project_id:     projSel?.value || null,
+    assigned_to_id: userSel?.value || null,
+    due_date:       document.getElementById('nce-due')?.value || null,
+    root_cause:     document.getElementById('nce-close-notes')?.value?.trim() || null,
   };
 
   try {
