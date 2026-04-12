@@ -1218,15 +1218,19 @@ async function loadProjects() {
   } catch(e) {}
 
   const data = { data: projList.map(p => {
-    const projAudits = allAudits.filter(a => a.project_id === p.id && a.compliance_score);
-    const avgComp = projAudits.length ? Math.round(projAudits.reduce((s, a) => s + (+a.compliance_score || 0), 0) / projAudits.length) : 0;
+    const projAudits = allAudits.filter(a => a.project_id === p.id);
+    const completedAudits = projAudits.filter(a => (a.status||'').toUpperCase() === 'COMPLETED');
+    // compliance_rate = completed_inspections / total_inspections * 100
+    const avgComp = projAudits.length ? Math.round(completedAudits.length / projAudits.length * 100) : 0;
     const openNCs = allNCs.filter(n => n.project_id === p.id && (n.status||'').toUpperCase() !== 'CLOSED').length;
     return {
       ...p,
       name: p.name || p.title,
-      status: (p.metadata?.status || p.status || 'active').toLowerCase(),
+      status: (p.status || 'active').toLowerCase(),
       avg_compliance: avgComp,
       open_ncs: openNCs,
+      total_inspections: projAudits.length,
+      completed_inspections: completedAudits.length,
     };
   }) };
   const statusLabels = {active:'نشط',completed:'مكتمل',on_hold:'موقوف',cancelled:'ملغى',draft:'مسودة'};
@@ -1358,10 +1362,12 @@ async function openProjectDetail(id) {
       .filter(n => n.project_id === id);
   } catch(e) {}
 
-  // Calculate compliance from ALL inspections
-  const scoredAudits = allProjInspections.filter(a => a.compliance_score);
-  p.avg_compliance = scoredAudits.length ? Math.round(scoredAudits.reduce((s, a) => s + (+a.compliance_score || 0), 0) / scoredAudits.length) : 0;
+  // Calculate compliance: completed / total * 100
+  const completedAudits = allProjInspections.filter(a => (a.status||'').toLowerCase() === 'completed');
+  p.avg_compliance = allProjInspections.length ? Math.round(completedAudits.length / allProjInspections.length * 100) : 0;
   p.open_ncs = allProjNCs.filter(n => n.status !== 'closed').length;
+  p.total_inspections = allProjInspections.length;
+  p.completed_inspections = completedAudits.length;
 
   // Limit for display
   const projInspections = allProjInspections.slice(0, 5);
@@ -1397,10 +1403,10 @@ async function openProjectDetail(id) {
       ${p.description?`<div class="mt-4 p-3 bg-slate-50 rounded-lg text-sm text-slate-600">${p.description}</div>`:''}
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="card p-4 text-center"><div class="text-3xl font-black text-blue-600">${p.avg_compliance||0}%</div><div class="text-xs text-slate-500 mt-1">معدل الامتثال</div><div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#059669':'#d97706'}"></div></div></div>
+      <div class="card p-4 text-center"><div class="text-3xl font-black text-blue-600">${p.avg_compliance||0}%</div><div class="text-xs text-slate-500 mt-1">معدل الامتثال</div><div class="text-xs text-slate-400">${p.completed_inspections||0} مكتمل / ${p.total_inspections||0} إجمالي</div><div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#059669':'#d97706'}"></div></div></div>
       <div class="card p-4 text-center"><div class="text-3xl font-black text-red-600">${p.open_ncs||0}</div><div class="text-xs text-slate-500 mt-1">NC مفتوحة</div></div>
       <div class="card p-4 text-center"><div class="text-2xl font-black mt-1" style="color:${sB[p.status]?.includes('green')?'#059669':sB[p.status]?.includes('blue')?'#3b82f6':'#d97706'}">${sL[p.status]||'-'}</div><div class="text-xs text-slate-500 mt-1">الحالة الحالية</div></div>
-      <div class="card p-4 text-center"><div class="text-3xl font-black text-purple-600">${[p.iso_9001,p.iso_45001,p.iso_14001,p.iso_27001].filter(Boolean).length}</div><div class="text-xs text-slate-500 mt-1">معايير ISO</div></div>
+      <div class="card p-4 text-center"><div class="text-3xl font-black text-purple-600">${p.total_inspections||0}</div><div class="text-xs text-slate-500 mt-1">عمليات التفتيش</div></div>
     </div>
 
     <!-- Status Change Card -->
@@ -1523,27 +1529,34 @@ async function submitProject(e) {
   const btn = document.getElementById('submit-proj-btn');
   btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
   const id = document.getElementById('edit-proj-id').value;
+  const isEdit = !!id;
+  const cityEl = document.getElementById('proj-city');
+  const selectedOpt = cityEl.selectedOptions?.[0];
+
   const body = {
     name: document.getElementById('proj-name').value.trim(),
-    code: document.getElementById('proj-code').value.trim(),
     client_name: document.getElementById('proj-client').value.trim(),
-    city: document.getElementById('proj-city').value,
-latitude: document.getElementById('proj-city').selectedOptions[0]?.dataset?.lat || null,
-longitude: document.getElementById('proj-city').selectedOptions[0]?.dataset?.lng || null,
+    city: cityEl.value,
     description: document.getElementById('proj-desc').value.trim(),
     status: document.getElementById('proj-status').value,
-    manager_id: document.getElementById('proj-manager')?.value||'usr-mgr-001',
-    iso_9001: document.getElementById('proj-iso9001').checked?1:0,
-    iso_45001: document.getElementById('proj-iso45001').checked?1:0,
-    iso_14001: document.getElementById('proj-iso14001').checked?1:0,
-    iso_27001: document.getElementById('proj-iso27001').checked?1:0,
-    start_date: document.getElementById('proj-start').value||null,
-    end_date: document.getElementById('proj-end').value||null,
+    iso_9001: document.getElementById('proj-iso9001').checked ? true : false,
+    iso_45001: document.getElementById('proj-iso45001').checked ? true : false,
+    iso_14001: document.getElementById('proj-iso14001').checked ? true : false,
+    iso_27001: document.getElementById('proj-iso27001').checked ? true : false,
+    start_date: document.getElementById('proj-start').value || null,
+    end_date: document.getElementById('proj-end').value || null,
   };
+
+  // Only set lat/lng on CREATE, never on edit
+  if (!isEdit) {
+    body.latitude = selectedOpt?.dataset?.lat ? parseFloat(selectedOpt.dataset.lat) : null;
+    body.longitude = selectedOpt?.dataset?.lng ? parseFloat(selectedOpt.dataset.lng) : null;
+  }
+
   try {
-    id ? await apiFetch(`/api/projects/${id}`,'PUT',body) : await apiFetch('/api/projects','POST',body);
+    isEdit ? await apiFetch(`/api/projects/${id}`,'PUT',body) : await apiFetch('/api/projects','POST',body);
     closeModal('modal-project');
-    showToast(id?'✅ تم تعديل المشروع':'✅ تم إضافة المشروع بنجاح','success');
+    showToast(isEdit?'✅ تم تعديل المشروع':'✅ تم إضافة المشروع بنجاح','success');
     loadProjects();
   } catch(err) {
     showToast('❌ '+(err.message||'حدث خطأ'),'error');
@@ -2583,15 +2596,16 @@ async function submitNewRCA() {
   };
 
   try {
+    console.log('[RCA] Submitting:', JSON.stringify(body));
     var result = await apiFetch('/api/rca', 'POST', body);
-    var newRCA = result.data || result;
+    console.log('[RCA] Result:', JSON.stringify(result));
+    var newRCA = result || {};
     document.getElementById('modal-new-rca')?.remove();
     showToast('✅ تم إنشاء التحليل — ' + (newRCA.ref_number || ''), 'success');
-    // Reload list first, then open the detail
     await loadRCA();
-    loadRCADetail(newRCA.id);
   } catch(e) {
-    showToast('❌ خطأ في الإنشاء', 'error');
+    console.error('[RCA] Error:', e);
+    showToast('❌ خطأ: ' + (e.message || 'فشل الإنشاء'), 'error');
   }
 }
 
@@ -2600,8 +2614,16 @@ async function loadRCA() {
   el.innerHTML = '<div class="flex items-center justify-center h-64"><i class="fas fa-spinner fa-spin text-purple-500 text-3xl"></i></div>';
 
   var resp;
-  try { resp = await apiFetch('/api/rca'); } catch(e) { resp = {data:[]}; }
-  var rcas = (resp.data || []).map(function(r) {
+  try {
+    resp = await apiFetch('/api/rca');
+    console.log('[RCA] List response:', JSON.stringify(resp));
+  } catch(e) {
+    console.error('[RCA] List error:', e);
+    resp = {data:[]};
+  }
+  // Handle both {data:[...]} and direct array
+  var rawList = Array.isArray(resp) ? resp : (resp?.data || []);
+  var rcas = rawList.map(function(r) {
     return Object.assign({}, r, {
       status: (r.status||'').toLowerCase(),
       methodology: r.type || r.methodology || 'five_whys',
@@ -7121,8 +7143,10 @@ async function loadMap() {
   };
 
   const projects = rawProjects.map(p => {
-    const projAudits = allAudits.filter(a => a.project_id === p.id && a.compliance_score);
-    const avgComp = projAudits.length ? Math.round(projAudits.reduce((s, a) => s + (+a.compliance_score || 0), 0) / projAudits.length) : 0;
+    const projAudits = allAudits.filter(a => a.project_id === p.id);
+    const completedProjAudits = projAudits.filter(a => (a.status||'').toUpperCase() === 'COMPLETED');
+    // compliance_rate = completed / total * 100
+    const avgComp = projAudits.length ? Math.round(completedProjAudits.length / projAudits.length * 100) : 0;
     const openNCs = allNCs.filter(n => n.project_id === p.id && (n.status||'').toUpperCase() !== 'CLOSED');
     const critNCs = openNCs.filter(n => (n.type||'').toUpperCase() === 'CRITICAL');
     const city = p.city || p.location_name || '';
@@ -7141,8 +7165,8 @@ async function loadMap() {
       iso_14001: p.iso_14001 || false,
       open_nc_count: openNCs.length,
       critical_nc_count: critNCs.length,
-      total_inspections: allAudits.filter(a => a.project_id === p.id).length,
-      completed_inspections: allAudits.filter(a => a.project_id === p.id && (a.status||'').toUpperCase() === 'COMPLETED').length,
+      total_inspections: projAudits.length,
+      completed_inspections: completedProjAudits.length,
     };
   });
   const clrFor   = v => v>=90?'#059669':v>=75?'#d97706':'#dc2626';
