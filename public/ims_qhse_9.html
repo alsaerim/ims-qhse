@@ -1346,13 +1346,13 @@ async function openProjectDetail(id) {
   let allProjInspections = [];
   let allProjNCs = [];
   try {
-    const inspRes = await apiFetch('/api/audits?project_id=' + id);
+    const inspRes = await apiFetch('/api/audits');
     allProjInspections = (Array.isArray(inspRes) ? inspRes : (inspRes?.data || []))
       .map(i => ({...i, status: (i.status||'').toLowerCase(), type: (i.type||'').toLowerCase()}))
       .filter(i => i.project_id === id);
   } catch(e) {}
   try {
-    const ncRes = await apiFetch('/api/nonconformances?project_id=' + id);
+    const ncRes = await apiFetch('/api/nonconformances');
     allProjNCs = (Array.isArray(ncRes) ? ncRes : (ncRes?.data || []))
       .map(n => ({...n, status: (n.status||'').toLowerCase(), type: (n.type||'').toLowerCase()}))
       .filter(n => n.project_id === id);
@@ -2601,7 +2601,16 @@ async function loadRCA() {
 
   var resp;
   try { resp = await apiFetch('/api/rca'); } catch(e) { resp = {data:[]}; }
-  var rcas = (resp.data || []).map(function(r) { return Object.assign({}, r, { status: (r.status||'').toLowerCase() }); });
+  var rcas = (resp.data || []).map(function(r) {
+    return Object.assign({}, r, {
+      status: (r.status||'').toLowerCase(),
+      methodology: r.type || r.methodology || 'five_whys',
+      target_date: r.due_date || r.target_date,
+      nc_ref: r.nc_id ? ('NC-' + (r.nc_id||'').substring(0,8)) : '-',
+      project_name: r.project_id ? 'مشروع' : '-',
+      actions: r.actions || [],
+    });
+  });
 
   // ── إحصاءات ──
   var total   = rcas.length;
@@ -2617,8 +2626,8 @@ async function loadRCA() {
   // ── توزيع المنهجيات ──
   var methMap = {};
   rcas.forEach(function(r){ var m=r.methodology||'5_whys'; methMap[m]=(methMap[m]||0)+1; });
-  var methAr  = {'5_whys':'5 Whys','ishikawa':'Ishikawa','pareto':'Pareto','fmea':'FMEA'};
-  var methClr = {'5_whys':'#7c3aed','ishikawa':'#2563eb','pareto':'#d97706','fmea':'#059669'};
+  var methAr  = {'5_whys':'5 Whys','five_whys':'5 Whys','ishikawa':'Ishikawa','pareto':'Pareto','fmea':'FMEA'};
+  var methClr = {'5_whys':'#7c3aed','five_whys':'#7c3aed','ishikawa':'#2563eb','pareto':'#d97706','fmea':'#059669'};
 
   // ── تكرار فئات Ishikawa ──
   var catKeys = ['man','machine','method','material','environment','measurement'];
@@ -2831,11 +2840,18 @@ async function loadRCADetail(id) {
     return;
   }
 
+  // Normalize fields
+  data.status = (data.status||'').toLowerCase();
+  data.methodology = data.type || data.methodology || 'five_whys';
+  data.target_date = data.due_date || data.target_date;
+  data.actions = data.actions || [];
+  data.nc_ref = data.nc_id ? ('NC') : '-';
+
   var ishData = {};
-  try { ishData = data.ishikawa_data ? (typeof data.ishikawa_data==='string' ? JSON.parse(data.ishikawa_data) : data.ishikawa_data) : {}; } catch(e){}
+  try { ishData = data.fishbone || data.ishikawa_data ? (typeof (data.fishbone||data.ishikawa_data)==='string' ? JSON.parse(data.fishbone||data.ishikawa_data) : (data.fishbone||data.ishikawa_data)) : {}; } catch(e){}
 
   var actions  = data.actions || [];
-  var methClr  = {'5_whys':'#7c3aed','ishikawa':'#2563eb','pareto':'#d97706','fmea':'#059669'};
+  var methClr  = {'5_whys':'#7c3aed','five_whys':'#7c3aed','ishikawa':'#2563eb','pareto':'#d97706','fmea':'#059669'};
   var mClr     = methClr[data.methodology] || '#7c3aed';
   var sBadge   = data.status==='closed'?'badge-green':data.status==='in_progress'?'badge-yellow':'badge-red';
   var sAr      = data.status==='closed'?'مُغلق':data.status==='in_progress'?'قيد التحليل':'مفتوح';
@@ -7088,20 +7104,47 @@ async function deleteObjective(id) {
 // ── Map ───────────────────────────────────────
 async function loadMap() {
   const _mapRes = await apiFetch('/api/projects');
-  const projects = (Array.isArray(_mapRes) ? _mapRes : (_mapRes?.data || [])).map(p => ({
-    ...p,
-    name: p.metadata?.name || p.title,
-    city: p.location_name || p.metadata?.location || '-',
-    client_name: p.metadata?.client_name || '',
-    status: (p.metadata?.status || p.status || 'active').toLowerCase(),
-    avg_compliance: p.compliance_score || 0,
-    latitude: p.metadata?.latitude || 24.7136,
-    longitude: p.metadata?.longitude || 46.6753,
-    iso_9001: p.metadata?.iso_9001 || 0,
-    iso_45001: p.metadata?.iso_45001 || 0,
-    iso_14001: p.metadata?.iso_14001 || 0,
-    open_nc_count: p._count?.non_conformances || 0,
-  }));
+  const rawProjects = Array.isArray(_mapRes) ? _mapRes : (_mapRes?.data || []);
+
+  // Load audits and NCs for compliance calculation
+  let allAudits = [], allNCs = [];
+  try { const r = await apiFetch('/api/audits'); allAudits = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+  try { const r = await apiFetch('/api/nonconformances'); allNCs = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
+
+  // City coordinates lookup
+  const cityCoords = {
+    'الرياض':[24.7136,46.6753],'جدة':[21.4858,39.1925],'مكة':[21.4225,39.8262],
+    'المدينة المنورة':[24.4539,39.6142],'الدمام':[26.3927,49.9777],'الخبر':[26.2172,50.1971],
+    'الظهران':[26.2361,50.0393],'جازان':[16.8892,42.5611],'تبوك':[28.3838,36.5550],
+    'ابها':[18.2164,42.5053],'نجران':[17.4933,44.1272],'ينبع':[24.0895,38.0618],
+    'القصيم':[26.3292,43.9700],'حائل':[27.5114,41.7208],'الجبيل':[27.0046,49.6225],
+  };
+
+  const projects = rawProjects.map(p => {
+    const projAudits = allAudits.filter(a => a.project_id === p.id && a.compliance_score);
+    const avgComp = projAudits.length ? Math.round(projAudits.reduce((s, a) => s + (+a.compliance_score || 0), 0) / projAudits.length) : 0;
+    const openNCs = allNCs.filter(n => n.project_id === p.id && (n.status||'').toUpperCase() !== 'CLOSED');
+    const critNCs = openNCs.filter(n => (n.type||'').toUpperCase() === 'CRITICAL');
+    const city = p.city || p.location_name || '';
+    const coords = cityCoords[city] || [24.7136, 46.6753];
+    return {
+      ...p,
+      name: p.name || p.title || '',
+      city: city || '-',
+      client_name: p.client_name || '',
+      status: (p.status || 'active').toLowerCase(),
+      avg_compliance: avgComp,
+      latitude: p.latitude || coords[0],
+      longitude: p.longitude || coords[1],
+      iso_9001: p.iso_9001 || false,
+      iso_45001: p.iso_45001 || false,
+      iso_14001: p.iso_14001 || false,
+      open_nc_count: openNCs.length,
+      critical_nc_count: critNCs.length,
+      total_inspections: allAudits.filter(a => a.project_id === p.id).length,
+      completed_inspections: allAudits.filter(a => a.project_id === p.id && (a.status||'').toUpperCase() === 'COMPLETED').length,
+    };
+  });
   const clrFor   = v => v>=90?'#059669':v>=75?'#d97706':'#dc2626';
   const lblFor   = v => v>=90?'ممتاز':v>=75?'جيد':'يحتاج تحسين';
 
