@@ -1203,14 +1203,14 @@ async function loadProjects() {
   const _projRes = await apiFetch('/api/projects');
   const projList = Array.isArray(_projRes) ? _projRes : (_projRes?.data || []);
 
-  // Load audits to calculate compliance per project
+  // Load audits (non-project type) for compliance
   let allAudits = [];
   try {
     const aRes = await apiFetch('/api/audits');
     allAudits = Array.isArray(aRes) ? aRes : (aRes?.data || []);
   } catch(e) {}
 
-  // Load NCs to count open NCs per project
+  // Load NCs
   let allNCs = [];
   try {
     const nRes = await apiFetch('/api/nonconformances');
@@ -1218,15 +1218,21 @@ async function loadProjects() {
   } catch(e) {}
 
   const data = { data: projList.map(p => {
+    const m = p.metadata || {};
     const projAudits = allAudits.filter(a => a.project_id === p.id);
     const completedAudits = projAudits.filter(a => (a.status||'').toUpperCase() === 'COMPLETED');
-    // compliance_rate = completed_inspections / total_inspections * 100
     const avgComp = projAudits.length ? Math.round(completedAudits.length / projAudits.length * 100) : 0;
     const openNCs = allNCs.filter(n => n.project_id === p.id && (n.status||'').toUpperCase() !== 'CLOSED').length;
     return {
       ...p,
-      name: p.name || p.title,
-      status: (p.status || 'active').toLowerCase(),
+      name: m.name || p.title || '',
+      client_name: m.client_name || p.client_name || '',
+      city: m.city || p.location_name || '',
+      status: (m.status || p.status || 'active').toLowerCase(),
+      iso_9001: m.iso_9001 || false,
+      iso_45001: m.iso_45001 || false,
+      iso_14001: m.iso_14001 || false,
+      iso_27001: m.iso_27001 || false,
       avg_compliance: avgComp,
       open_ncs: openNCs,
       total_inspections: projAudits.length,
@@ -1328,20 +1334,21 @@ function filterProjectsTable() {
 async function openProjectDetail(id) {
   state.currentProject = id;
   const _pRes = await apiFetch(`/api/projects/${id}`);
+  const m = _pRes.metadata || {};
   const p = {
     ..._pRes,
-    name:        _pRes.metadata?.name        || _pRes.title,
+    name:        m.name || _pRes.title || '',
     code:        _pRes.ref_number || '',
-    client_name: _pRes.client_name || _pRes.metadata?.client_name || '',
-    city:        _pRes.city || _pRes.location_name || _pRes.metadata?.city || '',
-    description: _pRes.description || _pRes.notes || _pRes.metadata?.description || '',
-    status:      (_pRes.metadata?.status || _pRes.status || 'active').toLowerCase(),
-    start_date:  _pRes.start_date || _pRes.metadata?.start_date || _pRes.scheduled_at,
-    end_date:    _pRes.end_date || _pRes.metadata?.end_date,
-    iso_9001:    _pRes.iso_9001 || _pRes.metadata?.iso_9001 || false,
-    iso_45001:   _pRes.iso_45001 || _pRes.metadata?.iso_45001 || false,
-    iso_14001:   _pRes.iso_14001 || _pRes.metadata?.iso_14001 || false,
-    iso_27001:   _pRes.iso_27001 || _pRes.metadata?.iso_27001 || false,
+    client_name: m.client_name || '',
+    city:        m.city || _pRes.location_name || '',
+    description: m.description || _pRes.notes || '',
+    status:      (m.status || _pRes.status || 'active').toLowerCase(),
+    start_date:  m.start_date || _pRes.scheduled_at,
+    end_date:    m.end_date,
+    iso_9001:    m.iso_9001 || false,
+    iso_45001:   m.iso_45001 || false,
+    iso_14001:   m.iso_14001 || false,
+    iso_27001:   m.iso_27001 || false,
   };
   const sL={active:'نشط',completed:'مكتمل',on_hold:'موقوف مؤقتاً',cancelled:'ملغى'};
   const sB={active:'badge-green',completed:'badge-blue',on_hold:'badge-yellow',cancelled:'badge-red'};
@@ -1505,21 +1512,22 @@ async function openProjectModal(p) {
 
 async function editProject(id) {
   const raw = await apiFetch(`/api/projects/${id}`);
+  const m = raw.metadata || {};
   const p = {
     id: raw.id,
-    name: raw.name || raw.title || '',
-    code: raw.ref_number || raw.code || '',
-    client_name: raw.client_name || raw.metadata?.client_name || '',
-    city: raw.city || raw.location_name || raw.metadata?.city || '',
-    description: raw.description || raw.notes || raw.metadata?.description || '',
-    status: (raw.status || 'active').toLowerCase(),
-    iso_9001: raw.iso_9001 || raw.metadata?.iso_9001 || false,
-    iso_45001: raw.iso_45001 || raw.metadata?.iso_45001 || false,
-    iso_14001: raw.iso_14001 || raw.metadata?.iso_14001 || false,
-    iso_27001: raw.iso_27001 || raw.metadata?.iso_27001 || false,
-    start_date: raw.start_date || raw.scheduled_at || raw.metadata?.start_date || '',
-    end_date: raw.end_date || raw.metadata?.end_date || '',
-    manager_id: raw.manager_id || raw.assigned_to_id || '',
+    name: m.name || raw.title || '',
+    code: raw.ref_number || '',
+    client_name: m.client_name || '',
+    city: m.city || raw.location_name || '',
+    description: m.description || raw.notes || '',
+    status: (m.status || raw.status || 'active').toLowerCase(),
+    iso_9001: m.iso_9001 || false,
+    iso_45001: m.iso_45001 || false,
+    iso_14001: m.iso_14001 || false,
+    iso_27001: m.iso_27001 || false,
+    start_date: m.start_date || raw.scheduled_at || '',
+    end_date: m.end_date || '',
+    manager_id: raw.assigned_to_id || '',
   };
   openProjectModal(p);
 }
@@ -1532,12 +1540,16 @@ async function submitProject(e) {
   const isEdit = !!id;
   const cityEl = document.getElementById('proj-city');
   const selectedOpt = cityEl.selectedOptions?.[0];
+  const projName = document.getElementById('proj-name').value.trim();
 
   const body = {
-    name: document.getElementById('proj-name').value.trim(),
+    title: projName,
+    name: projName,
     client_name: document.getElementById('proj-client').value.trim(),
     city: cityEl.value,
+    location_name: cityEl.value,
     description: document.getElementById('proj-desc').value.trim(),
+    notes: document.getElementById('proj-desc').value.trim(),
     status: document.getElementById('proj-status').value,
     iso_9001: document.getElementById('proj-iso9001').checked ? true : false,
     iso_45001: document.getElementById('proj-iso45001').checked ? true : false,
@@ -1545,12 +1557,27 @@ async function submitProject(e) {
     iso_27001: document.getElementById('proj-iso27001').checked ? true : false,
     start_date: document.getElementById('proj-start').value || null,
     end_date: document.getElementById('proj-end').value || null,
+    metadata: {
+      name: projName,
+      client_name: document.getElementById('proj-client').value.trim(),
+      city: cityEl.value,
+      description: document.getElementById('proj-desc').value.trim(),
+      status: document.getElementById('proj-status').value,
+      iso_9001: document.getElementById('proj-iso9001').checked ? true : false,
+      iso_45001: document.getElementById('proj-iso45001').checked ? true : false,
+      iso_14001: document.getElementById('proj-iso14001').checked ? true : false,
+      iso_27001: document.getElementById('proj-iso27001').checked ? true : false,
+      start_date: document.getElementById('proj-start').value || null,
+      end_date: document.getElementById('proj-end').value || null,
+    },
   };
 
-  // Only set lat/lng on CREATE, never on edit
-  if (!isEdit) {
-    body.latitude = selectedOpt?.dataset?.lat ? parseFloat(selectedOpt.dataset.lat) : null;
-    body.longitude = selectedOpt?.dataset?.lng ? parseFloat(selectedOpt.dataset.lng) : null;
+  // Only set lat/lng on CREATE
+  if (!isEdit && selectedOpt) {
+    const lat = parseFloat(selectedOpt.dataset.lat);
+    const lng = parseFloat(selectedOpt.dataset.lng);
+    if (!isNaN(lat)) body.latitude = lat;
+    if (!isNaN(lng)) body.longitude = lng;
   }
 
   try {
@@ -7143,26 +7170,26 @@ async function loadMap() {
   };
 
   const projects = rawProjects.map(p => {
+    const m = p.metadata || {};
     const projAudits = allAudits.filter(a => a.project_id === p.id);
     const completedProjAudits = projAudits.filter(a => (a.status||'').toUpperCase() === 'COMPLETED');
-    // compliance_rate = completed / total * 100
     const avgComp = projAudits.length ? Math.round(completedProjAudits.length / projAudits.length * 100) : 0;
     const openNCs = allNCs.filter(n => n.project_id === p.id && (n.status||'').toUpperCase() !== 'CLOSED');
     const critNCs = openNCs.filter(n => (n.type||'').toUpperCase() === 'CRITICAL');
-    const city = p.city || p.location_name || '';
+    const city = m.city || p.location_name || '';
     const coords = cityCoords[city] || [24.7136, 46.6753];
     return {
       ...p,
-      name: p.name || p.title || '',
+      name: m.name || p.title || '',
       city: city || '-',
-      client_name: p.client_name || '',
-      status: (p.status || 'active').toLowerCase(),
+      client_name: m.client_name || '',
+      status: (m.status || p.status || 'active').toLowerCase(),
       avg_compliance: avgComp,
       latitude: p.latitude || coords[0],
       longitude: p.longitude || coords[1],
-      iso_9001: p.iso_9001 || false,
-      iso_45001: p.iso_45001 || false,
-      iso_14001: p.iso_14001 || false,
+      iso_9001: m.iso_9001 || false,
+      iso_45001: m.iso_45001 || false,
+      iso_14001: m.iso_14001 || false,
       open_nc_count: openNCs.length,
       critical_nc_count: critNCs.length,
       total_inspections: projAudits.length,
