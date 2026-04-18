@@ -2897,7 +2897,10 @@ async function loadRCADetail(id) {
   data.nc_ref = data.nc_id ? ('NC') : '-';
 
   var ishData = {};
-  try { ishData = data.fishbone || data.ishikawa_data ? (typeof (data.fishbone||data.ishikawa_data)==='string' ? JSON.parse(data.fishbone||data.ishikawa_data) : (data.fishbone||data.ishikawa_data)) : {}; } catch(e){}
+  try {
+    var fishbone = data.fishbone || data.ishikawa_data;
+    ishData = fishbone ? (typeof fishbone === 'string' ? JSON.parse(fishbone) : fishbone) : {};
+  } catch(e) { ishData = {}; }
 
   var actions  = data.actions || [];
   var methClr  = {'5_whys':'#7c3aed','five_whys':'#7c3aed','ishikawa':'#2563eb','pareto':'#d97706','fmea':'#059669'};
@@ -2905,17 +2908,22 @@ async function loadRCADetail(id) {
   var sBadge   = data.status==='closed'?'badge-green':data.status==='in_progress'?'badge-yellow':'badge-red';
   var sAr      = data.status==='closed'?'مُغلق':data.status==='in_progress'?'قيد التحليل':'مفتوح';
 
+  // Parse whys array from backend
+  var whysArr = [];
+  try { whysArr = Array.isArray(data.whys) ? data.whys : (typeof data.whys === 'string' ? JSON.parse(data.whys) : []); } catch(e) { whysArr = []; }
+
   // 5 Whys
   var whysHtml = '<div class="p-4 bg-blue-50 border border-blue-100 rounded-xl mb-4">' +
     '<div class="text-xs font-bold text-blue-700 mb-1"><i class="fas fa-exclamation-circle ml-1"></i>المشكلة / الظاهرة</div>' +
-    '<p class="text-sm text-slate-700">' + (data.nc_description||data.title||'-') + '</p>' +
+    '<p class="text-sm text-slate-700">' + (data.description||data.title||'-') + '</p>' +
   '</div>';
   for (var n=1; n<=5; n++) {
+    var whyVal = (whysArr[n-1] && whysArr[n-1].answer) ? whysArr[n-1].answer : (data['why_'+n]||'');
     whysHtml += '<div class="flex gap-3 items-start mb-3">' +
       '<div class="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0 text-white" style="background:' + mClr + '">' + n + '</div>' +
       '<div class="flex-1">' +
         '<label class="text-xs font-bold text-slate-600 mb-1 block">لماذا؟ (Why ' + n + ')</label>' +
-        '<textarea class="form-input text-sm" rows="2" id="why_' + n + '" placeholder="اكتب السبب...">' + (data['why_'+n]||'') + '</textarea>' +
+        '<textarea class="form-input text-sm" rows="2" id="why_' + n + '" placeholder="اكتب السبب...">' + whyVal + '</textarea>' +
       '</div>' +
     '</div>';
   }
@@ -3055,12 +3063,14 @@ async function loadRCADetail(id) {
       '<div class="flex border-b border-slate-100 bg-slate-50 overflow-x-auto">' +
         '<button id="rtab-whys"    onclick="switchRCATab(\'whys\')"    class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-purple-500 text-purple-700 whitespace-nowrap px-3"><i class="fas fa-question-circle ml-1"></i>5 Whys</button>' +
         '<button id="rtab-ish"     onclick="switchRCATab(\'ish\')"     class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-fish ml-1"></i>Ishikawa</button>' +
+        '<button id="rtab-pareto"  onclick="switchRCATab(\'pareto\')"  class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-chart-bar ml-1"></i>Pareto</button>' +
         '<button id="rtab-fmea"    onclick="switchRCATab(\'fmea\')"    class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-cogs ml-1"></i>FMEA</button>' +
         '<button id="rtab-actions" onclick="switchRCATab(\'actions\')" class="rca-tab-btn flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap px-3"><i class="fas fa-tasks ml-1"></i>الإجراءات (' + actions.length + ')</button>' +
       '</div>' +
       '<div class="p-5">' +
         '<div id="rpanel-whys">' + whysHtml + '</div>' +
         '<div id="rpanel-ish" style="display:none">' + ishHtml2 + '</div>' +
+        '<div id="rpanel-pareto" style="display:none">' + buildParetoPanel(id, data) + '</div>' +
         '<div id="rpanel-fmea" style="display:none">' + buildFMEAPanel(id, data) + '</div>' +
         '<div id="rpanel-actions" style="display:none">' + actListHtml + addActHtml + '</div>' +
       '</div>' +
@@ -3071,11 +3081,111 @@ async function loadRCADetail(id) {
   // Auto-switch to matching tab based on methodology
   if (data.methodology === 'ishikawa') switchRCATab('ish');
   else if (data.methodology === 'fmea') switchRCATab('fmea');
+  else if (data.methodology === 'pareto') switchRCATab('pareto');
   else switchRCATab('whys');
 }
 
+function buildParetoPanel(id, data) {
+  var meta = data.metadata || {};
+  var items = meta.pareto_items || [];
+
+  var rowsHtml = '';
+  var total = items.reduce(function(s,i){ return s + (i.freq||0); }, 0);
+  var cumPct = 0;
+  if (items.length) {
+    var sorted = items.slice().sort(function(a,b){ return (b.freq||0)-(a.freq||0); });
+    sorted.forEach(function(item, i) {
+      var pct = total ? Math.round((item.freq||0)/total*100) : 0;
+      cumPct += pct;
+      var barColor = cumPct <= 80 ? '#3b82f6' : '#94a3b8';
+      rowsHtml += '<tr class="border-b border-slate-100">' +
+        '<td class="p-2 text-xs">' + (i+1) + '</td>' +
+        '<td class="p-2 text-xs font-medium">' + item.cause + '</td>' +
+        '<td class="p-2 text-center text-xs font-bold">' + (item.freq||0) + '</td>' +
+        '<td class="p-2 text-center text-xs">' + pct + '%</td>' +
+        '<td class="p-2 text-center text-xs font-bold" style="color:' + (cumPct<=80?'#059669':'#d97706') + '">' + cumPct + '%</td>' +
+        '<td class="p-2">' +
+          '<div class="h-3 rounded-full" style="width:' + pct + '%;background:' + barColor + ';min-width:4px"></div>' +
+        '</td>' +
+        '<td class="p-2 text-center"><button onclick="deleteParetoItem(\''+id+'\','+i+')" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-trash"></i></button></td>' +
+      '</tr>';
+    });
+  } else {
+    rowsHtml = '<tr><td colspan="7" class="p-6 text-center text-slate-400 text-sm">لا توجد عناصر — أضف الأسباب أدناه</td></tr>';
+  }
+
+  return '<div class="mb-4 p-3 bg-yellow-50 rounded-xl border border-yellow-100 text-xs text-yellow-700">' +
+    '<b>Pareto (80/20)</b> — ترتيب الأسباب حسب التكرار لتحديد 20% من الأسباب المسؤولة عن 80% من المشاكل' +
+  '</div>' +
+  '<div class="overflow-x-auto rounded-xl border border-slate-200 mb-4">' +
+    '<table class="w-full text-sm">' +
+      '<thead class="bg-slate-50 border-b border-slate-200">' +
+        '<tr>' +
+          '<th class="p-2 text-xs text-slate-600 text-center">#</th>' +
+          '<th class="p-2 text-xs text-slate-600 text-right">السبب</th>' +
+          '<th class="p-2 text-xs text-slate-600 text-center">التكرار</th>' +
+          '<th class="p-2 text-xs text-slate-600 text-center">%</th>' +
+          '<th class="p-2 text-xs text-slate-600 text-center">تراكمي %</th>' +
+          '<th class="p-2 text-xs text-slate-600">البار</th>' +
+          '<th class="p-2"></th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' + rowsHtml + '</tbody>' +
+    '</table>' +
+  '</div>' +
+  '<div class="border border-slate-200 rounded-xl p-4 bg-slate-50">' +
+    '<div class="text-sm font-bold text-slate-700 mb-3"><i class="fas fa-plus-circle text-yellow-500 ml-1"></i>إضافة سبب جديد</div>' +
+    '<div class="grid grid-cols-2 gap-3 mb-3">' +
+      '<div><label class="text-xs font-medium text-slate-600 block mb-1">السبب</label>' +
+      '<input class="form-input text-sm" id="pareto-cause" placeholder="مثال: عطل في المعدات"/></div>' +
+      '<div><label class="text-xs font-medium text-slate-600 block mb-1">عدد مرات التكرار</label>' +
+      '<input class="form-input text-sm" type="number" id="pareto-freq" min="1" value="1"/></div>' +
+    '</div>' +
+    '<button onclick="addParetoItem(\''+id+'\')" class="btn btn-primary w-full text-sm" style="background:#d97706">' +
+      '<i class="fas fa-plus ml-1"></i>إضافة' +
+    '</button>' +
+  '</div>';
+}
+
+async function addParetoItem(id) {
+  var cause = document.getElementById('pareto-cause')?.value?.trim();
+  var freq  = parseInt(document.getElementById('pareto-freq')?.value) || 1;
+  if (!cause) { showToast('❌ أدخل السبب', 'error'); return; }
+  var rca;
+  try { rca = await apiFetch('/api/rca/' + id); } catch(e) { return; }
+  var meta = rca.metadata || {};
+  var items = meta.pareto_items || [];
+  items.push({ cause: cause, freq: freq });
+  meta.pareto_items = items;
+  try {
+    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    showToast('✅ تم إضافة السبب', 'success');
+    await loadRCADetail(id);
+    setTimeout(function(){ switchRCATab('pareto'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
+}
+
+async function deleteParetoItem(id, idx) {
+  if (!confirm('حذف هذا السبب؟')) return;
+  var rca;
+  try { rca = await apiFetch('/api/rca/' + id); } catch(e) { return; }
+  var meta = rca.metadata || {};
+  var items = (meta.pareto_items || []).slice().sort(function(a,b){ return (b.freq||0)-(a.freq||0); });
+  items.splice(idx, 1);
+  meta.pareto_items = items;
+  try {
+    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    await loadRCADetail(id);
+    setTimeout(function(){ switchRCATab('pareto'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الحذف', 'error'); }
+}
+
 function buildFMEAPanel(id, data) {
-  var fmea = data.fmea_data || [];
+  var fmea = [];
+  try {
+    var meta = data.metadata || {};
+    fmea = meta.fmea_data || data.fmea_data || [];
+  } catch(e) { fmea = []; }
 
   var rowsHtml = '';
   if (fmea.length) {
@@ -3156,42 +3266,55 @@ function buildFMEAPanel(id, data) {
     '</div>';
 }
 
-function addFMEARow(id) {
+async function addFMEARow(id) {
   var fn  = document.getElementById('fmea-function')?.value?.trim();
   var fm  = document.getElementById('fmea-failure')?.value?.trim();
   if (!fn || !fm) { showToast('❌ أدخل الوظيفة ونمط الفشل', 'error'); return; }
 
-  var rca = (window.MOCK_DB?.rca_tickets||[]).find(function(r){return r.id===id;});
-  if (!rca) return;
-  if (!rca.fmea_data) rca.fmea_data = [];
+  // Load current RCA to get existing fmea_data
+  var rca;
+  try { rca = await apiFetch('/api/rca/' + id); } catch(e) { showToast('❌ خطأ في التحميل', 'error'); return; }
 
-  rca.fmea_data.push({
-    function:   fn,
+  var meta = rca.metadata || {};
+  var fmea = meta.fmea_data || [];
+
+  fmea.push({
+    function:     fn,
     failure_mode: fm,
-    effect:     document.getElementById('fmea-effect')?.value?.trim() || '',
-    action:     document.getElementById('fmea-action')?.value?.trim() || '',
-    severity:   parseInt(document.getElementById('fmea-s')?.value) || 5,
-    occurrence: parseInt(document.getElementById('fmea-o')?.value) || 5,
-    detection:  parseInt(document.getElementById('fmea-d')?.value) || 5,
+    effect:       document.getElementById('fmea-effect')?.value?.trim() || '',
+    action:       document.getElementById('fmea-action')?.value?.trim() || '',
+    severity:     parseInt(document.getElementById('fmea-s')?.value) || 5,
+    occurrence:   parseInt(document.getElementById('fmea-o')?.value) || 5,
+    detection:    parseInt(document.getElementById('fmea-d')?.value) || 5,
   });
 
-  showToast('✅ تم إضافة السجل', 'success');
-  loadRCADetail(id);
-  setTimeout(function(){ switchRCATab('fmea'); }, 100);
+  meta.fmea_data = fmea;
+
+  try {
+    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta, status: 'in_progress' });
+    showToast('✅ تم إضافة السجل وحفظه', 'success');
+    await loadRCADetail(id);
+    setTimeout(function(){ switchRCATab('fmea'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
 }
 
-function deleteFMEARow(id, idx) {
+async function deleteFMEARow(id, idx) {
   if (!confirm('حذف هذا السجل؟')) return;
-  var rca = (window.MOCK_DB?.rca_tickets||[]).find(function(r){return r.id===id;});
-  if (rca && rca.fmea_data) {
-    rca.fmea_data.splice(idx, 1);
-    loadRCADetail(id);
+  var rca;
+  try { rca = await apiFetch('/api/rca/' + id); } catch(e) { return; }
+  var meta = rca.metadata || {};
+  var fmea = meta.fmea_data || [];
+  fmea.splice(idx, 1);
+  meta.fmea_data = fmea;
+  try {
+    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    await loadRCADetail(id);
     setTimeout(function(){ switchRCATab('fmea'); }, 100);
-  }
+  } catch(e) { showToast('❌ خطأ في الحذف', 'error'); }
 }
 
 function switchRCATab(tab) {
-  ['whys','ish','fmea','actions'].forEach(function(t){
+  ['whys','ish','pareto','fmea','actions'].forEach(function(t){
     var panel = document.getElementById('rpanel-'+t);
     var btn   = document.getElementById('rtab-'+t);
     if (!panel || !btn) return;
@@ -3206,13 +3329,18 @@ function switchRCATab(tab) {
 }
 
 async function saveRCAWhys(id) {
-  var body = {status:'in_progress'};
+  var whys = [];
   for (var n=1; n<=5; n++) {
     var el = document.getElementById('why_'+n);
-    body['why_'+n] = el ? (el.value.trim()||null) : null;
+    var val = el ? el.value.trim() : '';
+    whys.push({ question: 'Why ' + n, answer: val });
   }
   var rc = document.getElementById('rca_root_cause');
-  body.root_cause = rc ? (rc.value.trim()||null) : null;
+  var body = {
+    whys: whys,
+    root_cause: rc ? (rc.value.trim()||null) : null,
+    status: 'in_progress'
+  };
   try {
     await apiFetch('/api/rca/'+id, 'PUT', body);
     showToast('✅ تم حفظ تحليل 5 Whys', 'success');
@@ -3224,7 +3352,7 @@ async function saveRCAIshikawa(id) {
   var ish  = {};
   keys.forEach(function(k){ var el=document.getElementById('ishi_'+k); ish[k]=el?el.value.trim():''; });
   try {
-    await apiFetch('/api/rca/'+id, 'PUT', {ishikawa_data: JSON.stringify(ish), status:'in_progress'});
+    await apiFetch('/api/rca/'+id, 'PUT', {fishbone: ish, status:'in_progress'});
     showToast('✅ تم حفظ مخطط Ishikawa', 'success');
   } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
 }
