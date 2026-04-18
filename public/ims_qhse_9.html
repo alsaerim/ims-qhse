@@ -2906,10 +2906,11 @@ async function loadRCADetail(id) {
   } catch(e) { rcaMeta = {}; }
   data.metadata = rcaMeta;
 
-  // Read actions from metadata
-  data.actions = Array.isArray(rcaMeta.actions) ? rcaMeta.actions : [];
+  // Parse extra data from corrective_action field (FMEA, Pareto, Actions)
+  var rcaExtra = parseRCAExtra(data.corrective_action);
+  data.actions = Array.isArray(rcaExtra.actions) ? rcaExtra.actions : [];
 
-  console.log('[RCA Detail] metadata keys:', Object.keys(rcaMeta), 'actions:', data.actions.length, 'fmea:', (rcaMeta.fmea_data||[]).length, 'pareto:', (rcaMeta.pareto_items||[]).length);
+  console.log('[RCA Detail] extra data - actions:', data.actions.length, 'fmea:', (rcaExtra.fmea_data||[]).length, 'pareto:', (rcaExtra.pareto_items||[]).length);
 
   // Read fishbone/ishikawa
   var ishData = {};
@@ -3104,8 +3105,8 @@ async function loadRCADetail(id) {
 }
 
 function buildParetoPanel(id, data) {
-  var meta = (data.metadata && typeof data.metadata === 'object') ? data.metadata : {};
-  var items = Array.isArray(meta.pareto_items) ? meta.pareto_items : [];
+  var extra = parseRCAExtra(data.corrective_action);
+  var items = Array.isArray(extra.pareto_items) ? extra.pareto_items : [];
 
   var rowsHtml = '';
   var total = items.reduce(function(s,i){ return s + (i.freq||0); }, 0);
@@ -3169,14 +3170,17 @@ async function addParetoItem(id) {
   var cause = document.getElementById('pareto-cause')?.value?.trim();
   var freq  = parseInt(document.getElementById('pareto-freq')?.value) || 1;
   if (!cause) { showToast('❌ أدخل السبب', 'error'); return; }
+
   var rca;
   try { rca = await apiFetch('/api/rca/' + id); } catch(e) { return; }
-  var meta = rca.metadata || {};
-  var items = meta.pareto_items || [];
+
+  var extraData = parseRCAExtra(rca.corrective_action);
+  var items = extraData.pareto_items || [];
   items.push({ cause: cause, freq: freq });
-  meta.pareto_items = items;
+  extraData.pareto_items = items;
+
   try {
-    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    await apiFetch('/api/rca/' + id, 'PUT', { corrective_action: JSON.stringify(extraData) });
     showToast('✅ تم إضافة السبب', 'success');
     await loadRCADetail(id);
     setTimeout(function(){ switchRCATab('pareto'); }, 100);
@@ -3187,22 +3191,32 @@ async function deleteParetoItem(id, idx) {
   if (!confirm('حذف هذا السبب؟')) return;
   var rca;
   try { rca = await apiFetch('/api/rca/' + id); } catch(e) { return; }
-  var meta = rca.metadata || {};
-  var items = (meta.pareto_items || []).slice().sort(function(a,b){ return (b.freq||0)-(a.freq||0); });
+  var extraData = parseRCAExtra(rca.corrective_action);
+  var items = (extraData.pareto_items || []).slice().sort(function(a,b){ return (b.freq||0)-(a.freq||0); });
   items.splice(idx, 1);
-  meta.pareto_items = items;
+  extraData.pareto_items = items;
   try {
-    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    await apiFetch('/api/rca/' + id, 'PUT', { corrective_action: JSON.stringify(extraData) });
     await loadRCADetail(id);
     setTimeout(function(){ switchRCATab('pareto'); }, 100);
   } catch(e) { showToast('❌ خطأ في الحذف', 'error'); }
 }
 
+function parseRCAExtra(corrective_action) {
+  // Extra data (FMEA, Pareto, Actions) stored as JSON in corrective_action field
+  if (!corrective_action) return {};
+  try {
+    var parsed = JSON.parse(corrective_action);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+  } catch(e) {}
+  return {};
+}
+
 function buildFMEAPanel(id, data) {
   var fmea = [];
   try {
-    var meta = (data.metadata && typeof data.metadata === 'object') ? data.metadata : {};
-    fmea = Array.isArray(meta.fmea_data) ? meta.fmea_data : [];
+    var extra = parseRCAExtra(data.corrective_action);
+    fmea = Array.isArray(extra.fmea_data) ? extra.fmea_data : [];
   } catch(e) { fmea = []; }
 
   var rowsHtml = '';
@@ -3289,13 +3303,11 @@ async function addFMEARow(id) {
   var fm  = document.getElementById('fmea-failure')?.value?.trim();
   if (!fn || !fm) { showToast('❌ أدخل الوظيفة ونمط الفشل', 'error'); return; }
 
-  // Load current RCA to get existing fmea_data
   var rca;
   try { rca = await apiFetch('/api/rca/' + id); } catch(e) { showToast('❌ خطأ في التحميل', 'error'); return; }
 
-  var meta = rca.metadata || {};
-  var fmea = meta.fmea_data || [];
-
+  var extraData = parseRCAExtra(rca.corrective_action);
+  var fmea = extraData.fmea_data || [];
   fmea.push({
     function:     fn,
     failure_mode: fm,
@@ -3305,11 +3317,10 @@ async function addFMEARow(id) {
     occurrence:   parseInt(document.getElementById('fmea-o')?.value) || 5,
     detection:    parseInt(document.getElementById('fmea-d')?.value) || 5,
   });
-
-  meta.fmea_data = fmea;
+  extraData.fmea_data = fmea;
 
   try {
-    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta, status: 'in_progress' });
+    await apiFetch('/api/rca/' + id, 'PUT', { corrective_action: JSON.stringify(extraData), status: 'in_progress' });
     showToast('✅ تم إضافة السجل وحفظه', 'success');
     await loadRCADetail(id);
     setTimeout(function(){ switchRCATab('fmea'); }, 100);
@@ -3320,12 +3331,12 @@ async function deleteFMEARow(id, idx) {
   if (!confirm('حذف هذا السجل؟')) return;
   var rca;
   try { rca = await apiFetch('/api/rca/' + id); } catch(e) { return; }
-  var meta = rca.metadata || {};
-  var fmea = meta.fmea_data || [];
+  var extraData = parseRCAExtra(rca.corrective_action);
+  var fmea = extraData.fmea_data || [];
   fmea.splice(idx, 1);
-  meta.fmea_data = fmea;
+  extraData.fmea_data = fmea;
   try {
-    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    await apiFetch('/api/rca/' + id, 'PUT', { corrective_action: JSON.stringify(extraData) });
     await loadRCADetail(id);
     setTimeout(function(){ switchRCATab('fmea'); }, 100);
   } catch(e) { showToast('❌ خطأ في الحذف', 'error'); }
@@ -3379,14 +3390,13 @@ async function addRCAAction(id) {
   var desc = (document.getElementById('na-desc')||{}).value||'';
   if (!desc.trim()) { showToast('❌ يرجى إدخال وصف الإجراء','error'); return; }
   var userSel  = document.getElementById('na-user');
-  var userName = userSel && userSel.selectedIndex>=0 ? (userSel.options[userSel.selectedIndex].dataset.name||userSel.options[userSel.selectedIndex].text||'') : '';
+  var userName = userSel && userSel.selectedIndex>=0 ? (userSel.options[userSel.selectedIndex].text||'') : '';
 
-  // Load current RCA
   var rca;
   try { rca = await apiFetch('/api/rca/' + id); } catch(e) { showToast('❌ خطأ في التحميل','error'); return; }
 
-  var meta = rca.metadata || {};
-  var actions = meta.actions || [];
+  var extraData = parseRCAExtra(rca.corrective_action);
+  var actions = extraData.actions || [];
   actions.push({
     type:          (document.getElementById('na-type')||{}).value||'corrective',
     description:   desc.trim(),
@@ -3395,10 +3405,10 @@ async function addRCAAction(id) {
     due_date:      (document.getElementById('na-date')||{}).value||null,
     status:        'pending'
   });
-  meta.actions = actions;
+  extraData.actions = actions;
 
   try {
-    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    await apiFetch('/api/rca/' + id, 'PUT', { corrective_action: JSON.stringify(extraData) });
     showToast('✅ تم إضافة الإجراء','success');
     await loadRCADetail(id);
     setTimeout(function(){ switchRCATab('actions'); }, 100);
@@ -3408,13 +3418,13 @@ async function addRCAAction(id) {
 async function updateActStatus(rcaId, idx, newStatus) {
   var rca;
   try { rca = await apiFetch('/api/rca/' + rcaId); } catch(e) { return; }
-  var meta = rca.metadata || {};
-  var actions = meta.actions || [];
+  var extraData = parseRCAExtra(rca.corrective_action);
+  var actions = extraData.actions || [];
   if (actions[idx]) {
     actions[idx].status = newStatus;
-    meta.actions = actions;
+    extraData.actions = actions;
     try {
-      await apiFetch('/api/rca/' + rcaId, 'PUT', { metadata: meta });
+      await apiFetch('/api/rca/' + rcaId, 'PUT', { corrective_action: JSON.stringify(extraData) });
       showToast('✅ تم تحديث الحالة','success');
       await loadRCADetail(rcaId);
       setTimeout(function(){ switchRCATab('actions'); }, 100);
