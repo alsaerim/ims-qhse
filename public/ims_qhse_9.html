@@ -2905,11 +2905,11 @@ async function loadRCADetail(id) {
     }
   } catch(e) { rcaMeta = {}; }
   data.metadata = rcaMeta;
-  console.log('[RCA Detail] metadata:', JSON.stringify(rcaMeta));
-  console.log('[RCA Detail] actions:', data.actions.length, 'fmea:', (rcaMeta.fmea_data||[]).length, 'pareto:', (rcaMeta.pareto_items||[]).length);
 
   // Read actions from metadata
   data.actions = Array.isArray(rcaMeta.actions) ? rcaMeta.actions : [];
+
+  console.log('[RCA Detail] metadata keys:', Object.keys(rcaMeta), 'actions:', data.actions.length, 'fmea:', (rcaMeta.fmea_data||[]).length, 'pareto:', (rcaMeta.pareto_items||[]).length);
 
   // Read fishbone/ishikawa
   var ishData = {};
