@@ -2893,13 +2893,31 @@ async function loadRCADetail(id) {
   data.status = (data.status||'').toLowerCase();
   data.methodology = data.type || data.methodology || 'five_whys';
   data.target_date = data.due_date || data.target_date;
-  data.actions = (data.metadata && data.metadata.actions) ? data.metadata.actions : (data.actions || []);
-  data.nc_ref = data.nc_id ? ('NC') : '-';
+  data.nc_ref = data.nc_id ? 'NC' : '-';
+  data.project_name = data.project_id ? 'مشروع' : '-';
 
+  // Parse metadata safely
+  var rcaMeta = {};
+  try {
+    var rawMeta = data.metadata;
+    if (rawMeta) {
+      rcaMeta = typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta;
+    }
+  } catch(e) { rcaMeta = {}; }
+  data.metadata = rcaMeta;
+  console.log('[RCA Detail] metadata:', JSON.stringify(rcaMeta));
+  console.log('[RCA Detail] actions:', data.actions.length, 'fmea:', (rcaMeta.fmea_data||[]).length, 'pareto:', (rcaMeta.pareto_items||[]).length);
+
+  // Read actions from metadata
+  data.actions = Array.isArray(rcaMeta.actions) ? rcaMeta.actions : [];
+
+  // Read fishbone/ishikawa
   var ishData = {};
   try {
-    var fishbone = data.fishbone || data.ishikawa_data;
-    ishData = fishbone ? (typeof fishbone === 'string' ? JSON.parse(fishbone) : fishbone) : {};
+    var fishbone = data.fishbone || rcaMeta.fishbone;
+    if (fishbone) {
+      ishData = typeof fishbone === 'string' ? JSON.parse(fishbone) : fishbone;
+    }
   } catch(e) { ishData = {}; }
 
   var actions  = data.actions || [];
@@ -3086,8 +3104,8 @@ async function loadRCADetail(id) {
 }
 
 function buildParetoPanel(id, data) {
-  var meta = data.metadata || {};
-  var items = meta.pareto_items || [];
+  var meta = (data.metadata && typeof data.metadata === 'object') ? data.metadata : {};
+  var items = Array.isArray(meta.pareto_items) ? meta.pareto_items : [];
 
   var rowsHtml = '';
   var total = items.reduce(function(s,i){ return s + (i.freq||0); }, 0);
@@ -3183,8 +3201,8 @@ async function deleteParetoItem(id, idx) {
 function buildFMEAPanel(id, data) {
   var fmea = [];
   try {
-    var meta = data.metadata || {};
-    fmea = meta.fmea_data || data.fmea_data || [];
+    var meta = (data.metadata && typeof data.metadata === 'object') ? data.metadata : {};
+    fmea = Array.isArray(meta.fmea_data) ? meta.fmea_data : [];
   } catch(e) { fmea = []; }
 
   var rowsHtml = '';
