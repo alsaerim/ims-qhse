@@ -7630,6 +7630,14 @@ async function loadLean() {
     wastes = Array.isArray(wastesData) ? wastesData : (wastesData?.data || []);
     wastes = wastes.map(w => ({...w, status: (w.status||'').toLowerCase()}));
   } catch(e) { console.error('[Lean]', e); }
+
+  // Load projects for name lookup
+  if (!window._leanProjects) {
+    try {
+      const pd = await apiFetch('/api/projects');
+      window._leanProjects = Array.isArray(pd) ? pd : (pd?.data || []);
+    } catch(e) { window._leanProjects = []; }
+  }
   const lm = {};
 
   // Compute summary stats
@@ -8074,7 +8082,7 @@ async function openWasteDetail(id) {
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">نوع الهدر</div><div class="font-bold text-slate-800">' + (mudaTypeAr[w.muda_type] || w.muda_type) + '</div></div>' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">درجة الأثر</div><div class="font-bold text-2xl" style="color:' + (w.impact_score >= 8 ? '#dc2626' : '#d97706') + '">' + w.impact_score + '<span class="text-sm text-slate-400">/10</span></div></div>' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">العملية</div><div class="font-medium text-slate-800">' + (w.process || '-') + '</div></div>' +
-        '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المشروع</div><div class="font-medium text-slate-800">' + (w.project_id ? ((window.MOCK_DB?.projects||[]).find(p=>p.id===w.project_id)?.name || 'مشروع') : '-') + '</div></div>' +
+        '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المشروع</div><div class="font-medium text-slate-800">' + (w.project_id ? ((window._leanProjects||[]).find(p=>p.id===w.project_id)?.metadata?.name || (window._leanProjects||[]).find(p=>p.id===w.project_id)?.title || 'مشروع') : '-') + '</div></div>' +
         '<div class="p-3 bg-green-50 rounded-xl col-span-2"><div class="text-xs text-slate-500 mb-1">الوفر المالي المتوقع</div><div class="font-black text-green-700 text-xl">' + Number(w.estimated_saving||0).toLocaleString('ar-SA') + ' ريال</div></div>' +
       '</div>' +
       '<div class="p-4 bg-red-50 rounded-xl border-r-4 border-red-400"><div class="text-xs font-bold text-red-700 mb-1">السبب الجذري</div><p class="text-sm text-slate-700">' + (w.root_cause || '-') + '</p></div>' +
