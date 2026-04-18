@@ -2893,7 +2893,7 @@ async function loadRCADetail(id) {
   data.status = (data.status||'').toLowerCase();
   data.methodology = data.type || data.methodology || 'five_whys';
   data.target_date = data.due_date || data.target_date;
-  data.actions = data.actions || [];
+  data.actions = (data.metadata && data.metadata.actions) ? data.metadata.actions : (data.actions || []);
   data.nc_ref = data.nc_id ? ('NC') : '-';
 
   var ishData = {};
@@ -3357,15 +3357,19 @@ async function saveRCAIshikawa(id) {
   } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
 }
 
-function addRCAAction(id) {
+async function addRCAAction(id) {
   var desc = (document.getElementById('na-desc')||{}).value||'';
   if (!desc.trim()) { showToast('❌ يرجى إدخال وصف الإجراء','error'); return; }
   var userSel  = document.getElementById('na-user');
-  var userName = userSel && userSel.selectedIndex>=0 ? (userSel.options[userSel.selectedIndex].dataset.name||'') : '';
-  var rca = window.MOCK_DB && window.MOCK_DB.rca_tickets ? window.MOCK_DB.rca_tickets.find(function(r){return r.id===id;}) : null;
-  if (!rca) { showToast('❌ لم يتم العثور على RCA','error'); return; }
-  if (!rca.actions) rca.actions = [];
-  rca.actions.push({
+  var userName = userSel && userSel.selectedIndex>=0 ? (userSel.options[userSel.selectedIndex].dataset.name||userSel.options[userSel.selectedIndex].text||'') : '';
+
+  // Load current RCA
+  var rca;
+  try { rca = await apiFetch('/api/rca/' + id); } catch(e) { showToast('❌ خطأ في التحميل','error'); return; }
+
+  var meta = rca.metadata || {};
+  var actions = meta.actions || [];
+  actions.push({
     type:          (document.getElementById('na-type')||{}).value||'corrective',
     description:   desc.trim(),
     assigned_to:   userSel ? userSel.value : '',
@@ -3373,16 +3377,30 @@ function addRCAAction(id) {
     due_date:      (document.getElementById('na-date')||{}).value||null,
     status:        'pending'
   });
-  showToast('✅ تم إضافة الإجراء','success');
-  loadRCADetail(id);
+  meta.actions = actions;
+
+  try {
+    await apiFetch('/api/rca/' + id, 'PUT', { metadata: meta });
+    showToast('✅ تم إضافة الإجراء','success');
+    await loadRCADetail(id);
+    setTimeout(function(){ switchRCATab('actions'); }, 100);
+  } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
 }
 
-function updateActStatus(rcaId, idx, newStatus) {
-  var rca = window.MOCK_DB && window.MOCK_DB.rca_tickets ? window.MOCK_DB.rca_tickets.find(function(r){return r.id===rcaId;}) : null;
-  if (rca && rca.actions && rca.actions[idx]) {
-    rca.actions[idx].status = newStatus;
-    showToast('✅ تم تحديث حالة الإجراء','success');
-    loadRCADetail(rcaId);
+async function updateActStatus(rcaId, idx, newStatus) {
+  var rca;
+  try { rca = await apiFetch('/api/rca/' + rcaId); } catch(e) { return; }
+  var meta = rca.metadata || {};
+  var actions = meta.actions || [];
+  if (actions[idx]) {
+    actions[idx].status = newStatus;
+    meta.actions = actions;
+    try {
+      await apiFetch('/api/rca/' + rcaId, 'PUT', { metadata: meta });
+      showToast('✅ تم تحديث الحالة','success');
+      await loadRCADetail(rcaId);
+      setTimeout(function(){ switchRCATab('actions'); }, 100);
+    } catch(e) { showToast('❌ خطأ في التحديث','error'); }
   }
 }
 
