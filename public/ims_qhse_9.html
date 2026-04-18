@@ -2651,13 +2651,15 @@ async function loadRCA() {
   // Handle both {data:[...]} and direct array
   var rawList = Array.isArray(resp) ? resp : (resp?.data || []);
   var rcas = rawList.map(function(r) {
+    var extra = parseRCAExtra(r.corrective_action);
     return Object.assign({}, r, {
       status: (r.status||'').toLowerCase(),
       methodology: r.type || r.methodology || 'five_whys',
       target_date: r.due_date || r.target_date,
       nc_ref: r.nc_id ? ('NC-' + (r.nc_id||'').substring(0,8)) : '-',
       project_name: r.project_id ? 'مشروع' : '-',
-      actions: r.actions || [],
+      actions: Array.isArray(extra.actions) ? extra.actions : [],
+      ishikawa_data: r.fishbone || null,
     });
   });
 
