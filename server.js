@@ -3,7 +3,7 @@ const express = require('express');
 const path    = require('path');
 
 const app = express();
-
+app.get('/admin', (req, res) => res.sendFile(__dirname + '/public/ims_admin.html'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const pages = {
