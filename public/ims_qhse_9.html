@@ -7781,7 +7781,7 @@ async function loadLean() {
       leanKpiCard('مفتوحة', openWastes, 'exclamation-circle', '#dc2626') +
       leanKpiCard('قيد المعالجة', inProgress, 'spinner', '#d97706') +
       leanKpiCard('مُعالجة', closedWastes, 'check-circle', '#059669') +
-      leanKpiCard('الوفر المتوقع', (totalSaving/1000).toFixed(0)+'K ر.س', 'coins', '#7c3aed') +
+      leanKpiCard('التوفير المتوقع', Number(totalSaving).toLocaleString('ar-SA') + ' ر.س', 'coins', '#7c3aed') +
     '</div>' +
 
     // Digitalization + DMAIC row
@@ -7801,8 +7801,8 @@ async function loadLean() {
             '<div class="text-xs text-slate-500 text-center">هدر مُعالج / الإجمالي</div>' +
           '</div>' +
           '<div class="p-3 bg-blue-50 rounded-xl">' +
-            '<div class="font-black text-blue-700 text-lg text-center">' + (totalSaving > 0 ? (totalSaving/1000).toFixed(0) + 'K' : '0') + ' ر.س</div>' +
-            '<div class="text-xs text-slate-500 text-center">الوفر المالي المتوقع</div>' +
+            '<div class="font-black text-blue-700 text-lg text-center">' + Number(totalSaving).toLocaleString('ar-SA') + ' ر.س</div>' +
+            '<div class="text-xs text-slate-500 text-center">التوفير المالي المتوقع</div>' +
           '</div>' +
         '</div>' +
         '<div class="mt-3 p-3 bg-slate-50 rounded-xl">' +
@@ -7877,7 +7877,7 @@ async function loadLean() {
               '<th class="text-right p-3 font-semibold text-slate-600">DMAIC</th>' +
               '<th class="text-right p-3 font-semibold text-slate-600">الأثر</th>' +
               '<th class="text-right p-3 font-semibold text-slate-600">الحالة</th>' +
-              '<th class="text-right p-3 font-semibold text-slate-600">الوفر</th>' +
+              '<th class="text-right p-3 font-semibold text-slate-600">التوفير</th>' +
               '<th class="p-3"></th>' +
             '</tr>' +
           '</thead>' +
@@ -7956,7 +7956,7 @@ async function loadLean() {
             '</div>' +
           '</div>' +
           '<div>' +
-            '<label class="text-sm font-medium text-slate-700 block mb-1">الوفر المالي المتوقع (ر.س)</label>' +
+            '<label class="text-sm font-medium text-slate-700 block mb-1">التوفير المالي المتوقع (ر.س)</label>' +
             '<input class="form-input" type="number" id="w-saving" min="0" value="0" placeholder="0" />' +
           '</div>' +
           '<div class="flex gap-3 pt-2 border-t border-slate-100">' +
@@ -8083,7 +8083,7 @@ async function openWasteDetail(id) {
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">درجة الأثر</div><div class="font-bold text-2xl" style="color:' + (w.impact_score >= 8 ? '#dc2626' : '#d97706') + '">' + w.impact_score + '<span class="text-sm text-slate-400">/10</span></div></div>' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">العملية</div><div class="font-medium text-slate-800">' + (w.process || '-') + '</div></div>' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المشروع</div><div class="font-medium text-slate-800">' + (w.project_id ? ((window._leanProjects||[]).find(p=>p.id===w.project_id)?.metadata?.name || (window._leanProjects||[]).find(p=>p.id===w.project_id)?.title || 'مشروع') : '-') + '</div></div>' +
-        '<div class="p-3 bg-green-50 rounded-xl col-span-2"><div class="text-xs text-slate-500 mb-1">الوفر المالي المتوقع</div><div class="font-black text-green-700 text-xl">' + Number(w.estimated_saving||0).toLocaleString('ar-SA') + ' ريال</div></div>' +
+        '<div class="p-3 bg-green-50 rounded-xl col-span-2"><div class="text-xs text-slate-500 mb-1">التوفير المالي المتوقع</div><div class="font-black text-green-700 text-xl">' + Number(w.estimated_saving||0).toLocaleString('ar-SA') + ' ريال</div></div>' +
       '</div>' +
       '<div class="p-4 bg-red-50 rounded-xl border-r-4 border-red-400"><div class="text-xs font-bold text-red-700 mb-1">السبب الجذري</div><p class="text-sm text-slate-700">' + (w.root_cause || '-') + '</p></div>' +
       '<div class="p-4 bg-green-50 rounded-xl border-r-4 border-green-400"><div class="text-xs font-bold text-green-700 mb-1">الإجراء المقترح</div><p class="text-sm text-slate-700">' + (w.proposed_action || '-') + '</p></div>' +
@@ -8257,7 +8257,7 @@ async function openWasteEdit(id) {
 
       // Saving
       '<div>' +
-        '<label class="text-sm font-medium text-slate-700 block mb-1">الوفر المالي المتوقع (ر.س)</label>' +
+        '<label class="text-sm font-medium text-slate-700 block mb-1">التوفير المالي المتوقع (ر.س)</label>' +
         '<input class="form-input" type="number" id="edit-w-saving" min="0" value="' + (w.estimated_saving||0) + '" />' +
       '</div>' +
 
@@ -8817,7 +8817,7 @@ function buildReportHTML(type, preview=false) {
           <th style="${thStyle}">الرقم</th><th style="${thStyle}">العنوان</th>
           <th style="${thStyle}">نوع الهدر</th><th style="${thStyle}">الأولوية</th>
           <th style="${thStyle}">الأثر</th><th style="${thStyle}">الحالة</th>
-          <th style="${thStyle}">الوفر</th>
+          <th style="${thStyle}">التوفير</th>
         </tr></thead>
         <tbody>
           ${wastes.slice(0,preview?5:999).map((w,idx)=>`<tr style="${idx%2===1?trAlt:''}">
