@@ -4315,11 +4315,19 @@ function orgSavePolicyEdit(sid) {
 function orgAddPolicy() {
   const list = document.getElementById('org-policies-list');
   if (!list) return;
-  const newP = { title:'سياسة جديدة', iso:'ISO 9001', date:new Date().toISOString().slice(0,10),
-    owner:'—', status:'مسودة', color:'#64748b', icon:'fa-file-contract', text:'أدخل نص السياسة هنا...' };
+  const newP = {
+    title:'سياسة جديدة', iso:'ISO 9001', date:new Date().toISOString().slice(0,10),
+    owner:'—', status:'مسودة', color:'#64748b', icon:'fa-file-contract', text:'أدخل نص السياسة هنا...'
+  };
   const tmp = document.createElement('div');
   tmp.innerHTML = orgPolicyCard(newP);
   list.prepend(tmp.firstElementChild);
+
+  // Save to _orgPolicies and API immediately
+  if (!window._orgPolicies) window._orgPolicies = [];
+  window._orgPolicies.unshift(newP);
+  saveOrgSettings();
+
   const sid = list.firstElementChild?.id;
   if (sid) setTimeout(() => orgEditPolicy(sid), 80);
 }
@@ -4868,12 +4876,10 @@ async function loadOrganization() {
             <button onclick="orgAddPolicy()" class="btn btn-primary text-sm"><i class="fas fa-plus ml-1"></i>إضافة سياسة</button>
           </div>
           <div class="space-y-4" id="org-policies-list">
-            ${[
-              {title:'سياسة الجودة',iso:'ISO 9001',date:'2025-01-15',owner:'سارة القحطاني',status:'معتمدة',color:'#3b82f6',icon:'fa-award',text:'تلتزم شركتنا بتقديم منتجات وخدمات تتوافق مع متطلبات العملاء والمتطلبات التنظيمية المعمول بها، وتسعى باستمرار إلى تحسين فاعلية نظام إدارة الجودة من خلال تحقيق أهداف الجودة وتعزيز ثقافة التميز.'},
-              {title:'سياسة الصحة والسلامة المهنية',iso:'ISO 45001',date:'2025-02-01',owner:'أحمد العمري',status:'معتمدة',color:'#059669',icon:'fa-hard-hat',text:'نلتزم بتوفير بيئة عمل آمنة وصحية لجميع الموظفين والزوار، وبمنع الإصابات والأمراض المهنية، وبالامتثال لجميع المتطلبات القانونية والتنظيمية ذات الصلة، مع السعي المستمر لتحقيق الأداء المتميز في مجال السلامة.'},
-              {title:'السياسة البيئية',iso:'ISO 14001',date:'2025-02-15',owner:'محمد الزهراني',status:'معتمدة',color:'#d97706',icon:'fa-leaf',text:'نلتزم بتقليل الأثر البيئي لعملياتنا من خلال الاستخدام الرشيد للموارد، وخفض الانبعاثات والنفايات، والامتثال للتشريعات البيئية، والعمل نحو تحقيق التنمية المستدامة في جميع مواقع عملنا.'},
-              {title:'سياسة أمن المعلومات',iso:'ISO 27001',date:'2025-03-01',owner:'مدير النظام',status:'قيد المراجعة',color:'#7c3aed',icon:'fa-shield-alt',text:'نلتزم بحماية سرية المعلومات وسلامتها وتوافرها من خلال تطبيق ضوابط أمنية مناسبة، والامتثال للمتطلبات القانونية والتعاقدية، وتعزيز الوعي الأمني لدى جميع العاملين.'},
-            ].map(p=>orgPolicyCard(p)).join('')}
+            ${(window._orgPolicies && window._orgPolicies.length > 0
+              ? window._orgPolicies
+              : []
+            ).map(p=>orgPolicyCard(p)).join('')}
           </div>
         </div>
 
