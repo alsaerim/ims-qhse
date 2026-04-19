@@ -7645,7 +7645,7 @@ async function loadLean() {
   const openWastes = wastes.filter(w => w.status === 'open').length;
   const inProgress = wastes.filter(w => w.status === 'in_progress').length;
   const closedWastes = wastes.filter(w => w.status === 'closed').length;
-  const totalSaving = wastes.reduce((s, w) => s + (w.estimated_saving || 0), 0);
+  const totalSaving = wastes.reduce((s, w) => s + Number(w.estimated_saving || 0), 0);
 
   // Pareto by muda type
   const mudaMap = {};
