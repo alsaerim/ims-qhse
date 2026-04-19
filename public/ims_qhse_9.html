@@ -7694,7 +7694,7 @@ async function loadLean() {
     const color = mudaColor[w.muda_type] || '#64748b';
     const icon = mudaIcon[w.muda_type] || 'circle';
     tableHtml += '<tr class="table-row border-b border-slate-100">' +
-      '<td class="p-3"><span class="font-mono text-xs text-blue-600">' + w.ref + '</span></td>' +
+      '<td class="p-3"><span class="font-mono text-xs text-blue-600">' + (w.ref_number || w.ref || '') + '</span></td>' +
       '<td class="p-3">' +
         '<div class="flex items-center gap-2">' +
           '<div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:' + color + '18">' +
@@ -8182,7 +8182,7 @@ async function openWasteEdit(id) {
 
     '<div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4 flex items-center justify-between sticky top-0 z-10">' +
       '<div>' +
-        '<div class="text-amber-100 font-mono text-xs">' + w.ref + '</div>' +
+        '<div class="text-amber-100 font-mono text-xs">' + (w.ref_number || w.ref || '') + '</div>' +
         '<h3 class="text-white font-bold text-lg"><i class="fas fa-edit ml-2"></i>تعديل سجل الهدر</h3>' +
       '</div>' +
       '<button onclick="document.getElementById(\'modal-waste-edit\').classList.remove(\'open\')" class="text-white opacity-70 hover:opacity-100 text-xl"><i class="fas fa-times"></i></button>' +
@@ -8821,7 +8821,7 @@ function buildReportHTML(type, preview=false) {
         </tr></thead>
         <tbody>
           ${wastes.slice(0,preview?5:999).map((w,idx)=>`<tr style="${idx%2===1?trAlt:''}">
-            <td style="${tdStyle};color:#0891b2;font-family:monospace">${w.ref}</td>
+            <td style="${tdStyle};color:#0891b2;font-family:monospace">${w.ref_number||w.ref||''}</td>
             <td style="${tdStyle}">${w.title.substring(0,35)}${w.title.length>35?'...':''}</td>
             <td style="${tdStyle}">${mudaAr[w.muda_type]||w.muda_type}</td>
             <td style="${tdStyle};font-weight:bold;color:${w.priority==='critical'?'#dc2626':w.priority==='high'?'#d97706':'#3b82f6'}">${w.priority==='critical'?'حرجة':w.priority==='high'?'عالية':'متوسطة'}</td>
