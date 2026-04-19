@@ -11307,6 +11307,38 @@ function subEnsureModals(PLANS, CURRENT) {
 }
 
 // ── Integrations ─────────────────────────────
+async function loadIntegrationsData() {
+  try {
+    const r = await apiFetch('/api/integrations');
+    window._integrations = Array.isArray(r) ? r : (r?.data || []);
+    const active = window._integrations.filter(function(i){ return i.status === 'ACTIVE'; }).length;
+    const el = document.getElementById('int-stat-active');
+    if (el) el.textContent = active;
+    // Update card statuses
+    const typeToTool = { ODOO:'odoo', ERPNEXT:'erpnext', SAP:'sap', MICROSOFT365:'ms365' };
+    window._integrations.forEach(function(intg) {
+      const tool = typeToTool[intg.type];
+      if (!tool) return;
+      const card = document.getElementById('int-card-' + tool);
+      if (!card) return;
+      const isActive = intg.status === 'ACTIVE';
+      card.style.borderColor = isActive ? '#6ee7b7' : '#e2e8f0';
+      const badge = card.querySelector('.badge');
+      if (badge) {
+        badge.className = isActive ? 'badge badge-green' : 'badge badge-gray';
+        badge.innerHTML = isActive
+          ? '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;margin-left:5px"></span>متصل'
+          : 'غير متصل';
+      }
+      if (isActive) {
+        const lastSync = intg.last_sync_at ? new Date(intg.last_sync_at).toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}) : '—';
+        const syncEl = document.getElementById('int-stat-sync');
+        if (syncEl) { syncEl.textContent = lastSync; syncEl.nextElementSibling.textContent = intg.name; }
+      }
+    });
+  } catch(e) { console.warn('[Integrations] API not available'); }
+}
+
 function loadIntegrations() {
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-5">
@@ -11539,6 +11571,8 @@ function loadIntegrations() {
 
   // Modals for integrations (injected dynamically)
   intEnsureModals();
+  // Load real data from API
+  loadIntegrationsData();
 }
 
 // ── Integrations Helpers ──────────────────────
@@ -11703,8 +11737,15 @@ function intSyncNow(tool) {
   }, 2200);
 }
 
-function intDisconnect(tool) {
+async function intDisconnect(tool) {
   if (!confirm('هل أنت متأكد من فصل الربط مع ' + tool + '؟')) return;
+  const typeMap = { odoo:'ODOO', erpnext:'ERPNEXT', sap:'SAP', ms365:'MICROSOFT365' };
+  const existing = (window._integrations||[]).find(function(i){ return i.type === typeMap[tool]; });
+  if (existing) {
+    try {
+      await apiFetch('/api/integrations/' + existing.id, 'PUT', { status: 'INACTIVE' });
+    } catch(e) {}
+  }
   const card = document.getElementById('int-card-'+tool);
   if (card) {
     card.style.borderColor = '#e2e8f0';
@@ -11712,9 +11753,7 @@ function intDisconnect(tool) {
     const badge = card.querySelector('.badge');
     if (badge) { badge.className='badge badge-gray'; badge.textContent='غير متصل'; }
     const btnRow = card.querySelector('.flex.gap-2');
-    if (btnRow) {
-      btnRow.innerHTML = `<button class="btn btn-primary text-sm w-full" onclick="intOpenConfig('${tool}')"><i class="fas fa-link ml-1"></i>إعادة الربط</button>`;
-    }
+    if (btnRow) btnRow.innerHTML = `<button class="btn btn-primary text-sm w-full" onclick="intOpenConfig('${tool}')"><i class="fas fa-link ml-1"></i>إعداد الربط</button>`;
     const el = document.getElementById('int-stat-active');
     if (el) el.textContent = Math.max(0, parseInt(el.textContent||0) - 1);
   }
@@ -11755,9 +11794,43 @@ function intTestConn(tool) {
   setTimeout(() => showToast('✅ الاتصال ناجح — استجابة 200 OK', 'success'), 1800);
 }
 
-function intSaveConfig(tool) {
-  document.getElementById('int-modal-config').classList.remove('open');
-  showToast('✅ تم حفظ إعدادات ' + (INT_CONFIGS[tool]?.name||tool), 'success');
+async function intSaveConfig(tool) {
+  const cfg = INT_CONFIGS[tool] || {};
+  const inputs = document.querySelectorAll('#int-modal-body input, #int-modal-body select');
+  const credentials = {};
+  cfg.fields?.forEach(function(f, i) {
+    if (inputs[i]) credentials[f.l] = inputs[i].value;
+  });
+
+  const typeMap = { odoo:'ODOO', erpnext:'ERPNEXT', sap:'SAP', ms365:'MICROSOFT365', powerbi:'CUSTOM' };
+  const body = {
+    type:        typeMap[tool] || 'CUSTOM',
+    name:        cfg.name || tool,
+    status:      'ACTIVE',
+    credentials: credentials,
+    base_url:    credentials['رابط الخادم'] || credentials['SAP Host'] || '',
+  };
+
+  try {
+    const existing = (window._integrations||[]).find(function(i){ return i.type === body.type; });
+    if (existing) {
+      await apiFetch('/api/integrations/' + existing.id, 'PUT', body);
+    } else {
+      await apiFetch('/api/integrations', 'POST', body);
+    }
+    document.getElementById('int-modal-config').classList.remove('open');
+    showToast('✅ تم حفظ إعدادات ' + cfg.name, 'success');
+    // Update card UI
+    const card = document.getElementById('int-card-' + tool);
+    if (card) {
+      card.style.borderColor = '#6ee7b7';
+      const badge = card.querySelector('.badge');
+      if (badge) { badge.className='badge badge-green'; badge.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>متصل'; }
+    }
+    const el = document.getElementById('int-stat-active');
+    if (el) el.textContent = parseInt(el.textContent||0) + 1;
+    loadIntegrationsData();
+  } catch(e) { showToast('❌ خطأ في الحفظ: ' + e.message, 'error'); }
 }
 
 function intOpenAddModal() {
@@ -11778,17 +11851,25 @@ function intOpenWebhookModal() {
   document.getElementById('int-modal-wh')?.classList.add('open');
 }
 
-function intSaveWebhook() {
-  const name = document.getElementById('int-wh-name')?.value.trim();
-  const url  = document.getElementById('int-wh-url')?.value.trim();
+async function intSaveWebhook() {
+  const name   = document.getElementById('int-wh-name')?.value.trim();
+  const url    = document.getElementById('int-wh-url')?.value.trim();
+  const events = Array.from(document.querySelectorAll('#int-wh-events input:checked')).map(e => e.value).join(',') || 'all';
   if (!name || !url) { showToast('يرجى تعبئة الحقول الإلزامية', 'error'); return; }
-  document.getElementById('int-modal-wh').classList.remove('open');
-  const list = document.getElementById('int-wh-list');
-  if (list) list.insertAdjacentHTML('beforeend', intWhRow('fas fa-satellite-dish','text-blue-600','bg-blue-100',name,url,'أحداث مختارة','0'));
-  intUpdateWhCount(1);
-  document.getElementById('int-wh-name').value = '';
-  document.getElementById('int-wh-url').value = '';
-  showToast('✅ تم إضافة الـ Webhook بنجاح', 'success');
+  try {
+    await apiFetch('/api/integrations', 'POST', {
+      type: 'CUSTOM', name: name, status: 'ACTIVE',
+      webhooks: [{ name, url, events }],
+      credentials: { webhook_url: url },
+    });
+    document.getElementById('int-modal-wh').classList.remove('open');
+    const list = document.getElementById('int-wh-list');
+    if (list) list.insertAdjacentHTML('beforeend', intWhRow('fas fa-satellite-dish','text-blue-600','bg-blue-100',name,url,events,'0'));
+    intUpdateWhCount(1);
+    document.getElementById('int-wh-name').value = '';
+    document.getElementById('int-wh-url').value = '';
+    showToast('✅ تم إضافة الـ Webhook بنجاح', 'success');
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
 }
 
 function intGenerateKey() {
