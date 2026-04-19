@@ -4712,7 +4712,15 @@ function submitGapAssessment(stdId, stdCode, stdColor) {
 async function loadOrganization() {
   const _o = await apiFetch('/api/org/profile');
   const org = _o || {};
-  const standards = org.iso_standards || [];
+
+  // Load ISO standards from API
+  let standards = [];
+  try {
+    const isoResp = await apiFetch('/api/iso/standards');
+    standards = Array.isArray(isoResp) ? isoResp : (isoResp?.data || []);
+  } catch(e) { standards = org.iso_standards || []; }
+  window._isoStandards = standards;
+  if (window.MOCK_DB) window.MOCK_DB.iso_standards = standards;
 
   // Load saved data from backend into memory
   if (org.org_chart && org.org_chart.length > 0) {
@@ -4910,7 +4918,7 @@ async function loadOrganization() {
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          ${standards.map(std => {
+          ${standards.filter(s => s.code.startsWith('ISO')).map(std => {
             const color = std.color || stdColors[std.code] || '#64748b';
             const icon  = std.icon  || stdIcons[std.code]  || 'certificate';
             return `
@@ -4975,7 +4983,7 @@ async function loadOrganization() {
                 <!-- Procedures with edit -->
                 <div>
                   <div class="flex items-center justify-between mb-2">
-                    <div class="text-xs font-bold text-slate-700">الإجراءات المرتبطة (${(std.procedures||[]).length})</div>
+                    <div class="text-xs font-bold text-slate-700">الإجراءات المرتبطة (${((std.gap_analysis?.procedures)||[]).length})</div>
                     <button onclick="openAddProcedureModal('${std.id}','${color}')"
                       class="text-xs px-2 py-1 rounded-lg font-bold flex items-center gap-1 transition-all"
                       style="background:${color}15;color:${color}">
@@ -4983,7 +4991,7 @@ async function loadOrganization() {
                     </button>
                   </div>
                   <div class="space-y-1" id="proc-list-${std.id}">
-                    ${(std.procedures||[]).map(p => {
+                    ${((std.gap_analysis?.procedures)||[]).map(p => {
                       const statusMap = {active:'نشط',review:'مراجعة',draft:'مسودة',retired:'متقاعد'};
                       const badgeMap  = {active:'badge-green',review:'badge-yellow',draft:'badge-gray',retired:'badge-red'};
                       return `
@@ -5013,6 +5021,32 @@ async function loadOrganization() {
             </div>`;
           }).join('')}
         </div>
+        ${standards.filter(s => !s.code.startsWith('ISO')).length > 0 ? `
+        <div class="mt-6">
+          <h4 class="font-bold text-slate-700 mb-3 text-sm"><i class="fas fa-certificate text-slate-400 ml-1"></i>معايير أخرى</h4>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            ${standards.filter(s => !s.code.startsWith('ISO')).map(std => {
+              const color = std.color || '#64748b';
+              return '<div class="border border-slate-100 rounded-xl p-4" id="std-card-'+std.id+'">'+
+                '<div class="flex items-center justify-between">'+
+                  '<div class="flex items-center gap-2">'+
+                    '<div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:'+color+'">'+
+                      '<i class="fas fa-certificate text-white text-xs"></i>'+
+                    '</div>'+
+                    '<div>'+
+                      '<div class="font-bold text-slate-800 text-sm">'+std.code.replace('_',' ')+'</div>'+
+                      '<div class="text-xs" style="color:'+color+'">'+std.name+'</div>'+
+                    '</div>'+
+                  '</div>'+
+                  '<div class="flex gap-1">'+
+                    '<button onclick="openEditStandardModal(\''+std.id+'\')" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg"><i class="fas fa-edit text-xs"></i></button>'+
+                    '<button onclick="deleteStandard(\''+std.id+'\')" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg"><i class="fas fa-trash text-xs"></i></button>'+
+                  '</div>'+
+                '</div>'+
+              '</div>';
+            }).join('')}
+          </div>
+        </div>` : ''}
       </div>
 
       <!-- TAB: Structure -->
@@ -5253,8 +5287,9 @@ function renderObjectiveCard(o, stdColors, isoNames, objStatus, objStatusAr) {
 
 // ── Cycle procedure status on badge click ──
 function cycleProcStatus(stdId, procId) {
-  var std  = (window.MOCK_DB?.iso_standards||[]).find(function(s){return s.id===stdId;});
-  var proc = std?.procedures?.find(function(p){return p.id===procId;});
+  var std  = (window._isoStandards||window.MOCK_DB?.iso_standards||[]).find(function(s){return s.id===stdId;});
+  var procs = std?.gap_analysis?.procedures || [];
+  var proc = procs.find(function(p){return p.id===procId;});
   if (!proc) return;
 
   var cycle  = ['active','review','draft','retired'];
@@ -5262,18 +5297,18 @@ function cycleProcStatus(stdId, procId) {
   var badges = {active:'badge-green', review:'badge-yellow', draft:'badge-gray', retired:'badge-red'};
 
   var idx     = cycle.indexOf(proc.status);
-  var nextIdx = (idx + 1) % cycle.length;
-  proc.status = cycle[nextIdx];
+  proc.status = cycle[(idx + 1) % cycle.length];
 
-  // Update badge in DOM without full reload
   var badge = document.getElementById('proc-badge-' + procId);
   if (badge) {
     badge.textContent = labels[proc.status];
     badge.className = 'badge ' + badges[proc.status] + ' text-xs cursor-pointer hover:opacity-80 transition-all';
   }
 
-  // Persist via API silently
-  apiFetch('/api/iso/standards/' + stdId + '/procedures/' + procId, 'PUT', {status: proc.status})
+  // Save silently
+  var gap = std.gap_analysis || {};
+  gap.procedures = procs;
+  apiFetch('/api/iso/standards/'+stdId, 'PUT', {gap_analysis: gap})
     .then(function(){ showToast('✅ ' + labels[proc.status], 'success'); })
     .catch(function(){});
 }
@@ -5284,8 +5319,8 @@ function openAddProcedureModal(stdId, color) {
 }
 
 function openEditProcedureModal(stdId, procId, color) {
-  var std  = (window.MOCK_DB?.iso_standards||[]).find(function(s){return s.id===stdId;});
-  var proc = std?.procedures?.find(function(p){return p.id===procId;});
+  var std  = (window._isoStandards||window.MOCK_DB?.iso_standards||[]).find(function(s){return s.id===stdId;});
+  var proc = (std?.gap_analysis?.procedures||[]).find(function(p){return p.id===procId;});
   if (!proc) return;
   openProcedureModal(stdId, color, proc);
 }
@@ -5373,7 +5408,8 @@ async function submitProcedure() {
 
   var stdId  = document.getElementById('proc-std-id')?.value;
   var procId = document.getElementById('proc-id')?.value;
-  var body   = {
+  var newProc = {
+    id:          procId || ('proc_' + Date.now()),
     code,
     title,
     status:      document.getElementById('proc-status')?.value || 'active',
@@ -5383,13 +5419,19 @@ async function submitProcedure() {
   };
 
   try {
+    // Load current standard
+    var std = (window._isoStandards||[]).find(function(s){ return s.id===stdId; });
+    if (!std) { showToast('❌ لم يتم العثور على المعيار', 'error'); return; }
+    var gap = std.gap_analysis || {};
+    var procs = Array.isArray(gap.procedures) ? [...gap.procedures] : [];
     if (procId) {
-      await apiFetch('/api/iso/standards/'+stdId+'/procedures/'+procId, 'PUT', body);
-      showToast('✅ تم تحديث الإجراء', 'success');
+      procs = procs.map(function(p){ return p.id===procId ? newProc : p; });
     } else {
-      await apiFetch('/api/iso/standards/'+stdId+'/procedures', 'POST', body);
-      showToast('✅ تم إضافة الإجراء', 'success');
+      procs.push(newProc);
     }
+    gap.procedures = procs;
+    await apiFetch('/api/iso/standards/'+stdId, 'PUT', { gap_analysis: gap });
+    showToast(procId ? '✅ تم تحديث الإجراء' : '✅ تم إضافة الإجراء', 'success');
     document.getElementById('modal-procedure')?.remove();
     loadOrganization();
     setTimeout(function(){ switchOrgTab('standards'); }, 100);
@@ -5398,7 +5440,11 @@ async function submitProcedure() {
 
 async function deleteProcedure(stdId, procId) {
   if (!confirm('هل أنت متأكد من حذف هذا الإجراء؟')) return;
-  await apiFetch('/api/iso/standards/'+stdId+'/procedures/'+procId, 'DELETE');
+  var std = (window._isoStandards||[]).find(function(s){ return s.id===stdId; });
+  if (!std) return;
+  var gap = std.gap_analysis || {};
+  gap.procedures = (gap.procedures||[]).filter(function(p){ return p.id!==procId; });
+  await apiFetch('/api/iso/standards/'+stdId, 'PUT', { gap_analysis: gap });
   document.getElementById('modal-procedure')?.remove();
   showToast('🗑️ تم حذف الإجراء', 'info');
   loadOrganization();
@@ -5595,8 +5641,8 @@ async function submitNewStandard() {
 
 // ── Edit Standard Modal ──────────────────────
 function openEditStandardModal(stdId) {
-  var std = (window.MOCK_DB?.iso_standards||[]).find(function(s){ return s.id === stdId; });
-  if (!std) return;
+  var std = (window._isoStandards||window.MOCK_DB?.iso_standards||[]).find(function(s){ return s.id === stdId; });
+  if (!std) { showToast('❌ لم يتم العثور على المعيار', 'error'); return; }
   document.getElementById('modal-edit-standard')?.remove();
 
   var color = std.color || '#64748b';
