@@ -3907,13 +3907,17 @@ async function openKPIDetail(id) {
 function orgUploadLogo(input) {
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    const img = document.getElementById('org-logo-img');
-    const icon= document.getElementById('org-logo-icon');
-    if (img)  { img.src = e.target.result; img.style.display = 'block'; }
-    if (icon) icon.style.display = 'none';
+  reader.onload = async e => {
+    const img     = document.getElementById('org-logo-img');
+    const icon    = document.getElementById('org-logo-icon');
+    const display = document.getElementById('org-logo-display');
+    if (img)     { img.src = e.target.result; img.style.display = 'block'; }
+    if (icon)    icon.style.display = 'none';
+    if (display) display.style.background = '#ffffff';
     window._orgLogo = e.target.result;
-    showToast('✅ تم رفع شعار المنظمة', 'success');
+    // Auto-save to backend
+    await saveOrgSettings();
+    showToast('✅ تم رفع وحفظ شعار المنظمة', 'success');
   };
   reader.readAsDataURL(file);
 }
@@ -3921,17 +3925,9 @@ function orgUploadLogo(input) {
 // ══════════════════════════════════════════════
 //  ORG CHART BUILDER  (interactive, from inside system)
 // ══════════════════════════════════════════════
-// Data store — persists across re-renders
+// Data store — loads from API, starts empty
 if (!window._orgNodes) {
-  window._orgNodes = [
-    { id:'n0', title:'الرئيس التنفيذي',   name:'مدير النظام',     role:'ceo',     color:'#1e40af', icon:'fa-crown',     parent:null },
-    { id:'n1', title:'مدير QHSE',          name:'أحمد العمري',     role:'manager', color:'#059669', icon:'fa-shield-alt', parent:'n0' },
-    { id:'n2', title:'مدير العمليات',      name:'محمد الزهراني',   role:'manager', color:'#d97706', icon:'fa-cogs',       parent:'n0' },
-    { id:'n3', title:'مدير الجودة',        name:'سارة القحطاني',   role:'manager', color:'#7c3aed', icon:'fa-award',      parent:'n0' },
-    { id:'n4', title:'مدير السلامة',       name:'فهد الدوسري',     role:'manager', color:'#dc2626', icon:'fa-hard-hat',   parent:'n0' },
-    { id:'n5', title:'مشرف التفتيش',       name:'—',               role:'staff',   color:'#0891b2', icon:'fa-clipboard-check', parent:'n1' },
-    { id:'n6', title:'مدقق داخلي',         name:'—',               role:'staff',   color:'#0891b2', icon:'fa-search',     parent:'n3' },
-  ];
+  window._orgNodes = [];
 }
 
 function orgChartRender() {
@@ -4093,6 +4089,7 @@ function orgNodeAddRoot() {
 function orgChartRefresh() {
   const el = document.getElementById('org-chart-built');
   if (el) el.innerHTML = orgChartRender();
+  saveOrgSettings();
 }
 
 // ══════════════════════════════════════════════
@@ -4286,7 +4283,6 @@ function orgSavePolicyEdit(sid) {
   const icon   = document.getElementById('pol-ed-icon-val')?.value;
   const text   = document.getElementById('pol-ed-text')?.value.trim();
 
-  // Save to dataset
   if (title)  card.dataset.title  = title;
   if (iso)    card.dataset.iso    = iso;
   if (status) card.dataset.status = status;
@@ -4297,12 +4293,22 @@ function orgSavePolicyEdit(sid) {
   if (text)   card.dataset.text   = text;
 
   document.getElementById('org-pol-edit-modal')?.remove();
-  // Re-render card with new data
-  const newData = { ...card.dataset, title: card.dataset.title, text: card.dataset.text };
+  const newData = { ...card.dataset };
   const tmp = document.createElement('div');
   tmp.innerHTML = orgPolicyCard(newData);
   const newCard = tmp.firstElementChild;
   card.replaceWith(newCard);
+
+  // Collect all policies and save to API
+  const list = document.getElementById('org-policies-list');
+  if (list) {
+    window._orgPolicies = Array.from(list.querySelectorAll('[data-title]')).map(c => ({
+      title: c.dataset.title, iso: c.dataset.iso, status: c.dataset.status,
+      owner: c.dataset.owner, date: c.dataset.date, color: c.dataset.color,
+      icon: c.dataset.icon, text: c.dataset.text
+    }));
+  }
+  saveOrgSettings();
   showToast('✅ تم حفظ السياسة', 'success');
 }
 
@@ -4703,12 +4709,22 @@ async function loadOrganization() {
   // Load saved data from backend into memory
   if (org.org_chart && org.org_chart.length > 0) {
     window._orgNodes = org.org_chart;
+  } else if (!window._orgNodes || window._orgNodes.length === 0) {
+    // Only use demo if nothing saved at all
+    window._orgNodes = [];
   }
   if (org.policies && org.policies.length > 0) {
     window._orgPolicies = org.policies;
+  } else if (!window._orgPolicies) {
+    window._orgPolicies = [];
   }
   if (org.comparison_rows && org.comparison_rows.length > 0) {
     window._comparisonRows = org.comparison_rows;
+  }
+
+  // Load logo
+  if (org.logo_url) {
+    window._orgLogo = org.logo_url;
   }
 
   const stdColors = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
@@ -5189,10 +5205,12 @@ async function loadOrganization() {
 
   // Restore logo if previously uploaded
   if (window._orgLogo) {
-    const img  = document.getElementById('org-logo-img');
-    const icon = document.getElementById('org-logo-icon');
-    if (img)  { img.src = window._orgLogo; img.style.display = 'block'; }
-    if (icon) icon.style.display = 'none';
+    const img     = document.getElementById('org-logo-img');
+    const icon    = document.getElementById('org-logo-icon');
+    const display = document.getElementById('org-logo-display');
+    if (img)     { img.src = window._orgLogo; img.style.display = 'block'; }
+    if (icon)    icon.style.display = 'none';
+    if (display) display.style.background = '#ffffff';
   }
 }
 
@@ -9137,12 +9155,14 @@ async function submitInspection(e) {
 // ── API Helper ────────────────────────────────
 async function saveOrgSettings(extraData = {}) {
   try {
-    await apiFetch('/api/org/profile', 'PUT', {
+    const payload = {
       ...extraData,
       org_chart:       window._orgNodes,
       policies:        window._orgPolicies || [],
       comparison_rows: window._comparisonRows || [],
-    });
+    };
+    if (window._orgLogo) payload.logo_url = window._orgLogo;
+    await apiFetch('/api/org/profile', 'PUT', payload);
   } catch(e) {
     console.error('Failed to save org data:', e);
   }
