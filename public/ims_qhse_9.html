@@ -11814,12 +11814,16 @@ async function intTestConn(tool) {
       await intSaveConfig(tool);
       return;
     }
-    const r = await apiFetch('/api/integrations/erpnext/test');
+    async function intTestConn(tool) {
+  showToast('🔍 جاري اختبار الاتصال...', 'info');
+  try {
+    const r = await apiFetch('/api/integrations/erpnext/test', 'GET');
     if (r?.ok || r?.data?.ok) {
       showToast('✅ الاتصال ناجح', 'success');
     } else {
-      showToast('❌ فشل الاتصال: ' + (r?.message || r?.data?.message || 'خطأ'), 'error');
+      showToast('❌ فشل الاتصال', 'error');
     }
+    return;
   } catch(e) {
     showToast('❌ فشل الاتصال: ' + e.message, 'error');
   }
