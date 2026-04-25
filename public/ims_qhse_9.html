@@ -9223,7 +9223,7 @@ async function saveOrgSettings(extraData = {}) {
 async function apiFetch(url, method = 'GET', body = null) {
   const token = localStorage.getItem('ims_token');
   if (!token) { window.location.href = '/'; return; }
-  const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health'];
+  const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health','/api/integrations'];
   const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
   let fullUrl;
   if (isReal) {
