@@ -11814,21 +11814,7 @@ async function intTestConn(tool) {
       await intSaveConfig(tool);
       return;
     }
-    async function intTestConn(tool) {
-  showToast('🔍 جاري اختبار الاتصال...', 'info');
-  try {
-    const r = await apiFetch('/api/integrations/erpnext/test', 'GET');
-    if (r?.ok || r?.data?.ok) {
-      showToast('✅ الاتصال ناجح', 'success');
-    } else {
-      showToast('❌ فشل الاتصال', 'error');
-    }
-    return;
-  } catch(e) {
-    showToast('❌ فشل الاتصال: ' + e.message, 'error');
-  }
-}
-
+    
 async function intSaveConfig(tool) {
   const cfg = INT_CONFIGS[tool] || {};
   const inputs = document.querySelectorAll('#int-modal-body input, #int-modal-body select');
