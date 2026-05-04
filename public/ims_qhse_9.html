@@ -11770,18 +11770,26 @@ const INT_CONFIGS = {
   powerbi: { name:'Power BI',       color:'#F2C811', fields:[{l:'Workspace ID',t:'text',p:''},{l:'Dataset ID',t:'text',p:''},{l:'Access Token',t:'password',p:''}] },
 };
 
-function intOpenConfig(tool) {
+async function intOpenConfig(tool) {
+  await loadIntegrationsData();
   const cfg = INT_CONFIGS[tool] || { name:tool, color:'#1e40af', fields:[] };
   const m = document.getElementById('int-modal-config');
   if (!m) return;
   m.querySelector('#int-modal-title').textContent = 'إعداد: ' + cfg.name;
   m.querySelector('#int-modal-logo').style.background = cfg.color;
+
+  const typeMap = { odoo:'ODOO', erpnext:'ERPNEXT', sap:'SAP', ms365:'MICROSOFT365' };
+  const existing = (window._integrations||[]).find(i => i.type === typeMap[tool]);
+  const savedUrl = existing?.base_url || '';
+
   m.querySelector('#int-modal-body').innerHTML = cfg.fields.map(f => {
+    const val = (f.l === 'رابط الخادم' || f.l === 'SAP Host') ? savedUrl : '';
     let inp = f.t === 'select'
       ? `<select class="form-input" style="padding:7px 10px;font-size:13px;">${f.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
-      : `<input class="form-input" style="padding:7px 10px;font-size:13px;" type="${f.t}" placeholder="${f.p}" dir="ltr"/>`;
+      : `<input class="form-input" style="padding:7px 10px;font-size:13px;" type="${f.t}" placeholder="${f.p}" value="${val}" dir="ltr"/>`;
     return `<div><label class="text-xs font-semibold text-slate-600 block mb-1">${f.l}</label>${inp}</div>`;
   }).join('') + `
+    ${existing ? `<div class="text-xs text-green-600 font-semibold py-1">✅ متصل — آخر مزامنة: ${existing.last_sync_at ? new Date(existing.last_sync_at).toLocaleString('ar-SA') : 'لم تتم بعد'}</div>` : ''}
     <div class="flex gap-2 pt-2 border-t border-slate-100">
       <button class="btn text-xs" style="background:#f1f5f9;color:#1e40af;padding:7px 12px;" onclick="intTestConn('${tool}')"><i class="fas fa-vial ml-1"></i>اختبار</button>
       <button class="btn btn-primary flex-1 text-xs" style="padding:7px 12px;" onclick="intSaveConfig('${tool}')"><i class="fas fa-save ml-1"></i>حفظ</button>
