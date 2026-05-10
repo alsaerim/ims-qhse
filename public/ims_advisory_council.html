@@ -701,11 +701,10 @@ async function callAdvisorAPI(advisor, userMsg, fileContext, conversationContext
 
   const userContent = userMsg + fileContext + contextNote;
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/v1/advisory-sessions/chat', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
       max_tokens: 1200,
       system: systemPrompt,
       messages: [{ role: 'user', content: userContent }],
@@ -743,11 +742,10 @@ async function callCouncilSynthesis(userMsg, advisorResponses) {
 
   const userContent = `الفكرة/المشروع المطروح: "${userMsg}"\n\nآراء المستشارين:\n\n${summaries}`;
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/v1/advisory-sessions/chat', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
       max_tokens: 900,
       system: systemPrompt,
       messages: [{ role: 'user', content: userContent }],
