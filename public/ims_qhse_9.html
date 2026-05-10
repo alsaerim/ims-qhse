@@ -10933,8 +10933,8 @@ async function loadAdvisoryCouncil() {
 
   let plan = 'unknown';
   try {
-    const me = await apiFetch('/auth/me', 'GET');
-    plan = me?.data?.tenant?.status || me?.tenant?.plan || me?.plan || 'unknown';
+    const me = await apiFetch('/api/auth/me', 'GET');
+    plan = me?.tenant?.status || me?.tenant?.plan || me?.status || 'unknown';
   } catch {
     try { plan = JSON.parse(localStorage.getItem('ims_user')||'{}').plan || 'unknown'; } catch {}
   }
