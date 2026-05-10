@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>المجلس الاستشاري الافتراضي — IMS QHSE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap');
+*{font-family:'Tajawal',sans-serif;box-sizing:border-box;}
+body{background:#f1f5f9;color:#1e293b;margin:0;min-height:100vh;}
+
+/* ── Layout ── */
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:100vh;}
+@media(max-width:900px){.layout{grid-template-columns:1fr;} .sidebar-panel{display:none;}}
+
+/* ── Sidebar ── */
+.sidebar-panel{background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);display:flex;flex-direction:column;border-left:1px solid #334155;}
+.advisor-card{padding:12px;border-radius:12px;cursor:pointer;border:1.5px solid transparent;transition:all .2s;margin-bottom:6px;}
+.advisor-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.06);}
+.advisor-card.selected{border-color:transparent;background:rgba(255,255,255,.08);}
+.advisor-card.active-advisor{border-color:currentColor;box-shadow:0 0 0 1px currentColor inset;}
+.avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0;border:2px solid rgba(255,255,255,.2);}
+
+/* ── Premium Badge ── */
+.premium-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:linear-gradient(135deg,#92400e,#d97706,#fbbf24,#d97706,#92400e);
+  background-size:200% auto;
+  animation:shimmer 3s linear infinite;
+  color:white;padding:4px 10px;border-radius:999px;
+  font-size:10px;font-weight:800;letter-spacing:.5px;
+  box-shadow:0 2px 8px rgba(217,119,6,.4);
+}
+@keyframes shimmer{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+
+/* ── Main ── */
+.main-panel{display:flex;flex-direction:column;height:100vh;}
+.chat-area{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.chat-area::-webkit-scrollbar{width:4px;}
+.chat-area::-webkit-scrollbar-track{background:transparent;}
+.chat-area::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px;}
+
+/* ── Messages ── */
+.msg-user{align-self:flex-start;background:#1e40af;color:white;border-radius:16px 16px 4px 16px;padding:12px 16px;max-width:70%;font-size:14px;line-height:1.6;}
+.msg-bot{align-self:flex-end;background:white;border-radius:16px 16px 16px 4px;padding:0;max-width:85%;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden;}
+.msg-bot-header{display:flex;align-items:center;gap:10px;padding:12px 16px 8px;border-bottom:1px solid #f1f5f9;}
+.msg-bot-body{padding:12px 16px;font-size:14px;line-height:1.7;color:#334155;}
+
+/* ── PDF Export Button ── */
+.pdf-btn{
+  display:none;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  color:white;border:none;padding:8px 16px;border-radius:10px;
+  font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 12px rgba(124,58,237,.3);
+}
+.pdf-btn.visible{display:flex;}
+.pdf-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(124,58,237,.4);}
+.pdf-btn:active{transform:scale(.97);}
+.pdf-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* ── Input ── */
+.input-area{background:white;border-top:1px solid #e2e8f0;padding:16px 20px;}
+.input-wrap{display:flex;gap:10px;align-items:flex-end;}
+.input-box{flex:1;border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 14px;font-size:14px;resize:none;min-height:44px;max-height:120px;outline:none;transition:border-color .2s;font-family:'Tajawal',sans-serif;direction:rtl;}
+.input-box:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.send-btn{width:44px;height:44px;border-radius:12px;background:#1e40af;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.send-btn:hover{background:#1e3a8a;}
+.send-btn:active{transform:scale(.95);}
+.send-btn:disabled{background:#94a3b8;cursor:not-allowed;}
+
+/* ── Upload ── */
+.upload-zone{border:2px dashed #cbd5e1;border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px;}
+.upload-zone:hover{border-color:#3b82f6;background:#eff6ff;}
+.upload-zone.has-file{border-color:#059669;background:#f0fdf4;}
+.badge{padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;display:inline-block;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-green{background:#d1fae5;color:#059669;}
+.badge-red{background:#fee2e2;color:#dc2626;}
+.badge-yellow{background:#fef3c7;color:#d97706;}
+.badge-purple{background:#ede9fe;color:#7c3aed;}
+
+/* ── Section headers in bot message ── */
+.sec-header{font-weight:700;font-size:13px;margin:12px 0 6px;display:flex;align-items:center;gap:6px;}
+.sec-item{font-size:13px;margin:4px 0;padding:6px 10px;border-radius:8px;line-height:1.5;}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp .3s ease;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:#94a3b8;display:inline-block;margin:0 2px;animation:pulse 1.2s ease-in-out infinite;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+
+/* ── Welcome screen ── */
+.welcome-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+
+/* ════════════════════════════════════════
+   PDF REPORT STYLES (print window)
+   ════════════════════════════════════════ */
+#pdf-report-container{display:none;}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ════════════ SIDEBAR ════════════ -->
+  <aside class="sidebar-panel">
+    <div style="padding:20px 16px 12px;border-bottom:1px solid #334155;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:38px;height:38px;border-radius:10px;background:#1e40af;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-chess-king" style="color:white;font-size:16px;"></i>
+        </div>
+        <div>
+          <div style="font-weight:800;color:white;font-size:14px;">المجلس الاستشاري</div>
+          <div style="font-size:11px;color:#94a3b8;">الافتراضي · AI-Powered</div>
+        </div>
+      </div>
+      <!-- Premium Badge -->
+      <div style="margin-bottom:10px;">
+        <span class="premium-badge">
+          <i class="fas fa-crown" style="font-size:9px;"></i>
+          الباقة الإدارية العليا حصراً
+        </span>
+      </div>
+      <button onclick="resetSession()" style="width:100%;padding:8px;background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Tajawal',sans-serif;">
+        <i class="fas fa-plus ml-1"></i>جلسة استشارية جديدة
+      </button>
+    </div>
+
+    <!-- Advisor Selection -->
+    <div style="padding:12px 16px 6px;flex:1;overflow-y:auto;">
+      <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">
+        أعضاء المجلس المتاحون
+      </div>
+      <div id="advisors-list"></div>
+    </div>
+
+    <!-- Active Council -->
+    <div style="padding:12px 16px;border-top:1px solid #334155;">
+      <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">
+        <i class="fas fa-users ml-1" style="color:#94a3b8;font-size:9px;"></i>المجلس المُشكَّل
+      </div>
+      <div id="active-council" style="min-height:40px;">
+        <div style="font-size:11px;color:#475569;font-style:italic;text-align:center;padding:8px;">لم يُشكَّل المجلس بعد</div>
+      </div>
+      <button onclick="startSession()" id="start-btn" disabled
+        style="width:100%;margin-top:10px;padding:10px;border-radius:10px;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all .2s;font-family:'Tajawal',sans-serif;background:#334155;color:#64748b;">
+        <i class="fas fa-play ml-1"></i>بدء الجلسة
+      </button>
+    </div>
+  </aside>
+
+  <!-- ════════════ MAIN ════════════ -->
+  <main class="main-panel">
+
+    <!-- Top bar -->
+    <div style="background:white;border-bottom:1px solid #e2e8f0;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="font-weight:800;font-size:16px;color:#1e293b;" id="session-title">جلسة استشارية جديدة</div>
+        <div style="font-size:12px;color:#94a3b8;" id="session-meta">اختر المستشارين وابدأ الجلسة</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div id="active-avatars" style="display:flex;"></div>
+        <span id="methodology-badge" style="display:none;" class="badge badge-blue"></span>
+        <!-- PDF Export Button -->
+        <button class="pdf-btn" id="pdf-export-btn" onclick="generatePDFReport()">
+          <i class="fas fa-file-pdf"></i>
+          تصدير تقرير PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat / Welcome -->
+    <div id="chat-or-welcome" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+
+      <!-- Welcome State -->
+      <div id="welcome-view" class="welcome-screen">
+        <div style="width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#1e40af,#7c3aed);display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+          <i class="fas fa-chess-king" style="color:white;font-size:28px;"></i>
+        </div>
+        <h2 style="font-size:22px;font-weight:800;color:#1e293b;margin:0 0 8px;">المجلس الاستشاري الافتراضي</h2>
+        <p style="font-size:14px;color:#64748b;max-width:440px;line-height:1.7;margin:0 0 24px;">
+          احصل على تحليل استراتيجي متعمق من نخبة من المستشارين الافتراضيين المتخصصين في منهجيات عالمية.
+          اختر المجلس المناسب لفكرتك، ثم اطرح فكرتك أو ارفع ملفاً لتبدأ.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:480px;">
+          <span class="badge badge-blue">McKinsey 7S</span>
+          <span class="badge badge-purple">Blue Ocean Strategy</span>
+          <span class="badge badge-green">Porter's Five Forces</span>
+          <span class="badge badge-yellow">Ansoff Matrix</span>
+          <span class="badge" style="background:#f3e8ff;color:#7c3aed;">Balanced Scorecard</span>
+          <span class="badge badge-red">SWOT / PESTLE</span>
+        </div>
+        <div style="margin-top:28px;padding:16px 20px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;max-width:440px;text-align:right;">
+          <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:8px;"><i class="fas fa-lightbulb text-yellow-500 ml-1"></i>كيف تبدأ؟</div>
+          <div style="font-size:12px;color:#64748b;line-height:1.8;">
+            1. اختر 2-3 مستشارين من القائمة الجانبية<br>
+            2. اضغط "بدء الجلسة"<br>
+            3. اكتب فكرتك أو ارفع ملفاً (PDF/TXT)<br>
+            4. احصل على التحليل الاستراتيجي الشامل<br>
+            5. صدّر تقرير PDF شامل بقرار المجلس
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat State -->
+      <div id="chat-view" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+        <div class="chat-area" id="chat-messages"></div>
+      </div>
+
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div id="upload-zone" class="upload-zone" onclick="document.getElementById('file-input').click()" style="display:none;">
+        <input type="file" id="file-input" accept=".txt,.pdf,.md,.doc,.docx" style="display:none;" onchange="handleFileUpload(this)"/>
+        <i class="fas fa-cloud-upload-alt" style="font-size:18px;color:#94a3b8;margin-bottom:4px;"></i>
+        <div style="font-size:12px;color:#64748b;" id="upload-label">اسحب ملفاً أو انقر للرفع (PDF, TXT, Word)</div>
+      </div>
+      <div class="input-wrap">
+        <button onclick="toggleUpload()" id="upload-btn"
+          style="width:44px;height:44px;border-radius:12px;background:#f1f5f9;color:#64748b;border:1.5px solid #e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;"
+          title="رفع ملف" disabled>
+          <i class="fas fa-paperclip" style="font-size:14px;"></i>
+        </button>
+        <textarea id="user-input" class="input-box" placeholder="اكتب فكرتك أو مشروعك هنا..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"
+          oninput="autoResize(this)" disabled></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+          <i class="fas fa-paper-plane" style="font-size:14px;"></i>
+        </button>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;" id="quick-prompts" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HIDDEN PDF REPORT CONTAINER
+     ═══════════════════════════════════════════ -->
+<div id="pdf-report-container"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  ADVISORS DATA
+// ═══════════════════════════════════════════
+const ADVISORS = [
+  {
+    id:'strategy',
+    name:'د. سارة الاستراتيجية',
+    title:'خبيرة الاستراتيجية التنافسية',
+    expertise:'Porter · Blue Ocean · BCG Matrix',
+    color:'#1e40af',
+    bg:'#dbeafe',
+    icon:'fa-chess',
+    methodology:'Porter\'s Five Forces + Blue Ocean',
+    speciality:'التحليل التنافسي، خلق القيمة، تمايز الأسواق',
+    avatar:'سا',
+    prompts:['ما هي المزايا التنافسية لهذه الفكرة؟','كيف نخلق قيمة في سوق مشبع؟','ما فرص التمايز المتاحة؟']
+  },
+  {
+    id:'risk',
+    name:'م. خالد إدارة المخاطر',
+    title:'متخصص إدارة المخاطر والامتثال',
+    expertise:'ISO 31000 · COSO · Risk Matrix',
+    color:'#dc2626',
+    bg:'#fee2e2',
+    icon:'fa-shield-alt',
+    methodology:'ISO 31000 + COSO ERM',
+    speciality:'تقييم المخاطر، التحوط، امتثال ISO',
+    avatar:'خا',
+    prompts:['ما المخاطر الرئيسية في هذا المشروع؟','كيف نبني إطار عمل لإدارة المخاطر؟','ما متطلبات الامتثال التنظيمي؟']
+  },
+  {
+    id:'finance',
+    name:'أ. نورة التمويل',
+    title:'مستشارة مالية واقتصادية',
+    expertise:'DCF · NPV · Financial Modeling',
+    color:'#059669',
+    bg:'#d1fae5',
+    icon:'fa-chart-line',
+    methodology:'Financial Modeling + Valuation',
+    speciality:'جدوى مالية، تقييم، هياكل التمويل',
+    avatar:'نو',
+    prompts:['ما مؤشرات الجدوى المالية؟','ما النموذج المالي الأمثل؟','كيف نقيم هذا المشروع ماليا؟']
+  },
+  {
+    id:'innovation',
+    name:'د. فهد الابتكار',
+    title:'خبير الابتكار والتحول الرقمي',
+    expertise:'Design Thinking · Lean Startup · Agile',
+    color:'#7c3aed',
+    bg:'#ede9fe',
+    icon:'fa-lightbulb',
+    methodology:'Design Thinking + Lean Startup',
+    speciality:'نماذج الأعمال، MVP، التحول الرقمي',
+    avatar:'فه',
+    prompts:['ما نموذج العمل الأكثر ابتكاراً؟','كيف نبني MVP فعّال؟','ما فرص التحول الرقمي؟']
+  },
+  {
+    id:'operations',
+    name:'م. أحمد العمليات',
+    title:'خبير العمليات والتميز التشغيلي',
+    expertise:'Lean Six Sigma · Balanced Scorecard · OKRs',
+    color:'#d97706',
+    bg:'#fef3c7',
+    icon:'fa-cogs',
+    methodology:'Balanced Scorecard + Lean Six Sigma',
+    speciality:'تحسين العمليات، قياس الأداء، KPIs',
+    avatar:'أح',
+    prompts:['كيف نقيس الأداء التشغيلي؟','ما مؤشرات النجاح الرئيسية (KPIs)؟','كيف نحقق التميز التشغيلي؟']
+  },
+  {
+    id:'market',
+    name:'د. ليلى التسويق',
+    title:'خبيرة التسويق الاستراتيجي',
+    expertise:'STP · Marketing Mix · Customer Journey',
+    color:'#0891b2',
+    bg:'#e0f2fe',
+    icon:'fa-bullseye',
+    methodology:'STP Framework + Marketing Mix',
+    speciality:'تحليل السوق، استهداف العملاء، تموضع العلامة',
+    avatar:'لي',
+    prompts:['من هو العميل المستهدف؟','ما استراتيجية التموضع الأمثل؟','كيف ندخل السوق بفاعلية؟']
+  },
+  {
+    id:'sustainability',
+    name:'د. منى الاستدامة',
+    title:'مستشارة الاستدامة والمسؤولية',
+    expertise:'ESG · Triple Bottom Line · UN SDGs',
+    color:'#16a34a',
+    bg:'#dcfce7',
+    icon:'fa-leaf',
+    methodology:'ESG Framework + Triple Bottom Line',
+    speciality:'استراتيجيات ESG، الاستدامة، رؤية 2030',
+    avatar:'من',
+    prompts:['ما تأثير المشروع على الاستدامة؟','كيف نتوافق مع رؤية 2030؟','ما معايير ESG الواجب مراعاتها؟']
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════════
+let state = {
+  selectedAdvisors:    [],
+  sessionStarted:      false,
+  uploadedContent:     null,
+  uploadedFileName:    null,
+  conversationHistory: [],   // [{role, content}] — shared context
+  sessionTopic:        null, // first user message
+  reportSections:      [],   // [{advisor, title, body, isCouncil}]
+  hasResponse:         false,
+  isProcessing:        false,
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  ADVISOR SYSTEM PROMPTS (Specialized Personas)
+// ═══════════════════════════════════════════════════════════════════
+const ADVISOR_PERSONAS = {
+
+  strategy: `أنت د. سارة — خبيرة استراتيجية تنافسية من الطراز الأول تعمل في مجلس استشاري إداري عالي المستوى.
+منهجيتك: Porter's Five Forces + Blue Ocean Strategy + BCG Matrix.
+تخصصك: التحليل التنافسي، خلق القيمة، تمايز الأسواق.
+
+طريقتك في التحليل:
+• تبدأ دائماً بتحديد القوى التنافسية الخمس لبورتر على الفكرة/المشروع
+• تحلل هل يمكن خلق مساحة سوقية جديدة (Blue Ocean) أم الاشتراك في المنافسة التقليدية
+• تضع الفكرة على مصفوفة BCG (نجمة، بقرة حلوب، علامة استفهام، كلب)
+• توصياتك عملية ومحددة بزمن ومسؤول
+
+عند الرد:
+- قدّم تحليلك باللغة العربية الفصيحة العملية
+- استخدم عناوين فرعية واضحة (### العنوان)
+- ضع النقاط كـ bullet points باستخدام -
+- اذكر أمثلة من السوق السعودي/الخليجي عند الإمكان
+- ردّك محدد وعملي، لا عام ولا مطوّل بلا فائدة
+- نهايته: "حكمي الاستراتيجي:" مع تقييم واحد جامع`,
+
+  risk: `أنت م. خالد — متخصص في إدارة المخاطر والامتثال المؤسسي، عضو في مجلس استشاري إداري.
+منهجيتك: ISO 31000:2018 + COSO ERM Framework + Risk Matrix.
+تخصصك: تقييم المخاطر وتصنيفها، التحوط الاستراتيجي، الامتثال التنظيمي.
+
+طريقتك في التحليل:
+• تحلل المخاطر في 4 محاور: تشغيلية، مالية، قانونية/تنظيمية، استراتيجية
+• تصنّف كل خطر بـ (احتمالية × تأثير) على مصفوفة 5×5
+• تقترح استراتيجية لكل خطر: تحمّل / تخفيف / نقل / تجنب
+• تحدد متطلبات الامتثال التنظيمي في المملكة والسياق المحلي
+
+عند الرد:
+- قدّم تحليلك باللغة العربية الفصيحة العملية
+- استخدم عناوين فرعية (### العنوان)
+- صنّف كل خطر كـ [عالي] أو [متوسط] أو [منخفض]
+- اذكر متطلبات هيئة السوق المالية أو وزارة التجارة عند الانطباق
+- نهايته: "تقييم المخاطر الإجمالي:" مع نسبة مئوية للخطورة`,
+
+  finance: `أنت أ. نورة — مستشارة مالية واقتصادية رفيعة المستوى، متخصصة في تقييم المشاريع.
+منهجيتك: DCF Analysis + NPV/IRR + Financial Modeling + Break-even Analysis.
+تخصصك: دراسات الجدوى المالية، هياكل التمويل، تقييم الأصول.
+
+طريقتك في التحليل:
+• تقدّر التدفقات النقدية المتوقعة بأسلوب DCF
+• تحسب فترة الاسترداد (Payback Period) وصافي القيمة الحالية (NPV)
+• تحلل هيكل التمويل الأمثل (دين / حقوق ملكية)
+• تحدد نقطة التعادل وهامش الربح المستهدف
+• تُقيّم مصادر التمويل المتاحة (بنوك، صناديق، مستثمرون)
+
+عند الرد:
+- قدّم تحليلك باللغة العربية مع أرقام تقديرية واقعية
+- ضع أرقاماً ونسباً حتى لو تقديرية (بناءً على المعطيات)
+- استخدم عناوين فرعية (### العنوان) ونقاط واضحة
+- أشر لصناديق التمويل السعودية (صندوق الاستثمارات العامة، Monsha'at إلخ) عند الانطباق
+- نهايته: "الحكم المالي:" مع مؤشر الجدوى (مجدي / مجدي مشروط / غير مجدي)`,
+
+  innovation: `أنت د. فهد — خبير الابتكار ونماذج الأعمال والتحول الرقمي، صاحب تجربة واسعة مع الشركات الناشئة.
+منهجيتك: Design Thinking + Lean Startup + Business Model Canvas + Agile.
+تخصصك: نماذج الأعمال الابتكارية، بناء MVP، التحول الرقمي.
+
+طريقتك في التحليل:
+• تحلل الفكرة عبر Business Model Canvas (9 عناصر)
+• تحدد ما هو قابل للبناء كـ MVP في 90 يوماً بأقل تكلفة
+• تقترح آلية التحقق من الفرضيات (Hypothesis Testing)
+• تكشف فرص التحول الرقمي والتقنيات المُمكِّنة (AI, IoT, SaaS)
+• تقيّم مدى التوافق مع Vision 2030 ومبادرات الاقتصاد الرقمي
+
+عند الرد:
+- قدّم تحليلك باللغة العربية بأسلوب مبتكر ومحفّز
+- اذكر شركات مشابهة نجحت بنموذج مماثل (محلياً وعالمياً)
+- حدد الميزة التنافسية الفريدة (USP)
+- نهايته: "قرار الابتكار:" مع توصية واحدة جريئة ومباشرة`,
+
+  operations: `أنت م. أحمد — خبير العمليات والتميز التشغيلي وقياس الأداء المؤسسي.
+منهجيتك: Balanced Scorecard + Lean Six Sigma + OKRs + Process Mapping.
+تخصصك: تصميم العمليات، تحديد KPIs، تحقيق التميز التشغيلي.
+
+طريقتك في التحليل:
+• تبني خارطة العمليات الأساسية (Process Map) للمشروع
+• تحدد KPIs لكل محور من محاور Balanced Scorecard (مالي / عملاء / عمليات داخلية / تعلم ونمو)
+• تكشف نقاط الهدر والاختناقات بمنهجية Lean
+• تقترح هيكل OKRs للسنة الأولى (3 أهداف + 3 نتائج رئيسية لكل هدف)
+• تحدد الكفاءات البشرية والتقنية المطلوبة
+
+عند الرد:
+- قدّم تحليلك باللغة العربية بشكل منظم ومنهجي
+- استخدم أرقاماً وأهدافاً قابلة للقياس
+- ضع جدولاً زمنياً تنفيذياً للأشهر الأولى
+- نهايته: "مؤشر الجاهزية التشغيلية:" نسبة مئوية مع تفسير`,
+
+  market: `أنت د. ليلى — خبيرة التسويق الاستراتيجي وسلوك المستهلك وإدارة العلامة التجارية.
+منهجيتك: STP Framework + Marketing Mix 7Ps + Customer Journey Mapping + Brand Positioning.
+تخصصك: تحليل السوق، استهداف العملاء، تموضع العلامة التجارية.
+
+طريقتك في التحليل:
+• تطبّق STP كاملاً: Segmentation → Targeting → Positioning
+• تحلل Customer Journey من الوعي حتى الولاء
+• تصمم Marketing Mix (7Ps) مناسباً للسوق
+• تحدد القنوات التسويقية الأكثر فاعلية (رقمية / تقليدية)
+• تقدّر حجم السوق المستهدف (TAM/SAM/SOM)
+• تقترح رسالة العلامة التجارية وتموضعها
+
+عند الرد:
+- قدّم تحليلك باللغة العربية مع فهم عميق للسوق السعودي والخليجي
+- حدد الشرائح بدقة (جيل Z، رجال الأعمال، الأسرة... إلخ)
+- اقترح 3 رسائل تسويقية محددة وجاهزة للاستخدام
+- نهايته: "توصية التموضع:" جملة واحدة تصف كيف يُرى المنتج في ذهن العميل`,
+
+  sustainability: `أنت د. منى — مستشارة الاستدامة والمسؤولية الاجتماعية والحوكمة المؤسسية.
+منهجيتك: ESG Framework + Triple Bottom Line + UN SDGs + رؤية 2030.
+تخصصك: التوافق مع معايير ESG، التنمية المستدامة، المسؤولية الاجتماعية.
+
+طريقتك في التحليل:
+• تقيّم الأثر على المحاور الثلاثة: بيئي / اجتماعي / حوكمة (ESG)
+• تربط الفكرة بأهداف رؤية 2030 المناسبة
+• تحدد مؤشرات الاستدامة القابلة للقياس (KPIs بيئية وإنسانية)
+• تحلل متطلبات الإفصاح والشفافية المؤسسية
+• تقترح مبادرات CSR تعزز صورة المشروع وتقوي ثقة المجتمع
+• تتحقق من التوافق مع المبادئ التوجيهية الدولية (GRI, SASB)
+
+عند الرد:
+- قدّم تحليلك باللغة العربية مع الاستشهاد بمبادرات رؤية 2030 ذات الصلة
+- حدد المخاطر البيئية والاجتماعية وكيفية التخفيف منها
+- اقترح ميزانية CSR مناسبة كنسبة من الإيرادات
+- نهايته: "درجة الاستدامة:" من 10 مع تفسير مختصر`,
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  RENDER FUNCTIONS (Advisors List, Council, Start Button)
+// ═══════════════════════════════════════════════════════════════════
+function renderAdvisors() {
+  const list = document.getElementById('advisors-list');
+  list.innerHTML = ADVISORS.map(a => `
+    <div class="advisor-card ${state.selectedAdvisors.includes(a.id)?'active-advisor':''}"
+         style="color:${a.color};"
+         onclick="toggleAdvisor('${a.id}')">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" style="background:${a.color};">${a.avatar}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:12px;color:${state.selectedAdvisors.includes(a.id)?a.color:'#e2e8f0'};transition:color .2s;">${a.name}</div>
+          <div style="font-size:10px;color:#94a3b8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.expertise}</div>
+        </div>
+        <div style="width:18px;height:18px;border-radius:50%;border:2px solid ${a.color};display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${state.selectedAdvisors.includes(a.id)?a.color:'transparent'};transition:all .2s;">
+          ${state.selectedAdvisors.includes(a.id)?'<i class="fas fa-check" style="color:white;font-size:8px;"></i>':''}
+        </div>
+      </div>
+      ${state.selectedAdvisors.includes(a.id)?`<div style="margin-top:6px;font-size:10px;color:${a.color};opacity:.8;"><i class="fas fa-${a.icon} ml-1"></i>${a.speciality}</div>`:''}
+    </div>`).join('');
+}
+
+function toggleAdvisor(id) {
+  if (state.sessionStarted) return;
+  if (state.selectedAdvisors.includes(id)) {
+    state.selectedAdvisors = state.selectedAdvisors.filter(x => x !== id);
+  } else {
+    if (state.selectedAdvisors.length >= 4) { showToast('الحد الأقصى 4 مستشارين في المجلس'); return; }
+    state.selectedAdvisors.push(id);
+  }
+  renderAdvisors(); renderActiveCouncil(); updateStartBtn();
+}
+
+function renderActiveCouncil() {
+  const el = document.getElementById('active-council');
+  if (!state.selectedAdvisors.length) {
+    el.innerHTML = '<div style="font-size:11px;color:#475569;font-style:italic;text-align:center;padding:8px;">لم يُشكَّل المجلس بعد</div>';
+    return;
+  }
+  el.innerHTML = state.selectedAdvisors.map(id => {
+    const a = ADVISORS.find(x => x.id === id);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;">
+      <div class="avatar" style="background:${a.color};width:28px;height:28px;font-size:10px;">${a.avatar}</div>
+      <div style="font-size:11px;color:#e2e8f0;font-weight:600;">${a.name}</div>
+      ${!state.sessionStarted?`<button onclick="toggleAdvisor('${id}')" style="margin-right:auto;background:none;border:none;cursor:pointer;color:#475569;padding:0;"><i class="fas fa-times" style="font-size:10px;"></i></button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function updateStartBtn() {
+  const btn = document.getElementById('start-btn');
+  const has = state.selectedAdvisors.length >= 1;
+  btn.disabled = !has;
+  btn.style.background = has ? 'linear-gradient(135deg,#1e40af,#3b82f6)' : '#334155';
+  btn.style.color = has ? 'white' : '#64748b';
+  btn.style.cursor = has ? 'pointer' : 'not-allowed';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SESSION START
+// ═══════════════════════════════════════════════════════════════════
+function startSession() {
+  if (!state.selectedAdvisors.length) return;
+  state.sessionStarted = true;
+
+  document.getElementById('welcome-view').style.display = 'none';
+  const cv = document.getElementById('chat-view');
+  cv.style.display = 'flex'; cv.style.flexDirection = 'column';
+  cv.style.overflow = 'hidden'; cv.style.flex = '1';
+
+  document.getElementById('user-input').disabled   = false;
+  document.getElementById('send-btn').disabled     = false;
+  document.getElementById('upload-btn').disabled   = false;
+  document.getElementById('upload-zone').style.display = 'block';
+
+  const advisorNames = state.selectedAdvisors.map(id =>
+    ADVISORS.find(x=>x.id===id).name.split(' ').slice(1).join(' ')).join('، ');
+  document.getElementById('session-title').textContent = 'جلسة استشارية نشطة';
+  document.getElementById('session-meta').textContent  = `المجلس: ${advisorNames}`;
+
+  const av = document.getElementById('active-avatars');
+  av.innerHTML = state.selectedAdvisors.map(id => {
+    const a = ADVISORS.find(x=>x.id===id);
+    return `<div class="avatar" style="background:${a.color};width:28px;height:28px;font-size:10px;margin-left:-6px;border:2px solid white;">${a.avatar}</div>`;
+  }).join('');
+
+  renderQuickPrompts();
+
+  const advisorList = state.selectedAdvisors.map(id => {
+    const a = ADVISORS.find(x=>x.id===id);
+    return `<div style="display:inline-flex;align-items:center;gap:6px;background:${a.color}12;border:1px solid ${a.color}25;border-radius:8px;padding:4px 10px;margin:2px;">
+      <span style="width:18px;height:18px;border-radius:50%;background:${a.color};display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:white;">${a.avatar}</span>
+      <span style="font-size:12px;font-weight:700;color:${a.color};">${a.name}</span>
+    </div>`;
+  }).join('');
+
+  appendBotMessage('رئاسة المجلس', '#1e40af', 'fa-chess-king', `
+    <div style="font-size:13px;line-height:1.8;color:#334155;margin-bottom:10px;">
+      تم تشكيل المجلس الاستشاري الافتراضي. <strong>كل مستشار سيتحدث بصوته المستقل</strong> بناءً على منهجيته الخاصة.
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">${advisorList}</div>
+    <div style="padding:10px 14px;background:#f0f9ff;border-radius:10px;border-right:3px solid #0891b2;">
+      <div style="font-size:12px;color:#0891b2;font-weight:700;margin-bottom:5px;"><i class="fas fa-bolt ml-1"></i>آلية عمل المجلس الجديدة</div>
+      <div style="font-size:12px;color:#334155;line-height:1.8;">
+        ◆ كل مستشار يحلل <strong>بشكل مستقل وبالتوازي</strong><br>
+        ◆ ردوده تظهر <strong>تباعاً فور اكتمالها</strong><br>
+        ◆ بعد اكتمال الجميع: <strong>قرار المجلس الموحد</strong>
+      </div>
+    </div>
+  `);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  QUICK PROMPTS
+// ═══════════════════════════════════════════════════════════════════
+function renderQuickPrompts() {
+  const qp = document.getElementById('quick-prompts');
+  const allPrompts = [];
+  state.selectedAdvisors.forEach(id => {
+    const a = ADVISORS.find(x => x.id === id);
+    a.prompts.forEach(p => allPrompts.push({text: p, color: a.color}));
+  });
+  const shown = allPrompts.slice(0, 4);
+  qp.style.display = 'flex';
+  qp.innerHTML = shown.map(p =>
+    `<button onclick="setInput('${p.text}')" style="font-size:11px;padding:4px 10px;border-radius:8px;background:${p.color}12;color:${p.color};border:1px solid ${p.color}30;cursor:pointer;font-family:'Tajawal',sans-serif;font-weight:600;transition:all .15s;"
+      onmouseover="this.style.background='${p.color}20'" onmouseout="this.style.background='${p.color}12'">
+      ${p.text}
+    </button>`).join('');
+}
+
+function setInput(text) {
+  const inp = document.getElementById('user-input');
+  inp.value = text; inp.focus(); autoResize(inp);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════════════════════════════════
+function toggleUpload() {
+  const uz = document.getElementById('upload-zone');
+  uz.style.display = uz.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleFileUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    state.uploadedContent  = e.target.result.substring(0, 8000);
+    state.uploadedFileName = file.name;
+    const uz = document.getElementById('upload-zone');
+    uz.className = 'upload-zone has-file';
+    document.getElementById('upload-label').innerHTML =
+      `<i class="fas fa-check-circle" style="color:#059669;margin-left:6px;"></i><strong>${file.name}</strong> — جاهز للتحليل`;
+  };
+  if (file.name.endsWith('.pdf')) {
+    state.uploadedContent  = `[ملف PDF: ${file.name}]`;
+    state.uploadedFileName = file.name;
+    const uz = document.getElementById('upload-zone');
+    uz.className = 'upload-zone has-file';
+    document.getElementById('upload-label').innerHTML =
+      `<i class="fas fa-file-pdf" style="color:#dc2626;margin-left:6px;"></i><strong>${file.name}</strong> — تم الرفع`;
+  } else {
+    reader.readAsText(file, 'UTF-8');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PROGRESS TRACKER (shown in top bar during analysis)
+// ═══════════════════════════════════════════════════════════════════
+let progressEl = null;
+
+function showProgress(done, total) {
+  if (!progressEl) {
+    progressEl = document.createElement('div');
+    progressEl.style.cssText = `
+      position:fixed;top:0;left:0;right:0;height:3px;
+      background:#e2e8f0;z-index:999;overflow:hidden;
+    `;
+    progressEl.innerHTML = `<div id="prog-bar" style="height:100%;background:linear-gradient(90deg,#1e40af,#7c3aed,#0891b2);background-size:200% auto;animation:shimmer 2s linear infinite;transition:width .5s ease;width:0%;"></div>`;
+    document.body.appendChild(progressEl);
+  }
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('prog-bar').style.width = pct + '%';
+
+  const meta = document.getElementById('session-meta');
+  if (done < total) {
+    meta.innerHTML = `<span style="color:#1e40af;font-weight:700;">
+      <i class="fas fa-circle-notch fa-spin" style="margin-left:4px;font-size:10px;"></i>
+      يحلل ${done} / ${total} مستشار...
+    </span>`;
+  } else {
+    meta.textContent = `اكتمل التحليل — ${total} مستشار`;
+    setTimeout(() => {
+      if (progressEl) { progressEl.remove(); progressEl = null; }
+    }, 800);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CORE API CALL — Single Advisor
+// ═══════════════════════════════════════════════════════════════════
+async function callAdvisorAPI(advisor, userMsg, fileContext, conversationContext) {
+  const systemPrompt = ADVISOR_PERSONAS[advisor.id] || `أنت ${advisor.name}، ${advisor.title}. منهجيتك: ${advisor.methodology}.`;
+
+  // Build conversation context for the advisor
+  const contextNote = conversationContext
+    ? `\n\n---\nسياق المحادثة السابقة:\n${conversationContext}\n---\n`
+    : '';
+
+  const userContent = userMsg + fileContext + contextNote;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1200,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userContent }],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.content?.[0]?.text || '';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  COUNCIL SYNTHESIS — Final unified decision
+// ═══════════════════════════════════════════════════════════════════
+async function callCouncilSynthesis(userMsg, advisorResponses) {
+  const summaries = advisorResponses.map(r =>
+    `### ${r.advisor.name} (${r.advisor.methodology}):\n${r.body.substring(0, 600)}...`
+  ).join('\n\n');
+
+  const systemPrompt = `أنت رئيس المجلس الاستشاري الافتراضي. مهمتك توليف آراء المستشارين في قرار موحد.
+
+قواعد القرار الموحد:
+- ابدأ بـ "### التوصية النهائية:" — جملة واحدة حاسمة
+- "### مستوى الثقة:" — نسبة % مع تبرير مختصر
+- "### نقاط الإجماع:" — 3 نقاط توافق عليها الجميع
+- "### الخطوات التنفيذية الأولى:" — 3 خطوات مرتبة بالأولوية مع الزمن والمسؤول
+- "### تحفظات المجلس:" — أهم تحفظ أو شرط للنجاح
+- "### الحكم الإجمالي:" — مجدي تماماً / مجدي مشروط / يحتاج مراجعة / غير مجدي
+
+الردود تكون باللغة العربية، حاسمة ومباشرة كما يليق بمجلس إداري.`;
+
+  const userContent = `الفكرة/المشروع المطروح: "${userMsg}"\n\nآراء المستشارين:\n\n${summaries}`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 900,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userContent }],
+    }),
+  });
+
+  if (!response.ok) throw new Error(`Council API error: ${response.status}`);
+  const data = await response.json();
+  return data.content?.[0]?.text || '';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SEND MESSAGE — Parallel advisor calls
+// ═══════════════════════════════════════════════════════════════════
+async function sendMessage() {
+  const input = document.getElementById('user-input');
+  const text  = input.value.trim();
+  if ((!text && !state.uploadedContent) || state.isProcessing) return;
+
+  state.isProcessing = true;
+  const userMsg = text || `[تم رفع ملف: ${state.uploadedFileName}]`;
+  if (!state.sessionTopic) state.sessionTopic = userMsg;
+
+  appendUserMessage(userMsg);
+  input.value = ''; autoResize(input);
+
+  // Disable input during processing
+  setInputEnabled(false);
+
+  state.conversationHistory.push({ role: 'user', content: userMsg });
+
+  const fileContext = state.uploadedContent
+    ? `\n\n[محتوى الملف: "${state.uploadedFileName}"]\n${state.uploadedContent}`
+    : '';
+  state.uploadedContent = null;
+
+  // Build conversation context (last 3 rounds)
+  const conversationContext = state.conversationHistory.slice(-6)
+    .map(m => `${m.role === 'user' ? 'المستخدم' : 'المجلس'}: ${m.content.substring(0, 300)}`)
+    .join('\n');
+
+  const selectedAdvisors = state.selectedAdvisors.map(id => ADVISORS.find(x => x.id === id));
+  const total = selectedAdvisors.length;
+  let doneCount = 0;
+
+  // Show typing indicators for ALL advisors
+  const typingMap = {};
+  for (const a of selectedAdvisors) {
+    typingMap[a.id] = appendTyping(a.name, a.color, a.icon);
+  }
+  showProgress(0, total);
+
+  // Clear report sections for this round
+  state.reportSections = [];
+  const advisorResults = []; // for council synthesis
+
+  // ── Launch all advisor calls IN PARALLEL ──────────────────────────
+  const advisorPromises = selectedAdvisors.map(async (advisor) => {
+    try {
+      const responseText = await callAdvisorAPI(advisor, userMsg, fileContext, conversationContext);
+
+      // Remove this advisor's typing indicator
+      removeTyping(typingMap[advisor.id]);
+      doneCount++;
+      showProgress(doneCount, total);
+
+      // Render advisor response immediately
+      const html = formatResponseHTML(responseText, advisor);
+      appendBotMessage(advisor.name, advisor.color, advisor.icon, `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid ${advisor.color}15;">
+          <span style="font-size:11px;color:${advisor.color};font-weight:700;background:${advisor.color}10;padding:3px 10px;border-radius:6px;">
+            <i class="fas fa-${advisor.icon} ml-1"></i>${advisor.methodology}
+          </span>
+          <span style="font-size:10px;color:#94a3b8;margin-right:auto;">${advisor.title}</span>
+        </div>
+        ${html}
+      `);
+
+      // Store for PDF + council synthesis
+      const section = { advisor, title: advisor.name, body: responseText, isCouncil: false };
+      state.reportSections.push(section);
+      advisorResults.push({ advisor, body: responseText });
+
+      state.conversationHistory.push({
+        role: 'assistant',
+        content: `[${advisor.name}]: ${responseText.substring(0, 400)}...`
+      });
+
+      return { advisor, text: responseText, success: true };
+
+    } catch (err) {
+      removeTyping(typingMap[advisor.id]);
+      doneCount++;
+      showProgress(doneCount, total);
+
+      appendBotMessage(advisor.name, advisor.color, 'fa-exclamation-circle', `
+        <div style="color:#dc2626;font-size:13px;padding:4px 0;">
+          <i class="fas fa-wifi ml-1"></i>
+          تعذّر الاتصال بـ ${advisor.name}: ${err.message}
+        </div>
+      `);
+
+      return { advisor, text: '', success: false };
+    }
+  });
+
+  // Wait for ALL advisors to complete
+  await Promise.allSettled(advisorPromises);
+
+  // ── Council Synthesis (after all advisors done) ───────────────────
+  const successfulResults = advisorResults.filter(r => r.body);
+  if (successfulResults.length > 0) {
+    const councilTypingId = appendTyping('المجلس الموحد — يوحّد القرار', '#1e40af', 'fa-chess-king');
+
+    try {
+      const councilText = await callCouncilSynthesis(userMsg, successfulResults);
+      removeTyping(councilTypingId);
+
+      const councilHtml = formatCouncilHTML(councilText);
+      appendBotMessage('المجلس الموحد — القرار النهائي', '#1e40af', 'fa-chess-king', `
+        <div style="background:linear-gradient(135deg,#1e40af08,#7c3aed08);border-radius:10px;padding:12px;margin-bottom:10px;border:1px solid #1e40af15;">
+          <div style="font-size:11px;color:#1e40af;font-weight:800;margin-bottom:4px;">
+            <i class="fas fa-star" style="color:#f59e0b;margin-left:6px;"></i>
+            توافق المجلس · Consensus Decision
+          </div>
+          <div style="font-size:10px;color:#64748b;">
+            بناءً على تحليل ${successfulResults.length} مستشارين
+          </div>
+        </div>
+        ${councilHtml}
+      `);
+
+      // Store council for PDF
+      state.reportSections.push({
+        advisor: null,
+        title: 'قرار المجلس الموحد',
+        body: councilText,
+        isCouncil: true
+      });
+
+      state.conversationHistory.push({
+        role: 'assistant',
+        content: `[قرار المجلس الموحد]: ${councilText.substring(0, 500)}`
+      });
+
+    } catch (err) {
+      removeTyping(councilTypingId);
+      appendBotMessage('المجلس الموحد', '#1e40af', 'fa-chess-king',
+        `<div style="color:#dc2626;font-size:13px;">تعذّر توليف قرار المجلس: ${err.message}</div>`);
+    }
+  }
+
+  // ── Finalize ─────────────────────────────────────────────────────
+  setInputEnabled(true);
+  state.isProcessing = false;
+
+  if (!state.hasResponse && successfulResults.length > 0) {
+    state.hasResponse = true;
+    document.getElementById('pdf-export-btn').classList.add('visible');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FORMAT FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════
+function formatResponseHTML(text, advisor) {
+  const color = advisor ? advisor.color : '#1e40af';
+  let html = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  html = html.replace(/^(\d+)\.\s+(.+)$/gm, (m, n, content) =>
+    `<div class="sec-item" style="background:${color}08;border-right:3px solid ${color}30;">
+      <span style="color:${color};font-weight:700;margin-left:6px;">${n}.</span>${content}
+    </div>`);
+
+  html = html.replace(/^[-•◆]\s+(.+)$/gm, (m, content) =>
+    `<div style="font-size:13px;padding:3px 8px;display:flex;gap:6px;align-items:flex-start;">
+      <span style="color:${color};margin-top:4px;flex-shrink:0;">◆</span><span>${content}</span>
+    </div>`);
+
+  html = html.replace(/###\s+(.+)/g, (m, title) =>
+    `<div class="sec-header" style="color:${color};border-bottom:1px solid ${color}25;padding-bottom:4px;margin-top:14px;">
+      <i class="fas fa-angle-left"></i>${title}
+    </div>`);
+
+  html = html.replace(/\n\n/g, '</p><p style="margin:5px 0;">').replace(/\n/g, '<br>');
+  return `<div style="font-size:13px;line-height:1.8;color:#334155;">${html}</div>`;
+}
+
+function formatCouncilHTML(text) {
+  let html = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Special styling for council verdict
+  html = html.replace(/###\s+(التوصية النهائية:.+)/g,
+    `<div style="background:linear-gradient(135deg,#1e40af,#3730a3);color:white;border-radius:10px;padding:12px 16px;margin:8px 0;font-size:14px;font-weight:700;line-height:1.6;">
+      <i class="fas fa-gavel" style="margin-left:8px;color:#bfdbfe;"></i>$1
+    </div>`);
+
+  html = html.replace(/###\s+(مستوى الثقة:.+)/g,
+    `<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 14px;margin:6px 0;color:#0891b2;font-weight:700;font-size:13px;">
+      <i class="fas fa-chart-pie" style="margin-left:6px;"></i>$1
+    </div>`);
+
+  html = html.replace(/###\s+(الحكم الإجمالي:.+)/g,
+    `<div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;padding:12px 16px;margin:10px 0;color:#92400e;font-weight:800;font-size:14px;">
+      <i class="fas fa-balance-scale" style="margin-left:8px;color:#f59e0b;"></i>$1
+    </div>`);
+
+  html = html.replace(/###\s+(.+)/g,
+    `<div class="sec-header" style="color:#1e40af;border-bottom:1px solid #1e40af25;padding-bottom:4px;margin-top:12px;">
+      <i class="fas fa-angle-left"></i>$1
+    </div>`);
+
+  html = html.replace(/^(\d+)\.\s+(.+)$/gm, (m, n, content) =>
+    `<div style="background:#eff6ff;border-right:3px solid #1e40af;border-radius:8px;padding:7px 12px;margin:4px 0;font-size:13px;color:#1e3a8a;">
+      <span style="font-weight:800;color:#1e40af;margin-left:6px;">${n}.</span>${content}
+    </div>`);
+
+  html = html.replace(/^[-•◆]\s+(.+)$/gm, (m, content) =>
+    `<div style="font-size:13px;padding:3px 8px;display:flex;gap:6px;align-items:flex-start;color:#334155;">
+      <span style="color:#1e40af;margin-top:4px;flex-shrink:0;">◆</span><span>${content}</span>
+    </div>`);
+
+  html = html.replace(/\n\n/g, '</p><p style="margin:5px 0;">').replace(/\n/g, '<br>');
+  return `<div style="font-size:13px;line-height:1.8;">${html}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CHAT HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function setInputEnabled(on) {
+  document.getElementById('user-input').disabled = !on;
+  document.getElementById('send-btn').disabled   = !on;
+  document.getElementById('upload-btn').disabled = !on;
+}
+
+function appendUserMessage(text) {
+  const msgs = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.className = 'msg-user fade-up';
+  div.innerHTML = `<i class="fas fa-user" style="font-size:11px;opacity:.7;margin-left:8px;"></i>${escapeHtml(text)}`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+
+function appendBotMessage(name, color, icon, html) {
+  const msgs = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.className = 'msg-bot fade-up';
+  div.innerHTML = `
+    <div class="msg-bot-header">
+      <div class="avatar" style="background:${color};width:32px;height:32px;font-size:11px;flex-shrink:0;">
+        <i class="fas ${icon}" style="font-size:12px;"></i>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:12px;color:${color};">${name}</div>
+        <div style="font-size:10px;color:#94a3b8;">${new Date().toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>
+    <div class="msg-bot-body">${html}</div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+
+let typingCounter = 0;
+function appendTyping(name, color, icon) {
+  const id   = 'typing-' + (++typingCounter);
+  const msgs = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.id = id;
+  div.className = 'msg-bot fade-up';
+  div.innerHTML = `
+    <div class="msg-bot-header">
+      <div class="avatar" style="background:${color};width:32px;height:32px;font-size:11px;flex-shrink:0;">
+        <i class="fas ${icon}" style="font-size:12px;"></i>
+      </div>
+      <div style="font-weight:700;font-size:12px;color:${color};">${name}</div>
+    </div>
+    <div class="msg-bot-body" style="display:flex;align-items:center;gap:4px;padding:12px 16px 10px;">
+      <span style="font-size:12px;color:#94a3b8;margin-left:6px;">يحلل</span>
+      <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+    </div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+  return id;
+}
+
+function removeTyping(id) { document.getElementById(id)?.remove(); }
+function scrollToBottom() {
+  const msgs = document.getElementById('chat-messages');
+  requestAnimationFrame(() => msgs.scrollTop = msgs.scrollHeight);
+}
+function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:10px 20px;border-radius:12px;font-size:13px;z-index:9999;font-family:Tajawal,sans-serif;';
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════════════════════════════════
+function resetSession() {
+  state = {
+    selectedAdvisors:[], sessionStarted:false,
+    uploadedContent:null, uploadedFileName:null,
+    conversationHistory:[], currentMethodology:null,
+    sessionTopic:null, reportSections:[], hasResponse:false, isProcessing:false,
+  };
+  if (progressEl) { progressEl.remove(); progressEl=null; }
+  document.getElementById('chat-messages').innerHTML    = '';
+  document.getElementById('welcome-view').style.display = 'flex';
+  document.getElementById('chat-view').style.display    = 'none';
+  setInputEnabled(false);
+  document.getElementById('upload-zone').style.display  = 'none';
+  document.getElementById('active-avatars').innerHTML   = '';
+  document.getElementById('session-title').textContent  = 'جلسة استشارية جديدة';
+  document.getElementById('session-meta').textContent   = 'اختر المستشارين وابدأ الجلسة';
+  document.getElementById('quick-prompts').style.display = 'none';
+  document.getElementById('quick-prompts').innerHTML    = '';
+  document.getElementById('pdf-export-btn').classList.remove('visible');
+  renderAdvisors(); renderActiveCouncil(); updateStartBtn();
+}
+
+function generatePDFReport() {
+  const btn = document.getElementById('pdf-export-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحضير...';
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ar-SA', {
+    year:'numeric', month:'long', day:'numeric',
+    weekday:'long', timeZone:'Asia/Riyadh'
+  });
+  const timeStr = now.toLocaleTimeString('ar-SA', {
+    hour:'2-digit', minute:'2-digit', timeZone:'Asia/Riyadh'
+  });
+
+  const advisorsInSession = state.selectedAdvisors.map(id => ADVISORS.find(x=>x.id===id));
+  const topic = state.sessionTopic || 'فكرة استراتيجية';
+
+  // Build HTML sections for each advisor
+  let advisorSectionsHTML = '';
+  state.reportSections.forEach((sec, i) => {
+    if (sec.isCouncil) return; // Handle council separately
+    const a = sec.advisor;
+    if (!a) return;
+
+    const bodyLines = sec.body
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/###\s+(.+)/g, '<h4 class="sec-title" style="color:$1_COLOR">$1</h4>'.replace('$1_COLOR', a.color).replace('$1', '$1'))
+      .split('\n')
+      .map(line => {
+        line = line.trim();
+        if (!line) return '';
+        if (/^\d+\./.test(line)) return `<div class="report-item" style="border-right-color:${a.color}30;background:${a.color}06;">${line}</div>`;
+        if (/^[-•]/.test(line)) return `<div class="report-bullet"><span style="color:${a.color}">◆</span> ${line.replace(/^[-•]\s*/,'')}</div>`;
+        if (line.startsWith('###')) return `<div class="report-section-header" style="color:${a.color};border-bottom-color:${a.color}30">${line.replace('###','').trim()}</div>`;
+        return `<p class="report-para">${line}</p>`;
+      }).join('');
+
+    advisorSectionsHTML += `
+      <div class="advisor-section" style="border-right-color:${a.color};">
+        <div class="advisor-section-header" style="background:${a.color}08;border-bottom-color:${a.color}15;">
+          <div class="advisor-avatar-pdf" style="background:${a.color};">${a.avatar}</div>
+          <div>
+            <div class="advisor-section-name" style="color:${a.color};">${a.name}</div>
+            <div class="advisor-section-title">${a.title}</div>
+            <div class="advisor-methodology">${a.methodology}</div>
+          </div>
+          <div class="advisor-num">${String(i+1).padStart(2,'0')}</div>
+        </div>
+        <div class="advisor-section-body">${bodyLines}</div>
+      </div>`;
+  });
+
+  // Council unified decision section
+  const councilSection = state.reportSections.find(s => s.isCouncil);
+  let councilHTML = '';
+  if (councilSection) {
+    const bodyLines = councilSection.body
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .split('\n')
+      .map(line => {
+        line = line.trim();
+        if (!line) return '';
+        if (/^\d+\./.test(line)) return `<div class="report-item council-item">${line}</div>`;
+        if (/^[-•]/.test(line)) return `<div class="report-bullet council-bullet"><span>◆</span> ${line.replace(/^[-•]\s*/,'')}</div>`;
+        return `<p class="report-para">${line}</p>`;
+      }).join('');
+    councilHTML = `<div class="council-section">${bodyLines}</div>`;
+  }
+
+  // Conversation history (user messages only for context)
+  const userMessages = state.conversationHistory.filter(m=>m.role==='user');
+
+  const reportHTML = `
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<title>تقرير المجلس الاستشاري — IMS QHSE</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Tajawal',sans-serif;background:#fff;color:#1e293b;direction:rtl;}
+
+/* ── COVER PAGE ── */
+.cover{
+  width:100%;height:100vh;
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f2744 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;page-break-after:always;
+}
+.cover::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.cover-glow{
+  position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(30,64,175,.3) 0%,transparent 70%);
+}
+.cover-content{position:relative;z-index:1;text-align:center;padding:40px;}
+.cover-logo-wrap{
+  width:100px;height:100px;border-radius:28px;
+  background:linear-gradient(135deg,#1e40af,#7c3aed);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 28px;
+  box-shadow:0 0 60px rgba(30,64,175,.5);
+}
+.cover-logo-icon{font-size:44px;color:white;}
+.cover-system-name{font-size:15px;color:#60a5fa;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.cover-title{font-size:40px;font-weight:900;color:white;line-height:1.2;margin-bottom:8px;}
+.cover-subtitle{font-size:18px;color:#94a3b8;font-weight:400;margin-bottom:40px;}
+.cover-topic-box{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:16px;padding:20px 32px;max-width:640px;margin:0 auto 40px;
+  backdrop-filter:blur(8px);
+}
+.cover-topic-label{font-size:11px;color:#60a5fa;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.cover-topic-text{font-size:18px;color:white;font-weight:700;line-height:1.5;}
+.cover-meta-row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
+.cover-meta-item{text-align:center;}
+.cover-meta-label{font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.cover-meta-value{font-size:13px;color:#e2e8f0;font-weight:600;}
+.cover-advisors-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.cover-advisor-chip{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:8px 16px;
+}
+.chip-avatar{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:11px;color:white;flex-shrink:0;
+}
+.chip-name{font-size:12px;color:#e2e8f0;font-weight:600;}
+.chip-method{font-size:10px;color:#64748b;}
+.cover-footer{
+  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:#334155;text-align:center;
+  display:flex;align-items:center;gap:12px;
+  border-top:1px solid #1e293b;padding-top:16px;width:80%;justify-content:center;
+}
+.cover-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:linear-gradient(135deg,#92400e,#d97706);
+  color:white;padding:3px 10px;border-radius:999px;
+  font-size:9px;font-weight:800;letter-spacing:.5px;
+}
+
+/* ── BODY PAGES ── */
+.page{padding:48px 52px;max-width:900px;margin:0 auto;page-break-inside:avoid;}
+
+/* Section title bars */
+.page-section-label{
+  display:flex;align-items:center;gap:10px;
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;
+  padding:10px 16px;margin-bottom:24px;
+}
+.page-section-label-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:white;flex-shrink:0;
+}
+.page-section-label-text{font-size:14px;font-weight:800;color:#1e293b;}
+.page-section-label-sub{font-size:11px;color:#94a3b8;}
+
+/* Conversation context */
+.context-box{
+  background:#f8fafc;border-right:4px solid #3b82f6;
+  border-radius:10px;padding:16px 20px;margin-bottom:16px;
+}
+.context-label{font-size:10px;color:#3b82f6;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.context-text{font-size:13px;color:#334155;line-height:1.7;}
+
+/* Advisor sections */
+.advisor-section{
+  border-right:4px solid;border-radius:14px;overflow:hidden;
+  margin-bottom:28px;box-shadow:0 2px 12px rgba(0,0,0,.06);
+  page-break-inside:avoid;
+}
+.advisor-section-header{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;border-bottom:1px solid;
+}
+.advisor-avatar-pdf{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:15px;color:white;flex-shrink:0;
+}
+.advisor-section-name{font-size:16px;font-weight:800;}
+.advisor-section-title{font-size:11px;color:#64748b;}
+.advisor-methodology{font-size:10px;font-weight:600;opacity:.7;margin-top:3px;}
+.advisor-num{
+  margin-right:auto;font-size:28px;font-weight:900;opacity:.1;
+  font-variant-numeric:tabular-nums;
+}
+.advisor-section-body{padding:20px 24px;}
+.report-section-header{
+  font-size:13px;font-weight:800;padding:6px 0 4px;
+  margin:14px 0 6px;border-bottom:1px solid;
+  display:flex;align-items:center;gap:6px;
+}
+.report-para{font-size:13px;color:#475569;line-height:1.8;margin:4px 0;}
+.report-item{
+  font-size:13px;padding:7px 12px;border-radius:8px;
+  border-right:3px solid;margin:5px 0;line-height:1.6;color:#334155;
+}
+.report-bullet{
+  font-size:13px;padding:3px 8px;display:flex;gap:8px;
+  align-items:flex-start;color:#334155;line-height:1.7;
+}
+
+/* Council decision */
+.council-section-wrap{page-break-before:always;}
+.council-header-bar{
+  background:linear-gradient(135deg,#1e40af,#3730a3);
+  border-radius:16px 16px 0 0;
+  padding:24px 32px;
+  display:flex;align-items:center;gap:16px;
+}
+.council-header-icon{
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;color:white;
+}
+.council-header-title{font-size:22px;font-weight:900;color:white;}
+.council-header-sub{font-size:12px;color:#93c5fd;margin-top:4px;}
+.council-stars{display:flex;gap:3px;margin-top:6px;}
+.council-body{
+  background:white;border:1px solid #e2e8f0;border-top:none;
+  border-radius:0 0 16px 16px;padding:28px 32px;
+}
+.council-item{
+  background:#eff6ff;border-right:3px solid #3b82f6;
+  border-radius:8px;padding:8px 14px;margin:6px 0;
+  font-size:13px;color:#1e3a8a;line-height:1.7;
+}
+.council-bullet{
+  display:flex;gap:8px;align-items:flex-start;
+  padding:4px 8px;font-size:13px;color:#334155;line-height:1.7;
+}
+.council-bullet span{color:#3b82f6;flex-shrink:0;margin-top:3px;}
+
+/* Confidence meter */
+.confidence-section{
+  background:#f0f9ff;border:1px solid #bae6fd;
+  border-radius:12px;padding:20px 24px;margin:24px 0;
+}
+.confidence-label{font-size:12px;font-weight:700;color:#0891b2;margin-bottom:12px;}
+.confidence-bar-wrap{background:#e0f2fe;border-radius:999px;height:10px;overflow:hidden;}
+.confidence-bar{height:100%;background:linear-gradient(90deg,#0891b2,#06b6d4);border-radius:999px;}
+
+/* Signatures */
+.signatures-section{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  margin-top:32px;padding-top:24px;border-top:1px solid #e2e8f0;
+}
+.sig-box{text-align:center;}
+.sig-line{border-bottom:1px solid #cbd5e1;margin-bottom:8px;height:40px;}
+.sig-name{font-size:11px;font-weight:700;color:#1e293b;}
+.sig-role{font-size:10px;color:#94a3b8;}
+.sig-avatar{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:12px;color:white;margin:0 auto 6px;
+}
+
+/* Footer */
+.report-footer{
+  margin-top:40px;padding:20px 0;border-top:2px solid #e2e8f0;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:10px;color:#94a3b8;
+}
+.report-footer-logo{
+  display:flex;align-items:center;gap:8px;
+  font-weight:800;color:#1e293b;font-size:13px;
+}
+.footer-badge{
+  background:#dbeafe;color:#1e40af;
+  padding:2px 10px;border-radius:999px;font-size:9px;font-weight:700;
+}
+.confidential-tag{
+  background:#fee2e2;color:#dc2626;
+  padding:3px 12px;border-radius:999px;font-size:10px;font-weight:800;
+  letter-spacing:.5px;
+}
+
+/* Page numbers via CSS counter */
+@page{size:A4;margin:0;}
+.page-num{font-size:10px;color:#cbd5e1;text-align:center;padding:8px;}
+
+@media print{
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .cover{height:100vh;}
+  .page-break{page-break-before:always;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ COVER PAGE ════════════ -->
+<div class="cover">
+  <div class="cover-glow"></div>
+  <div class="cover-content">
+
+    <div class="cover-logo-wrap">
+      <div class="cover-logo-icon">
+        <svg width="52" height="52" viewBox="0 0 48 48" fill="none">
+          <path d="M24 6L40 13V24C40 33 32.9 41.3 24 44C15.1 41.3 8 33 8 24V13L24 6Z"
+            fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
+          <path d="M24 12L35 17.5V24C35 29.8 30.1 35.2 24 37.2C17.9 35.2 13 29.8 13 24V17.5L24 12Z"
+            fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+          <path d="M19 24L23 28L29 20" stroke="white" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="cover-system-name">IMS QHSE — نظام الإدارة المتكاملة</div>
+    <div class="cover-title">تقرير المجلس<br>الاستشاري الافتراضي</div>
+    <div class="cover-subtitle">تحليل استراتيجي شامل · قرار المجلس الموحد</div>
+
+    <div class="cover-topic-box">
+      <div class="cover-topic-label">موضوع الجلسة</div>
+      <div class="cover-topic-text">${escapeForHTML(topic)}</div>
+    </div>
+
+    <div class="cover-meta-row">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">تاريخ الجلسة</div>
+        <div class="cover-meta-value">${dateStr}</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">وقت الجلسة</div>
+        <div class="cover-meta-value">${timeStr}</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">عدد المستشارين</div>
+        <div class="cover-meta-value">${advisorsInSession.length} مستشار</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">تصنيف الوثيقة</div>
+        <div class="cover-meta-value" style="color:#f87171;">سري — للإدارة فقط</div>
+      </div>
+    </div>
+
+    <div class="cover-advisors-row">
+      ${advisorsInSession.map(a => `
+        <div class="cover-advisor-chip" style="border-color:${a.color}30;">
+          <div class="chip-avatar" style="background:${a.color};">${a.avatar}</div>
+          <div>
+            <div class="chip-name">${a.name}</div>
+            <div class="chip-method">${a.methodology}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="cover-footer">
+      <span class="cover-badge">👑 الباقة الإدارية العليا</span>
+      <span>تقرير آلي مُولَّد بالذكاء الاصطناعي · AI-Powered Advisory Report</span>
+      <span>صفحة 1</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SESSION CONTEXT PAGE ════════════ -->
+<div class="page page-break">
+  <div class="page-section-label">
+    <div class="page-section-label-icon" style="background:#3b82f6;">
+      <i class="fas fa-comments" style="font-size:13px;"></i>
+    </div>
+    <div>
+      <div class="page-section-label-text">سياق الجلسة الاستشارية</div>
+      <div class="page-section-label-sub">الأسئلة والطلبات المُقدَّمة للمجلس</div>
+    </div>
+  </div>
+
+  ${userMessages.map((m, i) => `
+    <div class="context-box" style="margin-bottom:12px;">
+      <div class="context-label">الطلب ${i+1} من الإدارة</div>
+      <div class="context-text">${escapeForHTML(m.content)}</div>
+    </div>`).join('')}
+
+  <div style="margin-top:28px;">
+    <div class="page-section-label">
+      <div class="page-section-label-icon" style="background:#7c3aed;">
+        <i class="fas fa-users" style="font-size:13px;"></i>
+      </div>
+      <div>
+        <div class="page-section-label-text">تشكيل المجلس الاستشاري</div>
+        <div class="page-section-label-sub">المنهجيات والتخصصات المُعتمدة في هذه الجلسة</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px;">
+      ${advisorsInSession.map(a => `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1.5px solid ${a.color}25;background:${a.color}05;">
+          <div style="width:40px;height:40px;border-radius:10px;background:${a.color};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;">${a.avatar}</div>
+          <div>
+            <div style="font-weight:800;font-size:13px;color:${a.color};">${a.name}</div>
+            <div style="font-size:11px;color:#64748b;">${a.title}</div>
+            <div style="font-size:10px;color:${a.color};opacity:.8;margin-top:2px;">${a.methodology}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="report-footer">
+    <div class="report-footer-logo">
+      <i class="fas fa-chess-king" style="color:#1e40af;"></i>
+      المجلس الاستشاري الافتراضي · IMS QHSE
+    </div>
+    <span class="confidential-tag">سري — للإدارة فقط</span>
+    <span>${dateStr} · ${timeStr}</span>
+  </div>
+</div>
+
+<!-- ════════════ ADVISOR SECTIONS ════════════ -->
+<div class="page page-break">
+  <div class="page-section-label">
+    <div class="page-section-label-icon" style="background:#0891b2;">
+      <i class="fas fa-chart-bar" style="font-size:13px;"></i>
+    </div>
+    <div>
+      <div class="page-section-label-text">تحليلات المستشارين</div>
+      <div class="page-section-label-sub">التحليل المتخصص من كل عضو في المجلس</div>
+    </div>
+  </div>
+
+  ${advisorSectionsHTML}
+
+  <div class="report-footer">
+    <div class="report-footer-logo">
+      <i class="fas fa-chess-king" style="color:#1e40af;"></i>
+      المجلس الاستشاري الافتراضي · IMS QHSE
+    </div>
+    <span class="confidential-tag">سري — للإدارة فقط</span>
+    <span>${dateStr} · ${timeStr}</span>
+  </div>
+</div>
+
+<!-- ════════════ COUNCIL DECISION ════════════ -->
+<div class="council-section-wrap">
+<div class="page">
+  <div class="page-section-label" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;">
+    <div class="page-section-label-icon" style="background:#1e40af;">
+      <i class="fas fa-star" style="font-size:13px;"></i>
+    </div>
+    <div>
+      <div class="page-section-label-text" style="color:#1e40af;">قرار المجلس الاستشاري الموحد</div>
+      <div class="page-section-label-sub">التوصية النهائية والخطوات التنفيذية</div>
+    </div>
+  </div>
+
+  <div class="council-header-bar">
+    <div class="council-header-icon">
+      <i class="fas fa-chess-king"></i>
+    </div>
+    <div>
+      <div class="council-header-title">توصية المجلس الموحد</div>
+      <div class="council-header-sub">توافق المستشارين · Consensus Decision</div>
+      <div class="council-stars">
+        ${[...Array(5)].map((_,i)=>`<i class="fas fa-star" style="color:${i<4?'#fbbf24':'#334155'};font-size:12px;"></i>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="council-body">
+    ${councilHTML || '<p class="report-para">لا يوجد قرار موحد في هذه الجلسة.</p>'}
+  </div>
+
+  <!-- Signatures -->
+  <div style="margin-top:36px;">
+    <div style="font-size:13px;font-weight:800;color:#1e293b;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;">
+      <i class="fas fa-signature" style="color:#1e40af;margin-left:6px;"></i>
+      اعتماد وتوقيع أعضاء المجلس
+    </div>
+    <div class="signatures-section">
+      ${advisorsInSession.slice(0,3).map(a => `
+        <div class="sig-box">
+          <div class="sig-avatar" style="background:${a.color};">${a.avatar}</div>
+          <div class="sig-line"></div>
+          <div class="sig-name">${a.name}</div>
+          <div class="sig-role">${a.title}</div>
+        </div>`).join('')}
+    </div>
+    ${advisorsInSession.length > 3 ? `
+    <div class="signatures-section" style="margin-top:20px;">
+      ${advisorsInSession.slice(3).map(a => `
+        <div class="sig-box">
+          <div class="sig-avatar" style="background:${a.color};">${a.avatar}</div>
+          <div class="sig-line"></div>
+          <div class="sig-name">${a.name}</div>
+          <div class="sig-role">${a.title}</div>
+        </div>`).join('')}
+    </div>` : ''}
+  </div>
+
+  <!-- Final Footer -->
+  <div style="margin-top:40px;padding:20px 24px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;text-align:center;">
+    <div style="font-size:12px;color:#64748b;line-height:1.8;">
+      هذا التقرير صادر من نظام المجلس الاستشاري الافتراضي المدعوم بالذكاء الاصطناعي — IMS QHSE<br>
+      <strong style="color:#1e293b;">وثيقة سرية — للإدارة العليا فقط · Confidential — Executive Management Only</strong><br>
+      تاريخ الإصدار: ${dateStr} · الساعة: ${timeStr}
+    </div>
+    <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;flex-wrap:wrap;">
+      <span class="footer-badge" style="background:#dbeafe;color:#1e40af;">ISO 9001:2015</span>
+      <span class="footer-badge" style="background:#dcfce7;color:#16a34a;">ISO 45001:2018</span>
+      <span class="footer-badge" style="background:#f0fdf4;color:#15803d;">ISO 14001:2015</span>
+      <span class="footer-badge" style="background:#fef3c7;color:#d97706;">AI Advisory System</span>
+    </div>
+  </div>
+
+  <div class="report-footer">
+    <div class="report-footer-logo">
+      <i class="fas fa-chess-king" style="color:#1e40af;"></i>
+      المجلس الاستشاري الافتراضي · IMS QHSE
+    </div>
+    <span class="confidential-tag">سري — للإدارة فقط</span>
+    <span>${dateStr}</span>
+  </div>
+
+</div>
+</div>
+
+<script>
+  window.onload = function() {
+    setTimeout(() => {
+      window.print();
+    }, 1200);
+  };
+<\/script>
+</body>
+</html>`;
+
+  // Open print window
+  const printWin = window.open('', '_blank', 'width=900,height=700');
+  if (!printWin) {
+    showToast('يرجى السماح بفتح النوافذ المنبثقة');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-file-pdf"></i> تصدير تقرير PDF';
+    return;
+  }
+
+  printWin.document.write(reportHTML);
+  printWin.document.close();
+
+  // Re-enable button
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-file-pdf"></i> تصدير تقرير PDF';
+  }, 2000);
+}
+
+function escapeForHTML(text) {
+  return (text || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/\n/g,'<br>');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BACKEND INTEGRATION
+// ═══════════════════════════════════════════════════════════════
+
+const BACKEND_API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
+
+// ── Read token from URL hash (passed from parent dashboard) ─────
+function getAuthToken() {
+  // Priority 1: URL hash (when loaded in iframe from dashboard)
+  const hash = window.location.hash;
+  if (hash.includes('token=')) {
+    const tokenParam = new URLSearchParams(hash.slice(1)).get('token');
+    if (tokenParam) {
+      localStorage.setItem('ims_token', tokenParam); // cache locally
+      return tokenParam;
+    }
+  }
+  // Priority 2: localStorage (direct access or same-origin)
+  return localStorage.getItem('ims_token') || '';
+}
+
+// ── Decode JWT payload (client-side, no library) ─────────────────
+function decodeJWT(token) {
+  try {
+    const payload = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    return JSON.parse(atob(payload));
+  } catch { return null; }
+}
+
+// ── Verify plan with backend ─────────────────────────────────────
+async function verifyPlanWithBackend(token) {
+  try {
+    const res = await fetch(`${BACKEND_API}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.tenant?.plan || data?.plan || data?.data?.plan || null;
+  } catch { return null; }
+}
+
+// ── Save advisory session to backend ─────────────────────────────
+async function saveSessionToBackend(sessionData) {
+  const token = getAuthToken();
+  if (!token) return;
+
+  try {
+    await fetch(`${BACKEND_API}/advisory-sessions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sessionData),
+    });
+
+    // Notify parent dashboard
+    if (window.parent !== window) {
+      window.parent.postMessage({ source: 'ims-advisory', type: 'SESSION_SAVED' }, '*');
+    }
+  } catch (err) {
+    console.warn('Advisory session save failed:', err.message);
+  }
+}
+
+// ── Add save button after first council response ──────────────────
+function addSaveSessionButton() {
+  if (document.getElementById('save-session-btn')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'save-session-btn';
+  btn.style.cssText = `
+    display:flex;align-items:center;gap:6px;
+    background:linear-gradient(135deg,#059669,#10b981);
+    color:white;border:none;padding:8px 16px;border-radius:10px;
+    font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;
+    cursor:pointer;transition:all .2s;
+    box-shadow:0 2px 12px rgba(5,150,105,.3);
+    margin-right:8px;
+  `;
+  btn.innerHTML = '<i class="fas fa-save"></i> حفظ الجلسة';
+  btn.onclick = async () => {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+
+    const sessionData = {
+      topic:    state.sessionTopic || 'جلسة استشارية',
+      advisors: state.selectedAdvisors,
+      sections: state.reportSections.map(s => ({
+        advisor_id:   s.advisor?.id || 'council',
+        advisor_name: s.advisor?.name || 'المجلس الموحد',
+        body:         s.body?.substring(0, 2000), // truncate for DB
+        is_council:   s.isCouncil,
+      })),
+      messages_count: state.conversationHistory.length,
+    };
+
+    await saveSessionToBackend(sessionData);
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check"></i> تم الحفظ';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fas fa-save"></i> حفظ الجلسة';
+    }, 2000);
+  };
+
+  // Insert before PDF button
+  const pdfBtn = document.getElementById('pdf-export-btn');
+  if (pdfBtn?.parentNode) {
+    pdfBtn.parentNode.insertBefore(btn, pdfBtn);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT — with plan verification
+// ═══════════════════════════════════════════════════════════════
+async function initAdvisoryCouncil() {
+  const token = getAuthToken();
+
+  // If no token → show not-logged-in state
+  if (!token) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;
+          background:#f1f5f9;font-family:'Tajawal',sans-serif;direction:rtl;">
+        <div style="text-align:center;padding:40px;">
+          <i class="fas fa-lock" style="font-size:48px;color:#cbd5e1;margin-bottom:16px;display:block;"></i>
+          <div style="font-size:18px;font-weight:700;color:#475569;margin-bottom:8px;">يرجى تسجيل الدخول</div>
+          <div style="font-size:13px;color:#94a3b8;">للوصول إلى المجلس الاستشاري</div>
+          <a href="/" style="display:inline-block;margin-top:20px;padding:10px 28px;
+              background:#1e40af;color:white;border-radius:10px;text-decoration:none;font-weight:700;">
+            تسجيل الدخول
+          </a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Verify plan — call backend
+  const plan = await verifyPlanWithBackend(token);
+  const ALLOWED = ['enterprise', 'المؤسسي', 'Enterprise'];
+
+  if (plan !== null && !ALLOWED.includes(plan)) {
+    // Not enterprise plan → show upgrade prompt
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;
+          background:#f1f5f9;font-family:'Tajawal',sans-serif;direction:rtl;">
+        <div style="text-align:center;padding:40px;max-width:440px;">
+          <div style="width:80px;height:80px;border-radius:20px;
+              background:linear-gradient(135deg,#7c3aed20,#1e40af15);
+              border:2px dashed #7c3aed40;
+              display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <i class="fas fa-chess-king" style="font-size:32px;color:#7c3aed;opacity:.6;"></i>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#1e293b;margin-bottom:8px;">
+            باقة المؤسسي مطلوبة
+          </div>
+          <div style="font-size:13px;color:#64748b;line-height:1.7;margin-bottom:24px;">
+            المجلس الاستشاري الافتراضي متاح حصراً لباقة Enterprise.
+            باقتك الحالية: <strong>${plan || 'غير محدد'}</strong>
+          </div>
+          <button onclick="window.parent.postMessage({source:'ims-advisory',type:'OPEN_SUBSCRIPTION'},'*')"
+            style="padding:12px 28px;background:linear-gradient(135deg,#7c3aed,#1e40af);
+                color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;
+                cursor:pointer;font-family:inherit;">
+            <i class="fas fa-crown" style="margin-left:8px;"></i>
+            ترقية الباقة
+          </button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // ✅ Access granted — render the advisory council
+  renderAdvisors();
+
+  // Patch sendMessage to also show save button
+  const originalSendMessage = sendMessage;
+  window.sendMessage = async function() {
+    await originalSendMessage.call(this);
+    if (state.hasResponse) addSaveSessionButton();
+  };
+}
+
+// Start
+initAdvisoryCouncil();
+</script>
+</body>
+</html>

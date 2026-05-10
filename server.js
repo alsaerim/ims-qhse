@@ -7,11 +7,12 @@ app.get('/admin', (req, res) => res.sendFile(__dirname + '/public/ims_admin.html
 app.use(express.static(path.join(__dirname, 'public')));
 
 const pages = {
-  '/':              'ims_landing.html',
-  '/app':           'ims_qhse_9.html',
-  '/dashboard':     'ims_qhse_9.html',
-  '/mobile':        'ims_mobile.html',
-  '/mobile-login':  'ims_mobile_login.html',
+  '/':                 'ims_landing.html',
+  '/app':              'ims_qhse_9.html',
+  '/dashboard':        'ims_qhse_9.html',
+  '/mobile':           'ims_mobile.html',
+  '/mobile-login':     'ims_mobile_login.html',
+  '/advisory-council': 'ims_advisory_council.html',
 };
 
 app.get('{*path}', (req, res) => {

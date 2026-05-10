@@ -251,6 +251,11 @@ window.hydrateGlobalData = async function() {
     <div class="nav-item" onclick="navigate('integrations')">
       <i class="fas fa-plug w-4"></i><span class="sidebar-label">الأدوات والربط</span>
     </div>
+    <div class="nav-item" onclick="navigate('advisory')" style="position:relative;">
+      <i class="fas fa-chess-king w-4"></i>
+      <span class="sidebar-label">المجلس الاستشاري AI</span>
+      <span class="sidebar-label" style="margin-right:auto;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:800;">👑</span>
+    </div>
     <div class="nav-item" onclick="navigate('subscription')">
       <i class="fas fa-crown w-4"></i><span class="sidebar-label">الاشتراكات والفواتير</span>
     </div>
@@ -627,6 +632,7 @@ function navigate(page) {
     tasks: loadTasks,
     org: loadOrganization,
     integrations: loadIntegrations,
+    advisory:     loadAdvisoryCouncil,
     subscription: loadSubscription
   };
   (pages[page] || loadDashboard)();
@@ -10915,7 +10921,62 @@ function resetTaskFilters() {
   });
   document.querySelectorAll('.task-card').forEach(function(c){c.style.display='';});
 }
+// ── Advisory Council ─────────────────────────
+async function loadAdvisoryCouncil() {
+  const el = document.getElementById('app-content');
+  el.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:70vh;">
+    <div style="text-align:center;">
+      <i class="fas fa-circle-notch fa-spin" style="font-size:32px;color:#7c3aed;margin-bottom:12px;display:block;"></i>
+      <div style="color:#64748b;font-size:14px;">جاري التحقق من الصلاحيات...</div>
+    </div>
+  </div>`;
 
+  let plan = 'unknown';
+  try {
+    const me = await apiFetch('/auth/me', 'GET');
+    plan = me?.tenant?.plan || me?.plan || me?.data?.plan || 'unknown';
+  } catch {
+    try { plan = JSON.parse(localStorage.getItem('ims_user')||'{}').plan || 'unknown'; } catch {}
+  }
+
+  if (!['enterprise','Enterprise','المؤسسي'].includes(plan)) {
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px;">
+        <div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#7c3aed15,#1e40af10);border:2px dashed #7c3aed40;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+          <i class="fas fa-chess-king" style="font-size:36px;color:#7c3aed;opacity:.5;"></i>
+        </div>
+        <h2 style="font-size:20px;font-weight:800;color:#1e293b;margin:0 0 10px;">المجلس الاستشاري الافتراضي</h2>
+        <p style="color:#64748b;font-size:14px;max-width:400px;line-height:1.7;margin:0 0 24px;">
+          هذه الميزة متاحة <strong>حصراً</strong> لباقة <strong style="color:#7c3aed;">المؤسسي (Enterprise)</strong>.<br>
+          باقتك الحالية: <strong>${plan}</strong>
+        </p>
+        <button onclick="navigate('subscription')" style="padding:12px 28px;background:linear-gradient(135deg,#7c3aed,#1e40af);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,.3);">
+          <i class="fas fa-crown" style="margin-left:8px;"></i> الترقية إلى المؤسسي
+        </button>
+      </div>`;
+    return;
+  }
+
+  const token = localStorage.getItem('ims_token') || '';
+  el.innerHTML = `
+    <div style="height:calc(100vh - 80px);display:flex;flex-direction:column;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1);">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:white;border-bottom:2px solid #7c3aed20;flex-shrink:0;">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#1e40af);display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-chess-king" style="color:white;font-size:15px;"></i>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:14px;color:#1e293b;">المجلس الاستشاري الافتراضي</div>
+          <div style="font-size:11px;color:#94a3b8;">AI-Powered · تحليل استراتيجي متخصص</div>
+        </div>
+        <span style="margin-right:auto;background:linear-gradient(135deg,#92400e,#d97706);color:white;padding:3px 12px;border-radius:999px;font-size:10px;font-weight:800;">
+          <i class="fas fa-crown" style="margin-left:4px;font-size:9px;"></i> المؤسسي
+        </span>
+      </div>
+      <iframe src="/advisory-council#token=${encodeURIComponent(token)}"
+        style="flex:1;border:none;display:block;background:#f1f5f9;" allow="clipboard-write">
+      </iframe>
+    </div>`;
+}
 
 // ── Subscription ─────────────────────────────
 function loadSubscription() {
