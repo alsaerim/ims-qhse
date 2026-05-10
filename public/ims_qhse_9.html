@@ -10934,12 +10934,12 @@ async function loadAdvisoryCouncil() {
   let plan = 'unknown';
   try {
     const me = await apiFetch('/auth/me', 'GET');
-    plan = me?.tenant?.plan || me?.plan || me?.data?.plan || 'unknown';
+    plan = me?.data?.tenant?.status || me?.tenant?.plan || me?.plan || 'unknown';
   } catch {
     try { plan = JSON.parse(localStorage.getItem('ims_user')||'{}').plan || 'unknown'; } catch {}
   }
 
-  if (!['enterprise','Enterprise','المؤسسي'].includes(plan)) {
+  if (!['enterprise','Enterprise','المؤسسي','ACTIVE','TRIAL'].includes(plan)) {
     el.innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px;">
         <div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#7c3aed15,#1e40af10);border:2px dashed #7c3aed40;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
