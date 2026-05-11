@@ -10921,63 +10921,584 @@ function resetTaskFilters() {
   });
   document.querySelectorAll('.task-card').forEach(function(c){c.style.display='';});
 }
-// ── Advisory Council ─────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  ADVISORY COUNCIL — INLINE VERSION (مدمج في الداشبورد)
+//  استبدل دالة loadAdvisoryCouncil الموجودة بهذه كاملاً
+// ═══════════════════════════════════════════════════════════════
+
+// ── Advisory Data ────────────────────────────────────────────
+const ADV_ADVISORS = [
+  { id:'strategy', name:'د. سارة الاستراتيجية', title:'خبيرة الاستراتيجية التنافسية', expertise:'Porter · Blue Ocean · BCG Matrix', color:'#1e40af', icon:'fa-chess', methodology:"Porter's Five Forces + Blue Ocean", speciality:'التحليل التنافسي، خلق القيمة، تمايز الأسواق', avatar:'سا', prompts:['ما هي المزايا التنافسية لهذه الفكرة؟','كيف نخلق قيمة في سوق مشبع؟','ما فرص التمايز المتاحة؟'] },
+  { id:'risk',     name:'م. خالد إدارة المخاطر', title:'متخصص إدارة المخاطر والامتثال', expertise:'ISO 31000 · COSO · Risk Matrix', color:'#dc2626', icon:'fa-shield-alt', methodology:'ISO 31000 + COSO ERM', speciality:'تقييم المخاطر، التحوط، امتثال ISO', avatar:'خا', prompts:['ما المخاطر الرئيسية في هذا المشروع؟','كيف نبني إطار عمل لإدارة المخاطر؟','ما متطلبات الامتثال التنظيمي؟'] },
+  { id:'finance',  name:'أ. نورة التمويل', title:'مستشارة مالية واقتصادية', expertise:'DCF · NPV · Financial Modeling', color:'#059669', icon:'fa-chart-line', methodology:'Financial Modeling + Valuation', speciality:'جدوى مالية، تقييم، هياكل التمويل', avatar:'نو', prompts:['ما مؤشرات الجدوى المالية؟','ما النموذج المالي الأمثل؟','كيف نقيم هذا المشروع ماليا؟'] },
+  { id:'innovation',name:'د. فهد الابتكار', title:'خبير الابتكار والتحول الرقمي', expertise:'Design Thinking · Lean Startup · Agile', color:'#7c3aed', icon:'fa-lightbulb', methodology:'Design Thinking + Lean Startup', speciality:'نماذج الأعمال، MVP، التحول الرقمي', avatar:'فه', prompts:['ما نموذج العمل الأكثر ابتكاراً؟','كيف نبني MVP فعّال؟','ما فرص التحول الرقمي؟'] },
+  { id:'operations',name:'م. أحمد العمليات', title:'خبير العمليات والتميز التشغيلي', expertise:'Lean Six Sigma · Balanced Scorecard · OKRs', color:'#d97706', icon:'fa-cogs', methodology:'Balanced Scorecard + Lean Six Sigma', speciality:'تحسين العمليات، قياس الأداء، KPIs', avatar:'أح', prompts:['كيف نقيس الأداء التشغيلي؟','ما مؤشرات النجاح الرئيسية (KPIs)؟','كيف نحقق التميز التشغيلي؟'] },
+  { id:'market',   name:'د. ليلى التسويق', title:'خبيرة التسويق الاستراتيجي', expertise:'STP · Marketing Mix · Customer Journey', color:'#0891b2', icon:'fa-bullseye', methodology:'STP Framework + Marketing Mix', speciality:'تحليل السوق، استهداف العملاء، تموضع العلامة', avatar:'لي', prompts:['من هو العميل المستهدف؟','ما استراتيجية التموضع الأمثل؟','كيف ندخل السوق بفاعلية؟'] },
+  { id:'sustainability',name:'د. منى الاستدامة', title:'مستشارة الاستدامة والمسؤولية', expertise:'ESG · Triple Bottom Line · UN SDGs', color:'#16a34a', icon:'fa-leaf', methodology:'ESG Framework + Triple Bottom Line', speciality:'استراتيجيات ESG، الاستدامة، رؤية 2030', avatar:'من', prompts:['ما تأثير المشروع على الاستدامة؟','كيف نتوافق مع رؤية 2030؟','ما معايير ESG الواجب مراعاتها؟'] },
+];
+
+const ADV_PERSONAS = {
+  strategy:`أنت د. سارة — خبيرة استراتيجية تنافسية تعمل في مجلس استشاري إداري. منهجيتك: Porter's Five Forces + Blue Ocean + BCG Matrix. حلّل الفكرة بعمق وقدّم: 1) تقييم القوى التنافسية 2) فرص Blue Ocean 3) موقع المشروع على BCG Matrix 4) توصيات عملية. الرد باللغة العربية مع عناوين ### وبنود -. انهِ بـ "حكمي الاستراتيجي:" وتقييم جامع.`,
+  risk:`أنت م. خالد — متخصص إدارة المخاطر. منهجيتك: ISO 31000 + COSO ERM. حلّل الفكرة وقدّم: 1) المخاطر الرئيسية مصنّفة [عالي/متوسط/منخفض] 2) استراتيجية التعامل مع كل خطر 3) متطلبات الامتثال. الرد باللغة العربية مع عناوين ### وبنود -. انهِ بـ "تقييم المخاطر الإجمالي:" ونسبة خطورة %.`,
+  finance:`أنت أ. نورة — مستشارة مالية متخصصة. منهجيتك: DCF + NPV + Break-even. حلّل الفكرة وقدّم: 1) تقدير التدفقات النقدية 2) فترة الاسترداد 3) هيكل التمويل الأمثل 4) مصادر التمويل المتاحة. ضع أرقاماً تقديرية واقعية. الرد باللغة العربية. انهِ بـ "الحكم المالي:" مع مؤشر الجدوى.`,
+  innovation:`أنت د. فهد — خبير الابتكار ونماذج الأعمال. منهجيتك: Design Thinking + Business Model Canvas + Lean Startup. حلّل الفكرة وقدّم: 1) تحليل Canvas (9 عناصر رئيسية) 2) MVP في 90 يوماً 3) فرص التحول الرقمي 4) الميزة التنافسية الفريدة. الرد باللغة العربية. انهِ بـ "قرار الابتكار:" وتوصية جريئة.`,
+  operations:`أنت م. أحمد — خبير العمليات والتميز التشغيلي. منهجيتك: Balanced Scorecard + OKRs + Lean. حلّل الفكرة وقدّم: 1) خارطة العمليات الأساسية 2) KPIs لكل محور BSC 3) هيكل OKRs للسنة الأولى 4) جدول تنفيذي. الرد باللغة العربية. انهِ بـ "مؤشر الجاهزية التشغيلية:" ونسبة %.`,
+  market:`أنت د. ليلى — خبيرة التسويق الاستراتيجي. منهجيتك: STP + Marketing Mix 7Ps + Customer Journey. حلّل الفكرة وقدّم: 1) Segmentation & Targeting 2) Positioning 3) Marketing Mix 4) حجم السوق TAM/SAM/SOM. الرد باللغة العربية مع تركيز على السوق السعودي. انهِ بـ "توصية التموضع:" جملة واحدة.`,
+  sustainability:`أنت د. منى — مستشارة الاستدامة والحوكمة. منهجيتك: ESG + Triple Bottom Line + رؤية 2030. حلّل الفكرة وقدّم: 1) الأثر البيئي والاجتماعي والحوكمة 2) التوافق مع رؤية 2030 3) مؤشرات الاستدامة 4) مبادرات CSR مقترحة. الرد باللغة العربية. انهِ بـ "درجة الاستدامة:" من 10.`,
+};
+
+// ── Advisory State ────────────────────────────────────────────
+let advState = {
+  selected:[], started:false, topic:null,
+  history:[], sections:[], hasResponse:false, processing:false,
+  uploadContent:null, uploadName:null,
+};
+
+const ADV_BACKEND = 'https://ims-qhse-backend-production.up.railway.app/api/advisory-sessions/chat';
+
+// ── Main load function ────────────────────────────────────────
 async function loadAdvisoryCouncil() {
   const el = document.getElementById('app-content');
-  el.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:70vh;">
-    <div style="text-align:center;">
-      <i class="fas fa-circle-notch fa-spin" style="font-size:32px;color:#7c3aed;margin-bottom:12px;display:block;"></i>
-      <div style="color:#64748b;font-size:14px;">جاري التحقق من الصلاحيات...</div>
-    </div>
-  </div>`;
+
+  // Check plan
+  el.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:60vh;"><div style="text-align:center;"><i class="fas fa-circle-notch fa-spin" style="font-size:28px;color:#7c3aed;margin-bottom:12px;display:block;"></i><div style="color:#64748b;font-size:14px;">جاري التحقق...</div></div></div>`;
 
   let plan = 'unknown';
   try {
     const me = await apiFetch('/api/auth/me', 'GET');
-    plan = me?.tenant?.status || me?.tenant?.plan || me?.status || 'unknown';
-  } catch {
-    try { plan = JSON.parse(localStorage.getItem('ims_user')||'{}').plan || 'unknown'; } catch {}
-  }
+    plan = me?.tenant?.status || me?.tenant?.plan || me?.plan || 'unknown';
+  } catch { try { plan = JSON.parse(localStorage.getItem('ims_user')||'{}').plan||'unknown'; } catch {} }
 
   if (!['enterprise','Enterprise','المؤسسي','ACTIVE','TRIAL'].includes(plan)) {
     el.innerHTML = `
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px;">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px;font-family:inherit;">
         <div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#7c3aed15,#1e40af10);border:2px dashed #7c3aed40;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
           <i class="fas fa-chess-king" style="font-size:36px;color:#7c3aed;opacity:.5;"></i>
         </div>
         <h2 style="font-size:20px;font-weight:800;color:#1e293b;margin:0 0 10px;">المجلس الاستشاري الافتراضي</h2>
         <p style="color:#64748b;font-size:14px;max-width:400px;line-height:1.7;margin:0 0 24px;">
-          هذه الميزة متاحة <strong>حصراً</strong> لباقة <strong style="color:#7c3aed;">المؤسسي (Enterprise)</strong>.<br>
-          باقتك الحالية: <strong>${plan}</strong>
+          هذه الميزة متاحة <strong>حصراً</strong> لباقة <strong style="color:#7c3aed;">المؤسسي</strong>.<br>باقتك الحالية: <strong>${plan}</strong>
         </p>
-        <button onclick="navigate('subscription')" style="padding:12px 28px;background:linear-gradient(135deg,#7c3aed,#1e40af);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,.3);">
+        <button onclick="navigate('subscription')" style="padding:12px 28px;background:linear-gradient(135deg,#7c3aed,#1e40af);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
           <i class="fas fa-crown" style="margin-left:8px;"></i> الترقية إلى المؤسسي
         </button>
       </div>`;
     return;
   }
 
-  const token = localStorage.getItem('ims_token') || '';
+  // Reset state
+  advState = { selected:[], started:false, topic:null, history:[], sections:[], hasResponse:false, processing:false, uploadContent:null, uploadName:null };
+
+  // Render council UI
   el.innerHTML = `
-    <div style="height:calc(100vh - 80px);display:flex;flex-direction:column;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1);">
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:white;border-bottom:2px solid #7c3aed20;flex-shrink:0;">
-        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#1e40af);display:flex;align-items:center;justify-content:center;">
-          <i class="fas fa-chess-king" style="color:white;font-size:15px;"></i>
+    <style>
+      .adv-layout{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 80px);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1);}
+      .adv-sidebar{background:linear-gradient(180deg,#0f172a,#1e293b);display:flex;flex-direction:column;border-left:1px solid #334155;overflow:hidden;}
+      .adv-main{display:flex;flex-direction:column;background:#f1f5f9;overflow:hidden;}
+      .adv-topbar{background:white;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+      .adv-chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+      .adv-chat::-webkit-scrollbar{width:3px;} .adv-chat::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px;}
+      .adv-input-area{background:white;border-top:1px solid #e2e8f0;padding:12px 16px;flex-shrink:0;}
+      .adv-msg-user{align-self:flex-start;background:#1e40af;color:white;border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:65%;font-size:13px;line-height:1.6;}
+      .adv-msg-bot{align-self:flex-end;background:white;border-radius:14px 14px 14px 4px;max-width:85%;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden;}
+      .adv-msg-header{display:flex;align-items:center;gap:8px;padding:10px 14px 6px;border-bottom:1px solid #f1f5f9;}
+      .adv-msg-body{padding:10px 14px;font-size:13px;line-height:1.7;color:#334155;}
+      .adv-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:white;flex-shrink:0;}
+      .adv-advisor-card{padding:10px;border-radius:10px;cursor:pointer;border:1.5px solid transparent;transition:all .2s;margin-bottom:4px;}
+      .adv-advisor-card:hover{background:rgba(255,255,255,.06);}
+      .adv-advisor-card.adv-selected{border-color:currentColor;}
+      .adv-input{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:13px;resize:none;min-height:40px;max-height:100px;outline:none;font-family:inherit;direction:rtl;}
+      .adv-input:focus{border-color:#7c3aed;}
+      .adv-send-btn{width:38px;height:38px;border-radius:10px;background:#1e40af;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+      .adv-send-btn:hover{background:#1e3a8a;} .adv-send-btn:disabled{background:#94a3b8;cursor:not-allowed;}
+      .adv-pdf-btn{display:none;align-items:center;gap:5px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;padding:6px 14px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+      .adv-pdf-btn.adv-visible{display:flex;}
+      .adv-progress{position:fixed;top:0;left:0;right:0;height:3px;background:#e2e8f0;z-index:9999;display:none;}
+      .adv-progress-bar{height:100%;background:linear-gradient(90deg,#1e40af,#7c3aed);transition:width .4s;}
+      .adv-dot{width:6px;height:6px;border-radius:50%;background:#94a3b8;display:inline-block;margin:0 2px;animation:advPulse 1.2s ease-in-out infinite;}
+      .adv-dot:nth-child(2){animation-delay:.2s;} .adv-dot:nth-child(3){animation-delay:.4s;}
+      @keyframes advPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+      @keyframes advFadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+      .adv-fade{animation:advFadeUp .3s ease;}
+      .adv-premium{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#92400e,#d97706,#fbbf24,#d97706,#92400e);background-size:200% auto;animation:advShimmer 3s linear infinite;color:white;padding:3px 8px;border-radius:999px;font-size:9px;font-weight:800;}
+      @keyframes advShimmer{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+      @media(max-width:700px){.adv-layout{grid-template-columns:1fr;}.adv-sidebar{display:none;}}
+    </style>
+
+    <div id="adv-progress" class="adv-progress"><div id="adv-progress-bar" class="adv-progress-bar" style="width:0%"></div></div>
+
+    <div class="adv-layout">
+
+      <!-- Sidebar -->
+      <div class="adv-sidebar">
+        <div style="padding:14px 12px 10px;border-bottom:1px solid #334155;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:32px;height:32px;border-radius:8px;background:#1e40af;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-chess-king" style="color:white;font-size:13px;"></i>
+            </div>
+            <div>
+              <div style="font-weight:800;color:white;font-size:13px;">المجلس الاستشاري</div>
+              <div style="font-size:10px;color:#94a3b8;">AI-Powered</div>
+            </div>
+          </div>
+          <div style="margin-bottom:8px;"><span class="adv-premium"><i class="fas fa-crown" style="font-size:8px;"></i> الباقة الإدارية العليا</span></div>
+          <button onclick="advReset()" style="width:100%;padding:7px;background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.25);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">
+            <i class="fas fa-plus" style="margin-left:4px;"></i>جلسة جديدة
+          </button>
         </div>
-        <div>
-          <div style="font-weight:800;font-size:14px;color:#1e293b;">المجلس الاستشاري الافتراضي</div>
-          <div style="font-size:11px;color:#94a3b8;">AI-Powered · تحليل استراتيجي متخصص</div>
+
+        <div style="padding:10px 12px 6px;flex:1;overflow-y:auto;">
+          <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">أعضاء المجلس</div>
+          <div id="adv-advisors-list"></div>
         </div>
-        <span style="margin-right:auto;background:linear-gradient(135deg,#92400e,#d97706);color:white;padding:3px 12px;border-radius:999px;font-size:10px;font-weight:800;">
-          <i class="fas fa-crown" style="margin-left:4px;font-size:9px;"></i> المؤسسي
-        </span>
+
+        <div style="padding:10px 12px;border-top:1px solid #334155;">
+          <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">المجلس المُشكَّل</div>
+          <div id="adv-active-council" style="min-height:32px;font-size:11px;color:#475569;font-style:italic;text-align:center;padding:6px;">لم يُشكَّل بعد</div>
+          <button id="adv-start-btn" onclick="advStart()" disabled
+            style="width:100%;margin-top:8px;padding:8px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:all .2s;font-family:inherit;background:#334155;color:#64748b;">
+            <i class="fas fa-play" style="margin-left:4px;"></i>بدء الجلسة
+          </button>
+        </div>
       </div>
-      <iframe src="/advisory-council#token=${encodeURIComponent(token)}"
-        style="flex:1;border:none;display:block;background:#f1f5f9;" allow="clipboard-write">
-      </iframe>
+
+      <!-- Main -->
+      <div class="adv-main">
+        <!-- Top bar -->
+        <div class="adv-topbar">
+          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#1e40af);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-chess-king" style="color:white;font-size:12px;"></i>
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:800;font-size:13px;color:#1e293b;" id="adv-session-title">جلسة استشارية جديدة</div>
+            <div style="font-size:11px;color:#94a3b8;" id="adv-session-meta">اختر المستشارين وابدأ</div>
+          </div>
+          <div id="adv-active-avatars" style="display:flex;"></div>
+          <button class="adv-pdf-btn" id="adv-pdf-btn" onclick="advGeneratePDF()">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Chat -->
+        <div class="adv-chat" id="adv-chat">
+          <!-- Welcome -->
+          <div id="adv-welcome" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:40px 20px;min-height:400px;">
+            <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,#1e40af,#7c3aed);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+              <i class="fas fa-chess-king" style="color:white;font-size:24px;"></i>
+            </div>
+            <h3 style="font-size:18px;font-weight:800;color:#1e293b;margin:0 0 8px;">المجلس الاستشاري الافتراضي</h3>
+            <p style="font-size:13px;color:#64748b;max-width:380px;line-height:1.7;margin:0 0 20px;">
+              اختر 2-4 مستشارين من القائمة الجانبية، ثم ابدأ الجلسة واكتب فكرتك.
+            </p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
+              <span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;">Porter's Five Forces</span>
+              <span style="background:#ede9fe;color:#7c3aed;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;">Blue Ocean</span>
+              <span style="background:#d1fae5;color:#059669;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;">DCF Analysis</span>
+              <span style="background:#fef3c7;color:#d97706;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;">Balanced Scorecard</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="adv-input-area">
+          <div id="adv-upload-zone" style="display:none;border:2px dashed #cbd5e1;border-radius:8px;padding:10px;text-align:center;cursor:pointer;margin-bottom:8px;font-size:12px;color:#64748b;" onclick="document.getElementById('adv-file-input').click()">
+            <input type="file" id="adv-file-input" accept=".txt,.pdf,.md" style="display:none;" onchange="advHandleFile(this)"/>
+            <i class="fas fa-cloud-upload-alt" style="margin-left:6px;"></i>
+            <span id="adv-upload-label">اسحب ملفاً أو انقر للرفع</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-end;">
+            <button onclick="document.getElementById('adv-upload-zone').style.display=document.getElementById('adv-upload-zone').style.display==='none'?'block':'none'"
+              id="adv-upload-btn" disabled
+              style="width:36px;height:36px;border-radius:8px;background:#f1f5f9;color:#64748b;border:1.5px solid #e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-paperclip" style="font-size:13px;"></i>
+            </button>
+            <textarea id="adv-input" class="adv-input" placeholder="اكتب فكرتك هنا..." rows="1" disabled
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();advSend();}"
+              oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+            <button class="adv-send-btn" id="adv-send-btn" onclick="advSend()" disabled>
+              <i class="fas fa-paper-plane" style="font-size:12px;"></i>
+            </button>
+          </div>
+          <div id="adv-quick-prompts" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
+        </div>
+      </div>
     </div>`;
+
+  advRenderAdvisors();
 }
 
+// ── Render advisors list ──────────────────────────────────────
+function advRenderAdvisors() {
+  const list = document.getElementById('adv-advisors-list');
+  if (!list) return;
+  list.innerHTML = ADV_ADVISORS.map(a => `
+    <div class="adv-advisor-card adv-fade ${advState.selected.includes(a.id)?'adv-selected':''}"
+         style="color:${a.color}" onclick="advToggle('${a.id}')">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="adv-avatar" style="background:${a.color}">${a.avatar}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:11px;color:${advState.selected.includes(a.id)?a.color:'#e2e8f0'}">${a.name}</div>
+          <div style="font-size:9px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.expertise}</div>
+        </div>
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid ${a.color};display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${advState.selected.includes(a.id)?a.color:'transparent'}">
+          ${advState.selected.includes(a.id)?'<i class="fas fa-check" style="color:white;font-size:7px;"></i>':''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function advToggle(id) {
+  if (advState.started) return;
+  if (advState.selected.includes(id)) {
+    advState.selected = advState.selected.filter(x => x !== id);
+  } else {
+    if (advState.selected.length >= 4) { advShowToast('الحد الأقصى 4 مستشارين'); return; }
+    advState.selected.push(id);
+  }
+  advRenderAdvisors();
+  advRenderCouncil();
+  advUpdateBtn();
+}
+
+function advRenderCouncil() {
+  const el = document.getElementById('adv-active-council');
+  if (!el) return;
+  if (!advState.selected.length) { el.innerHTML = '<div style="font-size:11px;color:#475569;font-style:italic;text-align:center;padding:6px;">لم يُشكَّل بعد</div>'; return; }
+  el.innerHTML = advState.selected.map(id => {
+    const a = ADV_ADVISORS.find(x => x.id === id);
+    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+      <div class="adv-avatar" style="background:${a.color};width:22px;height:22px;font-size:9px;">${a.avatar}</div>
+      <div style="font-size:11px;color:#e2e8f0;font-weight:600;flex:1;">${a.name}</div>
+      ${!advState.started?`<button onclick="advToggle('${id}')" style="background:none;border:none;cursor:pointer;color:#475569;padding:0;"><i class="fas fa-times" style="font-size:9px;"></i></button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function advUpdateBtn() {
+  const btn = document.getElementById('adv-start-btn');
+  if (!btn) return;
+  const has = advState.selected.length >= 1;
+  btn.disabled = !has;
+  btn.style.background = has ? 'linear-gradient(135deg,#1e40af,#3b82f6)' : '#334155';
+  btn.style.color = has ? 'white' : '#64748b';
+}
+
+// ── Start session ─────────────────────────────────────────────
+function advStart() {
+  if (!advState.selected.length) return;
+  advState.started = true;
+
+  document.getElementById('adv-welcome').style.display = 'none';
+  document.getElementById('adv-input').disabled = false;
+  document.getElementById('adv-send-btn').disabled = false;
+  document.getElementById('adv-upload-btn').disabled = false;
+  document.getElementById('adv-upload-zone').style.display = 'none';
+
+  const names = advState.selected.map(id => ADV_ADVISORS.find(x => x.id === id).name.split(' ').slice(1).join(' ')).join('، ');
+  document.getElementById('adv-session-title').textContent = 'جلسة استشارية نشطة';
+  document.getElementById('adv-session-meta').textContent = `المجلس: ${names}`;
+
+  const av = document.getElementById('adv-active-avatars');
+  av.innerHTML = advState.selected.map(id => {
+    const a = ADV_ADVISORS.find(x => x.id === id);
+    return `<div class="adv-avatar" style="background:${a.color};width:24px;height:24px;font-size:9px;margin-left:-4px;border:2px solid white;">${a.avatar}</div>`;
+  }).join('');
+
+  // Quick prompts
+  const qp = document.getElementById('adv-quick-prompts');
+  const prompts = [];
+  advState.selected.forEach(id => { const a = ADV_ADVISORS.find(x => x.id === id); a.prompts.slice(0,2).forEach(p => prompts.push({text:p,color:a.color})); });
+  qp.innerHTML = prompts.slice(0,4).map(p =>
+    `<button onclick="document.getElementById('adv-input').value='${p.text}';document.getElementById('adv-input').focus()"
+      style="font-size:11px;padding:4px 10px;border-radius:8px;background:${p.color}12;color:${p.color};border:1px solid ${p.color}30;cursor:pointer;font-family:inherit;font-weight:600;">${p.text}</button>`
+  ).join('');
+
+  const advisorList = advState.selected.map(id => { const a = ADV_ADVISORS.find(x=>x.id===id); return `<span style="display:inline-flex;align-items:center;gap:5px;background:${a.color}12;border:1px solid ${a.color}25;border-radius:6px;padding:3px 8px;margin:2px;font-size:11px;font-weight:700;color:${a.color};"><span style="width:16px;height:16px;border-radius:50%;background:${a.color};display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:white;">${a.avatar}</span>${a.name}</span>`; }).join('');
+
+  advAppendBot('رئاسة المجلس', '#1e40af', 'fa-chess-king',
+    `<div style="font-size:13px;line-height:1.8;color:#334155;margin-bottom:8px;">تم تشكيل المجلس. كل مستشار سيحلل بشكل مستقل وبالتوازي.</div>
+     <div style="display:flex;flex-wrap:wrap;gap:3px;">${advisorList}</div>`);
+}
+
+// ── File upload ───────────────────────────────────────────────
+function advHandleFile(input) {
+  const file = input.files[0]; if (!file) return;
+  if (file.name.endsWith('.pdf')) {
+    advState.uploadContent = `[ملف PDF: ${file.name}]`;
+    advState.uploadName = file.name;
+  } else {
+    const reader = new FileReader();
+    reader.onload = e => { advState.uploadContent = e.target.result.substring(0,6000); advState.uploadName = file.name; };
+    reader.readAsText(file,'UTF-8');
+  }
+  document.getElementById('adv-upload-label').innerHTML = `<i class="fas fa-check-circle" style="color:#059669;margin-left:4px;"></i>${file.name}`;
+  document.getElementById('adv-upload-zone').style.borderColor = '#059669';
+}
+
+// ── Send message ──────────────────────────────────────────────
+async function advSend() {
+  const inp = document.getElementById('adv-input');
+  const text = inp.value.trim();
+  if ((!text && !advState.uploadContent) || advState.processing) return;
+
+  advState.processing = true;
+  const userMsg = text || `[ملف: ${advState.uploadName}]`;
+  if (!advState.topic) advState.topic = userMsg;
+
+  advAppendUser(userMsg);
+  inp.value = ''; inp.style.height = 'auto';
+
+  advSetInput(false);
+  advState.history.push({ role:'user', content: userMsg });
+
+  const fileCtx = advState.uploadContent ? `\n\n[محتوى الملف: "${advState.uploadName}"]\n${advState.uploadContent}` : '';
+  advState.uploadContent = null;
+
+  const ctxText = advState.history.slice(-4).map(m=>`${m.role==='user'?'المستخدم':'المجلس'}: ${m.content.substring(0,200)}`).join('\n');
+
+  const selected = advState.selected.map(id => ADV_ADVISORS.find(x=>x.id===id));
+  const total = selected.length;
+  let done = 0;
+
+  // Show progress
+  const prog = document.getElementById('adv-progress');
+  const bar  = document.getElementById('adv-progress-bar');
+  if (prog) { prog.style.display='block'; bar.style.width='0%'; }
+
+  // Typing indicators
+  const typings = {};
+  selected.forEach(a => { typings[a.id] = advAppendTyping(a.name, a.color, a.icon); });
+
+  advState.sections = [];
+  const results = [];
+
+  // Parallel API calls
+  const promises = selected.map(async (advisor) => {
+    try {
+      const system = ADV_PERSONAS[advisor.id] || `أنت ${advisor.name}، ${advisor.title}. منهجيتك: ${advisor.methodology}.`;
+      const content = userMsg + fileCtx + (ctxText ? `\n\nسياق:\n${ctxText}` : '');
+
+      const token = localStorage.getItem('ims_token') || '';
+      const res = await fetch(ADV_BACKEND, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
+        body: JSON.stringify({ system, messages:[{role:'user',content}], max_tokens:1200 }),
+      });
+
+      const data = await res.json();
+      const responseText = data?.data?.content?.[0]?.text || data?.content?.[0]?.text || '';
+
+      advRemoveTyping(typings[advisor.id]);
+      done++;
+      if (bar) bar.style.width = `${Math.round((done/total)*100)}%`;
+      document.getElementById('adv-session-meta').textContent = `يحلل ${done}/${total} مستشار...`;
+
+      if (!responseText) throw new Error('لا يوجد رد');
+
+      const html = advFormatHTML(responseText, advisor.color);
+      advAppendBot(advisor.name, advisor.color, advisor.icon, `
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid ${advisor.color}15;">
+          <span style="font-size:10px;color:${advisor.color};font-weight:700;background:${advisor.color}10;padding:2px 8px;border-radius:5px;">${advisor.methodology}</span>
+        </div>${html}`);
+
+      advState.sections.push({ advisor, body:responseText, isCouncil:false });
+      results.push({ advisor, body:responseText });
+      advState.history.push({ role:'assistant', content:`[${advisor.name}]: ${responseText.substring(0,300)}` });
+
+    } catch (err) {
+      advRemoveTyping(typings[advisor.id]);
+      done++;
+      if (bar) bar.style.width = `${Math.round((done/total)*100)}%`;
+      advAppendBot(advisor.name, advisor.color, 'fa-exclamation-circle',
+        `<div style="color:#dc2626;font-size:13px;">تعذّر الاتصال: ${err.message}</div>`);
+    }
+  });
+
+  await Promise.allSettled(promises);
+
+  // Council synthesis
+  if (results.length > 0) {
+    const councilTyping = advAppendTyping('المجلس الموحد', '#1e40af', 'fa-chess-king');
+    try {
+      const summaries = results.map(r=>`### ${r.advisor.name}:\n${r.body.substring(0,500)}`).join('\n\n');
+      const system = `أنت رئيس المجلس الاستشاري. وحّد آراء المستشارين في قرار موحد يشمل: ### التوصية النهائية: ### مستوى الثقة: (%) ### الخطوات التنفيذية: (3 خطوات) ### الحكم الإجمالي: (مجدي/مشروط/غير مجدي). الرد بالعربية.`;
+      const content = `الفكرة: "${userMsg}"\n\nآراء المستشارين:\n${summaries}`;
+
+      const token = localStorage.getItem('ims_token') || '';
+      const res = await fetch(ADV_BACKEND, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
+        body: JSON.stringify({ system, messages:[{role:'user',content}], max_tokens:800 }),
+      });
+      const data = await res.json();
+      const councilText = data?.data?.content?.[0]?.text || data?.content?.[0]?.text || '';
+
+      advRemoveTyping(councilTyping);
+      advAppendBot('المجلس الموحد — القرار النهائي', '#1e40af', 'fa-chess-king',
+        `<div style="background:linear-gradient(135deg,#1e40af08,#7c3aed08);border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid #1e40af15;">
+          <div style="font-size:10px;color:#1e40af;font-weight:800;"><i class="fas fa-star" style="color:#f59e0b;margin-left:4px;"></i>توافق المجلس · Consensus</div>
+        </div>${advFormatCouncil(councilText)}`);
+
+      advState.sections.push({ advisor:null, body:councilText, isCouncil:true });
+      advState.history.push({ role:'assistant', content:`[قرار المجلس]: ${councilText.substring(0,300)}` });
+
+    } catch(err) {
+      advRemoveTyping(councilTyping);
+    }
+  }
+
+  // Done
+  if (prog) { setTimeout(()=>{ prog.style.display='none'; bar.style.width='0%'; }, 600); }
+  document.getElementById('adv-session-meta').textContent = `اكتمل التحليل — ${selected.length} مستشارين`;
+  advSetInput(true);
+  advState.processing = false;
+
+  if (!advState.hasResponse && results.length > 0) {
+    advState.hasResponse = true;
+    const pdfBtn = document.getElementById('adv-pdf-btn');
+    if (pdfBtn) pdfBtn.classList.add('adv-visible');
+  }
+}
+
+// ── Format HTML ───────────────────────────────────────────────
+function advFormatHTML(text, color) {
+  let h = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+  h = h.replace(/^(\d+)\.\s+(.+)$/gm, (m,n,c) => `<div style="background:${color}08;border-right:3px solid ${color}25;border-radius:6px;padding:6px 10px;margin:4px 0;font-size:13px;"><span style="color:${color};font-weight:700;margin-left:4px;">${n}.</span>${c}</div>`);
+  h = h.replace(/^[-•◆]\s+(.+)$/gm, (m,c) => `<div style="display:flex;gap:6px;padding:2px 6px;font-size:13px;"><span style="color:${color};flex-shrink:0;margin-top:3px;">◆</span><span>${c}</span></div>`);
+  h = h.replace(/###\s+(.+)/g, (m,t) => `<div style="font-weight:800;font-size:12px;color:${color};border-bottom:1px solid ${color}20;padding-bottom:3px;margin:10px 0 5px;"><i class="fas fa-angle-left" style="margin-left:4px;"></i>${t}</div>`);
+  h = h.replace(/\n\n/g,'<br>').replace(/\n/g,'<br>');
+  return `<div style="font-size:13px;line-height:1.8;color:#334155;">${h}</div>`;
+}
+
+function advFormatCouncil(text) {
+  let h = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h = h.replace(/###\s+(التوصية النهائية.+)/g,'<div style="background:linear-gradient(135deg,#1e40af,#3730a3);color:white;border-radius:8px;padding:10px 14px;margin:6px 0;font-size:13px;font-weight:700;"><i class="fas fa-gavel" style="margin-left:6px;"></i>$1</div>');
+  h = h.replace(/###\s+(الحكم الإجمالي.+)/g,'<div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;margin:8px 0;color:#92400e;font-weight:800;font-size:13px;"><i class="fas fa-balance-scale" style="margin-left:6px;color:#f59e0b;"></i>$1</div>');
+  h = h.replace(/###\s+(.+)/g,'<div style="font-weight:800;font-size:12px;color:#1e40af;border-bottom:1px solid #1e40af20;padding-bottom:3px;margin:10px 0 5px;"><i class="fas fa-angle-left" style="margin-left:4px;"></i>$1</div>');
+  h = h.replace(/^(\d+)\.\s+(.+)$/gm, (m,n,c) => `<div style="background:#eff6ff;border-right:3px solid #1e40af;border-radius:6px;padding:6px 10px;margin:4px 0;font-size:13px;color:#1e3a8a;"><span style="font-weight:800;color:#1e40af;margin-left:4px;">${n}.</span>${c}</div>`);
+  h = h.replace(/^[-•◆]\s+(.+)$/gm,(m,c)=>`<div style="display:flex;gap:6px;padding:2px 6px;font-size:13px;color:#334155;"><span style="color:#1e40af;flex-shrink:0;">◆</span><span>${c}</span></div>`);
+  h = h.replace(/\n\n/g,'<br>').replace(/\n/g,'<br>');
+  return `<div style="font-size:13px;line-height:1.8;">${h}</div>`;
+}
+
+// ── Chat helpers ──────────────────────────────────────────────
+function advSetInput(on) {
+  ['adv-input','adv-send-btn','adv-upload-btn'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.disabled = !on;
+  });
+}
+
+function advAppendUser(text) {
+  const chat = document.getElementById('adv-chat');
+  if (!chat) return;
+  const d = document.createElement('div');
+  d.className = 'adv-msg-user adv-fade';
+  d.innerHTML = `<i class="fas fa-user" style="font-size:10px;opacity:.7;margin-left:6px;"></i>${text.replace(/</g,'&lt;')}`;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function advAppendBot(name, color, icon, html) {
+  const chat = document.getElementById('adv-chat');
+  if (!chat) return;
+  const d = document.createElement('div');
+  d.className = 'adv-msg-bot adv-fade';
+  d.innerHTML = `
+    <div class="adv-msg-header">
+      <div class="adv-avatar" style="background:${color};"><i class="fas ${icon}" style="font-size:10px;"></i></div>
+      <div><div style="font-weight:700;font-size:11px;color:${color};">${name}</div>
+      <div style="font-size:9px;color:#94a3b8;">${new Date().toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})}</div></div>
+    </div>
+    <div class="adv-msg-body">${html}</div>`;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+let advTypingCnt = 0;
+function advAppendTyping(name, color, icon) {
+  const id = 'advt-'+(++advTypingCnt);
+  const chat = document.getElementById('adv-chat');
+  if (!chat) return id;
+  const d = document.createElement('div');
+  d.id = id; d.className = 'adv-msg-bot adv-fade';
+  d.innerHTML = `
+    <div class="adv-msg-header">
+      <div class="adv-avatar" style="background:${color};"><i class="fas ${icon}" style="font-size:10px;"></i></div>
+      <div style="font-weight:700;font-size:11px;color:${color};">${name}</div>
+    </div>
+    <div class="adv-msg-body" style="display:flex;align-items:center;gap:3px;padding:10px 14px 8px;">
+      <span style="font-size:11px;color:#94a3b8;margin-left:4px;">يحلل</span>
+      <span class="adv-dot"></span><span class="adv-dot"></span><span class="adv-dot"></span>
+    </div>`;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+  return id;
+}
+
+function advRemoveTyping(id) { document.getElementById(id)?.remove(); }
+
+function advShowToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:8px 18px;border-radius:10px;font-size:13px;z-index:9999;font-family:inherit;';
+  t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500);
+}
+
+function advReset() {
+  advState = { selected:[], started:false, topic:null, history:[], sections:[], hasResponse:false, processing:false, uploadContent:null, uploadName:null };
+  loadAdvisoryCouncil();
+}
+
+// ── PDF Report ────────────────────────────────────────────────
+function advGeneratePDF() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Riyadh'});
+  const advisors = advState.selected.map(id=>ADV_ADVISORS.find(x=>x.id===id));
+
+  let sectionsHTML = advState.sections.filter(s=>!s.isCouncil).map((s,i)=>{
+    const a = s.advisor; if(!a) return '';
+    const body = s.body.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/###\s+(.+)/g,'<div style="font-weight:800;color:'+a.color+';margin:10px 0 5px;">$1</div>').replace(/\n/g,'<br>');
+    return `<div style="border-right:4px solid ${a.color};border-radius:10px;overflow:hidden;margin-bottom:20px;page-break-inside:avoid;">
+      <div style="background:${a.color}10;padding:14px 18px;border-bottom:1px solid ${a.color}20;display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;border-radius:9px;background:${a.color};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;">${a.avatar}</div>
+        <div><div style="font-weight:800;font-size:14px;color:${a.color};">${a.name}</div><div style="font-size:11px;color:#64748b;">${a.methodology}</div></div>
+      </div>
+      <div style="padding:16px 20px;font-size:13px;line-height:1.8;color:#334155;">${body}</div>
+    </div>`;
+  }).join('');
+
+  const council = advState.sections.find(s=>s.isCouncil);
+  const councilHTML = council ? council.body.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/###\s+(التوصية.+)/g,'<div style="background:#1e40af;color:white;padding:10px 14px;border-radius:8px;margin:8px 0;font-weight:700;">$1</div>').replace(/###\s+(.+)/g,'<div style="font-weight:800;color:#1e40af;margin:10px 0 5px;">$1</div>').replace(/\n/g,'<br>') : '';
+
+  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"/><title>تقرير المجلس</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Tahoma,Arial,sans-serif;background:#fff;color:#1e293b;direction:rtl;}
+  .cover{background:linear-gradient(135deg,#0f172a,#1e293b);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;page-break-after:always;}
+  .page{padding:40px 48px;max-width:860px;margin:0 auto;}
+  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}</style></head><body>
+  <div class="cover">
+    <div style="font-size:14px;color:#60a5fa;font-weight:600;letter-spacing:3px;margin-bottom:8px;">IMS QHSE</div>
+    <div style="font-size:36px;font-weight:900;color:white;margin-bottom:8px;">تقرير المجلس الاستشاري</div>
+    <div style="font-size:16px;color:#94a3b8;margin-bottom:40px;">تحليل استراتيجي شامل</div>
+    <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px 28px;max-width:560px;margin:0 auto 32px;">
+      <div style="font-size:11px;color:#60a5fa;font-weight:700;letter-spacing:2px;margin-bottom:8px;">موضوع الجلسة</div>
+      <div style="font-size:17px;color:white;font-weight:700;">${advState.topic||'جلسة استشارية'}</div>
+    </div>
+    <div style="font-size:13px;color:#64748b;">${dateStr} · ${advisors.length} مستشارين</div>
+  </div>
+  <div class="page">
+    <div style="font-size:20px;font-weight:800;color:#1e293b;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #e2e8f0;">تحليلات المستشارين</div>
+    ${sectionsHTML}
+    ${councilHTML?`<div style="page-break-before:always;margin-top:32px;">
+      <div style="font-size:20px;font-weight:800;color:#1e40af;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #1e40af30;">قرار المجلس الموحد</div>
+      <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:24px;font-size:13px;line-height:1.8;">${councilHTML}</div>
+    </div>`:''}
+  </div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),800);<\/script>
+  </body></html>`;
+
+  const w = window.open('','_blank','width=860,height:700');
+  if (w) { w.document.write(html); w.document.close(); }
+  else advShowToast('يرجى السماح بفتح النوافذ المنبثقة');
+}
 // ── Subscription ─────────────────────────────
 function loadSubscription() {
   const PLANS = {
