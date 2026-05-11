@@ -701,7 +701,7 @@ async function callAdvisorAPI(advisor, userMsg, fileContext, conversationContext
 
   const userContent = userMsg + fileContext + contextNote;
 
-  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/v1/advisory-sessions/chat', {
+  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/advisory-sessions/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
     body: JSON.stringify({
@@ -742,7 +742,7 @@ async function callCouncilSynthesis(userMsg, advisorResponses) {
 
   const userContent = `الفكرة/المشروع المطروح: "${userMsg}"\n\nآراء المستشارين:\n\n${summaries}`;
 
-  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/v1/advisory-sessions/chat', {
+  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/advisory-sessions/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
     body: JSON.stringify({
