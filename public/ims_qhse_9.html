@@ -11291,7 +11291,7 @@ async function advSend() {
     try{
       var system=ADV_PERSONAS[advisor.id]||('أنت '+advisor.name+'، '+advisor.title+'. منهجيتك: '+advisor.methodology+'.');
       var content=userMsg+fileCtx+(ctx?('\n\nسياق سابق:\n'+ctx):'');
-      var res=await fetch(ADV_BACKEND,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({system:system,messages:[{role:'user',content:content}],max_tokens:1200})});
+      var res=await fetch(ADV_BACKEND,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({system:system,messages:[{role:'user',content:content}],max_tokens:3000})});
       var json=await res.json();
       var txt='';
       if(json&&json.data&&json.data.content&&json.data.content[0]&&json.data.content[0].text)txt=json.data.content[0].text;
@@ -11652,7 +11652,7 @@ function advGenPDF() {
     var depth = score>=85?'عالٍ':score>=70?'متوسط':'مقبول';
     var body  = cleanToHtml(s.body, a.color);
 
-    return '<div style="page-break-before:always;">'
+    return '<div style="page-break-before:always;overflow:visible;">'
       // رأس المستشار
       + '<div style="background:'+a.color+';padding:16px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'
         + '<div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:white;flex-shrink:0;">'+a.avatar+'</div>'
@@ -11685,7 +11685,7 @@ function advGenPDF() {
       + '</table>'
 
       // محتوى التحليل
-      + '<div style="border:1px solid '+a.color+'30;border-top:none;border-radius:0 0 10px 10px;padding:20px;">'
+      + '<div style="border:1px solid '+a.color+'30;border-top:none;border-radius:0 0 10px 10px;padding:20px;overflow:visible;min-height:auto;">'
         + body
       + '</div>'
     + '</div>';
