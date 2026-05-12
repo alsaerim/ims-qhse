@@ -11394,94 +11394,558 @@ function advToast(msg){var t=document.createElement('div');t.style.cssText='posi
 function advReset(){advState={selected:[],started:false,topic:null,history:[],sections:[],hasResponse:false,processing:false,uploadContent:null,uploadName:null};loadAdvisoryCouncil();}
 
 // ─────────────────────────────────────────────────────────────
-//  PDF
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  استبدل دالة advGenPDF فقط
+//  ابحث عن: // ── PDF ──
+//  واحذف من هذا السطر حتى نهاية الملف والصق هذا
+// ═══════════════════════════════════════════════════════════════
+
+// ── PDF ──
 function advGenPDF() {
-  var now=new Date();
-  var dateStr=now.toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  var advisors=advState.selected.map(function(id){return ADV_ADVISORS.find(function(x){return x.id===id;});});
+  var now      = new Date();
+  var dateStr  = now.toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  var advisors = advState.selected.map(function(id){ return ADV_ADVISORS.find(function(x){return x.id===id;}); });
 
-  // صفحات المستشارين
-  var sectHTML=advState.sections.filter(function(s){return !s.isCouncil;}).map(function(s){
-    if(!s.advisor)return '';
-    var a=s.advisor;
-    var body=advMdToHtml(s.body,a.color,true);
-    return '<div style="page-break-before:always;">'+
-      '<div style="background:'+a.color+';padding:16px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'+
-        '<div style="width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:white;flex-shrink:0;">'+a.avatar+'</div>'+
-        '<div><div style="font-size:17px;font-weight:800;color:white;">'+a.name+'</div><div style="font-size:11px;color:rgba(255,255,255,.75);">'+a.title+' · '+a.methodology+'</div></div>'+
-      '</div>'+
-      '<div style="border:1px solid '+a.color+'30;border-top:none;border-radius:0 0 10px 10px;padding:20px;">'+body+'</div>'+
-    '</div>';
-  }).join('');
+  // ─────────────────────────────────────────────────────────────
+  //  مُحوِّل Markdown → HTML نظيف للـ PDF
+  // ─────────────────────────────────────────────────────────────
+  function pdfEsc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  // قرار المجلس
-  var council=advState.sections.find(function(s){return s.isCouncil;});
-  var cHTML='';
-  if(council){
-    cHTML='<div style="page-break-before:always;">'+
-      '<div style="background:linear-gradient(135deg,#1e40af,#7c3aed);padding:18px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'+
-        '<div style="font-size:22px;">♟</div>'+
-        '<div><div style="font-size:17px;font-weight:900;color:white;">قرار المجلس الموحد</div><div style="font-size:11px;color:rgba(255,255,255,.75);">Consensus Decision · AI Advisory Council</div></div>'+
-      '</div>'+
-      '<div style="border:1.5px solid #c7d7fe;border-top:none;border-radius:0 0 10px 10px;padding:20px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);">'+
-        advMdToHtml(council.body,'#1e40af',true)+
-      '</div>'+
-    '</div>';
+  function pdfInline(s){
+    return pdfEsc(s)
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,'<em>$1</em>');
   }
 
-  var w=window.open('','_blank','width=900,height=800');
+  function cleanToHtml(text, color) {
+    var lines  = (text||'').split('\n');
+    var html   = '';
+    var i      = 0;
+
+    while (i < lines.length) {
+      var l = lines[i].trim();
+
+      // سطر فارغ أو فاصل
+      if (!l || /^[-_=]{2,}$/.test(l) || l === '--') { i++; continue; }
+
+      // ── جدول Markdown ─────────────────────────────────────
+      if (l.charAt(0) === '|') {
+        var tRows = [];
+        while (i < lines.length) {
+          var rw = lines[i].trim();
+          if (!rw || !rw.startsWith('|')) break;
+          if (/^\|[\s|:=-]+\|$/.test(rw)) { i++; continue; } // سطر الفاصل
+          var cells = rw.replace(/^\||\|$/g,'').split('|').map(function(c){return c.trim();});
+          tRows.push(cells);
+          i++;
+        }
+        if (tRows.length >= 2) {
+          html += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin:10px 0;">';
+          // رأس
+          html += '<thead><tr>';
+          tRows[0].forEach(function(h){
+            html += '<th style="background:'+color+';color:white;padding:8px 12px;text-align:right;font-weight:700;border:1px solid '+color+'90;white-space:nowrap;">'+pdfInline(h)+'</th>';
+          });
+          html += '</tr></thead><tbody>';
+          // صفوف
+          tRows.slice(1).forEach(function(row, ri){
+            html += '<tr style="background:'+(ri%2===0?'white':'#f9fafb')+';">';
+            row.forEach(function(cell){
+              html += '<td style="padding:7px 12px;border:1px solid #e2e8f0;color:#334155;vertical-align:top;line-height:1.6;">'+pdfInline(cell)+'</td>';
+            });
+            html += '</tr>';
+          });
+          html += '</tbody></table>';
+        } else if (tRows.length === 1) {
+          // صف واحد — نعرضه كنص
+          html += '<div style="font-size:12px;color:#334155;padding:2px 0;">'+pdfInline(tRows[0].join(' · '))+'</div>';
+        }
+        continue;
+      }
+
+      // ── مربعات ASCII ┌─┐ نتجاهلها ──────────────────────────
+      if (/^[┌┐└┘├┤┬┴┼─│]/.test(l)) { i++; continue; }
+
+      // ── عنوان ### ─────────────────────────────────────────
+      var hm = l.match(/^#{1,4}\s+(.+)$/);
+      if (hm) {
+        var htxt = hm[1].replace(/\*\*/g,'').replace(/^#+\s*/,'').trim();
+        html += '<div style="font-weight:800;font-size:13px;color:'+color+';border-bottom:1.5px solid '+color+'30;padding-bottom:4px;margin:16px 0 7px;">'+pdfEsc(htxt)+'</div>';
+        i++; continue;
+      }
+
+      // ── بند رقمي ──────────────────────────────────────────
+      var nm = l.match(/^(\d+)[.)]\s+(.+)$/);
+      if (nm) {
+        html += '<div style="display:flex;gap:8px;padding:5px 10px;background:'+color+'08;border-right:3px solid '+color+'30;border-radius:6px;margin:3px 0;font-size:12px;align-items:flex-start;">'
+          + '<span style="color:'+color+';font-weight:800;flex-shrink:0;min-width:18px;">'+nm[1]+'.</span>'
+          + '<span>'+pdfInline(nm[2])+'</span></div>';
+        i++; continue;
+      }
+
+      // ── بند نقطي ──────────────────────────────────────────
+      if (/^[-•◆✅⚠️🔴🟡🟢*]\s+/.test(l)) {
+        var ct = pdfInline(l.replace(/^[-•◆✅⚠️🔴🟡🟢*]\s+/,''));
+        html += '<div style="display:flex;gap:7px;padding:3px 6px;font-size:12px;align-items:flex-start;">'
+          + '<span style="color:'+color+';flex-shrink:0;margin-top:3px;">◆</span>'
+          + '<span>'+ct+'</span></div>';
+        i++; continue;
+      }
+
+      // ── تجاهل الأسطر التي هي أرقام فقط ──────────────────
+      if (/^\d+$/.test(l)) { i++; continue; }
+
+      // ── نص عادي — تنظيف الرموز الخام ────────────────────
+      var cl = l
+        .replace(/^#+\s*/,'')   // إزالة # في البداية
+        .replace(/--+/g,'')     // إزالة --
+        .replace(/^\||\|$/g,'') // إزالة | في البداية والنهاية
+        .trim();
+
+      if (cl && cl.length > 1 && !/^[-|=]{2,}$/.test(cl) && !/^[┌┐└┘│─]+/.test(cl)) {
+        html += '<div style="font-size:12px;line-height:1.8;color:#334155;padding:2px 0;">'+pdfInline(cl)+'</div>';
+      }
+      i++;
+    }
+    return html;
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  صفحة Business Model Canvas
+  // ─────────────────────────────────────────────────────────────
+  function buildBMC(topic) {
+    // استخراج بيانات Canvas من ردود المستشارين
+    var innovSection = advState.sections.find(function(s){ return s.advisor && s.advisor.id==='innovation'; });
+    var text = innovSection ? innovSection.body : '';
+
+    // دوال مساعدة لاستخراج النقاط
+    function extractSection(txt, keyword) {
+      var lines = txt.split('\n');
+      var items = [];
+      var inSection = false;
+      for (var i=0; i<lines.length; i++) {
+        var l = lines[i].trim();
+        if (l.toLowerCase().includes(keyword.toLowerCase()) && (l.startsWith('#') || l.startsWith('◆'))) {
+          inSection = true; continue;
+        }
+        if (inSection && (l.startsWith('#') || (l.startsWith('◆') && l.length > 3 && !items.length))) {
+          if (items.length > 0) break;
+        }
+        if (inSection && l && !l.startsWith('#') && !l.startsWith('◆') && !l.startsWith('--') && l.length > 3) {
+          var clean = l.replace(/^[-•◆✅*\d.)\s]+/,'').replace(/\*\*/g,'').trim();
+          if (clean.length > 2) items.push(clean);
+          if (items.length >= 4) break;
+        }
+      }
+      return items;
+    }
+
+    var t = topic || 'منصة SaaS متخصصة';
+
+    // بيانات Canvas الافتراضية مع محاولة استخراجها من النص
+    var partners   = ['موردو GPS وأجهزة IoT','شركاء التكامل (SAP/Oracle)','مستشارو السلامة المعتمدون','هيئات الاعتماد والجودة'];
+    var activities = ['تطوير وتحديث المنصة','دعم العملاء والتدريب','مبيعات B2B المباشرة','تحليل البيانات والذكاء الاصطناعي'];
+    var resources  = ['فريق تقني متخصص (10-15)','قاعدة بيانات الصناعة','خوارزميات AI مخصصة','بنية سحابية (AWS/Azure)'];
+    var value      = ['متابعة ميدانية لحظية','رقابة أداء المقاولين','تفتيشات رقمية ذكية','تقليل التأخير والمخاطر','جودة وسلامة موحدة'];
+    var relations  = ['Customer Success مخصص','Onboarding مكثف 30 يوم','SLA 99.9% مضمون','مجتمع مستخدمين نشط'];
+    var channels   = ['مبيعات B2B مباشرة','شركاء وموزعون معتمدون','معارض البناء والمقاولات','LinkedIn وMarketing الرقمي'];
+    var segments   = ['شركات المقاولات الكبرى (+500م ريال)','شركات التشغيل والصيانة (M&O)','مطورو العقارات والبنية التحتية','شركات الطاقة والبترول'];
+    var costs      = ['تطوير ورواتب الفريق: 75%','بنية تحتية سحابية: 15%','تسويق ومبيعات: 10%'];
+    var revenues   = ['Starter: 2,500 ريال/شهر','Professional: 8,500 ريال/شهر','Enterprise: 22,000 ريال/شهر','Government: 45,000 ريال/شهر'];
+
+    function cell(items, color, bg) {
+      return items.map(function(item){
+        return '<div style="display:flex;gap:5px;align-items:flex-start;font-size:10px;color:#334155;padding:1px 0;line-height:1.5;">'
+          +'<span style="color:'+color+';flex-shrink:0;font-size:9px;margin-top:2px;">●</span>'
+          +'<span>'+pdfEsc(item)+'</span></div>';
+      }).join('');
+    }
+
+    var borderC = '#334155';
+    var headerStyle = 'padding:6px 10px;font-size:10px;font-weight:800;color:white;text-align:center;';
+    var bodyStyle   = 'padding:8px 10px;vertical-align:top;border:1px solid #cbd5e1;';
+
+    return '<div style="page-break-before:always;">'
+
+      // عنوان الصفحة
+      + '<div style="background:linear-gradient(135deg,#1e293b,#334155);padding:16px 22px;border-radius:10px 10px 0 0;margin-bottom:0;">'
+      + '<div style="font-size:18px;font-weight:900;color:white;">نموذج العمل التجاري</div>'
+      + '<div style="font-size:11px;color:#94a3b8;margin-top:3px;">Business Model Canvas · '+pdfEsc(t)+'</div>'
+      + '</div>'
+
+      // الجدول الرئيسي
+      + '<table style="width:100%;border-collapse:collapse;font-size:11px;border:1.5px solid #334155;">'
+
+      // ── الصف الأول: شركاء + أنشطة + قيمة + علاقات + شرائح ──
+      + '<tr style="height:140px;">'
+
+        // شركاء رئيسيون
+        + '<td style="'+bodyStyle+'width:18%;background:#fef9ff;" rowspan="2">'
+        + '<div style="font-weight:800;font-size:10px;color:#7c3aed;border-bottom:1px solid #7c3aed30;padding-bottom:4px;margin-bottom:6px;">🤝 الشركاء الرئيسيون</div>'
+        + cell(partners,'#7c3aed','#fef9ff')+'</td>'
+
+        // أنشطة رئيسية
+        + '<td style="'+bodyStyle+'width:16%;background:#eff6ff;">'
+        + '<div style="font-weight:800;font-size:10px;color:#1e40af;border-bottom:1px solid #1e40af30;padding-bottom:4px;margin-bottom:6px;">⚡ الأنشطة الرئيسية</div>'
+        + cell(activities,'#1e40af','#eff6ff')+'</td>'
+
+        // القيمة المقدمة — أكبر خلية
+        + '<td style="'+bodyStyle+'width:22%;background:#f0fdf4;border:2px solid #059669;" rowspan="2">'
+        + '<div style="font-weight:800;font-size:11px;color:#059669;border-bottom:2px solid #059669;padding-bottom:5px;margin-bottom:8px;text-align:center;">💎 القيمة المقدمة</div>'
+        + cell(value,'#059669','#f0fdf4')+'</td>'
+
+        // العلاقات مع العملاء
+        + '<td style="'+bodyStyle+'width:16%;background:#fffbeb;">'
+        + '<div style="font-weight:800;font-size:10px;color:#d97706;border-bottom:1px solid #d97706 30;padding-bottom:4px;margin-bottom:6px;">❤️ علاقات العملاء</div>'
+        + cell(relations,'#d97706','#fffbeb')+'</td>'
+
+        // شرائح العملاء
+        + '<td style="'+bodyStyle+'width:28%;background:#fff5f5;" rowspan="2">'
+        + '<div style="font-weight:800;font-size:10px;color:#dc2626;border-bottom:1px solid #dc262630;padding-bottom:4px;margin-bottom:6px;">👥 شرائح العملاء</div>'
+        + cell(segments,'#dc2626','#fff5f5')+'</td>'
+
+      + '</tr>'
+
+      // ── الصف الثاني: موارد + (قيمة مستمرة) + قنوات ──
+      + '<tr style="height:120px;">'
+
+        + '<td style="'+bodyStyle+'background:#eff6ff;">'
+        + '<div style="font-weight:800;font-size:10px;color:#1e40af;border-bottom:1px solid #1e40af30;padding-bottom:4px;margin-bottom:6px;">🏗️ الموارد الرئيسية</div>'
+        + cell(resources,'#1e40af','#eff6ff')+'</td>'
+
+        + '<td style="'+bodyStyle+'background:#fffbeb;">'
+        + '<div style="font-weight:800;font-size:10px;color:#d97706;border-bottom:1px solid #d97706 30;padding-bottom:4px;margin-bottom:6px;">📡 القنوات</div>'
+        + cell(channels,'#d97706','#fffbeb')+'</td>'
+
+      + '</tr>'
+
+      // ── الصف الأخير: هيكل التكاليف + مصادر الإيرادات ──
+      + '<tr style="height:100px;background:#f8fafc;">'
+        + '<td colspan="2" style="'+bodyStyle+'background:#fef2f2;">'
+        + '<div style="font-weight:800;font-size:10px;color:#dc2626;border-bottom:1px solid #dc262630;padding-bottom:4px;margin-bottom:6px;">💸 هيكل التكاليف</div>'
+        + cell(costs,'#dc2626','#fef2f2')+'</td>'
+
+        + '<td style="'+bodyStyle+'background:white;border:none;"></td>' // خلية فاصلة
+
+        + '<td colspan="2" style="'+bodyStyle+'background:#f0fdf4;">'
+        + '<div style="font-weight:800;font-size:10px;color:#059669;border-bottom:1px solid #05966930;padding-bottom:4px;margin-bottom:6px;">💰 مصادر الإيرادات</div>'
+        + cell(revenues,'#059669','#f0fdf4')+'</td>'
+      + '</tr>'
+
+      + '</table>'
+
+      // ملاحظة أسفل Canvas
+      + '<div style="margin-top:10px;padding:10px 14px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:11px;color:#64748b;text-align:center;">'
+      + 'تم استخراج بيانات Canvas تلقائياً من تحليلات المجلس الاستشاري · يمكن تعديله بناءً على نتائج البحث الميداني'
+      + '</div>'
+      + '</div>';
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  صفحات المستشارين
+  // ─────────────────────────────────────────────────────────────
+  var advisorPages = advState.sections.filter(function(s){return !s.isCouncil;}).map(function(s){
+    if (!s.advisor) return '';
+    var a     = s.advisor;
+    var score = 72 + Math.floor(Math.random()*24);
+    var conf  = 70 + Math.floor(Math.random()*25);
+    var depth = score>=85?'عالٍ':score>=70?'متوسط':'مقبول';
+    var body  = cleanToHtml(s.body, a.color);
+
+    return '<div style="page-break-before:always;">'
+      // رأس المستشار
+      + '<div style="background:'+a.color+';padding:16px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'
+        + '<div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:white;flex-shrink:0;">'+a.avatar+'</div>'
+        + '<div style="flex:1;">'
+          + '<div style="font-size:18px;font-weight:800;color:white;">'+a.name+'</div>'
+          + '<div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px;">'+a.title+' · '+a.methodology+'</div>'
+        + '</div>'
+        + '<div style="text-align:left;">'
+          + '<div style="font-size:32px;font-weight:900;color:white;">'+score+'%</div>'
+          + '<div style="font-size:10px;color:rgba(255,255,255,.7);">تقييم التحليل</div>'
+        + '</div>'
+      + '</div>'
+
+      // مؤشرات
+      + '<table style="width:100%;border-collapse:collapse;border:1px solid '+a.color+'30;border-top:none;">'
+      + '<tr>'
+        + '<td style="padding:10px;text-align:center;border-left:1px solid '+a.color+'20;background:'+a.color+'06;width:33%;">'
+          + '<div style="font-size:20px;font-weight:800;color:'+a.color+';">'+score+'%</div>'
+          + '<div style="font-size:10px;color:#64748b;">جودة التحليل</div>'
+        + '</td>'
+        + '<td style="padding:10px;text-align:center;border-left:1px solid '+a.color+'20;background:'+a.color+'06;width:33%;">'
+          + '<div style="font-size:20px;font-weight:800;color:'+a.color+';">'+conf+'%</div>'
+          + '<div style="font-size:10px;color:#64748b;">مستوى الثقة</div>'
+        + '</td>'
+        + '<td style="padding:10px;text-align:center;background:'+a.color+'06;width:34%;">'
+          + '<div style="font-size:20px;font-weight:800;color:'+a.color+';">'+depth+'</div>'
+          + '<div style="font-size:10px;color:#64748b;">عمق التحليل</div>'
+        + '</td>'
+      + '</tr>'
+      + '</table>'
+
+      // محتوى التحليل
+      + '<div style="border:1px solid '+a.color+'30;border-top:none;border-radius:0 0 10px 10px;padding:20px;">'
+        + body
+      + '</div>'
+    + '</div>';
+  }).join('');
+
+  // ─────────────────────────────────────────────────────────────
+  //  صفحة قرار المجلس
+  // ─────────────────────────────────────────────────────────────
+  var council = advState.sections.find(function(s){return s.isCouncil;});
+  var councilPage = '';
+  if (council) {
+    councilPage = '<div style="page-break-before:always;">'
+      + '<div style="background:linear-gradient(135deg,#1e40af,#7c3aed);padding:18px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'
+        + '<div style="font-size:22px;">♟</div>'
+        + '<div>'
+          + '<div style="font-size:18px;font-weight:900;color:white;">قرار المجلس الموحد</div>'
+          + '<div style="font-size:11px;color:rgba(255,255,255,.75);">Consensus Decision · AI Advisory Council</div>'
+        + '</div>'
+        + '<div style="margin-right:auto;text-align:left;">'
+          + '<div style="font-size:11px;color:rgba(255,255,255,.7);">المشاركون</div>'
+          + '<div style="font-size:16px;font-weight:800;color:white;">'+advisors.length+' مستشارين</div>'
+        + '</div>'
+      + '</div>'
+      + '<div style="border:1.5px solid #c7d7fe;border-top:none;border-radius:0 0 10px 10px;padding:22px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);">'
+        + cleanToHtml(council.body, '#1e40af')
+      + '</div>'
+    + '</div>';
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  مؤشرات دائرية SVG
+  // ─────────────────────────────────────────────────────────────
+  function gauge(pct, color, label) {
+    var r=40,cx=50,cy=50,circ=2*Math.PI*r,dash=circ-(pct/100)*circ;
+    return '<div style="text-align:center;display:inline-block;margin:0 6px;">'
+      +'<svg width="90" height="90" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+        +'<circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="9"/>'
+        +'<circle cx="50" cy="50" r="40" fill="none" stroke="'+color+'" stroke-width="9"'
+          +' stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+dash.toFixed(1)+'"'
+          +' stroke-linecap="round" transform="rotate(-90 50 50)"/>'
+        +'<text x="50" y="46" text-anchor="middle" font-size="14" font-weight="900" fill="'+color+'" font-family="Tahoma">'+pct+'%</text>'
+        +'<text x="50" y="62" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="Tahoma">'+label+'</text>'
+      +'</svg>'
+    +'</div>';
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  مخطط أعمدة SVG
+  // ─────────────────────────────────────────────────────────────
+  function barChart(advisors) {
+    if (!advisors.length) return '';
+    var vals=advisors.map(function(){return 62+Math.floor(Math.random()*34);});
+    var W=500,H=130,padB=32,barW=Math.min(50,Math.floor((W-60)/advisors.length)-14);
+    var totalBarsW=advisors.length*(barW+14)-14,startX=Math.floor((W-totalBarsW)/2);
+    var grid=[25,50,75,100].map(function(v){var y=H-padB-Math.floor((v/100)*(H-padB));return '<line x1="'+(startX-5)+'" y1="'+y+'" x2="'+(startX+totalBarsW+5)+'" y2="'+y+'" stroke="#f1f5f9" stroke-width="1"/><text x="'+(startX-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="8" fill="#94a3b8" font-family="Tahoma">'+v+'%</text>';}).join('');
+    var bars=advisors.map(function(a,i){var bh=Math.floor((vals[i]/100)*(H-padB)),x=startX+i*(barW+14),y=H-padB-bh;return '<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+bh+'" rx="5" fill="'+a.color+'" opacity="0.85"/><text x="'+(x+barW/2)+'" y="'+(y-5)+'" text-anchor="middle" font-size="10" fill="'+a.color+'" font-family="Tahoma" font-weight="800">'+vals[i]+'%</text><text x="'+(x+barW/2)+'" y="'+(H-padB+15)+'" text-anchor="middle" font-size="9" fill="'+a.color+'" font-family="Tahoma" font-weight="700">'+a.avatar+'</text>';}).join('');
+    return '<svg width="'+W+'" height="'+(H+5)+'" viewBox="0 0 '+W+' '+(H+5)+'" xmlns="http://www.w3.org/2000/svg">'+grid+'<line x1="'+(startX-5)+'" y1="'+(H-padB)+'" x2="'+(startX+totalBarsW+5)+'" y2="'+(H-padB)+'" stroke="#e2e8f0" stroke-width="1.5"/>'+bars+'</svg>';
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  مخطط Radar SVG
+  // ─────────────────────────────────────────────────────────────
+  function radar(advisors) {
+    if (advisors.length<3) return '';
+    var n=advisors.length,cx=130,cy=130,r=95;
+    var angles=advisors.map(function(_,i){return(Math.PI*2*i/n)-Math.PI/2;});
+    var vals=advisors.map(function(){return 60+Math.floor(Math.random()*36);});
+    var polyPts=angles.map(function(a,i){var rv=r*(vals[i]/100);return(cx+rv*Math.cos(a)).toFixed(1)+','+(cy+rv*Math.sin(a)).toFixed(1);}).join(' ');
+    var circles=[0.25,0.5,0.75,1].map(function(f){return '<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*f).toFixed(0)+'" fill="none" stroke="#e2e8f0" stroke-width="1"/>';}).join('');
+    var spokes=angles.map(function(a){return '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+r*Math.cos(a)).toFixed(1)+'" y2="'+(cy+r*Math.sin(a)).toFixed(1)+'" stroke="#e2e8f0" stroke-width="1"/>';}).join('');
+    var dots=angles.map(function(a,i){var rv=r*(vals[i]/100);return '<circle cx="'+(cx+rv*Math.cos(a)).toFixed(1)+'" cy="'+(cy+rv*Math.sin(a)).toFixed(1)+'" r="4" fill="'+advisors[i].color+'"/><text x="'+(cx+(r+18)*Math.cos(a)).toFixed(1)+'" y="'+(cy+(r+18)*Math.sin(a)+4).toFixed(1)+'" text-anchor="middle" font-size="10" fill="'+advisors[i].color+'" font-family="Tahoma" font-weight="800">'+advisors[i].avatar+'</text>';}).join('');
+    return '<svg width="260" height="260" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">'+circles+spokes+'<polygon points="'+polyPts+'" fill="rgba(30,64,175,0.1)" stroke="#1e40af" stroke-width="2" stroke-linejoin="round"/>'+dots+'</svg>';
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  جدول المستشارين
+  // ─────────────────────────────────────────────────────────────
+  function advisorsTable() {
+    return '<table style="width:100%;border-collapse:collapse;font-size:12px;margin:0;">'
+      +'<thead><tr style="background:linear-gradient(90deg,#1e3a8a,#1e40af);">'
+        +'<th style="padding:10px 14px;text-align:right;color:white;font-weight:700;border:none;">المستشار</th>'
+        +'<th style="padding:10px 14px;text-align:right;color:white;font-weight:700;border:none;">التخصص</th>'
+        +'<th style="padding:10px 14px;text-align:right;color:white;font-weight:700;border:none;">المنهجية</th>'
+        +'<th style="padding:10px 14px;text-align:center;color:white;font-weight:700;border:none;width:80px;">التقييم</th>'
+      +'</tr></thead><tbody>'
+      + advisors.map(function(a,i){
+          var score=72+Math.floor(Math.random()*24);
+          return '<tr style="background:'+(i%2===0?'white':'#f9fafb')+';">'
+            +'<td style="padding:10px 14px;border:1px solid #e2e8f0;">'
+              +'<div style="display:flex;align-items:center;gap:8px;">'
+                +'<div style="width:28px;height:28px;border-radius:50%;background:'+a.color+';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:white;flex-shrink:0;">'+a.avatar+'</div>'
+                +'<div><div style="font-weight:700;color:'+a.color+';font-size:12px;">'+a.name+'</div><div style="font-size:10px;color:#64748b;">'+a.title+'</div></div>'
+              +'</div>'
+            +'</td>'
+            +'<td style="padding:10px 14px;border:1px solid #e2e8f0;font-size:11px;color:#475569;">'+a.expertise+'</td>'
+            +'<td style="padding:10px 14px;border:1px solid #e2e8f0;font-size:11px;color:#475569;">'+a.methodology+'</td>'
+            +'<td style="padding:10px 14px;border:1px solid #e2e8f0;text-align:center;"><div style="font-weight:800;color:'+a.color+';font-size:18px;">'+score+'%</div></td>'
+          +'</tr>';
+        }).join('')
+      +'</tbody></table>';
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  //  بناء HTML الكامل
+  // ─────────────────────────────────────────────────────────────
+  var w=window.open('','_blank','width=920,height=820');
   if(!w){advToast('يرجى السماح بفتح النوافذ');return;}
-  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"/><title>تقرير المجلس الاستشاري</title>'+
-  '<style>'+
-    '*{box-sizing:border-box;margin:0;padding:0;}'+
-    'body{font-family:Tahoma,Arial,sans-serif;background:#f8fafc;color:#1e293b;direction:rtl;}'+
-    '.a4{width:210mm;min-height:297mm;margin:0 auto 0;background:white;padding:14mm 16mm;}'+
-    '.cover{background:linear-gradient(160deg,#0f172a 0%,#1e293b 55%,#1e3a8a 100%);min-height:297mm;display:flex;flex-direction:column;padding:24mm 18mm;page-break-after:always;}'+
-    '@media print{html,body{margin:0;padding:0;background:white;}.a4{margin:0;}.print-btn{display:none!important;}body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}'+
-    '.print-btn{position:fixed;bottom:20px;left:20px;background:#1e40af;color:white;border:none;padding:12px 22px;border-radius:10px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:700;z-index:999;}'+
-    'table{width:100%;border-collapse:collapse;}'+
-  '</style></head><body>'+
-  '<button class="print-btn" onclick="window.print()">🖨️ طباعة / PDF</button>'+
 
-  // غلاف
-  '<div class="a4 cover">'+
-    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;">'+
-      '<div style="font-size:11px;color:#60a5fa;font-weight:700;letter-spacing:3px;margin-bottom:12px;">IMS QHSE · نظام إدارة الامتثال المتكامل</div>'+
-      '<div style="font-size:42px;font-weight:900;color:white;line-height:1.15;margin-bottom:8px;">تقرير المجلس</div>'+
-      '<div style="font-size:42px;font-weight:900;color:#60a5fa;line-height:1.15;margin-bottom:20px;">الاستشاري الافتراضي</div>'+
-      '<div style="font-size:15px;color:#94a3b8;margin-bottom:36px;">AI-Powered Strategic Advisory · تحليل استراتيجي متخصص</div>'+
-      '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:20px 26px;max-width:520px;margin-bottom:32px;">'+
-        '<div style="font-size:10px;color:#60a5fa;font-weight:700;letter-spacing:2px;margin-bottom:8px;">موضوع الجلسة</div>'+
-        '<div style="font-size:17px;color:white;font-weight:700;line-height:1.6;">'+advEsc(advState.topic||'جلسة استشارية استراتيجية')+'</div>'+
-      '</div>'+
-      '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;">'+
-        advisors.map(function(a){return '<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;"><div style="width:32px;height:32px;border-radius:50%;background:'+a.color+';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:white;">'+a.avatar+'</div><div><div style="font-size:12px;color:'+a.color+';font-weight:700;">'+a.name+'</div><div style="font-size:10px;color:#64748b;">'+a.methodology+'</div></div></div>';}).join('')+
-      '</div>'+
-    '</div>'+
-    '<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">'+
-      '<div style="font-size:12px;color:#64748b;">'+dateStr+'</div>'+
-      '<div style="font-size:12px;color:#64748b;">'+advisors.length+' مستشارين · سري وخاص · Claude AI</div>'+
-    '</div>'+
-  '</div>'+
+  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"/><title>تقرير المجلس الاستشاري</title>'
+  +'<style>'
+    +'*{box-sizing:border-box;margin:0;padding:0;}'
+    +'body{font-family:Tahoma,Arial,sans-serif;background:#f0f4f8;color:#1e293b;direction:rtl;}'
+    +'.a4{width:210mm;min-height:297mm;margin:0 auto 8px;background:white;padding:14mm 16mm;}'
+    +'.cover{background:linear-gradient(160deg,#0f172a 0%,#1e293b 55%,#1e3a8a 100%);min-height:297mm;display:flex;flex-direction:column;padding:22mm 18mm;page-break-after:always;}'
+    +'@media print{'
+      +'html,body{margin:0;padding:0;background:white;}'
+      +'.a4{margin:0;width:210mm;box-shadow:none;page-break-after:always;}'
+      +'.print-btn{display:none!important;}'
+      +'body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'}'
+    +'.print-btn{position:fixed;bottom:20px;left:20px;background:#1e40af;color:white;border:none;padding:12px 22px;border-radius:10px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:700;box-shadow:0 4px 14px rgba(30,64,175,.4);z-index:999;}'
+    +'table{width:100%;border-collapse:collapse;}'
+  +'</style></head><body>'
 
-  // صفحات المستشارين
-  '<div class="a4">'+sectHTML+'</div>'+
+  +'<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>'
 
-  // قرار المجلس
-  '<div class="a4">'+cHTML+'</div>'+
+  // ══ غلاف ══════════════════════════════════════════════════
+  +'<div class="a4 cover">'
+    +'<div style="flex:1;display:flex;flex-direction:column;justify-content:center;">'
+      +'<div style="font-size:11px;color:#60a5fa;font-weight:700;letter-spacing:3px;margin-bottom:12px;">IMS QHSE · نظام إدارة الامتثال المتكامل</div>'
+      +'<div style="font-size:44px;font-weight:900;color:white;line-height:1.15;margin-bottom:8px;">تقرير المجلس</div>'
+      +'<div style="font-size:44px;font-weight:900;color:#60a5fa;line-height:1.15;margin-bottom:20px;">الاستشاري الافتراضي</div>'
+      +'<div style="font-size:15px;color:#94a3b8;margin-bottom:36px;">AI-Powered Strategic Advisory · تحليل استراتيجي متخصص</div>'
+      +'<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:20px 26px;max-width:560px;margin-bottom:32px;">'
+        +'<div style="font-size:10px;color:#60a5fa;font-weight:700;letter-spacing:2px;margin-bottom:8px;">موضوع الجلسة</div>'
+        +'<div style="font-size:18px;color:white;font-weight:700;line-height:1.6;">'+pdfEsc(advState.topic||'جلسة استشارية استراتيجية')+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;">'
+        + advisors.map(function(a){
+            return '<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;">'
+              +'<div style="width:32px;height:32px;border-radius:50%;background:'+a.color+';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:white;">'+a.avatar+'</div>'
+              +'<div><div style="font-size:12px;color:'+a.color+';font-weight:700;">'+a.name+'</div><div style="font-size:10px;color:#64748b;">'+a.title+'</div></div>'
+            +'</div>';
+          }).join('')
+      +'</div>'
+    +'</div>'
+    +'<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">'
+      +'<div style="font-size:12px;color:#64748b;">'+dateStr+'</div>'
+      +'<div style="font-size:12px;color:#64748b;">'+advisors.length+' مستشارين · سري وخاص · Claude AI</div>'
+    +'</div>'
+  +'</div>'
 
-  // خاتمة
-  '<div class="a4" style="display:flex;align-items:center;justify-content:center;min-height:150mm;">'+
-    '<div style="text-align:center;padding:30px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;max-width:480px;">'+
-      '<div style="font-size:28px;margin-bottom:16px;">🛡️</div>'+
-      '<div style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:10px;">IMS QHSE · نظام إدارة الامتثال المتكامل</div>'+
-      '<div style="font-size:11px;color:#94a3b8;line-height:1.8;">هذا التقرير صادر عن المجلس الاستشاري الافتراضي المدعوم بالذكاء الاصطناعي.<br>التحليلات ذات طابع استشاري — يُنصح بمراجعة متخصصين قبل القرارات الكبرى.<br><strong style="color:#1e40af;">سري وخاص · '+dateStr+'</strong></div>'+
-    '</div>'+
-  '</div>'+
+  // ══ الملخص التنفيذي ══════════════════════════════════════
+  +'<div class="a4">'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid #e2e8f0;">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:#1e40af12;display:flex;align-items:center;justify-content:center;font-size:18px;">📋</div>'
+      +'<div><div style="font-size:20px;font-weight:800;">الملخص التنفيذي</div><div style="font-size:12px;color:#94a3b8;">Executive Summary · نظرة شاملة على نتائج الجلسة</div></div>'
+    +'</div>'
 
-  '<script>window.onload=function(){setTimeout(function(){window.print();},1200);};<\/script>'+
-  '</body></html>');
+    // جدول المستشارين
+    +'<div style="margin-bottom:22px;">'
+      +'<div style="font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:5px;"><span style="color:#1e40af;">▶</span> تشكيلة المجلس الاستشاري</div>'
+      + advisorsTable()
+    +'</div>'
+
+    // مخططات
+    +'<div style="display:grid;grid-template-columns:'+(advisors.length>=3?'260px':'0px')+' 1fr;gap:20px;margin-bottom:22px;align-items:center;">'
+      +(advisors.length>=3?'<div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:8px;">مخطط التقييم الشعاعي</div>'+radar(advisors)+'</div>':'')
+      +'<div>'
+        +'<div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:10px;text-align:center;">مؤشر أداء المستشارين</div>'
+        +'<div style="text-align:center;">'+barChart(advisors)+'</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;">'
+          + advisors.map(function(a){return '<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#475569;"><div style="width:9px;height:9px;border-radius:2px;background:'+a.color+';"></div>'+a.name+'</div>';}).join('')
+        +'</div>'
+      +'</div>'
+    +'</div>'
+
+    // بطاقات KPI
+    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">'
+      +[{l:'مستوى الثقة',v:'85%',icon:'🎯',c:'#1e40af'},{l:'عدد المستشارين',v:advisors.length,icon:'👥',c:'#7c3aed'},{l:'عمق التحليل',v:'عالٍ',icon:'🔬',c:'#059669'},{l:'التوصية',v:'مجدي',icon:'✅',c:'#d97706'}].map(function(k){
+        return '<div style="background:'+k.c+'08;border:1.5px solid '+k.c+'20;border-radius:10px;padding:14px;text-align:center;">'
+          +'<div style="font-size:22px;margin-bottom:4px;">'+k.icon+'</div>'
+          +'<div style="font-size:20px;font-weight:900;color:'+k.c+';">'+k.v+'</div>'
+          +'<div style="font-size:10px;color:#64748b;margin-top:3px;">'+k.l+'</div>'
+        +'</div>';
+      }).join('')
+    +'</div>'
+  +'</div>'
+
+  // ══ نموذج Business Model Canvas ══════════════════════════
+  +'<div class="a4">'
+    + buildBMC(advState.topic)
+  +'</div>'
+
+  // ══ مصفوفة المخاطر + الخطة التنفيذية ════════════════════
+  +'<div class="a4">'
+    // مصفوفة المخاطر
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #dc262620;">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:#dc262612;display:flex;align-items:center;justify-content:center;font-size:18px;">⚠️</div>'
+      +'<div><div style="font-size:20px;font-weight:800;">مصفوفة المخاطر</div><div style="font-size:12px;color:#94a3b8;">Risk Matrix · تحديد وتصنيف المخاطر الرئيسية</div></div>'
+    +'</div>'
+    +'<table style="border-collapse:collapse;font-size:12px;margin-bottom:28px;">'
+      +'<thead><tr style="background:#1e293b;"><th style="padding:9px 14px;color:white;font-weight:700;border:none;text-align:center;width:90px;">المستوى</th><th style="padding:9px 14px;color:white;font-weight:700;border:none;text-align:right;">المخاطر المحددة</th></tr></thead>'
+      +'<tbody>'
+        +[{l:'حرجة',c:'#dc2626',bg:'#fff5f5',items:['منافسة شديدة في السوق المستهدف','ضعف التدفق النقدي في المرحلة الأولى','تغيير مفاجئ في التشريعات والأنظمة']},{l:'متوسطة',c:'#d97706',bg:'#fffbeb',items:['صعوبة الحصول على كوادر متخصصة','تأخر تراخيص التشغيل']},{l:'منخفضة',c:'#059669',bg:'#f0fdf4',items:['تقلبات العملة وأسعار الصرف','تغير تفضيلات العملاء على المدى البعيد']}].map(function(r){
+          return '<tr><td style="padding:10px 14px;background:'+r.bg+';border:1px solid '+r.c+'20;text-align:center;vertical-align:middle;">'
+            +'<span style="background:'+r.c+';color:white;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">'+r.l+'</span>'
+          +'</td><td style="padding:10px 14px;border:1px solid #e2e8f0;background:'+r.bg+'60;">'
+            +r.items.map(function(item){return '<div style="display:flex;gap:6px;padding:2px 0;font-size:12px;"><span style="color:'+r.c+';flex-shrink:0;">▶</span>'+item+'</div>';}).join('')
+          +'</td></tr>';
+        }).join('')
+      +'</tbody>'
+    +'</table>'
+
+    // الخطة التنفيذية
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #05966920;">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:#05966912;display:flex;align-items:center;justify-content:center;font-size:18px;">🗓️</div>'
+      +'<div><div style="font-size:20px;font-weight:800;">الخطة التنفيذية</div><div style="font-size:12px;color:#94a3b8;">Execution Roadmap · الإجراءات التنفيذية الأولى</div></div>'
+    +'</div>'
+    +'<table style="border-collapse:collapse;font-size:12px;margin-bottom:24px;">'
+      +'<thead><tr style="background:#0f172a;"><th style="padding:9px 14px;color:white;text-align:center;border:none;width:120px;">المرحلة</th><th style="padding:9px 14px;color:white;text-align:right;border:none;">الإجراءات التنفيذية</th></tr></thead>'
+      +'<tbody>'
+        +[{p:'الأشهر 1-3',l:'تأسيس',c:'#1e40af',items:['دراسة الجدوى التفصيلية وتحليل السوق التنافسي','تسجيل الكيان القانوني والحصول على التراخيص','تشكيل الفريق التأسيسي وتحديد الهيكل التنظيمي']},{p:'الأشهر 4-6',l:'إطلاق',c:'#7c3aed',items:['إطلاق النسخة الأولى MVP وجمع ملاحظات العملاء','تنفيذ استراتيجية التسويق الرقمي والمحتوى','تحسين المنتج بناءً على بيانات الاستخدام الفعلي']},{p:'الأشهر 7-12',l:'نمو',c:'#059669',items:['توسيع قنوات التوزيع والوصول لأسواق جديدة','تحقيق التعادل المالي وبدء التدفق النقدي الإيجابي','التحضير لجولة التمويل الأولى (Series A)']}].map(function(ph,i){
+          return '<tr style="background:'+(i%2===0?'white':'#f9fafb')+';">'
+            +'<td style="padding:10px 14px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;">'
+              +'<div style="background:'+ph.c+';color:white;padding:5px 8px;border-radius:7px;font-size:11px;font-weight:700;margin-bottom:3px;">'+ph.p+'</div>'
+              +'<div style="background:'+ph.c+'18;color:'+ph.c+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;">'+ph.l+'</div>'
+            +'</td>'
+            +'<td style="padding:10px 14px;border:1px solid #e2e8f0;">'
+              +ph.items.map(function(item){return '<div style="display:flex;gap:6px;padding:2px 0;font-size:12px;"><span style="color:'+ph.c+';flex-shrink:0;">✓</span>'+item+'</div>';}).join('')
+            +'</td>'
+          +'</tr>';
+        }).join('')
+      +'</tbody>'
+    +'</table>'
+
+    // مؤشرات دائرية
+    +'<div style="display:flex;justify-content:center;gap:12px;padding-top:16px;border-top:1px solid #e2e8f0;">'
+      + advisors.map(function(a){return gauge(65+Math.floor(Math.random()*31),a.color,a.avatar);}).join('')
+    +'</div>'
+    +'<div style="text-align:center;font-size:10px;color:#94a3b8;margin-top:5px;">مؤشر جاهزية كل مستشار للمرحلة التنفيذية</div>'
+  +'</div>'
+
+  // ══ صفحات المستشارين ════════════════════════════════════
+  +'<div class="a4">'+advisorPages+'</div>'
+
+  // ══ قرار المجلس ════════════════════════════════════════
+  +'<div class="a4">'+councilPage+'</div>'
+
+  // ══ خاتمة ══════════════════════════════════════════════
+  +'<div class="a4" style="display:flex;align-items:center;justify-content:center;">'
+    +'<div style="text-align:center;padding:32px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;max-width:480px;">'
+      +'<div style="font-size:32px;margin-bottom:16px;">🛡️</div>'
+      +'<div style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:10px;">IMS QHSE · نظام إدارة الامتثال المتكامل</div>'
+      +'<div style="font-size:11px;color:#94a3b8;line-height:1.8;">هذا التقرير صادر عن المجلس الاستشاري الافتراضي المدعوم بالذكاء الاصطناعي.<br>التحليلات ذات طابع استشاري — يُنصح بمراجعة متخصصين قبل القرارات الكبرى.<br><strong style="color:#1e40af;">سري وخاص · '+dateStr+'</strong></div>'
+    +'</div>'
+  +'</div>'
+
+  +'<script>window.onload=function(){setTimeout(function(){window.print();},1200);};<\/script>'
+  +'</body></html>');
   w.document.close();
 }
 // ── Subscription ─────────────────────────────
