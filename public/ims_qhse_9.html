@@ -11309,14 +11309,14 @@ async function advSend() {
   if (results.length > 0) {
     var ct = advAddTyping('المجلس الموحد — يوحّد القرار', '#1e40af', 'fa-chess-king');
     try {
-      var summaries = results.map(function(r){ return '### ' + r.advisor.name + ' (' + r.advisor.methodology + '):\n' + r.body.substring(0,500); }).join('\n\n');
+      var summaries = results.map(function(r){ return '### ' + r.advisor.name + ':\n' + r.body.substring(0,800); }).join('\n\n');
       var sysCouncil = 'أنت رئيس المجلس الاستشاري. وحّد آراء المستشارين في قرار موحد يشمل:\n### التوصية النهائية:\n### مستوى الثقة: (نسبة %)\n### الخطوات التنفيذية الأولى: (3 خطوات)\n### الحكم الإجمالي:\nالرد بالعربية، حاسم ومباشر.';
       var msgCouncil = 'الفكرة: "' + userMsg + '"\n\nآراء المستشارين:\n' + summaries;
 
       var r2 = await fetch(ADV_BACKEND, {
         method: 'POST',
         headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
-        body: JSON.stringify({ system:sysCouncil, messages:[{role:'user',content:msgCouncil}], max_tokens:800 })
+        body: JSON.stringify({ system:sysCouncil, messages:[{role:'user',content:msgCouncil}], max_tokens:2000 })
       });
       var j2 = await r2.json();
       var cTxt = '';
