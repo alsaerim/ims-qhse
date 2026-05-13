@@ -1,1058 +1,886 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>IMS QHSE — لوحة الإدارة العليا</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
-<style>
-:root {
-  --bg: #0a0e1a;
-  --surface: #111827;
-  --surface2: #1a2235;
-  --border: #1e2d47;
-  --accent: #3b82f6;
-  --accent2: #6366f1;
-  --green: #10b981;
-  --yellow: #f59e0b;
-  --red: #ef4444;
-  --purple: #8b5cf6;
-  --text: #f1f5f9;
-  --muted: #64748b;
-  --font: 'Tajawal', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
-
-/* ── LOGIN ── */
-#login-screen {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 100vh;
-  background: radial-gradient(ellipse at 20% 50%, #1e3a5f22 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, #6366f122 0%, transparent 60%),
-              var(--bg);
-}
-.login-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 48px; width: 100%; max-width: 420px;
-  box-shadow: 0 25px 60px #0006;
-}
-.login-logo { text-align: center; margin-bottom: 32px; }
-.login-logo .shield { font-size: 48px; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.login-logo h1 { font-size: 22px; font-weight: 900; margin-top: 8px; }
-.login-logo p { font-size: 12px; color: var(--muted); margin-top: 4px; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
-.form-group input {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 16px; color: var(--text); font-family: var(--font); font-size: 14px;
-  outline: none; transition: border-color .2s;
-}
-.form-group input:focus { border-color: var(--accent); }
-.btn-login {
-  width: 100%; padding: 14px; background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: none; border-radius: 10px; color: white; font-family: var(--font); font-size: 15px; font-weight: 700;
-  cursor: pointer; margin-top: 8px; transition: opacity .2s;
-}
-.btn-login:hover { opacity: .9; }
-
-/* ── LAYOUT ── */
-#app { display: none; min-height: 100vh; }
-.sidebar {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 240px;
-  background: var(--surface); border-left: 1px solid var(--border);
-  display: flex; flex-direction: column; z-index: 100;
-}
-.sidebar-logo {
-  padding: 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.sidebar-logo .icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; }
-.sidebar-logo span { font-size: 14px; font-weight: 900; }
-.sidebar-logo small { display: block; font-size: 10px; color: var(--muted); }
-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
-.nav-section { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
-  color: var(--muted); cursor: pointer; border-radius: 0; transition: all .15s;
-  font-size: 13px; font-weight: 500; border-right: 3px solid transparent; margin: 1px 0;
-}
-.nav-item i { width: 18px; text-align: center; font-size: 14px; }
-.nav-item:hover { color: var(--text); background: var(--surface2); }
-.nav-item.active { color: var(--accent); background: #3b82f610; border-right-color: var(--accent); }
-.sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
-.logout-btn { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-family: var(--font); font-size: 13px; cursor: pointer; transition: all .2s; }
-.logout-btn:hover { border-color: var(--red); color: var(--red); }
-
-.main { margin-right: 240px; padding: 32px; min-height: 100vh; }
-.page-header { margin-bottom: 28px; }
-.page-header h1 { font-size: 22px; font-weight: 900; }
-.page-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-/* ── CARDS ── */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-.stat-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  padding: 20px; position: relative; overflow: hidden;
-}
-.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-.stat-card.blue::before { background: var(--accent); }
-.stat-card.green::before { background: var(--green); }
-.stat-card.yellow::before { background: var(--yellow); }
-.stat-card.purple::before { background: var(--purple); }
-.stat-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
-.stat-value { font-size: 32px; font-weight: 900; margin: 6px 0; font-family: var(--mono); }
-.stat-sub { font-size: 12px; color: var(--muted); }
-
-/* ── TABLE ── */
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
-.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.card-header h3 { font-size: 14px; font-weight: 700; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-th { padding: 12px 16px; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; text-align: right; background: var(--surface2); border-bottom: 1px solid var(--border); }
-td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: var(--surface2); }
-
-/* ── BADGES ── */
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-.badge-blue { background: #3b82f618; color: var(--accent); }
-.badge-green { background: #10b98118; color: var(--green); }
-.badge-yellow { background: #f59e0b18; color: var(--yellow); }
-.badge-red { background: #ef444418; color: var(--red); }
-.badge-purple { background: #8b5cf618; color: var(--purple); }
-.badge-gray { background: #64748b18; color: var(--muted); }
-
-/* ── BUTTONS ── */
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: #2563eb; }
-.btn-success { background: var(--green); color: white; }
-.btn-danger { background: var(--red); color: white; }
-.btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn-sm { padding: 5px 10px; font-size: 12px; }
-
-/* ── MODAL ── */
-.modal-overlay { position: fixed; inset: 0; background: #000a; z-index: 1000; display: none; align-items: center; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; margin: 16px; }
-.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.modal-header h3 { font-size: 16px; font-weight: 700; }
-.modal-body { padding: 24px; }
-.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
-.form-row { margin-bottom: 16px; }
-.form-row label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
-.form-row input, .form-row select, .form-row textarea {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-  padding: 10px 14px; color: var(--text); font-family: var(--font); font-size: 14px; outline: none; transition: border-color .2s;
-}
-.form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--accent); }
-.form-row textarea { resize: vertical; min-height: 80px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.close-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 4px; }
-.close-btn:hover { color: var(--text); }
-
-/* ── PLAN CARDS ── */
-.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
-.plan-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-  padding: 24px; position: relative; transition: border-color .2s;
-}
-.plan-card:hover { border-color: var(--accent); }
-.plan-badge { position: absolute; top: 12px; left: 12px; }
-.plan-name { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
-.plan-price { font-size: 30px; font-weight: 900; font-family: var(--mono); color: var(--accent); }
-.plan-price span { font-size: 14px; color: var(--muted); font-family: var(--font); }
-.plan-features { margin: 16px 0; space-y: 8px; }
-.plan-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; }
-.plan-feature i { color: var(--green); width: 14px; }
-.plan-feature.disabled { color: var(--muted); }
-.plan-feature.disabled i { color: var(--muted); }
-.plan-actions { display: flex; gap: 8px; margin-top: 16px; }
-
-/* ── FEATURE TOGGLE ── */
-.feature-list { display: flex; flex-direction: column; gap: 8px; }
-.feature-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border);
-}
-.feature-item .feat-name { font-size: 13px; font-weight: 600; }
-.feature-item .feat-key { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-.toggle { position: relative; width: 44px; height: 24px; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle-slider {
-  position: absolute; cursor: pointer; inset: 0; background: var(--border);
-  border-radius: 24px; transition: .3s;
-}
-.toggle-slider:before {
-  content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px;
-  background: white; border-radius: 50%; transition: .3s;
-}
-.toggle input:checked + .toggle-slider { background: var(--accent); }
-.toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
-
-/* ── ALERT ── */
-.alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; }
-.alert-success { background: #10b98118; border: 1px solid #10b98130; color: var(--green); }
-.alert-error { background: #ef444418; border: 1px solid #ef444430; color: var(--red); }
-
-/* ── SEARCH ── */
-.search-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-.search-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; color: var(--text); font-family: var(--font); font-size: 13px; outline: none; }
-.search-input:focus { border-color: var(--accent); }
-
-/* ── LOADING ── */
-.loading { display: flex; align-items: center; justify-content: center; height: 200px; }
-.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── ISO STANDARDS ── */
-.iso-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.iso-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-.iso-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.iso-tag { font-size: 12px; font-weight: 700; font-family: var(--mono); }
-
-/* ── TABS ── */
-.tabs { display: flex; gap: 4px; background: var(--surface2); padding: 4px; border-radius: 10px; margin-bottom: 20px; }
-.tab-btn { flex: 1; padding: 8px 16px; border: none; border-radius: 8px; background: transparent; color: var(--muted); font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
-.tab-btn.active { background: var(--accent); color: white; }
-
-/* ── NOTIFICATION TOAST ── */
-#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 13px; box-shadow: 0 8px 24px #0006; z-index: 9999; display: none; align-items: center; gap: 8px; }
-#toast.show { display: flex; }
-
-/* Responsive */
-@media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2,1fr); } .plans-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 768px) { .sidebar { transform: translateX(240px); } .main { margin-right: 0; } .stats-grid { grid-template-columns: 1fr 1fr; } .plans-grid { grid-template-columns: 1fr; } }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IMS QHSE — Super Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap');
+    * { font-family: 'Tajawal', sans-serif; }
+    body { background: #0f172a; color: #e2e8f0; }
+    .sidebar { width: 220px; background: #0f172a; border-left: 1px solid #1e293b; height: 100vh; position: fixed; right: 0; top: 0; z-index: 50; }
+    .main { margin-right: 220px; min-height: 100vh; }
+    .card { background: #1e293b; border-radius: 12px; border: 1px solid #334155; }
+    .nav-item { padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; color: #64748b; margin: 2px 8px; font-size: 13px; }
+    .nav-item:hover, .nav-item.active { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .nav-item.active { border-right: 3px solid #3b82f6; }
+    .badge-green { background: #052e16; color: #4ade80; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .badge-yellow { background: #422006; color: #fbbf24; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .badge-red { background: #450a0a; color: #f87171; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .badge-blue { background: #0c1a40; color: #60a5fa; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .badge-gray { background: #1e293b; color: #94a3b8; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .btn { padding: 8px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; border: none; }
+    .btn-primary { background: #1e40af; color: white; }
+    .btn-primary:hover { background: #1e3a8a; }
+    .btn-success { background: #065f46; color: #4ade80; }
+    .btn-danger  { background: #450a0a; color: #f87171; }
+    .btn-outline { background: transparent; color: #94a3b8; border: 1px solid #334155; }
+    .btn-outline:hover { border-color: #3b82f6; color: #60a5fa; }
+    .form-input { width: 100%; padding: 8px 12px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 13px; outline: none; }
+    .form-input:focus { border-color: #3b82f6; }
+    .table-row:hover { background: #1e293b; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; align-items: center; justify-content: center; }
+    .modal.open { display: flex; }
+    .modal-content { background: #1e293b; border-radius: 14px; border: 1px solid #334155; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .toggle { position: relative; width: 40px; height: 22px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #334155; border-radius: 22px; transition: .3s; }
+    .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; right: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; }
+    .toggle input:checked + .toggle-slider { background: #3b82f6; }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(-18px); }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in { animation: fadeIn .25s ease; }
+    .stat-card { background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 14px; padding: 20px; }
+  </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="shield"><i class="fas fa-shield-halved"></i></div>
-      <h1>IMS QHSE Admin</h1>
-      <p>لوحة الإدارة العليا — Super Admin</p>
-    </div>
-    <div id="login-error" class="alert alert-error" style="display:none"></div>
-    <div class="form-group">
-      <label>اسم المستخدم</label>
-      <input type="text" id="admin-user" placeholder="admin" value="admin"/>
-    </div>
-    <div class="form-group">
-      <label>كلمة المرور</label>
-      <input type="password" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
-    </div>
-    <button class="btn-login" onclick="doLogin()"><i class="fas fa-lock-open" style="margin-left:8px"></i>دخول</button>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <div class="icon"><i class="fas fa-shield-halved"></i></div>
+<!-- SIDEBAR -->
+<aside class="sidebar flex flex-col">
+  <div class="p-4 border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center">
+        <i class="fas fa-shield-alt text-white text-sm"></i>
+      </div>
       <div>
-        <span>IMS QHSE</span>
-        <small>Super Admin Panel</small>
+        <div class="text-white font-bold text-sm">IMS QHSE</div>
+        <div class="text-red-400 text-xs font-bold">SUPER ADMIN</div>
       </div>
     </div>
-    <nav>
-      <div class="nav-section">الرئيسية</div>
-      <div class="nav-item active" onclick="showPage('dashboard')"><i class="fas fa-gauge-high"></i>لوحة التحكم</div>
-      <div class="nav-section">إدارة العملاء</div>
-      <div class="nav-item" onclick="showPage('tenants')"><i class="fas fa-buildings"></i>المشتركون</div>
-      <div class="nav-item" onclick="showPage('payments')"><i class="fas fa-credit-card"></i>المدفوعات</div>
-      <div class="nav-section">الباقات والأسعار</div>
-      <div class="nav-item" onclick="showPage('plans')"><i class="fas fa-layer-group"></i>الباقات والأسعار</div>
-      <div class="nav-item" onclick="showPage('features')"><i class="fas fa-sliders"></i>مميزات الباقات</div>
-      <div class="nav-section">معايير ISO</div>
-      <div class="nav-item" onclick="showPage('iso')"><i class="fas fa-certificate"></i>إدارة المعايير</div>
-    </nav>
-    <div class="sidebar-footer">
-      <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt" style="margin-left:6px"></i>تسجيل الخروج</button>
+  </div>
+
+  <nav class="p-2 mt-2 flex-1 overflow-y-auto">
+    <div class="text-xs text-slate-600 px-3 mb-2 uppercase tracking-wider">الرئيسية</div>
+    <div class="nav-item active" onclick="navigate('dashboard')"><i class="fas fa-tachometer-alt w-4"></i>لوحة التحكم</div>
+    <div class="nav-item" onclick="navigate('analytics')"><i class="fas fa-chart-line w-4"></i>التحليلات المالية</div>
+
+    <div class="text-xs text-slate-600 px-3 mb-2 mt-4 uppercase tracking-wider">الاشتراكات</div>
+    <div class="nav-item" onclick="navigate('tenants')"><i class="fas fa-building w-4"></i>المستأجرون</div>
+    <div class="nav-item" onclick="navigate('plans')"><i class="fas fa-layer-group w-4"></i>إدارة الباقات</div>
+    <div class="nav-item" onclick="navigate('invoices')"><i class="fas fa-file-invoice-dollar w-4"></i>الفواتير</div>
+
+    <div class="text-xs text-slate-600 px-3 mb-2 mt-4 uppercase tracking-wider">النظام</div>
+    <div class="nav-item" onclick="navigate('settings')"><i class="fas fa-cog w-4"></i>الإعدادات</div>
+    <div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt w-4"></i>تسجيل الخروج</div>
+  </nav>
+
+  <div class="p-3 border-t border-slate-800">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-xs font-bold">SA</div>
+      <div><div class="text-sm text-white font-medium">Super Admin</div><div class="text-xs text-slate-500">admin@ims-qhse.com</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-40" style="background:#0f172a;">
+    <div>
+      <h1 class="text-lg font-bold text-white" id="page-title">لوحة التحكم</h1>
+      <p class="text-xs text-slate-500" id="page-subtitle">نظرة شاملة على النظام والاشتراكات</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="text-xs text-slate-500" id="current-time"></div>
+      <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+      <span class="text-xs text-green-400">متصل</span>
     </div>
   </div>
 
-  <!-- Main -->
-  <div class="main" id="main-content">
-    <div class="loading"><div class="spinner"></div></div>
+  <div class="p-6" id="content">
+    <div class="flex justify-center py-16"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>
+  </div>
+</main>
+
+<!-- Modal: Tenant Detail -->
+<div class="modal" id="modal-tenant">
+  <div class="modal-content mx-4" style="max-width:700px;">
+    <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+      <h3 class="text-white font-bold text-lg" id="tenant-modal-title">تفاصيل المستأجر</h3>
+      <button onclick="closeModal('modal-tenant')" class="text-slate-400 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-5" id="tenant-modal-body">...</div>
   </div>
 </div>
 
-<!-- Toast -->
-<div id="toast"></div>
+<!-- Modal: Plan Edit -->
+<div class="modal" id="modal-plan">
+  <div class="modal-content mx-4" style="max-width:600px;">
+    <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+      <h3 class="text-white font-bold text-lg" id="plan-modal-title">تعديل الباقة</h3>
+      <button onclick="closeModal('modal-plan')" class="text-slate-400 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-5" id="plan-modal-body">...</div>
+  </div>
+</div>
 
-<!-- Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box" id="modal-box"></div>
+<!-- Modal: Assign Plan -->
+<div class="modal" id="modal-assign">
+  <div class="modal-content mx-4" style="max-width:400px;">
+    <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+      <h3 class="text-white font-bold">تعيين باقة للمستأجر</h3>
+      <button onclick="closeModal('modal-assign')" class="text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="p-5 space-y-4">
+      <input type="hidden" id="assign-tenant-id"/>
+      <div>
+        <label class="text-sm text-slate-400 block mb-1">الباقة</label>
+        <select class="form-input" id="assign-plan-id"></select>
+      </div>
+      <div>
+        <label class="text-sm text-slate-400 block mb-1">دورة الفوترة</label>
+        <select class="form-input" id="assign-billing">
+          <option value="monthly">شهري</option>
+          <option value="yearly">سنوي (وفّر 16%)</option>
+        </select>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button onclick="submitAssignPlan()" class="btn btn-primary flex-1"><i class="fas fa-check ml-1"></i>تعيين الباقة</button>
+        <button onclick="closeModal('modal-assign')" class="btn btn-outline">إلغاء</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
+// ── Config ─────────────────────────────────────────────────────
 const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
-let _token = localStorage.getItem('admin_token') || '';
-let _currentPage = 'dashboard';
+let currentPage = 'dashboard';
+let _plans = [];
+let _charts = {};
 
-// ── AUTH ──
-function doLogin() {
-  const u = document.getElementById('admin-user').value;
-  const p = document.getElementById('admin-pass').value;
-  // Super admin credentials check
-  if (u === 'admin' && p === 'Mahdi@1993') {
-    _token = 'admin_session_' + Date.now();
-    localStorage.setItem('admin_token', _token);
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    showPage('dashboard');
-  } else {
-    const err = document.getElementById('login-error');
-    err.textContent = '❌ بيانات الدخول غير صحيحة';
-    err.style.display = 'block';
-  }
-}
+// ── Auth ────────────────────────────────────────────────────────
+function getToken() { return localStorage.getItem('ims_token') || localStorage.getItem('sa_token'); }
+function logout() { localStorage.removeItem('ims_token'); location.href = '/'; }
 
-function doLogout() {
-  localStorage.removeItem('admin_token');
-  location.reload();
-}
-
-// Check session
-if (_token) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  setTimeout(() => showPage('dashboard'), 50);
-}
-
-// ── API ──
-async function adminFetch(path, method='GET', body=null) {
-  // Use first tenant's token for API calls
-  const imsToken = localStorage.getItem('ims_token') || '';
+async function apiFetch(url, method='GET', body=null) {
+  const token = getToken();
   const opts = {
     method,
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + imsToken }
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token }
   };
   if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(API + path, opts);
-  const j = await r.json();
-  return j.data !== undefined ? j.data : j;
+  const res = await fetch(API+url, opts);
+  if (res.status === 401) { logout(); return; }
+  const json = await res.json();
+  return json.data !== undefined ? json.data : json;
 }
 
-// ── TOAST ──
-function showToast(msg, type='success') {
-  const t = document.getElementById('toast');
-  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-  t.innerHTML = icon + ' ' + msg;
-  t.className = 'show';
-  setTimeout(() => t.className = '', 3000);
-}
-
-// ── MODAL ──
-function openModal(html) {
-  document.getElementById('modal-box').innerHTML = html;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-// ── NAVIGATION ──
-function showPage(page) {
-  _currentPage = page;
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => {
-    if (n.getAttribute('onclick')?.includes(`'${page}'`)) n.classList.add('active');
+// ── Navigation ──────────────────────────────────────────────────
+function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => {
+    if (el.getAttribute('onclick')?.includes(page)) el.classList.add('active');
   });
-  const pages = { dashboard: loadDashboard, tenants: loadTenants, payments: loadPayments, plans: loadPlans, features: loadFeatures, iso: loadISO };
-  if (pages[page]) pages[page]();
+  const titles = {
+    dashboard: ['لوحة التحكم','نظرة شاملة على النظام والاشتراكات'],
+    analytics:  ['التحليلات المالية','الإيرادات · MRR · ARR · التوزيع'],
+    tenants:    ['المستأجرون','إدارة جميع المستأجرين والاشتراكات'],
+    plans:      ['إدارة الباقات','تسعير · مميزات · حدود الاستخدام'],
+    invoices:   ['الفواتير','تتبع المدفوعات والفواتير المعلقة'],
+    settings:   ['الإعدادات','إعدادات النظام العامة'],
+  };
+  const [t,s] = titles[page] || ['الصفحة',''];
+  document.getElementById('page-title').textContent = t;
+  document.getElementById('page-subtitle').textContent = s;
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="flex justify-center py-16"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>';
+  const pages = { dashboard:loadDashboard, analytics:loadAnalytics, tenants:loadTenants, plans:loadPlans, invoices:loadInvoices, settings:loadSettings };
+  (pages[page] || loadDashboard)();
 }
 
-// ══════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════
+// ── DASHBOARD ───────────────────────────────────────────────────
 async function loadDashboard() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  let tenants = [], payments = [];
-  try {
-    const r = await adminFetch('/tenants');
-    tenants = Array.isArray(r) ? r : (r?.data || []);
-  } catch(e) {}
-  try {
-    const r = await adminFetch('/payments');
-    payments = Array.isArray(r) ? r : (r?.data || []);
-  } catch(e) {}
+  let stats = {};
+  try { stats = await apiFetch('/super-admin/stats') || {}; } catch(e) {}
 
-  const active = tenants.filter(t => t.status === 'ACTIVE' || t.status === 'active').length;
-  const trial  = tenants.filter(t => t.status === 'TRIAL' || t.status === 'trial').length;
-  const revenue = payments.filter(p => p.status === 'SUCCEEDED').reduce((s,p) => s + Number(p.amount||0), 0);
+  const t = stats.tenants || {};
+  const r = stats.revenue || {};
+  const s = stats.subs    || {};
+  const plans = stats.plans || [];
 
-  main.innerHTML = `
-  <div class="page-header">
-    <h1><i class="fas fa-gauge-high" style="color:var(--accent);margin-left:10px"></i>لوحة التحكم الرئيسية</h1>
-    <p>نظرة شاملة على المنصة — آخر تحديث: ${new Date().toLocaleString('ar-SA')}</p>
-  </div>
+  document.getElementById('content').innerHTML = `
+  <div class="fade-in space-y-6">
 
-  <div class="stats-grid">
-    <div class="stat-card blue">
-      <div class="stat-label">إجمالي المشتركين</div>
-      <div class="stat-value" style="color:var(--accent)">${tenants.length}</div>
-      <div class="stat-sub">${active} نشط · ${trial} تجريبي</div>
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${kpiCard('MRR', formatSAR(r.mrr||0), 'chart-line', '#3b82f6', 'الإيراد الشهري المتكرر')}
+      ${kpiCard('ARR', formatSAR(r.arr||0), 'chart-bar', '#059669', 'الإيراد السنوي المتكرر')}
+      ${kpiCard('مستأجرون نشطون', t.active||0, 'building', '#7c3aed', 'من '+(t.total||0)+' إجمالي')}
+      ${kpiCard('فواتير معلقة', r.pending_count||0, 'clock', '#d97706', formatSAR(r.pending_amount||0))}
     </div>
-    <div class="stat-card green">
-      <div class="stat-label">الإيرادات (ر.س)</div>
-      <div class="stat-value" style="color:var(--green)">${revenue.toLocaleString('ar-SA')}</div>
-      <div class="stat-sub">${payments.filter(p=>p.status==='SUCCEEDED').length} عملية ناجحة</div>
-    </div>
-    <div class="stat-card yellow">
-      <div class="stat-label">اشتراكات نشطة</div>
-      <div class="stat-value" style="color:var(--yellow)">${active}</div>
-      <div class="stat-sub">${trial} في الفترة التجريبية</div>
-    </div>
-    <div class="stat-card purple">
-      <div class="stat-label">المدفوعات المعلقة</div>
-      <div class="stat-value" style="color:var(--purple)">${payments.filter(p=>p.status==='PENDING').length}</div>
-      <div class="stat-sub">تحتاج مراجعة</div>
-    </div>
-  </div>
 
-  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:20px">
-    <div class="card">
-      <div class="card-header">
-        <h3><i class="fas fa-buildings" style="color:var(--accent);margin-left:8px"></i>آخر المشتركين</h3>
-        <button class="btn btn-ghost btn-sm" onclick="showPage('tenants')">عرض الكل</button>
+    <!-- Row 2 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- توزيع الباقات -->
+      <div class="card p-5">
+        <h3 class="font-bold text-white mb-4"><i class="fas fa-layer-group text-blue-400 ml-2"></i>توزيع الباقات</h3>
+        <canvas id="chart-plans" height="200"></canvas>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>المنظمة</th><th>الحالة</th><th>تاريخ التسجيل</th></tr></thead>
-          <tbody>
-            ${tenants.slice(0,8).map(t => `
-            <tr>
-              <td><div style="font-weight:600">${t.name}</div><div style="font-size:11px;color:var(--muted)">${t.slug}</div></td>
-              <td>${statusBadge(t.status)}</td>
-              <td style="font-size:12px;color:var(--muted)">${t.created_at ? new Date(t.created_at).toLocaleDateString('ar-SA') : '—'}</td>
-            </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px">لا توجد بيانات</td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <h3><i class="fas fa-credit-card" style="color:var(--green);margin-left:8px"></i>آخر المدفوعات</h3>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>المبلغ</th><th>الحالة</th></tr></thead>
-          <tbody>
-            ${payments.slice(0,8).map(p => `
-            <tr>
-              <td style="font-family:var(--mono);font-weight:700">${Number(p.amount||0).toLocaleString('ar-SA')} ر.س</td>
-              <td>${paymentBadge(p.status)}</td>
-            </tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:var(--muted);padding:24px">لا توجد مدفوعات</td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>`;
-}
 
-// ══════════════════════════════════════════
-// TENANTS
-// ══════════════════════════════════════════
-async function loadTenants() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  let tenants = [];
-  try { const r = await adminFetch('/tenants'); tenants = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
-
-  main.innerHTML = `
-  <div class="page-header">
-    <h1><i class="fas fa-buildings" style="color:var(--accent);margin-left:10px"></i>إدارة المشتركين</h1>
-    <p>${tenants.length} مشترك مسجّل في المنصة</p>
-  </div>
-  <div class="search-bar">
-    <input class="search-input" id="tenant-search" placeholder="🔍 ابحث بالاسم أو الـ slug..." oninput="filterTenants()"/>
-    <button class="btn btn-primary" onclick="openAddTenantModal()"><i class="fas fa-plus"></i>مشترك جديد</button>
-  </div>
-  <div class="card">
-    <div class="table-wrap">
-      <table id="tenants-table">
-        <thead><tr><th>المنظمة</th><th>Slug</th><th>الباقة</th><th>الحالة</th><th>المستخدمون</th><th>تاريخ الانضمام</th><th>إجراءات</th></tr></thead>
-        <tbody>
-          ${tenants.map(t => `
-          <tr data-name="${(t.name||'').toLowerCase()}" data-slug="${(t.slug||'').toLowerCase()}">
-            <td><div style="font-weight:700">${t.name||'—'}</div><div style="font-size:11px;color:var(--muted)">${t.industry||''}</div></td>
-            <td><span style="font-family:var(--mono);font-size:12px;color:var(--muted)">${t.slug||'—'}</span></td>
-            <td>${planBadge(t.plan||'basic')}</td>
-            <td>${statusBadge(t.status||'TRIAL')}</td>
-            <td style="font-family:var(--mono)">${t.employees||'—'}</td>
-            <td style="font-size:12px;color:var(--muted)">${t.created_at ? new Date(t.created_at).toLocaleDateString('ar-SA') : '—'}</td>
-            <td>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-ghost btn-sm" onclick="editTenant('${t.id}','${(t.name||'').replace(/'/g,'\\'')}','${t.status||'TRIAL'}','${t.plan||'basic'}')"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-ghost btn-sm" onclick="manageTenantISO('${t.id}','${(t.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-certificate"></i></button>
-              </div>
-            </td>
-          </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">لا توجد بيانات</td></tr>'}
-        </tbody>
-      </table>
-    </div>
-  </div>`;
-}
-
-function filterTenants() {
-  const q = document.getElementById('tenant-search').value.toLowerCase();
-  document.querySelectorAll('#tenants-table tbody tr[data-name]').forEach(row => {
-    const match = row.dataset.name.includes(q) || row.dataset.slug.includes(q);
-    row.style.display = match ? '' : 'none';
-  });
-}
-
-function editTenant(id, name, status, plan) {
-  openModal(`
-  <div class="modal-header">
-    <h3><i class="fas fa-edit" style="color:var(--accent);margin-left:8px"></i>تعديل بيانات المشترك</h3>
-    <button class="close-btn" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="form-row"><label>الاسم</label><input id="et-name" value="${name}"/></div>
-    <div class="form-grid">
-      <div class="form-row"><label>الباقة</label>
-        <select id="et-plan">
-          <option value="basic" ${plan==='basic'?'selected':''}>أساسية</option>
-          <option value="professional" ${plan==='professional'?'selected':''}>احترافية</option>
-          <option value="enterprise" ${plan==='enterprise'?'selected':''}>مؤسسية</option>
-        </select>
-      </div>
-      <div class="form-row"><label>الحالة</label>
-        <select id="et-status">
-          <option value="ACTIVE" ${status==='ACTIVE'?'selected':''}>نشط</option>
-          <option value="TRIAL" ${status==='TRIAL'?'selected':''}>تجريبي</option>
-          <option value="SUSPENDED" ${status==='SUSPENDED'?'selected':''}>موقوف</option>
-          <option value="CANCELLED" ${status==='CANCELLED'?'selected':''}>ملغى</option>
-        </select>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveTenant('${id}')"><i class="fas fa-save"></i>حفظ</button>
-  </div>`);
-}
-
-async function saveTenant(id) {
-  const body = {
-    name:   document.getElementById('et-name').value,
-    plan:   document.getElementById('et-plan').value,
-    status: document.getElementById('et-status').value,
-  };
-  try {
-    await adminFetch('/tenants/' + id, 'PUT', body);
-    showToast('✅ تم تحديث بيانات المشترك');
-    closeModal();
-    loadTenants();
-  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
-}
-
-function openAddTenantModal() {
-  openModal(`
-  <div class="modal-header">
-    <h3><i class="fas fa-plus" style="color:var(--green);margin-left:8px"></i>إضافة مشترك جديد</h3>
-    <button class="close-btn" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="form-row"><label>اسم المنظمة *</label><input id="nt-name" placeholder="شركة المثال"/></div>
-    <div class="form-row"><label>البريد الإلكتروني *</label><input id="nt-email" type="email" placeholder="admin@company.com"/></div>
-    <div class="form-row"><label>كلمة المرور *</label><input id="nt-pass" type="password" placeholder="••••••••"/></div>
-    <div class="form-row"><label>الباقة</label>
-      <select id="nt-plan">
-        <option value="basic">أساسية</option>
-        <option value="professional" selected>احترافية</option>
-        <option value="enterprise">مؤسسية</option>
-      </select>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-success" onclick="createTenant()"><i class="fas fa-plus"></i>إنشاء الحساب</button>
-  </div>`);
-}
-
-async function createTenant() {
-  const body = {
-    company_name: document.getElementById('nt-name').value,
-    email:        document.getElementById('nt-email').value,
-    password:     document.getElementById('nt-pass').value,
-    plan:         document.getElementById('nt-plan').value,
-    full_name:    document.getElementById('nt-name').value,
-  };
-  if (!body.company_name || !body.email || !body.password) { showToast('❌ يرجى ملء الحقول المطلوبة', 'error'); return; }
-  try {
-    await adminFetch('/auth/register', 'POST', body);
-    showToast('✅ تم إنشاء الحساب بنجاح');
-    closeModal();
-    loadTenants();
-  } catch(e) { showToast('❌ خطأ في الإنشاء: ' + e.message, 'error'); }
-}
-
-async function manageTenantISO(tenantId, tenantName) {
-  openModal(`
-  <div class="modal-header">
-    <h3><i class="fas fa-certificate" style="color:var(--yellow);margin-left:8px"></i>معايير ISO — ${tenantName}</h3>
-    <button class="close-btn" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">اختر المعايير المتاحة لهذا المشترك حسب باقته:</p>
-    ${['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(code => `
-    <div class="feature-item" style="margin-bottom:8px">
-      <div>
-        <div class="feat-name">${code.replace('_',' ')}</div>
-        <div class="feat-key">${isoName(code)}</div>
-      </div>
-      <label class="toggle">
-        <input type="checkbox" id="iso-${code}" checked/>
-        <span class="toggle-slider"></span>
-      </label>
-    </div>`).join('')}
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="showToast('✅ تم حفظ إعدادات المعايير');closeModal()"><i class="fas fa-save"></i>حفظ</button>
-  </div>`);
-}
-
-// ══════════════════════════════════════════
-// PAYMENTS
-// ══════════════════════════════════════════
-async function loadPayments() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  let payments = [];
-  try { const r = await adminFetch('/payments'); payments = Array.isArray(r) ? r : (r?.data || []); } catch(e) {}
-
-  const total    = payments.reduce((s,p) => s + (p.status==='SUCCEEDED' ? Number(p.amount||0) : 0), 0);
-  const pending  = payments.filter(p => p.status === 'PENDING').length;
-  const failed   = payments.filter(p => p.status === 'FAILED').length;
-
-  main.innerHTML = `
-  <div class="page-header">
-    <h1><i class="fas fa-credit-card" style="color:var(--green);margin-left:10px"></i>إدارة المدفوعات</h1>
-    <p>متابعة جميع معاملات الدفع</p>
-  </div>
-  <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
-    <div class="stat-card green">
-      <div class="stat-label">إجمالي الإيرادات</div>
-      <div class="stat-value" style="color:var(--green)">${total.toLocaleString('ar-SA')}</div>
-      <div class="stat-sub">ريال سعودي</div>
-    </div>
-    <div class="stat-card yellow">
-      <div class="stat-label">معلقة</div>
-      <div class="stat-value" style="color:var(--yellow)">${pending}</div>
-      <div class="stat-sub">تحتاج مراجعة</div>
-    </div>
-    <div class="stat-card" style="--c:#ef4444">
-      <div class="stat-label">فاشلة</div>
-      <div class="stat-value" style="color:var(--red)">${failed}</div>
-      <div class="stat-sub">فشل في المعالجة</div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header">
-      <h3>سجل المدفوعات</h3>
-      <button class="btn btn-primary" onclick="openAddPaymentModal()"><i class="fas fa-plus"></i>إضافة دفعة يدوية</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>المبلغ</th><th>العملة</th><th>الحالة</th><th>المزود</th><th>التاريخ</th><th>إجراء</th></tr></thead>
-        <tbody>
-          ${payments.map((p,i) => `
-          <tr>
-            <td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${(p.id||'').substring(0,8)}...</td>
-            <td style="font-family:var(--mono);font-weight:700">${Number(p.amount||0).toLocaleString('ar-SA')}</td>
-            <td style="font-size:12px">${p.currency||'SAR'}</td>
-            <td>${paymentBadge(p.status||'PENDING')}</td>
-            <td style="font-size:12px;color:var(--muted)">${p.provider||'MANUAL'}</td>
-            <td style="font-size:12px;color:var(--muted)">${p.created_at ? new Date(p.created_at).toLocaleDateString('ar-SA') : '—'}</td>
-            <td>
-              ${p.status==='PENDING' ? `<button class="btn btn-success btn-sm" onclick="approvePayment('${p.id}')"><i class="fas fa-check"></i>قبول</button>` : '—'}
-            </td>
-          </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">لا توجد مدفوعات</td></tr>'}
-        </tbody>
-      </table>
-    </div>
-  </div>`;
-}
-
-async function approvePayment(id) {
-  if (!confirm('تأكيد قبول هذه الدفعة؟')) return;
-  try {
-    await adminFetch('/payments/' + id, 'PUT', { status: 'SUCCEEDED' });
-    showToast('✅ تم قبول الدفعة');
-    loadPayments();
-  } catch(e) { showToast('❌ خطأ', 'error'); }
-}
-
-function openAddPaymentModal() {
-  openModal(`
-  <div class="modal-header">
-    <h3><i class="fas fa-plus" style="color:var(--green);margin-left:8px"></i>إضافة دفعة يدوية</h3>
-    <button class="close-btn" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="form-row"><label>Tenant ID *</label><input id="pay-tenant" placeholder="معرف المشترك"/></div>
-    <div class="form-grid">
-      <div class="form-row"><label>المبلغ (ر.س) *</label><input id="pay-amount" type="number" placeholder="0"/></div>
-      <div class="form-row"><label>الحالة</label>
-        <select id="pay-status">
-          <option value="SUCCEEDED">مكتملة</option>
-          <option value="PENDING">معلقة</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row"><label>ملاحظة</label><textarea id="pay-desc" placeholder="سبب الدفع..."></textarea></div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-success" onclick="addPayment()"><i class="fas fa-save"></i>إضافة</button>
-  </div>`);
-}
-
-async function addPayment() {
-  const body = {
-    tenant_id:   document.getElementById('pay-tenant').value,
-    amount:      Number(document.getElementById('pay-amount').value),
-    currency:    'SAR',
-    status:      document.getElementById('pay-status').value,
-    provider:    'MANUAL',
-    description: document.getElementById('pay-desc').value,
-  };
-  if (!body.tenant_id || !body.amount) { showToast('❌ يرجى ملء الحقول المطلوبة', 'error'); return; }
-  try {
-    await adminFetch('/payments', 'POST', body);
-    showToast('✅ تم إضافة الدفعة');
-    closeModal();
-    loadPayments();
-  } catch(e) { showToast('❌ خطأ', 'error'); }
-}
-
-// ══════════════════════════════════════════
-// PLANS
-// ══════════════════════════════════════════
-const PLANS_DATA = {
-  basic: {
-    name: 'أساسية', name_en: 'Basic', price_monthly: 299, price_yearly: 2990,
-    color: '#64748b', users: 5, projects: 3,
-    description: 'للشركات الصغيرة والناشئة',
-    iso_standards: ['ISO_9001'],
-  },
-  professional: {
-    name: 'احترافية', name_en: 'Professional', price_monthly: 799, price_yearly: 7990,
-    color: '#3b82f6', users: 20, projects: 15,
-    description: 'للشركات المتوسطة والمتنامية',
-    iso_standards: ['ISO_9001', 'ISO_45001', 'ISO_14001'],
-  },
-  enterprise: {
-    name: 'مؤسسية', name_en: 'Enterprise', price_monthly: 1999, price_yearly: 19990,
-    color: '#8b5cf6', users: -1, projects: -1,
-    description: 'للمؤسسات الكبرى بدون حدود',
-    iso_standards: ['ISO_9001', 'ISO_45001', 'ISO_14001', 'ISO_27001'],
-  },
-};
-
-function loadPlans() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = `
-  <div class="page-header">
-    <h1><i class="fas fa-layer-group" style="color:var(--purple);margin-left:10px"></i>إدارة الباقات والأسعار</h1>
-    <p>تعديل أسعار وتفاصيل باقات الاشتراك</p>
-  </div>
-  <div class="plans-grid">
-    ${Object.entries(PLANS_DATA).map(([key, plan]) => `
-    <div class="plan-card">
-      <div class="plan-badge"><span class="badge" style="background:${plan.color}22;color:${plan.color}">${plan.name_en}</span></div>
-      <div style="margin-top:24px">
-        <div class="plan-name" style="color:${plan.color}">${plan.name}</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${plan.description}</div>
-        <div class="plan-price">${plan.price_monthly.toLocaleString('ar-SA')}<span> ر.س/شهر</span></div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px">${plan.price_yearly.toLocaleString('ar-SA')} ر.س/سنة</div>
-        <div style="margin:16px 0;font-size:12px">
-          <div style="padding:6px 0;border-bottom:1px solid var(--border)"><i class="fas fa-users" style="color:var(--accent);margin-left:6px;width:14px"></i>${plan.users === -1 ? 'مستخدمون غير محدودين' : 'حتى ' + plan.users + ' مستخدم'}</div>
-          <div style="padding:6px 0;border-bottom:1px solid var(--border)"><i class="fas fa-diagram-project" style="color:var(--accent);margin-left:6px;width:14px"></i>${plan.projects === -1 ? 'مشاريع غير محدودة' : 'حتى ' + plan.projects + ' مشروع'}</div>
-          <div style="padding:6px 0"><i class="fas fa-certificate" style="color:var(--yellow);margin-left:6px;width:14px"></i>${plan.iso_standards.length} معايير ISO</div>
+      <!-- حالة الاشتراكات -->
+      <div class="card p-5">
+        <h3 class="font-bold text-white mb-4"><i class="fas fa-circle-check text-green-400 ml-2"></i>حالة الاشتراكات</h3>
+        <div class="space-y-3 mt-6">
+          ${statusRow('نشطة', s.active||0, '#3b82f6')}
+          ${statusRow('تجريبية', s.trial||0, '#f59e0b')}
+          ${statusRow('ملغاة', s.cancelled||0, '#ef4444')}
         </div>
-        <div class="plan-actions">
-          <button class="btn btn-primary" style="flex:1;background:${plan.color}" onclick="editPlan('${key}')"><i class="fas fa-edit"></i>تعديل</button>
+        <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+          <div class="p-2 rounded-xl" style="background:#0c1a4010;"><div class="text-xl font-black text-blue-400">${s.active||0}</div><div class="text-xs text-slate-500">نشطة</div></div>
+          <div class="p-2 rounded-xl" style="background:#42200610;"><div class="text-xl font-black text-yellow-400">${s.trial||0}</div><div class="text-xs text-slate-500">تجريبية</div></div>
+          <div class="p-2 rounded-xl" style="background:#45090910;"><div class="text-xl font-black text-red-400">${s.cancelled||0}</div><div class="text-xs text-slate-500">ملغاة</div></div>
         </div>
       </div>
-    </div>`).join('')}
-  </div>
 
-  <div class="card">
-    <div class="card-header"><h3><i class="fas fa-certificate" style="color:var(--yellow);margin-left:8px"></i>معايير ISO لكل باقة</h3></div>
-    <div style="padding:20px;overflow-x:auto">
-      <table>
-        <thead><tr><th>المعيار</th><th>أساسية</th><th>احترافية</th><th>مؤسسية</th></tr></thead>
+      <!-- إجراءات سريعة -->
+      <div class="card p-5">
+        <h3 class="font-bold text-white mb-4"><i class="fas fa-bolt text-yellow-400 ml-2"></i>إجراءات سريعة</h3>
+        <div class="space-y-2">
+          <button onclick="navigate('tenants')" class="btn btn-primary w-full justify-start"><i class="fas fa-building"></i>إدارة المستأجرين</button>
+          <button onclick="navigate('plans')" class="btn btn-outline w-full justify-start"><i class="fas fa-layer-group"></i>تعديل الباقات والأسعار</button>
+          <button onclick="navigate('invoices')" class="btn btn-outline w-full justify-start"><i class="fas fa-file-invoice-dollar"></i>الفواتير المعلقة</button>
+          <button onclick="navigate('analytics')" class="btn btn-outline w-full justify-start"><i class="fas fa-chart-line"></i>تقرير الإيرادات</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- جدول أحدث المستأجرين -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-white"><i class="fas fa-users text-slate-400 ml-2"></i>أحدث المستأجرين</h3>
+        <button onclick="navigate('tenants')" class="text-blue-400 text-sm hover:underline">عرض الكل</button>
+      </div>
+      <div id="recent-tenants-list">
+        <div class="text-center py-4 text-slate-500 text-sm">جاري التحميل...</div>
+      </div>
+    </div>
+  </div>`;
+
+  // رسم مخطط الباقات
+  setTimeout(() => {
+    const ctx = document.getElementById('chart-plans');
+    if (ctx && plans.length) {
+      if (_charts.plans) _charts.plans.destroy();
+      _charts.plans = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: plans.map(p => p.name_ar || p.name),
+          datasets: [{
+            data: plans.map(p => Number(p.subscriber_count||0)),
+            backgroundColor: ['#3b82f6','#7c3aed','#059669','#d97706'],
+            borderWidth: 2, borderColor: '#1e293b', hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true, cutout: '60%',
+          plugins: {
+            legend: { position:'bottom', labels:{ color:'#94a3b8', boxWidth:12, font:{family:'Tajawal',size:11} } }
+          }
+        }
+      });
+    }
+    loadRecentTenants();
+  }, 100);
+}
+
+async function loadRecentTenants() {
+  try {
+    const res = await apiFetch('/super-admin/tenants?limit=5');
+    const tenants = res.data || res || [];
+    const el = document.getElementById('recent-tenants-list');
+    if (!el) return;
+    if (!tenants.length) { el.innerHTML='<div class="text-center py-4 text-slate-500 text-sm">لا توجد بيانات</div>'; return; }
+    el.innerHTML = `<table class="w-full text-sm">
+      <thead><tr class="border-b border-slate-700">
+        <th class="text-right py-2 px-3 text-slate-400 font-medium">المستأجر</th>
+        <th class="text-right py-2 px-3 text-slate-400 font-medium">الباقة</th>
+        <th class="text-right py-2 px-3 text-slate-400 font-medium">الحالة</th>
+        <th class="text-right py-2 px-3 text-slate-400 font-medium">المستخدمون</th>
+        <th class="py-2 px-3"></th>
+      </tr></thead>
+      <tbody>
+        ${tenants.map(t => `
+        <tr class="table-row border-b border-slate-800 cursor-pointer" onclick="openTenantModal('${t.id}')">
+          <td class="py-3 px-3"><div class="font-semibold text-white">${t.name||''}</div><div class="text-xs text-slate-500">${t.email||''}</div></td>
+          <td class="py-3 px-3"><span class="badge-blue">${t.plan_name||'—'}</span></td>
+          <td class="py-3 px-3">${statusBadge(t.status)}</td>
+          <td class="py-3 px-3 text-slate-300">${t.active_users||0}</td>
+          <td class="py-3 px-3"><button onclick="event.stopPropagation();openAssignModal('${t.id}')" class="text-blue-400 hover:text-blue-300 text-xs"><i class="fas fa-exchange-alt"></i></button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  } catch(e) {}
+}
+
+// ── ANALYTICS ───────────────────────────────────────────────────
+async function loadAnalytics() {
+  let data = {};
+  try { data = await apiFetch('/super-admin/revenue') || {}; } catch(e) {}
+
+  const monthly = data.monthly || [];
+  const byPlan  = data.byPlan  || [];
+  const byStatus= data.byStatus|| [];
+
+  document.getElementById('content').innerHTML = `
+  <div class="fade-in space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="card p-5">
+        <h3 class="font-bold text-white mb-4"><i class="fas fa-chart-line text-blue-400 ml-2"></i>الإيرادات — آخر 12 شهراً</h3>
+        <canvas id="chart-revenue" height="200"></canvas>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-bold text-white mb-4"><i class="fas fa-chart-pie text-purple-400 ml-2"></i>توزيع الإيرادات حسب الباقة</h3>
+        <canvas id="chart-plan-revenue" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="card p-5">
+      <h3 class="font-bold text-white mb-4"><i class="fas fa-table text-green-400 ml-2"></i>الإيرادات حسب الباقة</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="border-b border-slate-700">
+          <th class="text-right py-2 px-3 text-slate-400">الباقة</th>
+          <th class="text-right py-2 px-3 text-slate-400">المشتركون</th>
+          <th class="text-right py-2 px-3 text-slate-400">MRR</th>
+        </tr></thead>
         <tbody>
-          ${['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(code => `
-          <tr>
-            <td><strong>${code.replace('_',' ')}</strong><br/><span style="font-size:11px;color:var(--muted)">${isoName(code)}</span></td>
-            <td style="text-align:center">${PLANS_DATA.basic.iso_standards.includes(code) ? '<i class="fas fa-check-circle" style="color:var(--green)"></i>' : '<i class="fas fa-times-circle" style="color:var(--border)"></i>'}</td>
-            <td style="text-align:center">${PLANS_DATA.professional.iso_standards.includes(code) ? '<i class="fas fa-check-circle" style="color:var(--green)"></i>' : '<i class="fas fa-times-circle" style="color:var(--border)"></i>'}</td>
-            <td style="text-align:center">${PLANS_DATA.enterprise.iso_standards.includes(code) ? '<i class="fas fa-check-circle" style="color:var(--green)"></i>' : '<i class="fas fa-times-circle" style="color:var(--border)"></i>'}</td>
+          ${byPlan.map(p=>`<tr class="border-b border-slate-800">
+            <td class="py-3 px-3 text-white font-medium">${p.name_ar||p.name}</td>
+            <td class="py-3 px-3 text-slate-300">${p.subscribers||0}</td>
+            <td class="py-3 px-3 text-green-400 font-bold">${formatSAR(p.mrr||0)}</td>
           </tr>`).join('')}
         </tbody>
       </table>
     </div>
   </div>`;
+
+  setTimeout(() => {
+    if (monthly.length) {
+      const ctx = document.getElementById('chart-revenue');
+      if (ctx) {
+        if (_charts.revenue) _charts.revenue.destroy();
+        _charts.revenue = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: monthly.map(m => m.month),
+            datasets: [{
+              label: 'الإيرادات (ريال)',
+              data: monthly.map(m => Number(m.revenue||0)),
+              backgroundColor: '#3b82f680', borderColor: '#3b82f6', borderWidth: 2, borderRadius: 6
+            }]
+          },
+          options: {
+            responsive:true,
+            plugins: { legend: { labels: { color:'#94a3b8', font:{family:'Tajawal'} } } },
+            scales: {
+              x: { ticks:{ color:'#64748b', font:{family:'Tajawal'} }, grid:{ color:'#1e293b' } },
+              y: { ticks:{ color:'#64748b', font:{family:'Tajawal'}, callback: v => formatSAR(v) }, grid:{ color:'#1e293b' } }
+            }
+          }
+        });
+      }
+    }
+    if (byPlan.length) {
+      const ctx2 = document.getElementById('chart-plan-revenue');
+      if (ctx2) {
+        if (_charts.planRevenue) _charts.planRevenue.destroy();
+        _charts.planRevenue = new Chart(ctx2, {
+          type: 'doughnut',
+          data: {
+            labels: byPlan.map(p=>p.name_ar||p.name),
+            datasets: [{ data: byPlan.map(p=>Number(p.mrr||0)), backgroundColor:['#3b82f6','#7c3aed','#059669','#d97706'], borderColor:'#1e293b', borderWidth:2, hoverOffset:6 }]
+          },
+          options: { responsive:true, cutout:'60%', plugins:{ legend:{ position:'bottom', labels:{color:'#94a3b8',boxWidth:12,font:{family:'Tajawal',size:11}} } } }
+        });
+      }
+    }
+  }, 100);
 }
 
-function editPlan(key) {
-  const plan = PLANS_DATA[key];
-  openModal(`
-  <div class="modal-header">
-    <h3 style="color:${plan.color}"><i class="fas fa-layer-group" style="margin-left:8px"></i>تعديل باقة ${plan.name}</h3>
-    <button class="close-btn" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="form-grid">
-      <div class="form-row"><label>السعر الشهري (ر.س)</label><input id="ep-monthly" type="number" value="${plan.price_monthly}"/></div>
-      <div class="form-row"><label>السعر السنوي (ر.س)</label><input id="ep-yearly" type="number" value="${plan.price_yearly}"/></div>
-    </div>
-    <div class="form-grid">
-      <div class="form-row"><label>عدد المستخدمين (-1 = غير محدود)</label><input id="ep-users" type="number" value="${plan.users}"/></div>
-      <div class="form-row"><label>عدد المشاريع (-1 = غير محدود)</label><input id="ep-projects" type="number" value="${plan.projects}"/></div>
-    </div>
-    <div class="form-row"><label>الوصف</label><input id="ep-desc" value="${plan.description}"/></div>
-    <div class="form-row">
-      <label>معايير ISO المتضمنة</label>
-      ${['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(code => `
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
-        <input type="checkbox" id="ep-iso-${code}" ${plan.iso_standards.includes(code)?'checked':''} style="width:16px;height:16px"/>
-        <label for="ep-iso-${code}" style="font-size:13px;cursor:pointer">${code.replace('_',' ')} — ${isoName(code)}</label>
-      </div>`).join('')}
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="savePlan('${key}')"><i class="fas fa-save"></i>حفظ التعديلات</button>
-  </div>`);
-}
-
-function savePlan(key) {
-  const plan = PLANS_DATA[key];
-  plan.price_monthly = Number(document.getElementById('ep-monthly').value);
-  plan.price_yearly  = Number(document.getElementById('ep-yearly').value);
-  plan.users         = Number(document.getElementById('ep-users').value);
-  plan.projects      = Number(document.getElementById('ep-projects').value);
-  plan.description   = document.getElementById('ep-desc').value;
-  plan.iso_standards = ['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].filter(code => document.getElementById('ep-iso-'+code)?.checked);
-  showToast('✅ تم حفظ تعديلات الباقة');
-  closeModal();
-  loadPlans();
-}
-
-// ══════════════════════════════════════════
-// FEATURES
-// ══════════════════════════════════════════
-const FEATURES_CONFIG = {
-  basic: ['dashboard','projects','audits','nonconformances','kpis','org'],
-  professional: ['dashboard','projects','audits','nonconformances','kpis','org','rca','lean','iso','reports','tasks'],
-  enterprise: ['dashboard','projects','audits','nonconformances','kpis','org','rca','lean','iso','reports','tasks','risks','integrations','advanced_analytics'],
-};
-
-const FEATURE_LABELS = {
-  dashboard: 'لوحة التحكم',
-  projects: 'المشاريع',
-  audits: 'التفتيش والمراجعة',
-  nonconformances: 'عدم المطابقة',
-  kpis: 'مؤشرات الأداء',
-  org: 'ملف المنظمة',
-  rca: 'تحليل الأسباب الجذرية',
-  lean: 'تحليل الهدر Lean',
-  iso: 'معايير ISO',
-  reports: 'التقارير',
-  tasks: 'المهام',
-  risks: 'إدارة المخاطر',
-  integrations: 'التكاملات',
-  advanced_analytics: 'التحليلات المتقدمة',
-};
-
-function loadFeatures() {
-  const main = document.getElementById('main-content');
-  const allFeatures = Object.keys(FEATURE_LABELS);
-  main.innerHTML = `
-  <div class="page-header">
-    <h1><i class="fas fa-sliders" style="color:var(--accent2);margin-left:10px"></i>إعدادات مميزات الباقات</h1>
-    <p>تحديد الصفحات والوظائف المتاحة لكل باقة اشتراك</p>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-    ${['basic','professional','enterprise'].map(plan => `
-    <div class="card">
-      <div class="card-header" style="background:${PLANS_DATA[plan].color}15">
-        <h3 style="color:${PLANS_DATA[plan].color}"><i class="fas fa-layer-group" style="margin-left:6px"></i>${PLANS_DATA[plan].name}</h3>
-        <button class="btn btn-ghost btn-sm" onclick="saveFeatures('${plan}')"><i class="fas fa-save"></i>حفظ</button>
-      </div>
-      <div style="padding:16px">
-        ${allFeatures.map(feat => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-          <span style="font-size:13px">${FEATURE_LABELS[feat]}</span>
-          <label class="toggle">
-            <input type="checkbox" id="feat-${plan}-${feat}" ${FEATURES_CONFIG[plan].includes(feat)?'checked':''}/>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>`).join('')}
-      </div>
-    </div>`).join('')}
-  </div>`;
-}
-
-function saveFeatures(plan) {
-  const allFeatures = Object.keys(FEATURE_LABELS);
-  FEATURES_CONFIG[plan] = allFeatures.filter(f => document.getElementById(`feat-${plan}-${f}`)?.checked);
-  showToast(`✅ تم حفظ مميزات باقة ${PLANS_DATA[plan].name}`);
-}
-
-// ══════════════════════════════════════════
-// ISO STANDARDS MANAGEMENT
-// ══════════════════════════════════════════
-const DEFAULT_ISO = [
-  { code: 'ISO_9001',  name: 'نظام إدارة الجودة',                 version: '2015', color: '#3b82f6', plans: ['basic','professional','enterprise'] },
-  { code: 'ISO_45001', name: 'الصحة والسلامة المهنية',              version: '2018', color: '#059669', plans: ['professional','enterprise'] },
-  { code: 'ISO_14001', name: 'نظام إدارة البيئة',                  version: '2015', color: '#d97706', plans: ['professional','enterprise'] },
-  { code: 'ISO_27001', name: 'أمن المعلومات',                       version: '2022', color: '#8b5cf6', plans: ['enterprise'] },
-];
-
-function loadISO() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = `
-  <div class="page-header">
-    <h1><i class="fas fa-certificate" style="color:var(--yellow);margin-left:10px"></i>إدارة معايير ISO</h1>
-    <p>تحديث المعايير الأساسية وتوزيعها على الباقات</p>
-  </div>
-
-  <div class="card" style="margin-bottom:24px">
-    <div class="card-header">
-      <h3>المعايير الأساسية</h3>
-      <button class="btn btn-primary" onclick="seedAllTenants()"><i class="fas fa-sync"></i>تحديث كل المشتركين</button>
-    </div>
-    <div style="padding:20px">
-      <div class="iso-grid">
-        ${DEFAULT_ISO.map(std => `
-        <div class="iso-card">
-          <div class="iso-card-header">
-            <div>
-              <div class="iso-tag" style="color:${std.color}">${std.code.replace('_',' ')}</div>
-              <div style="font-size:13px;font-weight:700;margin-top:2px">${std.name}</div>
-              <div style="font-size:11px;color:var(--muted)">إصدار ${std.version}</div>
-            </div>
-            <button class="btn btn-ghost btn-sm" onclick="editISO('${std.code}')"><i class="fas fa-edit"></i></button>
-          </div>
-          <div style="margin-top:8px">
-            ${std.plans.map(p => `<span class="badge badge-blue" style="margin-left:4px;font-size:10px">${PLANS_DATA[p].name}</span>`).join('')}
-          </div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h3><i class="fas fa-question-circle" style="color:var(--accent);margin-left:8px"></i>بنك أسئلة تقييم الفجوة</h3></div>
-    <div style="padding:20px">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">عدد الأسئلة لكل معيار في نظام تقييم الفجوة:</p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-        ${DEFAULT_ISO.map(std => `
-        <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border)">
-          <div style="font-size:11px;font-family:var(--mono);color:${std.color};font-weight:700">${std.code.replace('_',' ')}</div>
-          <div style="font-size:28px;font-weight:900;font-family:var(--mono);margin:6px 0">28</div>
-          <div style="font-size:11px;color:var(--muted)">سؤال (بنود 4-10)</div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </div>`;
-}
-
-function editISO(code) {
-  const std = DEFAULT_ISO.find(s => s.code === code);
-  if (!std) return;
-  openModal(`
-  <div class="modal-header">
-    <h3 style="color:${std.color}"><i class="fas fa-certificate" style="margin-left:8px"></i>${code.replace('_',' ')} — ${std.name}</h3>
-    <button class="close-btn" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="form-row"><label>اسم المعيار (عربي)</label><input id="iso-name" value="${std.name}"/></div>
-    <div class="form-grid">
-      <div class="form-row"><label>رقم الإصدار</label><input id="iso-ver" value="${std.version}"/></div>
-      <div class="form-row"><label>اللون</label><input id="iso-color" type="color" value="${std.color}"/></div>
-    </div>
-    <div class="form-row">
-      <label>متاح في الباقات</label>
-      ${['basic','professional','enterprise'].map(p => `
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
-        <input type="checkbox" id="isoplan-${p}" ${std.plans.includes(p)?'checked':''} style="width:16px;height:16px"/>
-        <label for="isoplan-${p}" style="font-size:13px;cursor:pointer">${PLANS_DATA[p].name}</label>
-      </div>`).join('')}
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveISO('${code}')"><i class="fas fa-save"></i>حفظ</button>
-  </div>`);
-}
-
-function saveISO(code) {
-  const std = DEFAULT_ISO.find(s => s.code === code);
-  if (!std) return;
-  std.name    = document.getElementById('iso-name').value;
-  std.version = document.getElementById('iso-ver').value;
-  std.color   = document.getElementById('iso-color').value;
-  std.plans   = ['basic','professional','enterprise'].filter(p => document.getElementById('isoplan-'+p)?.checked);
-  showToast('✅ تم تحديث إعدادات ' + code.replace('_',' '));
-  closeModal();
-  loadISO();
-}
-
-async function seedAllTenants() {
-  if (!confirm('سيتم إضافة/تحديث معايير ISO لجميع المشتركين. متابعة؟')) return;
-  showToast('⏳ جارٍ التحديث...', 'info');
-  // Call seed endpoint for current tenant as demo
+// ── TENANTS ─────────────────────────────────────────────────────
+async function loadTenants(search='', status='', page=1) {
+  let res = {};
   try {
-    await adminFetch('/iso/standards/seed', 'POST');
-    showToast('✅ تم تحديث المعايير لجميع المشتركين');
+    const q = new URLSearchParams({ page, limit:20, search, status }).toString();
+    res = await apiFetch('/super-admin/tenants?'+q) || {};
+  } catch(e) {}
+  const tenants = res.data || [];
+  const total   = res.total || 0;
+
+  document.getElementById('content').innerHTML = `
+  <div class="fade-in space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex gap-2 flex-wrap">
+        <input type="text" id="tenant-search" value="${search}" placeholder="بحث..." class="form-input text-sm" style="width:200px" oninput="loadTenants(this.value,document.getElementById('tenant-status').value)"/>
+        <select id="tenant-status" class="form-input text-sm" style="width:150px" onchange="loadTenants(document.getElementById('tenant-search').value,this.value)">
+          <option value="">كل الحالات</option>
+          <option value="ACTIVE" ${status==='ACTIVE'?'selected':''}>نشط</option>
+          <option value="TRIAL"  ${status==='TRIAL' ?'selected':''}>تجريبي</option>
+          <option value="CANCELLED" ${status==='CANCELLED'?'selected':''}>ملغى</option>
+          <option value="EXPIRED"   ${status==='EXPIRED'  ?'selected':''}>منتهي</option>
+        </select>
+      </div>
+      <div class="text-sm text-slate-400">${total} مستأجر إجمالاً</div>
+    </div>
+
+    <div class="card overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="border-b border-slate-700">
+          <tr>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">المستأجر</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">الباقة</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">الحالة</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">المستخدمون</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">تجديد</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">الفواتير</th>
+            <th class="py-3 px-4 text-slate-400 font-medium text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tenants.length ? tenants.map(t=>`
+          <tr class="table-row border-b border-slate-800 cursor-pointer" onclick="openTenantModal('${t.id}')">
+            <td class="py-3 px-4">
+              <div class="font-semibold text-white">${t.name||'—'}</div>
+              <div class="text-xs text-slate-500">${t.email||''}</div>
+            </td>
+            <td class="py-3 px-4"><span class="badge-blue">${t.plan_name||'—'}</span></td>
+            <td class="py-3 px-4">${statusBadge(t.status)}</td>
+            <td class="py-3 px-4 text-slate-300">${t.active_users||0}</td>
+            <td class="py-3 px-4 text-xs text-slate-400">${t.current_period_end?new Date(t.current_period_end).toLocaleDateString('ar-SA'):'—'}</td>
+            <td class="py-3 px-4 text-slate-300">${t.paid_invoices||0}</td>
+            <td class="py-3 px-4 text-center" onclick="event.stopPropagation()">
+              <div class="flex gap-1 justify-center">
+                <button onclick="openTenantModal('${t.id}')" class="btn btn-outline text-xs py-1 px-2"><i class="fas fa-eye"></i></button>
+                <button onclick="openAssignModal('${t.id}')" class="btn btn-primary text-xs py-1 px-2"><i class="fas fa-exchange-alt"></i></button>
+              </div>
+            </td>
+          </tr>`).join('') : '<tr><td colspan="7" class="py-8 text-center text-slate-500">لا توجد بيانات</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ── PLANS ────────────────────────────────────────────────────────
+async function loadPlans() {
+  let plans = [];
+  try { plans = await apiFetch('/super-admin/plans') || []; } catch(e){}
+  _plans = Array.isArray(plans) ? plans : [];
+
+  const FEATURES = [
+    {key:'dashboard',      label:'لوحة التحكم'},
+    {key:'projects',       label:'إدارة المشاريع'},
+    {key:'inspections',    label:'التفتيش والمراجعة'},
+    {key:'nc',             label:'عدم المطابقة'},
+    {key:'rca',            label:'تحليل الأسباب RCA'},
+    {key:'lean',           label:'تحليل الهدر Lean'},
+    {key:'kpis_basic',     label:'مؤشرات KPI أساسية'},
+    {key:'kpis_advanced',  label:'مؤشرات KPI متقدمة'},
+    {key:'reports_basic',  label:'التقارير الأساسية'},
+    {key:'reports_advanced',label:'التقارير المتقدمة'},
+    {key:'map',            label:'خريطة المشاريع'},
+    {key:'tasks',          label:'لوحة المهام'},
+    {key:'mobile',         label:'تطبيق الجوال'},
+    {key:'iso_9001',       label:'معيار ISO 9001'},
+    {key:'iso_45001',      label:'معيار ISO 45001'},
+    {key:'iso_14001',      label:'معيار ISO 14001'},
+    {key:'iso_27001',      label:'معيار ISO 27001'},
+    {key:'gap_analysis',   label:'تحليل الفجوة'},
+    {key:'advisory',       label:'المجلس الاستشاري AI'},
+    {key:'api_access',     label:'API Access'},
+    {key:'custom_branding',label:'Custom Branding'},
+    {key:'sso',            label:'SSO / LDAP'},
+    {key:'sla',            label:'SLA 99.9%'},
+    {key:'dedicated_support',label:'دعم مخصص'},
+  ];
+
+  const planColors = {starter:'#3b82f6',professional:'#7c3aed',enterprise:'#059669',custom:'#d97706'};
+
+  document.getElementById('content').innerHTML = `
+  <div class="fade-in space-y-6">
+    <div class="flex justify-between items-center">
+      <div class="text-sm text-slate-400">إدارة الباقات والمميزات والأسعار</div>
+      <button onclick="openCreatePlanModal()" class="btn btn-primary"><i class="fas fa-plus ml-1"></i>باقة جديدة</button>
+    </div>
+
+    <!-- بطاقات الباقات -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4" id="plans-grid">
+      ${_plans.map(plan => {
+        const color = planColors[plan.name] || '#64748b';
+        const feats = typeof plan.features === 'string' ? JSON.parse(plan.features) : (plan.features||{});
+        const enabledCount = Object.values(feats).filter(Boolean).length;
+        return `<div class="card overflow-hidden" style="border-top:3px solid ${color}">
+          <div class="p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-bold text-white text-base">${plan.name_ar}</div>
+              <button onclick="openEditPlanModal('${plan.id}')" class="text-slate-400 hover:text-white text-xs"><i class="fas fa-edit"></i></button>
+            </div>
+            <div class="text-2xl font-black mb-1" style="color:${color}">${plan.price_monthly?plan.price_monthly.toLocaleString()+' ريال':'تواصل'}</div>
+            <div class="text-xs text-slate-500 mb-3">شهرياً · ${plan.price_yearly?plan.price_yearly.toLocaleString()+' ريال سنوياً':''}</div>
+            <div class="grid grid-cols-3 gap-2 text-center text-xs mb-3">
+              <div class="p-1 rounded" style="background:${color}15"><div class="font-bold" style="color:${color}">${plan.max_users>=999?'∞':plan.max_users}</div><div class="text-slate-500">مستخدم</div></div>
+              <div class="p-1 rounded" style="background:${color}15"><div class="font-bold" style="color:${color}">${plan.max_projects>=999?'∞':plan.max_projects}</div><div class="text-slate-500">مشروع</div></div>
+              <div class="p-1 rounded" style="background:${color}15"><div class="font-bold" style="color:${color}">${plan.storage_gb>=999?'∞':plan.storage_gb+'GB'}</div><div class="text-slate-500">تخزين</div></div>
+            </div>
+            <div class="text-xs text-slate-400 mb-3">${enabledCount} ميزة مفعّلة</div>
+          </div>
+
+          <!-- مفاتيح المميزات -->
+          <div class="border-t border-slate-700 p-3 space-y-1.5 max-h-64 overflow-y-auto">
+            ${FEATURES.map(f => {
+              const enabled = feats[f.key] === true;
+              return `<div class="flex items-center justify-between py-1">
+                <span class="text-xs text-slate-400">${f.label}</span>
+                <label class="toggle">
+                  <input type="checkbox" ${enabled?'checked':''} onchange="toggleFeature('${plan.id}','${f.key}',this.checked)"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ── INVOICES ─────────────────────────────────────────────────────
+async function loadInvoices(status='', page=1) {
+  let res = {};
+  try {
+    const q = new URLSearchParams({page,limit:30,status}).toString();
+    res = await apiFetch('/super-admin/invoices?'+q) || {};
+  } catch(e){}
+  const invoices = res.data || [];
+
+  document.getElementById('content').innerHTML = `
+  <div class="fade-in space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex gap-2">
+        <select id="inv-status" class="form-input text-sm" style="width:150px" onchange="loadInvoices(this.value)">
+          <option value="">كل الفواتير</option>
+          <option value="pending"  ${status==='pending' ?'selected':''}>معلقة</option>
+          <option value="paid"     ${status==='paid'    ?'selected':''}>مدفوعة</option>
+          <option value="failed"   ${status==='failed'  ?'selected':''}>فاشلة</option>
+        </select>
+      </div>
+      <div class="text-sm text-slate-400">${res.total||0} فاتورة إجمالاً</div>
+    </div>
+
+    <div class="card overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="border-b border-slate-700">
+          <tr>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">رقم الفاتورة</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">المستأجر</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">الباقة</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">المبلغ</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">الإجمالي (مع VAT)</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">الحالة</th>
+            <th class="text-right py-3 px-4 text-slate-400 font-medium">التاريخ</th>
+            <th class="py-3 px-4 text-center text-slate-400 font-medium">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${invoices.length ? invoices.map(inv=>`
+          <tr class="table-row border-b border-slate-800">
+            <td class="py-3 px-4 font-mono text-blue-400 text-xs">${inv.invoice_number}</td>
+            <td class="py-3 px-4 text-white">${inv.tenant_name||'—'}</td>
+            <td class="py-3 px-4"><span class="badge-blue text-xs">${inv.plan_name||'—'}</span></td>
+            <td class="py-3 px-4 text-slate-300">${formatSAR(inv.amount||0)}</td>
+            <td class="py-3 px-4 text-white font-bold">${formatSAR(inv.total_amount||0)}</td>
+            <td class="py-3 px-4">${invStatusBadge(inv.status)}</td>
+            <td class="py-3 px-4 text-xs text-slate-400">${new Date(inv.created_at).toLocaleDateString('ar-SA')}</td>
+            <td class="py-3 px-4 text-center">
+              ${inv.status==='pending'?`<button onclick="payInvoice('${inv.id}')" class="btn btn-success text-xs py-1 px-2"><i class="fas fa-check"></i> تسجيل دفع</button>`:''}
+              <button onclick="printInvoice('${inv.id}')" class="btn btn-outline text-xs py-1 px-2 ml-1"><i class="fas fa-print"></i></button>
+            </td>
+          </tr>`).join('') : '<tr><td colspan="8" class="py-8 text-center text-slate-500">لا توجد فواتير</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────────
+function loadSettings() {
+  document.getElementById('content').innerHTML = `
+  <div class="fade-in space-y-5">
+    <div class="card p-5">
+      <h3 class="font-bold text-white mb-4"><i class="fas fa-cog text-slate-400 ml-2"></i>إعدادات النظام</h3>
+      <div class="space-y-4">
+        ${settingRow('فترة التجربة المجانية (أيام)', 'trial_days', '14')}
+        ${settingRow('معدل ضريبة القيمة المضافة (%)', 'vat_rate', '15')}
+        ${settingRow('عملة الفوترة', 'currency', 'SAR')}
+        ${settingRow('الموعد النهائي للدفع (أيام)', 'payment_due_days', '7')}
+      </div>
+      <div class="mt-4">
+        <button class="btn btn-primary"><i class="fas fa-save ml-1"></i>حفظ الإعدادات</button>
+      </div>
+    </div>
+
+    <div class="card p-5">
+      <h3 class="font-bold text-white mb-4"><i class="fas fa-shield-alt text-red-400 ml-2"></i>Super Admin</h3>
+      <div class="text-sm text-slate-400 mb-3">يمكن الوصول لهذه اللوحة عبر: <code class="text-blue-400">/admin</code></div>
+      <div class="p-3 rounded-lg text-xs text-slate-500 font-mono" style="background:#0f172a;">
+        Backend: ${API}<br>
+        Version: v1.0.0<br>
+        Status: <span class="text-green-400">🟢 Running</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function settingRow(label, key, value) {
+  return `<div class="flex items-center justify-between py-2 border-b border-slate-800">
+    <label class="text-sm text-slate-300">${label}</label>
+    <input type="text" class="form-input text-sm" style="width:160px;" value="${value}" id="setting-${key}"/>
+  </div>`;
+}
+
+// ── MODALS ────────────────────────────────────────────────────────
+async function openTenantModal(id) {
+  let data = {};
+  try { data = await apiFetch('/super-admin/tenants/'+id) || {}; } catch(e){}
+  const t  = data.tenant || {};
+  const s  = data.subscription || {};
+  const invs = data.invoices || [];
+  const users= data.users || [];
+
+  document.getElementById('tenant-modal-title').textContent = t.name || 'تفاصيل المستأجر';
+  document.getElementById('tenant-modal-body').innerHTML = `
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div class="p-3 rounded-xl" style="background:#0f172a;">
+        <div class="text-xs text-slate-500 mb-1">الباقة الحالية</div>
+        <div class="text-white font-bold">${t.plan_name||'—'}</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:#0f172a;">
+        <div class="text-xs text-slate-500 mb-1">الحالة</div>
+        <div>${statusBadge(t.status)}</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:#0f172a;">
+        <div class="text-xs text-slate-500 mb-1">دورة الفوترة</div>
+        <div class="text-white">${s.billing_cycle==='yearly'?'سنوي':'شهري'}</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:#0f172a;">
+        <div class="text-xs text-slate-500 mb-1">نهاية الفترة</div>
+        <div class="text-white">${s.current_period_end?new Date(s.current_period_end).toLocaleDateString('ar-SA'):'—'}</div>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <div class="text-sm font-bold text-white mb-2">آخر الفواتير</div>
+      <table class="w-full text-xs">
+        <thead><tr class="border-b border-slate-700"><th class="text-right py-2 text-slate-400">رقم</th><th class="text-right py-2 text-slate-400">المبلغ</th><th class="text-right py-2 text-slate-400">الحالة</th><th class="text-right py-2 text-slate-400">التاريخ</th></tr></thead>
+        <tbody>${invs.map(i=>`<tr class="border-b border-slate-800"><td class="py-2 font-mono text-blue-400">${i.invoice_number}</td><td class="py-2 text-white">${formatSAR(i.total_amount||0)}</td><td class="py-2">${invStatusBadge(i.status)}</td><td class="py-2 text-slate-400">${new Date(i.created_at).toLocaleDateString('ar-SA')}</td></tr>`).join('')||'<tr><td colspan="4" class="py-3 text-center text-slate-500">لا توجد فواتير</td></tr>'}</tbody>
+      </table>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="closeModal('modal-tenant');openAssignModal('${t.id}')" class="btn btn-primary flex-1"><i class="fas fa-exchange-alt ml-1"></i>تغيير الباقة</button>
+      <button onclick="closeModal('modal-tenant')" class="btn btn-outline">إغلاق</button>
+    </div>`;
+  openModal('modal-tenant');
+}
+
+async function openAssignModal(tenantId) {
+  document.getElementById('assign-tenant-id').value = tenantId;
+  const planSel = document.getElementById('assign-plan-id');
+  if (!_plans.length) {
+    try { _plans = await apiFetch('/super-admin/plans') || []; } catch(e){}
+  }
+  planSel.innerHTML = _plans.map(p=>`<option value="${p.id}">${p.name_ar} — ${p.price_monthly?p.price_monthly.toLocaleString()+' ريال/شهر':'تواصل'}</option>`).join('');
+  openModal('modal-assign');
+}
+
+async function submitAssignPlan() {
+  const tenantId = document.getElementById('assign-tenant-id').value;
+  const planId   = document.getElementById('assign-plan-id').value;
+  const billing  = document.getElementById('assign-billing').value;
+  try {
+    await apiFetch('/super-admin/tenants/'+tenantId+'/assign-plan', 'POST', { plan_id:planId, billing_cycle:billing });
+    closeModal('modal-assign');
+    showToast('✅ تم تعيين الباقة بنجاح');
+    loadTenants();
+  } catch(e) { showToast('❌ خطأ في التعيين', 'error'); }
+}
+
+function openEditPlanModal(planId) {
+  const plan = _plans.find(p=>p.id===planId);
+  if (!plan) return;
+  document.getElementById('plan-modal-title').textContent = 'تعديل باقة: '+plan.name_ar;
+  document.getElementById('plan-modal-body').innerHTML = `
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-xs text-slate-400 block mb-1">الاسم العربي</label><input class="form-input" id="pe-name_ar" value="${plan.name_ar}"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">السعر الشهري (ريال)</label><input class="form-input" type="number" id="pe-monthly" value="${plan.price_monthly||0}"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">السعر السنوي (ريال)</label><input class="form-input" type="number" id="pe-yearly" value="${plan.price_yearly||0}"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">الحد الأقصى للمستخدمين</label><input class="form-input" type="number" id="pe-users" value="${plan.max_users}"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">الحد الأقصى للمشاريع</label><input class="form-input" type="number" id="pe-projects" value="${plan.max_projects}"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">التخزين (GB)</label><input class="form-input" type="number" id="pe-storage" value="${plan.storage_gb}"/></div>
+      </div>
+      <div class="text-xs text-slate-400">999 = غير محدود</div>
+      <div class="flex gap-3 pt-2">
+        <button onclick="savePlanEdit('${planId}')" class="btn btn-primary flex-1"><i class="fas fa-save ml-1"></i>حفظ التعديلات</button>
+        <button onclick="closeModal('modal-plan')" class="btn btn-outline">إلغاء</button>
+      </div>
+    </div>`;
+  openModal('modal-plan');
+}
+
+async function savePlanEdit(planId) {
+  try {
+    await apiFetch('/super-admin/plans/'+planId, 'PUT', {
+      name_ar:      document.getElementById('pe-name_ar').value,
+      price_monthly: parseFloat(document.getElementById('pe-monthly').value)||0,
+      price_yearly:  parseFloat(document.getElementById('pe-yearly').value)||0,
+      max_users:     parseInt(document.getElementById('pe-users').value)||5,
+      max_projects:  parseInt(document.getElementById('pe-projects').value)||2,
+      storage_gb:    parseInt(document.getElementById('pe-storage').value)||5,
+    });
+    closeModal('modal-plan');
+    showToast('✅ تم حفظ التعديلات');
+    loadPlans();
+  } catch(e) { showToast('❌ خطأ في الحفظ', 'error'); }
+}
+
+function openCreatePlanModal() {
+  document.getElementById('plan-modal-title').textContent = 'إنشاء باقة جديدة';
+  document.getElementById('plan-modal-body').innerHTML = `
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-xs text-slate-400 block mb-1">الكود (إنجليزي) *</label><input class="form-input" id="np-name" placeholder="basic"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">الاسم العربي *</label><input class="form-input" id="np-name_ar" placeholder="الأساسي"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">السعر الشهري</label><input class="form-input" type="number" id="np-monthly" value="0"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">السعر السنوي</label><input class="form-input" type="number" id="np-yearly" value="0"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">الحد الأقصى للمستخدمين</label><input class="form-input" type="number" id="np-users" value="5"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">الحد الأقصى للمشاريع</label><input class="form-input" type="number" id="np-projects" value="2"/></div>
+        <div><label class="text-xs text-slate-400 block mb-1">التخزين (GB)</label><input class="form-input" type="number" id="np-storage" value="5"/></div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button onclick="createPlan()" class="btn btn-primary flex-1"><i class="fas fa-plus ml-1"></i>إنشاء الباقة</button>
+        <button onclick="closeModal('modal-plan')" class="btn btn-outline">إلغاء</button>
+      </div>
+    </div>`;
+  openModal('modal-plan');
+}
+
+async function createPlan() {
+  try {
+    await apiFetch('/super-admin/plans', 'POST', {
+      name:         document.getElementById('np-name').value.trim(),
+      name_ar:      document.getElementById('np-name_ar').value.trim(),
+      price_monthly: parseFloat(document.getElementById('np-monthly').value)||0,
+      price_yearly:  parseFloat(document.getElementById('np-yearly').value)||0,
+      max_users:     parseInt(document.getElementById('np-users').value)||5,
+      max_projects:  parseInt(document.getElementById('np-projects').value)||2,
+      storage_gb:    parseInt(document.getElementById('np-storage').value)||5,
+    });
+    closeModal('modal-plan');
+    showToast('✅ تم إنشاء الباقة');
+    loadPlans();
+  } catch(e) { showToast('❌ خطأ في الإنشاء', 'error'); }
+}
+
+async function toggleFeature(planId, feature, enabled) {
+  try {
+    await apiFetch('/super-admin/plans/'+planId+'/features', 'PUT', { feature, enabled });
+    showToast((enabled?'✅ تم تفعيل':'🔴 تم تعطيل')+' '+feature);
+    const idx = _plans.findIndex(p=>p.id===planId);
+    if (idx>=0) {
+      const feats = typeof _plans[idx].features==='string'?JSON.parse(_plans[idx].features):(_plans[idx].features||{});
+      feats[feature] = enabled;
+      _plans[idx].features = feats;
+    }
   } catch(e) { showToast('❌ خطأ في التحديث', 'error'); }
 }
 
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
+async function payInvoice(id) {
+  if (!confirm('تأكيد تسجيل الدفع لهذه الفاتورة؟')) return;
+  try {
+    await apiFetch('/super-admin/invoices/'+id+'/pay', 'POST');
+    showToast('✅ تم تسجيل الدفع');
+    loadInvoices();
+  } catch(e) { showToast('❌ خطأ', 'error'); }
+}
+
+function printInvoice(id) { showToast('⬇️ جاري تحضير الفاتورة...'); }
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function formatSAR(v) { return Number(v||0).toLocaleString('ar-SA')+' ريال'; }
+
 function statusBadge(s) {
-  const m = {ACTIVE:'badge-green',TRIAL:'badge-yellow',SUSPENDED:'badge-red',CANCELLED:'badge-gray',active:'badge-green',trial:'badge-yellow'};
-  const l = {ACTIVE:'نشط',TRIAL:'تجريبي',SUSPENDED:'موقوف',CANCELLED:'ملغى',active:'نشط',trial:'تجريبي'};
-  return `<span class="badge ${m[s]||'badge-gray'}">${l[s]||s}</span>`;
+  const map = { ACTIVE:'badge-green', TRIAL:'badge-yellow', CANCELLED:'badge-red', EXPIRED:'badge-red', PAST_DUE:'badge-yellow' };
+  const ar  = { ACTIVE:'نشط', TRIAL:'تجريبي', CANCELLED:'ملغى', EXPIRED:'منتهي', PAST_DUE:'متأخر' };
+  return `<span class="${map[s]||'badge-gray'}">${ar[s]||s||'—'}</span>`;
 }
 
-function paymentBadge(s) {
-  const m = {SUCCEEDED:'badge-green',PENDING:'badge-yellow',FAILED:'badge-red',REFUNDED:'badge-purple'};
-  const l = {SUCCEEDED:'مكتملة',PENDING:'معلقة',FAILED:'فاشلة',REFUNDED:'مُسترجعة'};
-  return `<span class="badge ${m[s]||'badge-gray'}">${l[s]||s}</span>`;
+function invStatusBadge(s) {
+  const map = { paid:'badge-green', pending:'badge-yellow', failed:'badge-red', refunded:'badge-blue' };
+  const ar  = { paid:'مدفوعة', pending:'معلقة', failed:'فاشلة', refunded:'مسترجعة' };
+  return `<span class="${map[s]||'badge-gray'}">${ar[s]||s||'—'}</span>`;
 }
 
-function planBadge(p) {
-  const m = {basic:'badge-gray',professional:'badge-blue',enterprise:'badge-purple'};
-  const l = {basic:'أساسية',professional:'احترافية',enterprise:'مؤسسية'};
-  return `<span class="badge ${m[p]||'badge-gray'}">${l[p]||p}</span>`;
+function kpiCard(label, value, icon, color, sub) {
+  return `<div class="stat-card">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-xs text-slate-500 mb-1">${label}</p>
+        <p class="text-2xl font-black" style="color:${color}">${value}</p>
+        <p class="text-xs text-slate-600 mt-1">${sub}</p>
+      </div>
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${color}20">
+        <i class="fas fa-${icon} text-lg" style="color:${color}"></i>
+      </div>
+    </div>
+  </div>`;
 }
 
-function isoName(code) {
-  const n = {ISO_9001:'نظام إدارة الجودة',ISO_45001:'الصحة والسلامة المهنية',ISO_14001:'نظام إدارة البيئة',ISO_27001:'أمن المعلومات'};
-  return n[code] || code;
+function statusRow(label, count, color) {
+  return `<div class="flex items-center justify-between">
+    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${color}"></div><span class="text-sm text-slate-300">${label}</span></div>
+    <span class="font-bold" style="color:${color}">${count}</span>
+  </div>`;
 }
+
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+
+function showToast(msg, type='success') {
+  const d = document.createElement('div');
+  const c = type==='error' ? '#dc2626' : '#059669';
+  d.style.cssText=`position:fixed;bottom:24px;right:24px;z-index:9999;padding:11px 20px;border-radius:10px;background:${c};color:white;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.3);font-family:Tajawal,sans-serif;`;
+  d.textContent=msg; document.body.appendChild(d); setTimeout(()=>d.remove(),3500);
+}
+
+// ── Clock ─────────────────────────────────────────────────────────
+function updateClock() {
+  const el = document.getElementById('current-time');
+  if (el) el.textContent = new Date().toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Init ──────────────────────────────────────────────────────────
+(async function() {
+  const token = getToken();
+  if (!token) { location.href = '/'; return; }
+  navigate('dashboard');
+})();
 </script>
 </body>
 </html>
