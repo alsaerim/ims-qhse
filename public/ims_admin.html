@@ -333,7 +333,20 @@ async function loadPlans(){
     `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
       ${plans.map(plan=>{
         const color=PC[plan.name]||'#475569';
-        const feats=typeof plan.features==='string'?tryParse(plan.features):(plan.features||{});
+        const rawF=typeof plan.features==='string'?tryParse(plan.features):(plan.features||{});
+        const feats={
+         dashboard:true,projects:rawF.projects??true,inspections:rawF.inspections??true,
+         nc:rawF.nc??true,rca:rawF.rca_analysis??rawF.rca??false,lean:rawF.lean_six_sigma??rawF.lean??false,
+         kpis_basic:rawF.kpis_basic??true,kpis_advanced:rawF.kpis_advanced??false,
+         reports_basic:rawF.pdf_reports??rawF.reports_basic??true,reports_advanced:rawF.custom_reports??false,
+         map:rawF.project_map??rawF.map??false,tasks:rawF.tasks??false,mobile:rawF.mobile_app??rawF.mobile??true,
+         iso_9001:!!(rawF.iso_standards||[]).includes('ISO_9001'),iso_45001:!!(rawF.iso_standards||[]).includes('ISO_45001'),
+         iso_14001:!!(rawF.iso_standards||[]).includes('ISO_14001'),iso_27001:!!(rawF.iso_standards||[]).includes('ISO_27001'),
+         gap_analysis:rawF.gap_analysis??false,advisory:rawF.advisory_council??rawF.advisory??false,
+         api_access:rawF.api_access??false,custom_branding:rawF.on_premise??rawF.custom_branding??false,
+         sso:rawF.sso_ldap??rawF.sso??false,sla:!!(rawF.sla_uptime||rawF.sla),
+         dedicated_support:rawF.dedicated_manager??rawF.dedicated_support??false,
+         };
         const cnt=Object.values(feats).filter(Boolean).length;
         return `<div class="card" style="overflow:hidden;border-top:3px solid ${color};">
           <div style="padding:16px 18px;">
@@ -344,9 +357,9 @@ async function loadPlans(){
             <div style="font-size:26px;font-weight:900;color:${color};">${plan.price_monthly?Number(plan.price_monthly).toLocaleString()+' ريال':'تواصل'}</div>
             <div style="font-size:11px;color:#94a3b8;margin-bottom:12px;">شهرياً${plan.price_yearly?' · '+Number(plan.price_yearly).toLocaleString()+' ريال سنوياً':''}</div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${plan.max_users>=999?'∞':plan.max_users}</div><div style="font-size:10px;color:#94a3b8;">مستخدم</div></div>
-              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${plan.max_projects>=999?'∞':plan.max_projects}</div><div style="font-size:10px;color:#94a3b8;">مشروع</div></div>
-              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${plan.storage_gb>=999?'∞':plan.storage_gb+'G'}</div><div style="font-size:10px;color:#94a3b8;">تخزين</div></div>
+              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const u=plan.max_users??plan.limits?.users;return(!u||u<0||u>=999)?'∞':u;})()}</div><div style="font-size:10px;color:#94a3b8;">مستخدم</div></div>
+              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const p=plan.max_projects??plan.limits?.projects;return(!p||p<0||p>=999)?'∞':p;})()}</div><div style="font-size:10px;color:#94a3b8;">مشروع</div></div>
+              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const s=plan.storage_gb??plan.limits?.storage_gb;return(!s||s<0||s>=999)?'∞':s+'G';})()}</div><div style="font-size:10px;color:#94a3b8;">تخزين</div></div>
             </div>
             <div style="font-size:11px;color:#94a3b8;">${cnt} ميزة مفعّلة</div>
           </div>
@@ -449,9 +462,9 @@ function planForm(p){
       <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">الاسم العربي*</label><input class="form-input" id="pf-ar" value="${p?.name_ar||''}"/></div>
       <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">السعر الشهري (ريال)</label><input class="form-input" type="number" id="pf-m" value="${p?.price_monthly||0}"/></div>
       <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">السعر السنوي (ريال)</label><input class="form-input" type="number" id="pf-y" value="${p?.price_yearly||0}"/></div>
-      <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمستخدمين</label><input class="form-input" type="number" id="pf-u" value="${p?.max_users||5}"/></div>
-      <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمشاريع</label><input class="form-input" type="number" id="pf-pr" value="${p?.max_projects||2}"/></div>
-      <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">التخزين (GB)</label><input class="form-input" type="number" id="pf-s" value="${p?.storage_gb||5}"/></div>
+      <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمستخدمين</label><input class="form-input" type="number" id="pf-u" value="${p?.max_users??p?.limits?.users??5}"/></div>
+      <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمشاريع</label><input class="form-input" type="number" id="pf-pr" value="${p?.max_projects??p?.limits?.projects??2}"/></div>
+      <div><label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">التخزين (GB)</label><input class="form-input" type="number" id="pf-s" value="${p?.storage_gb??p?.limits?.storage_gb??5}"/></div>
     </div>
     <div style="font-size:11px;color:#94a3b8;">تلميح: 999 = غير محدود</div>
     <div style="display:flex;gap:10px;margin-top:4px;">
