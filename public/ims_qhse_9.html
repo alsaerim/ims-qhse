@@ -154,6 +154,20 @@ tailwind.config = { theme: { extend: {
 // ============================================================
 // DATA LAYER — يحمّل البيانات الحقيقية من API
 // ============================================================
+// Backend enums arrive upper-case (OPEN, IN_PROGRESS, COMPLETED…); the UI compares lower-case.
+// Normalise the enum-like fields once, at the fetch boundary.
+window.normalizeEnums = function normalizeEnums(v) {
+  if (Array.isArray(v)) return v.map(normalizeEnums);
+  if (v && typeof v === 'object') {
+    for (const k of Object.keys(v)) {
+      const x = v[k];
+      if (/^(status|type|result|severity|priority)$/.test(k) && typeof x === 'string' && /^[A-Z_]+$/.test(x)) v[k] = x.toLowerCase();
+      else if (x && typeof x === 'object') v[k] = normalizeEnums(x);
+    }
+  }
+  return v;
+};
+
 window.MOCK_DB = {
   users: [], projects: [], inspections: [], nonconformances: [],
   rca_tickets: [], kpis: [], risks: [], annual_plans: [],
@@ -173,7 +187,7 @@ window.hydrateGlobalData = async function() {
       const r = await fetch(API + url, { headers });
       if (!r.ok) return null;
       const j = await r.json();
-      return j.data !== undefined ? j.data : j;
+      return normalizeEnums(j.data !== undefined ? j.data : j);
     } catch(e) { return null; }
   };
 
@@ -185,7 +199,7 @@ window.hydrateGlobalData = async function() {
     get('/risks'),
     get('/kpis'),
     get('/org/profile'),
-    get('/org/iso-standards'),
+    get('/org/iso/standards'),
     get('/dashboard/tasks'),
   ]);
 
@@ -267,7 +281,7 @@ window.hydrateGlobalData = async function() {
     <div class="nav-item" onclick="navigate('nc')">
       <i class="fas fa-exclamation-triangle w-4"></i>
       <span class="sidebar-label">عدم المطابقة</span>
-      <span class="badge badge-red text-xs mr-auto" id="nc-count-badge">-</span>
+      <span class="badge badge-red text-xs mr-auto" id="nc-count-badge" style="display:none">0</span>
     </div>
 
     <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">Lean Six Sigma</div>
@@ -2070,7 +2084,10 @@ async function loadNonConformances() {
   } catch(e) {
     console.error('[NC Load Error]', e);
   }
-  document.getElementById('nc-count-badge').textContent = ncList.filter(n => n.status === 'open').length || 0;
+  const _openNC = ncList.filter(n => n.status === 'open').length;
+  const _ncBadge = document.getElementById('nc-count-badge');
+  _ncBadge.textContent = _openNC;
+  _ncBadge.style.display = _openNC ? '' : 'none';
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-4">
     <div class="flex items-center justify-between">
@@ -9278,9 +9295,9 @@ async function apiFetch(url, method = 'GET', body = null) {
   }
   const json = await res.json();
   if (isReal && json && json.success !== undefined) {
-    return json.data !== undefined ? json.data : json;
+    return normalizeEnums(json.data !== undefined ? json.data : json);
   }
-  return json;
+  return normalizeEnums(json);
 }
 
 // ── Helpers ───────────────────────────────────
@@ -9496,8 +9513,8 @@ function renderUsersTable(usersArr) {
         <td class="p-4 text-slate-500 text-xs">${u.department || '-'}</td>
         <td class="p-4 text-xs text-slate-400">${u.last_login ? timeAgo(u.last_login) : 'لم يسجل دخول'}</td>
         <td class="p-4">
-          <span class="badge ${u.status === 'ACTIVE' ? 'badge-green' : 'badge-red'}">
-            ${u.status === 'ACTIVE' ? 'نشط' : 'معطّل'}
+          <span class="badge ${String(u.status).toUpperCase() === 'ACTIVE' ? 'badge-green' : 'badge-red'}">
+            ${String(u.status).toUpperCase() === 'ACTIVE' ? 'نشط' : 'معطّل'}
           </span>
         </td>
         <td class="p-4">
@@ -12364,17 +12381,17 @@ async function loadIntegrationsData() {
   try {
     const r = await apiFetch('/api/integrations');
     window._integrations = Array.isArray(r) ? r : (r?.data || []);
-    const active = window._integrations.filter(function(i){ return i.status === 'ACTIVE'; }).length;
+    const active = window._integrations.filter(function(i){ return String(i.status).toUpperCase() === 'ACTIVE'; }).length;
     const el = document.getElementById('int-stat-active');
     if (el) el.textContent = active;
     // Update card statuses
     const typeToTool = { ODOO:'odoo', ERPNEXT:'erpnext', SAP:'sap', MICROSOFT365:'ms365' };
     window._integrations.forEach(function(intg) {
-      const tool = typeToTool[intg.type];
+      const tool = typeToTool[String(intg.type).toUpperCase()];
       if (!tool) return;
       const card = document.getElementById('int-card-' + tool);
       if (!card) return;
-      const isActive = intg.status === 'ACTIVE';
+      const isActive = String(intg.status).toUpperCase() === 'ACTIVE';
       card.style.borderColor = isActive ? '#6ee7b7' : '#e8e8e8';
       const badge = card.querySelector('.badge');
       if (badge) {
@@ -12793,7 +12810,7 @@ function intSyncNow(tool) {
 async function intDisconnect(tool) {
   if (!confirm('هل أنت متأكد من فصل الربط مع ' + tool + '؟')) return;
   const typeMap = { odoo:'ODOO', erpnext:'ERPNEXT', sap:'SAP', ms365:'MICROSOFT365' };
-  const existing = (window._integrations||[]).find(function(i){ return i.type === typeMap[tool]; });
+  const existing = (window._integrations||[]).find(function(i){ return String(i.type).toUpperCase() === typeMap[tool]; });
   if (existing) {
     try {
       await apiFetch('/api/integrations/' + existing.id, 'PUT', { status: 'INACTIVE' });
@@ -12832,7 +12849,7 @@ async function intOpenConfig(tool) {
   m.querySelector('#int-modal-logo').style.background = cfg.color;
 
   const typeMap = { odoo:'ODOO', erpnext:'ERPNEXT', sap:'SAP', ms365:'MICROSOFT365' };
-  const existing = (window._integrations||[]).find(i => i.type === typeMap[tool]);
+  const existing = (window._integrations||[]).find(i => String(i.type).toUpperCase() === typeMap[tool]);
   const savedUrl = existing?.base_url || '';
 
   m.querySelector('#int-modal-body').innerHTML = cfg.fields.map(f => {
@@ -13106,8 +13123,12 @@ function updateSidebarISO() {
   // Load NC count for badge
   try {
     const ncData = await apiFetch('/api/nonconformances?status=open');
-    document.getElementById('nc-count-badge').textContent = ncData.total || 0;
-    if (ncData.total > 0) {
+    // lists arrive as plain arrays (the API interceptor unwraps {data,total})
+    const openNC = Array.isArray(ncData) ? ncData.length : (ncData?.total || 0);
+    const ncBadge = document.getElementById('nc-count-badge');
+    ncBadge.textContent = openNC;
+    ncBadge.style.display = openNC ? '' : 'none';
+    if (openNC > 0) {
       document.getElementById('notif-dot').style.display = 'block';
     }
   } catch (e) {}

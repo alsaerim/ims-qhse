@@ -112,231 +112,6 @@ tailwind.config = { theme: { extend: {
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}}
     #install-prompt{display:none;position:fixed;bottom:90px;left:16px;right:16px;z-index:9990;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.2);border:1px solid #e8e8e8;}
   </style>
-<script>
-// ── Mobile Mock API ──
-(function(){
-  const _rf = window.fetch.bind(window);
-  const MDATA = {
-    users:[
-      {id:'usr-admin-001',email:'admin@ims-qhse.com',full_name:'مدير النظام',role:'admin',department:'IT',phone:'+966500000001',is_active:1,last_login:'2026-03-10T08:00:00Z'},
-      {id:'usr-mgr-001',email:'manager@ims-qhse.com',full_name:'أحمد العمري',role:'manager',department:'QHSE',phone:'+966500000002',is_active:1,last_login:'2026-03-09T14:30:00Z'},
-      {id:'usr-eng-001',email:'engineer@ims-qhse.com',full_name:'محمد الزهراني',role:'engineer',department:'Operations',phone:'+966500000003',is_active:1,last_login:'2026-03-10T07:15:00Z'},
-      {id:'usr-aud-001',email:'auditor@ims-qhse.com',full_name:'سارة القحطاني',role:'auditor',department:'Quality',phone:'+966500000004',is_active:1,last_login:'2026-03-08T11:00:00Z'},
-      {id:'usr-eng-002',email:'engineer2@ims-qhse.com',full_name:'فهد الدوسري',role:'engineer',department:'Safety',phone:'+966500000005',is_active:1,last_login:'2026-03-07T09:00:00Z'},
-    ],
-    inspections:[
-      {id:'insp-001',ref_number:'INS-2026-001',title:'تفتيش السلامة الأسبوعي - الوحدة A',type:'routine',status:'completed',result:'pass',compliance_score:94,iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',assigned_name:'محمد الزهراني',location_name:'الوحدة A',scheduled_at:'2026-03-03T08:00:00Z',completed_at:'2026-03-03T10:30:00Z',created_at:'2026-03-01T00:00:00Z'},
-      {id:'insp-002',ref_number:'INS-2026-002',title:'مراجعة جودة ISO 9001 - الربع الأول',type:'audit',status:'completed',result:'pass',compliance_score:88,iso_standard:'ISO_9001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-aud-001',assigned_name:'سارة القحطاني',location_name:'مبنى الإدارة',scheduled_at:'2026-03-05T09:00:00Z',completed_at:'2026-03-05T14:00:00Z',created_at:'2026-03-02T00:00:00Z'},
-      {id:'insp-003',ref_number:'INS-2026-003',title:'تفتيش البيئة - معالجة المياه',type:'scheduled',status:'pending',result:null,compliance_score:null,iso_standard:'ISO_14001',project_id:'proj-002',project_name:'منشأة تحلية مياه الخبر',assigned_to:'usr-eng-001',assigned_name:'محمد الزهراني',location_name:'محطة المعالجة',scheduled_at:'2026-03-12T08:00:00Z',created_at:'2026-03-05T00:00:00Z'},
-      {id:'insp-004',ref_number:'INS-2026-004',title:'تفتيش أمان المعدات الثقيلة',type:'routine',status:'in_progress',result:null,compliance_score:null,iso_standard:'ISO_45001',project_id:'proj-003',project_name:'محطة كهرباء جازان',assigned_to:'usr-eng-002',assigned_name:'فهد الدوسري',location_name:'حديقة المعدات',scheduled_at:'2026-03-10T07:00:00Z',created_at:'2026-03-08T00:00:00Z'},
-      {id:'insp-005',ref_number:'INS-2026-005',title:'تفتيش السلامة الأسبوعي - الوحدة B',type:'routine',status:'overdue',result:null,compliance_score:null,iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',assigned_name:'محمد الزهراني',location_name:'الوحدة B',scheduled_at:'2026-03-01T08:00:00Z',created_at:'2026-02-28T00:00:00Z'},
-    ],
-    nonconformances:[
-      {id:'nc-001',ref_number:'NC-2026-001',title:'عدم ارتداء معدات الحماية الشخصية في منطقة الضغط العالي',type:'major',status:'open',category:'safety',iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',detected_at:'2026-03-08T09:00:00Z',due_date:'2026-03-20T00:00:00Z',rca_ref:'RCA-2026-001',rca_status:'in_progress'},
-      {id:'nc-002',ref_number:'NC-2026-002',title:'وثائق ضبط الجودة غير مكتملة للدفعة #457',type:'minor',status:'in_progress',category:'documentation',iso_standard:'ISO_9001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-aud-001',detected_at:'2026-03-05T11:00:00Z',due_date:'2026-03-25T00:00:00Z',rca_ref:'RCA-2026-002',rca_status:'open'},
-      {id:'nc-003',ref_number:'NC-2026-003',title:'عطل في منظومة رصد الانبعاثات - خزان T-12',type:'critical',status:'open',category:'environmental',iso_standard:'ISO_14001',project_id:'proj-002',project_name:'منشأة تحلية مياه الخبر',assigned_to:'usr-mgr-001',detected_at:'2026-03-07T14:00:00Z',due_date:'2026-03-12T00:00:00Z',rca_ref:'RCA-2026-003',rca_status:'open'},
-      {id:'nc-004',ref_number:'NC-2026-004',title:'انتهاء صلاحية شهادات الكفاءة لـ 3 مشغلين',type:'major',status:'open',category:'process',iso_standard:'ISO_9001',project_id:'proj-003',project_name:'محطة كهرباء جازان',assigned_to:'usr-mgr-001',detected_at:'2026-03-06T10:00:00Z',due_date:'2026-03-18T00:00:00Z',rca_ref:null,rca_status:null},
-      {id:'nc-005',ref_number:'NC-2025-089',title:'تسرب زيت في خط الأنابيب - القسم D',type:'major',status:'closed',category:'equipment',iso_standard:'ISO_45001',project_id:'proj-001',project_name:'مشروع مصفاة الرياض',assigned_to:'usr-eng-001',detected_at:'2026-02-15T08:00:00Z',due_date:'2026-02-28T00:00:00Z',rca_ref:'RCA-2025-089',rca_status:'closed'},
-    ],
-    rca:[
-      {id:'rca-001',ref_number:'RCA-2026-001',title:'تحليل سبب عدم ارتداء معدات الحماية',status:'in_progress',methodology:'5_whys',nc_ref:'NC-2026-001',project_name:'مشروع مصفاة الرياض',why_1:'لم يكن العامل يعلم بإلزامية المعدات',why_2:'لا توجد لافتات تحذيرية',why_3:null,why_4:null,why_5:null,root_cause:null,target_date:'2026-03-20T00:00:00Z',
-        ishikawa:{man:'نقص التدريب والتوعية',machine:'المعدات غير متاحة في نقاط العمل',method:'لا يوجد إجراء واضح للتحقق',material:'PPE غير مريحة',environment:'ضغط العمل يؤدي للتجاهل',measurement:'لا يوجد نظام رصد'},
-        fmea:[{function:'ارتداء PPE',failure:'عدم الارتداء',effect:'إصابة جسدية',severity:8,occurrence:4,detection:6,action:'تركيب لافتات + تدريب'}],
-        actions:[{type:'corrective',description:'تركيب لافتات تحذيرية في جميع المناطق',assigned_name:'محمد الزهراني',due_date:'2026-03-15T00:00:00Z',status:'in_progress'}]},
-      {id:'rca-002',ref_number:'RCA-2026-002',title:'تحليل نقص وثائق ضبط الجودة',status:'open',methodology:'ishikawa',nc_ref:'NC-2026-002',project_name:'مشروع مصفاة الرياض',why_1:null,why_2:null,why_3:null,why_4:null,why_5:null,root_cause:null,target_date:'2026-03-25T00:00:00Z',
-        ishikawa:{man:'',machine:'',method:'',material:'',environment:'',measurement:''},
-        fmea:[],actions:[]},
-      {id:'rca-003',ref_number:'RCA-2026-003',title:'تحليل عطل منظومة رصد الانبعاثات',status:'open',methodology:'5_whys',nc_ref:'NC-2026-003',project_name:'منشأة تحلية مياه الخبر',why_1:null,why_2:null,why_3:null,why_4:null,why_5:null,root_cause:null,target_date:'2026-03-12T00:00:00Z',
-        ishikawa:{man:'',machine:'',method:'',material:'',environment:'',measurement:''},
-        fmea:[],actions:[]},
-    ],
-    notifications:[
-      {id:'n1',user_id:'usr-eng-001',title:'NC حرجة تتطلب تدخلاً',message:'NC-2026-003 تجاوزت الموعد — عطل منظومة الانبعاثات',priority:'critical',is_read:0,created_at:'2026-03-10T06:00:00Z'},
-      {id:'n2',user_id:'usr-eng-001',title:'تفتيش متأخر',message:'INS-2026-005 تجاوز موعده بـ 9 أيام',priority:'high',is_read:0,created_at:'2026-03-09T08:00:00Z'},
-      {id:'n3',user_id:'usr-eng-001',title:'تم إغلاق NC بنجاح',message:'NC-2025-089 تم إغلاقها وإتمام الإجراءات',priority:'low',is_read:1,created_at:'2026-03-01T11:00:00Z'},
-    ],
-    db_stats:{users:5,projects:4,inspections:6,nonconformances:6,rca_tickets:4,kpi_definitions:10},
-    risks:[
-      {id:'risk-001',title:'عدم إتمام مراجعة ISO 45001 في الموعد',category:'compliance',iso:'ISO_45001',probability:3,impact:4,status:'open',owners:['محمد الزهراني'],mitigation_points:['وضع خطة مراجعة تفصيلية','تحديد مسؤوليات واضحة']},
-      {id:'risk-002',title:'ارتفاع معدل الحوادث فوق الحد',category:'safety',iso:'ISO_45001',probability:2,impact:5,status:'mitigated',owners:['أحمد العمري'],mitigation_points:['تكثيف دوريات السلامة','تدريب المشرفين']},
-      {id:'risk-003',title:'فجوة في توثيق إجراءات الجودة',category:'quality',iso:'ISO_9001',probability:4,impact:3,status:'open',owners:['سارة القحطاني'],mitigation_points:['مراجعة جميع الوثائق خلال 60 يوم']},
-    ],
-    annual_plans:[
-      {id:'ap-001',title:'برنامج رفع الامتثال ISO 45001',category:'safety',iso:'ISO_45001',status:'in_progress',priority:'high',owners:['أحمد العمري','محمد الزهراني'],progress:65,budget:50000,start_month:1,end_month:6,notes:'تدريب الكوادر وتحديث إجراءات السلامة'},
-      {id:'ap-002',title:'مراجعة وثائق نظام الجودة',category:'quality',iso:'ISO_9001',status:'completed',priority:'medium',owners:['سارة القحطاني'],progress:100,budget:20000,start_month:1,end_month:3,notes:'تم إعادة هيكلة جميع الوثائق'},
-      {id:'ap-003',title:'برنامج التحسين البيئي',category:'environmental',iso:'ISO_14001',status:'planned',priority:'medium',owners:['محمد الزهراني'],progress:0,budget:35000,start_month:7,end_month:12,notes:'خفض الانبعاثات بنسبة 20%'},
-      {id:'ap-004',title:'تأهيل وتدريب فريق QHSE',category:'training',iso:'MULTI',status:'in_progress',priority:'medium',owners:['أحمد العمري','فهد الدوسري'],progress:55,budget:80000,start_month:1,end_month:12,notes:'برنامج تدريبي سنوي مستمر'},
-    ],
-    lean_wastes:[
-      {id:'w-001',ref:'LEAN-001',title:'انتظار الموافقات على تصاريح العمل',muda_type:'waiting',priority:'high',status:'open',impact_score:8,estimated_saving:15000,process:'إصدار التصاريح',project_name:'مشروع مصفاة الرياض',dmaic_phase:'define',description:'تأخير في إصدار تصاريح العمل يؤدي لتوقف الفرق'},
-      {id:'w-002',ref:'LEAN-002',title:'إعادة طباعة تقارير التفتيش الورقية',muda_type:'over_processing',priority:'medium',status:'in_progress',impact_score:5,estimated_saving:8000,process:'إعداد التقارير',project_name:'مشروع مصفاة الرياض',dmaic_phase:'measure',description:'تقارير تُطبع ثم تُدخل رقمياً مرة أخرى'},
-      {id:'w-003',ref:'LEAN-003',title:'تنقل المهندسين بين المواقع لتوقيع الوثائق',muda_type:'motion',priority:'high',status:'open',impact_score:7,estimated_saving:20000,process:'اعتماد الوثائق',project_name:'محطة كهرباء جازان',dmaic_phase:'analyze',description:'تنقل غير ضروري لإنجاز مهام يمكن تنفيذها رقمياً'},
-      {id:'w-004',ref:'LEAN-004',title:'مخزون زائد من مستلزمات السلامة منتهية الصلاحية',muda_type:'inventory',priority:'low',status:'closed',impact_score:3,estimated_saving:5000,process:'إدارة المخزون',project_name:'منشأة تحلية مياه الخبر',dmaic_phase:'control',description:'شراء PPE بكميات تتجاوز الحاجة الفعلية'},
-      {id:'w-005',ref:'LEAN-005',title:'عيوب في سجلات الجودة تستلزم إعادة الإدخال',muda_type:'defects',priority:'critical',status:'in_progress',impact_score:9,estimated_saving:25000,process:'توثيق الجودة',project_name:'مشروع مصفاة الرياض',dmaic_phase:'improve',description:'أخطاء في إدخال البيانات تتطلب تصحيح يدوي'},
-    ],
-    tasks:[
-      {id:'task-001',title:'إجراء تفتيش سلامة الوحدة B',type:'inspection',priority:'critical',status:'pending',assigned_to:'usr-eng-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-20T00:00:00Z',iso:'ISO_45001'},
-      {id:'task-002',title:'متابعة إغلاق NC-2026-001',type:'nc',priority:'high',status:'in_progress',assigned_to:'usr-eng-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-20T00:00:00Z',iso:'ISO_45001'},
-      {id:'task-003',title:'إكمال تحليل RCA-2026-002',type:'rca',priority:'high',status:'pending',assigned_to:'usr-aud-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-25T00:00:00Z',iso:'ISO_9001'},
-      {id:'task-004',title:'مراجعة وثائق الجودة — دفعة 458',type:'audit',priority:'medium',status:'pending',assigned_to:'usr-eng-001',project:'مشروع مصفاة الرياض',due_date:'2026-03-22T00:00:00Z',iso:'ISO_9001'},
-      {id:'task-005',title:'تفتيش البيئة — محطة المعالجة',type:'inspection',priority:'medium',status:'pending',assigned_to:'usr-eng-001',project:'منشأة تحلية مياه الخبر',due_date:'2026-03-28T00:00:00Z',iso:'ISO_14001'},
-    ]
-  };
-
-  // ── Define globals BEFORE fetch intercept ──
-  window.MDATA   = MDATA;
-  window._TOK    = {};
-
-  // ── Apply localStorage sync ──
-  try {
-    const _sh = localStorage.getItem('IMS_SHARED_DB');
-    if (_sh) {
-      const _p = JSON.parse(_sh);
-      if (_p.tasks          && _p.tasks.length)          MDATA.tasks          = _p.tasks;
-      if (_p.annual_plans   && _p.annual_plans.length)   MDATA.annual_plans   = _p.annual_plans;
-      if (_p.risks          && _p.risks.length)          MDATA.risks          = _p.risks;
-      if (_p.nonconformances&& _p.nonconformances.length)MDATA.nonconformances= _p.nonconformances;
-      if (_p.inspections    && _p.inspections.length)    MDATA.inspections    = _p.inspections;
-      if (_p.rca_tickets    && _p.rca_tickets.length)    MDATA.rca            = _p.rca_tickets;
-      if (_p.lean_wastes    && _p.lean_wastes.length)    MDATA.lean_wastes    = _p.lean_wastes;
-      console.log('[Mobile] ✅ Loaded', Object.keys(_p).join(', '));
-    }
-  } catch(e) { console.warn('[Mobile] Sync error:', e); }
-
-  // ── Save mutations back to localStorage ──
-  window._mSyncDB = function() {
-    try {
-      const saved = localStorage.getItem('IMS_SHARED_DB');
-      const base  = saved ? JSON.parse(saved) : {};
-      // الجوال يحفظ المهام بصيغته فقط في tasks — لا يلمس tasks_web
-      base.tasks           = MDATA.tasks           || [];
-      base.nonconformances = MDATA.nonconformances  || [];
-      base.inspections     = MDATA.inspections      || [];
-      base.rca_tickets     = MDATA.rca              || [];
-      base.lean_wastes     = MDATA.lean_wastes      || [];
-      // تحديث tasks_web بالحالات المحوّلة للويب
-      const mobToWeb = {pending:'todo',in_progress:'inprogress',completed:'done'};
-      base.tasks_web = (MDATA.tasks||[]).map(function(t){
-        return Object.assign({},t,{status: mobToWeb[t.status]||t.status});
-      });
-      localStorage.setItem('IMS_SHARED_DB', JSON.stringify(base));
-    } catch(e) {}
-  };
-
-  // ── Intercept fetch ──
-  window.fetch = async function(url, opts={}) {
-    if(typeof url==='string' && url.includes('/api/')) {
-      const u=new URL(url,'http://localhost'), path=u.pathname, q=Object.fromEntries(u.searchParams);
-      const auth=(opts.headers?.Authorization||opts.headers?.['Authorization']||'');
-      if(auth) window._mLastAuth=auth;
-      let body=null; try{if(opts.body)body=JSON.parse(opts.body);}catch(e){}
-      const method=opts.method||'GET';
-      let result;
-      if(path==='/api/auth/login'&&method==='POST'){
-        const u2=MDATA.users.find(x=>x.email===body?.email);
-        if(!u2){result={error:'بيانات غير صحيحة'};}
-        else{const tk='mob-'+u2.id;window._TOK[tk]=u2;result={success:true,token:tk,user:{id:u2.id,email:u2.email,full_name:u2.full_name,role:u2.role,department:u2.department}};}
-      } else if(path==='/api/auth/me'){
-        const tk=(window._mLastAuth||'').replace('Bearer ','');
-        const uu=window._TOK[tk]||MDATA.users[2];
-        result={id:uu.id,email:uu.email,full_name:uu.full_name,role:uu.role,department:uu.department};
-      } else if(path==='/api/auth/logout'){result={success:true};}
-      else if(path==='/api/db-stats'){result=MDATA.db_stats;}
-      else if(path==='/api/dashboard/overview'||path==='/api/dashboard'){
-        const myTasks = MDATA.tasks||[];
-        const myOpen  = myTasks.filter(t=>t.status!=='completed');
-        const overdue = myOpen.filter(t=>t.due_date&&new Date(t.due_date)<new Date());
-        result={summary:{
-          projects:{total:4,active:3},
-          inspections:{total:MDATA.inspections.length,completed:2,pending:2,overdue:1,avg_score:91},
-          nonconformances:{total:MDATA.nonconformances.length,open:4,closed:2,critical:1},
-          rca:{total:3,open:2,closed:1,closure_rate:33},
-          tasks:{total:myOpen.length,overdue:overdue.length},
-          risks:{total:(MDATA.risks||[]).length,open:(MDATA.risks||[]).filter(r=>r.status==='open').length},
-        },recent_ncs:MDATA.nonconformances.slice(0,4),notifications:MDATA.notifications.filter(n=>!n.is_read),my_tasks:myOpen.slice(0,4)};
-      } else if(path==='/api/inspections'){
-        let d=[...MDATA.inspections];
-        if(q.status)d=d.filter(i=>i.status===q.status);
-        if(q.iso_standard)d=d.filter(i=>i.iso_standard===q.iso_standard);
-        result={data:d,total:d.length};
-      } else if(method==='POST'&&path==='/api/inspections'){
-        const ni={id:'i-'+Date.now(),ref_number:'INS-2026-'+(MDATA.inspections.length+1).toString().padStart(3,'0'),status:'pending',result:null,compliance_score:null,...body,created_at:new Date().toISOString()};
-        MDATA.inspections.unshift(ni);result=ni;
-      } else if(path.startsWith('/api/inspections/')&&method==='PUT'){
-        const iid=path.split('/')[3];
-        const ins=MDATA.inspections.find(x=>x.id===iid);
-        if(ins)Object.assign(ins,body);result=ins||{error:'غير موجود'};
-      } else if(path==='/api/nonconformances'){
-        let d=[...MDATA.nonconformances];
-        if(q.status)d=d.filter(n=>n.status===q.status);
-        result={data:d,total:d.length};
-      } else if(method==='POST'&&path==='/api/nonconformances'){
-        const nn={id:'nc-'+Date.now(),ref_number:'NC-2026-'+(MDATA.nonconformances.length+1).toString().padStart(3,'0'),status:'open',detected_at:new Date().toISOString(),...body};
-        MDATA.nonconformances.unshift(nn);result=nn;
-      } else if(path==='/api/rca'){
-        result={data:MDATA.rca,total:MDATA.rca.length};
-      } else if(path.startsWith('/api/rca/')&&method==='PUT'){
-        const rid=path.split('/')[3];
-        const r=MDATA.rca.find(x=>x.id===rid);
-        if(r)Object.assign(r,body);result=r||{error:'غير موجود'};
-      } else if(path.startsWith('/api/rca/')){
-        result=MDATA.rca.find(x=>x.id===path.split('/')[3])||{error:'غير موجود'};
-      } else if(path==='/api/users'){
-        let d=[...MDATA.users];
-        if(q.role)d=d.filter(u=>u.role===q.role);
-        result={data:d,total:d.length};
-      } else if(path.startsWith('/api/users/')&&path.endsWith('/avatar')&&method==='POST'){
-        result={success:true};
-      } else if(path.startsWith('/api/users/')){
-        result=MDATA.users.find(u=>u.id===path.split('/')[3])||{error:'غير موجود'};
-      } else if(path==='/api/dashboard/notifications'){
-        const uid=q.user_id;
-        result=MDATA.notifications.filter(n=>!uid||n.user_id===uid);
-      } else if(path==='/api/dashboard/notifications/read'&&method==='PUT'){
-        MDATA.notifications.forEach(n=>n.is_read=1);result={success:true};
-      } else if(path==='/api/lean/wastes'){
-        let d=[...MDATA.lean_wastes];
-        if(q.status)d=d.filter(w=>w.status===q.status);
-        result={data:d,total:d.length};
-      } else if(path.startsWith('/api/lean/wastes/')&&method==='PUT'){
-        const wid=path.split('/')[4];
-        const w=MDATA.lean_wastes.find(x=>x.id===wid);
-        if(w)Object.assign(w,body);result=w||{error:'not found'};
-      } else if(path==='/api/tasks'){
-        let d=[...MDATA.tasks];
-        // Filter by current user - extract user ID from auth token
-        const authHeader = (window._mLastAuth||'').replace('Bearer mob-','').replace('Bearer ','');
-        const myId = authHeader && authHeader !== '' ? authHeader : null;
-        if(q.assigned_to) {
-          d = d.filter(t=>t.assigned_to===q.assigned_to);
-        } else if(myId && myId.startsWith('usr-')) {
-          // Show tasks assigned to this user OR unassigned tasks
-          d = d.filter(t=>!t.assigned_to || t.assigned_to===myId);
-        }
-        if(q.status) d=d.filter(t=>t.status===q.status);
-        result={data:d,total:d.length};
-      } else if(path.startsWith('/api/tasks/')&&method==='PUT'){
-        const tid=path.split('/')[3];
-        const t=MDATA.tasks.find(x=>x.id===tid);
-        if(t)Object.assign(t,body);result=t||{error:'غير موجود'};
-      } else if(path==='/api/risks'){
-        result={data:MDATA.risks,total:MDATA.risks.length};
-      } else if(path==='/api/annual-plans'){
-        result={data:MDATA.annual_plans,total:MDATA.annual_plans.length};
-      } else {
-        result={error:'mock: not found '+path};
-      }
-      const ok=!result?.error;
-      // Sync mutations back to shared localStorage
-      if (method !== 'GET' && typeof window._mSyncDB === 'function') window._mSyncDB();
-      return {ok,status:ok?200:404,json:async()=>result,text:async()=>JSON.stringify(result)};
-    }
-    return _rf(url,opts);
-  };
-
-  console.log('[Mobile Mock] ✅ Active');
-})();
-</script>
 <link rel="icon" type="image/svg+xml" href="/assets/mizan-mark.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Sometype+Mono:wght@400;500&display=swap"/>
@@ -1133,15 +908,46 @@ function mobileLogout() {
 
 function mToken() { return localStorage.getItem('ims_token') || ''; }
 
+// Backend enums arrive upper-case (OPEN, COMPLETED…); the screens compare lower-case.
+function mNormalize(v) {
+  if (Array.isArray(v)) return v.map(mNormalize);
+  if (v && typeof v === 'object') {
+    for (const k of Object.keys(v)) {
+      const x = v[k];
+      if (/^(status|type|result|severity|priority)$/.test(k) && typeof x === 'string' && /^[A-Z_]+$/.test(x)) v[k] = x.toLowerCase();
+      else if (x && typeof x === 'object') v[k] = mNormalize(x);
+    }
+    // audits: the field app reads score / iso_standard as flat values
+    if (v.compliance_score !== undefined && v.score === undefined) v.score = v.compliance_score;
+    if (v.iso_standard && typeof v.iso_standard === 'object') v.iso_standard = v.iso_standard.code;
+  }
+  return v;
+}
+
 async function mFetch(url, method='GET', body=null) {
   const apiUrl = url.replace(/^\/api\//, '/api/v1/');
   const opts = { method, headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+mToken() } };
   if (body) opts.body = JSON.stringify(body);
   const r = await fetch(MAPI + apiUrl, opts);
-  if (r.status === 401) { mobileLogout(); throw new Error('غير مصرح'); }
-  const json = await r.json();
-  return (json.data !== undefined) ? json.data : json;
+  if (r.status === 401) { mobileLogout(); throw new Error('انتهت الجلسة، سجّل الدخول مجدداً'); }
+  let json = null;
+  try { json = await r.json(); } catch (e) { /* non-JSON body */ }
+  if (!r.ok) {
+    // Endpoint not built on the server yet (see docs/api-contract.md): empty list instead of a broken page
+    if (r.status === 404 && method === 'GET') { console.warn('[mFetch] not on server yet:', apiUrl); return []; }
+    throw new Error((json && (json.message || json.error)) || ('خطأ من الخادم ' + r.status));
+  }
+  return mNormalize(json && json.data !== undefined ? json.data : json);
 }
+
+// Lists arrive as plain arrays from the API (its interceptor unwraps {data,total}); accept both shapes
+function mList(d) { return Array.isArray(d) ? d : ((d && Array.isArray(d.data)) ? d.data : []); }
+
+// Any unhandled API failure surfaces as a toast instead of a silent stuck spinner
+window.addEventListener('unhandledrejection', e => {
+  const msg = e.reason && e.reason.message ? e.reason.message : 'تعذّر إكمال العملية';
+  if (typeof mToast === 'function') mToast('❌ ' + msg, 'error');
+});
 
 // ── Navigation ────────────────────────────────────
 function mShowPage(pageId) {
@@ -1253,10 +1059,10 @@ async function loadHomeStats() {
 
 // ── Inspections ───────────────────────────────────
 async function loadInspectionsList() {
-  const data = await mFetch('/api/inspections?limit=15');
+  const data = await mFetch('/api/audits?limit=15');
   const el = document.getElementById('m-insp-list');
   if (!el) return;
-  const items = data.data || [];
+  const items = mList(data);
   if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد عمليات تفتيش بعد</div>'; return; }
   el.innerHTML = items.map(i => `
     <div class="card p-4 mb-3">
@@ -1391,18 +1197,22 @@ async function wizardSubmit() {
 
   try {
     // Create inspection
-    const insp = await mFetch('/api/inspections', 'POST', {
-      project_id: 'proj-001', title, iso_standard: iso,
+    const insp = await mFetch('/api/audits', 'POST', {
+      project_id: mState.currentProject || null, title, iso_standard: iso,
       location_name: location || 'ميداني',
       latitude: mState.gps.lat, longitude: mState.gps.lng,
-      assigned_to: mState.user?.id || 'usr-eng-001'
+      assigned_to_id: mState.user?.id
     });
 
-    // Complete inspection
-    await mFetch(`/api/inspections/${insp.id}/complete`, 'PUT', {
+    // Complete inspection: the backend has no /complete route, so update status + results on the audit
+    await mFetch(`/api/audits/${insp.id}`, 'PUT', {
+      status: 'COMPLETED',
+      // backend AuditResult enum: PASS / FAIL / PARTIAL / PENDING
+      result: !failed.length ? 'PASS' : (passed ? 'PARTIAL' : 'FAIL'),
+      compliance_score: score,
+      completed_at: new Date().toISOString(),
       notes,
-      form_data: {},
-      items_results: mState.wizardItems.map(it => ({
+      checklist_data: mState.wizardItems.map(it => ({
         id: it.id, item_text: it.text, result: it.result || 'na',
         severity: it.result === 'fail' ? 'major' : null
       }))
@@ -1461,7 +1271,7 @@ async function loadNCList() {
   const data = await mFetch('/api/nonconformances?status=open&limit=10');
   const el = document.getElementById('m-nc-list');
   if (!el) return;
-  const items = data.data || [];
+  const items = mList(data);
   if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد NCs مفتوحة</div>'; return; }
   el.innerHTML = items.map(n => `
     <div class="card p-4 mb-3 border-r-4 ${n.type==='critical'?'border-red-500':n.type==='major'?'border-orange-400':'border-yellow-400'}">
@@ -1485,13 +1295,13 @@ async function submitNC_mobile() {
 
   try {
     const result = await mFetch('/api/nonconformances', 'POST', {
-      project_id: 'proj-001',
+      project_id: mState.currentProject || null,
       title, description: desc,
       type: document.getElementById('nc-type').value,
       iso_standard: document.getElementById('nc-iso').value,
       location: document.getElementById('nc-location').value || null,
       latitude: mState.gps.lat, longitude: mState.gps.lng,
-      detected_by: mState.user?.id || 'usr-eng-001'
+      detected_by: mState.user?.id
     });
 
     // Upload NC photos
@@ -1542,7 +1352,7 @@ async function loadTasksList() {
   const data  = await mFetch('/api/tasks');
   const el    = document.getElementById('m-tasks-list');
   if (!el) return;
-  let tasks   = data.data || [];
+  let tasks   = mList(data);
   const now   = new Date();
   if (_tasksFilter==='pending') tasks = tasks.filter(t=>t.status==='pending');
   if (_tasksFilter==='overdue') tasks = tasks.filter(t=>t.due_date&&new Date(t.due_date)<now&&t.status!=='completed');
@@ -1590,7 +1400,7 @@ async function loadTasksList() {
 
 function viewTask(id) {
   mFetch('/api/tasks').then(data=>{
-    const t   = (data.data||[]).find(x=>x.id===id);
+    const t   = mList(data).find(x=>x.id===id);
     if (!t) return;
     const typeClr={inspection:'#2a86e0',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
     const typeLbl={inspection:'تفتيش',nc:'NC',rca:'RCA',audit:'تدقيق'};
@@ -1657,7 +1467,7 @@ function viewTask(id) {
 
 function editTask(id) {
   mFetch('/api/tasks').then(data=>{
-    const t   = (data.data||[]).find(x=>x.id===id);
+    const t   = mList(data).find(x=>x.id===id);
     if (!t) return;
     const typeClr={inspection:'#2a86e0',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
     const clr   = typeClr[t.type]||'#646464';
@@ -1731,7 +1541,7 @@ async function completeTask(id) { await quickCompleteTask(id); }
 
 function openTaskAction(id) {
   mFetch('/api/tasks').then(data=>{
-    const t=(data.data||[]).find(x=>x.id===id);
+    const t=mList(data).find(x=>x.id===id);
     if(!t) return;
     if(t.type==='inspection') startNewInspection();
     else if(t.type==='nc') mShowPage('m-nc');
@@ -1743,7 +1553,7 @@ function openTaskAction(id) {
 // ── Risks ─────────────────────────────────────────
 async function loadRisksList() {
   const data  = await mFetch('/api/risks');
-  const risks = data.data || [];
+  const risks = mList(data);
   const el    = document.getElementById('m-risks-list');
   const sumEl = document.getElementById('risks-summary');
   if (!el) return;
@@ -1793,7 +1603,7 @@ async function loadRisksList() {
 
 function viewRisk(id) {
   mFetch('/api/risks').then(data=>{
-    const r   = (data.data||[]).find(x=>x.id===id);
+    const r   = mList(data).find(x=>x.id===id);
     if (!r) return;
     const rpn  = r.probability * r.impact;
     const clr  = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#2a86e0';
@@ -1844,7 +1654,7 @@ function viewRisk(id) {
 
 function editRisk(id) {
   mFetch('/api/risks').then(data=>{
-    const r = (data.data||[]).find(x=>x.id===id);
+    const r = mList(data).find(x=>x.id===id);
     if (!r) return;
     const mits = Array.isArray(r.mitigation_points)?r.mitigation_points:(r.mitigation?[r.mitigation]:[]);
     const mitsHtml = mits.map((m,i)=>`<div class="flex gap-2 items-center mit-r">
@@ -1937,7 +1747,7 @@ function filterLean(f) {
 
 async function loadLeanList() {
   const data   = await mFetch('/api/lean/wastes');
-  let wastes   = data.data||[];
+  let wastes   = mList(data);
   const sumEl  = document.getElementById('lean-summary');
   const listEl = document.getElementById('m-lean-list');
   if (!listEl) return;
@@ -1999,7 +1809,7 @@ async function loadLeanList() {
 
 function viewLean(id) {
   mFetch('/api/lean/wastes').then(data=>{
-    const w=(data.data||[]).find(x=>x.id===id);
+    const w=mList(data).find(x=>x.id===id);
     if(!w) return;
     const mudaAr={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
     const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#0b6bcb',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#646464'};
@@ -2078,7 +1888,7 @@ function viewLean(id) {
 
 function editLean(id) {
   mFetch('/api/lean/wastes').then(data=>{
-    const w=(data.data||[]).find(x=>x.id===id);
+    const w=mList(data).find(x=>x.id===id);
     if(!w) return;
     const mudaTypes=['defects','waiting','overproduction','motion','inventory','over_processing','transportation','skills'];
     const mudaAr={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
@@ -2152,7 +1962,7 @@ async function loadRCAList() {
   if (!el) return;
   if (panel) panel.style.display = 'none';
   el.style.display = '';
-  const items = data.data || [];
+  const items = mList(data);
   if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تذاكر RCA</div>'; return; }
 
   const methLbl  = {'5_whys':'5 Whys','ishikawa':'Ishikawa','fmea':'FMEA','dmaic':'DMAIC'};
@@ -2441,7 +2251,7 @@ async function addRCAAction(id) {
 // ── Annual Plans ──────────────────────────────────
 async function loadPlansList() {
   const data  = await mFetch('/api/annual-plans');
-  const plans = data.data||[];
+  const plans = mList(data);
   const el    = document.getElementById('m-plans-list');
   const sumEl = document.getElementById('plans-summary');
   if (!el) return;
@@ -2496,7 +2306,7 @@ async function loadPlansList() {
 
 function viewPlan(id) {
   mFetch('/api/annual-plans').then(data=>{
-    const p=(data.data||[]).find(x=>x.id===id);
+    const p=mList(data).find(x=>x.id===id);
     if(!p) return;
     const stClr={completed:'#059669',in_progress:'#d97706',planned:'#2a86e0',delayed:'#dc2626'};
     const stLbl={completed:'مكتملة',in_progress:'جارية',planned:'مخطط',delayed:'متأخرة'};
@@ -2542,7 +2352,7 @@ function viewPlan(id) {
 
 function editPlan(id) {
   mFetch('/api/annual-plans').then(data=>{
-    const p=(data.data||[]).find(x=>x.id===id);
+    const p=mList(data).find(x=>x.id===id);
     if(!p) return;
     const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     const mOpts =months.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
@@ -2596,10 +2406,10 @@ async function updatePlanStatus(id, status) {
 
 // ── Inspections View/Edit ─────────────────────────
 async function loadInspectionsList() {
-  const data  = await mFetch('/api/inspections?limit=15');
+  const data  = await mFetch('/api/audits?limit=15');
   const el    = document.getElementById('m-insp-list');
   if (!el) return;
-  const items = data.data||[];
+  const items = mList(data);
   if (!items.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تفتيشات</div>';return;}
 
   const stClr={completed:'#059669',in_progress:'#d97706',pending:'#2a86e0',overdue:'#dc2626'};
@@ -2628,8 +2438,8 @@ async function loadInspectionsList() {
 }
 
 function viewInspection(id) {
-  mFetch('/api/inspections').then(data=>{
-    const i=(data.data||[]).find(x=>x.id===id);
+  mFetch('/api/audits').then(data=>{
+    const i=mList(data).find(x=>x.id===id);
     if(!i) return;
     const stClr={completed:'#059669',in_progress:'#d97706',pending:'#2a86e0',overdue:'#dc2626'};
     const stLbl={completed:'مكتمل',in_progress:'جارٍ',pending:'معلق',overdue:'متأخر'};
@@ -2676,8 +2486,8 @@ function viewInspection(id) {
 }
 
 function editInspection(id) {
-  mFetch('/api/inspections').then(data=>{
-    const i=(data.data||[]).find(x=>x.id===id);
+  mFetch('/api/audits').then(data=>{
+    const i=mList(data).find(x=>x.id===id);
     if(!i) return;
     openBS(`
       <div class="px-4 pb-4 space-y-3">
@@ -2711,7 +2521,7 @@ function editInspection(id) {
 
 async function saveInspEdit(id) {
   const score = document.getElementById('ei-score')?.value;
-  await mFetch(`/api/inspections/${id}`,'PUT',{
+  await mFetch(`/api/audits/${id}`,'PUT',{
     title:  document.getElementById('ei-title')?.value?.trim(),
     status: document.getElementById('ei-status')?.value,
     result: document.getElementById('ei-result')?.value||null,
@@ -2722,7 +2532,7 @@ async function saveInspEdit(id) {
 }
 
 async function updateInspStatus(id, status) {
-  await mFetch(`/api/inspections/${id}`,'PUT',{status,
+  await mFetch(`/api/audits/${id}`,'PUT',{status,
     ...(status==='completed'?{completed_at:new Date().toISOString()}:{})});
   closeBS(); mToast('✅ تم تحديث الحالة','success'); loadInspectionsList();
 }
@@ -2732,7 +2542,7 @@ async function loadNCList() {
   const data  = await mFetch('/api/nonconformances?status=open&limit=10');
   const el    = document.getElementById('m-nc-list');
   if (!el) return;
-  const items = data.data||[];
+  const items = mList(data);
   if (!items.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد NCs مفتوحة</div>';return;}
 
   el.innerHTML=items.map(n=>`
@@ -2758,7 +2568,7 @@ async function loadNCList() {
 
 function viewNC(id) {
   mFetch('/api/nonconformances').then(data=>{
-    const n=(data.data||[]).find(x=>x.id===id);
+    const n=mList(data).find(x=>x.id===id);
     if(!n) return;
     const tClr={critical:'#dc2626',major:'#d97706',minor:'#2a86e0'};
     const tLbl={critical:'حرجة',major:'رئيسية',minor:'ثانوية'};
@@ -2803,7 +2613,7 @@ function viewNC(id) {
 
 function editNC(id) {
   mFetch('/api/nonconformances').then(data=>{
-    const n=(data.data||[]).find(x=>x.id===id);
+    const n=mList(data).find(x=>x.id===id);
     if(!n) return;
     openBS(`
       <div class="px-4 pb-4 space-y-3">
@@ -2853,7 +2663,7 @@ async function updateNCStatus(id, status) {
 
 // ── Notifications ─────────────────────────────────
 async function loadNotifications_m() {
-  const data = await mFetch('/api/dashboard/notifications?user_id=' + (mState.user?.id || 'usr-eng-001'));
+  const data = await mFetch('/api/dashboard/notifications?user_id=' + (mState.user?.id || ''));
   const el   = document.getElementById('m-notifs-list');
   if (!el) return;
   const unread = data.filter(n => !n.is_read).length;
@@ -2888,7 +2698,7 @@ async function loadMobileUsers(role = '', search = '') {
     if (role) url += '&role=' + role;
     if (search) url += '&search=' + encodeURIComponent(search);
     const data = await mFetch(url);
-    _mUsersCache = data.data || [];
+    _mUsersCache = mList(data);
     renderMobileUsers(_mUsersCache);
   } catch(e) {
     el.innerHTML = '<div class="text-center text-slate-400 py-8"><i class="fas fa-wifi-slash text-2xl mb-2 block"></i>تعذّر تحميل البيانات</div>';
@@ -3129,55 +2939,19 @@ window.addEventListener('offline', updateOnlineStatus);
 
 // ── Sync from Web App ────────────────────────────
 function syncFromWebApp() {
-  try {
-    const _shared = localStorage.getItem('IMS_SHARED_DB');
-    if (!_shared) {
-      mToast('⚠️ افتح النظام الرئيسي في نفس المتصفح أولاً', 'warning');
-      return;
-    }
-    const _parsed = JSON.parse(_shared);
-    const MD = window.MDATA;
-    if (!MD) { mToast('❌ خطأ داخلي: MDATA غير محمّل', 'error'); return; }
-
-    // ── Status mapping: web → mobile ──
-    const stMap = {todo:'pending', inprogress:'in_progress', review:'in_progress', done:'completed'};
-    const normalizeTasks = arr => (arr||[]).map(t => Object.assign({}, t, {
-      status:  stMap[t.status] || t.status,
-      project: t.project_name || t.project || '',
-      iso:     t.iso_standard || t.iso || '',
-    }));
-
-    // Sync each collection
-    if (Array.isArray(_parsed.tasks))           MD.tasks           = normalizeTasks(_parsed.tasks);
-    if (Array.isArray(_parsed.annual_plans))     MD.annual_plans    = _parsed.annual_plans;
-    if (Array.isArray(_parsed.risks))            MD.risks           = _parsed.risks;
-    if (Array.isArray(_parsed.nonconformances))  MD.nonconformances = _parsed.nonconformances;
-    if (Array.isArray(_parsed.inspections))      MD.inspections     = _parsed.inspections;
-    if (Array.isArray(_parsed.rca_tickets))      MD.rca             = _parsed.rca_tickets;
-    if (Array.isArray(_parsed.lean_wastes))      MD.lean_wastes     = _parsed.lean_wastes;
-
-    // Update sync timestamp
-    const syncEl = document.getElementById('m-last-sync');
-    if (syncEl) syncEl.textContent = new Date().toLocaleTimeString('ar-SA');
-
-    const taskCount = (MD.tasks||[]).length;
-    mToast('✅ تمت المزامنة — ' + taskCount + ' مهمة محمّلة', 'success');
-
-    // Refresh all loaded pages
-    loadHomeStats();
-    const p = mState.currentPage;
-    if (p === 'm-tasks')       loadTasksList();
-    if (p === 'm-nc')          loadNCList();
-    if (p === 'm-rca')         loadRCAList();
-    if (p === 'm-risks')       loadRisksList();
-    if (p === 'm-plans')       loadPlansList();
-    if (p === 'm-lean')        loadLeanList();
-    if (p === 'm-inspections') loadInspectionsList();
-
-  } catch(e) {
-    mToast('❌ خطأ في المزامنة: ' + e.message, 'error');
-    console.error('syncFromWebApp error:', e);
-  }
+  // Pull the latest data from the server for the home stats and the open page
+  loadHomeStats();
+  const p = mState.currentPage;
+  if (p === 'm-tasks')       loadTasksList();
+  if (p === 'm-nc')          loadNCList();
+  if (p === 'm-rca')         loadRCAList();
+  if (p === 'm-risks')       loadRisksList();
+  if (p === 'm-plans')       loadPlansList();
+  if (p === 'm-lean')        loadLeanList();
+  if (p === 'm-inspections') loadInspectionsList();
+  const syncEl = document.getElementById('m-last-sync');
+  if (syncEl) syncEl.textContent = new Date().toLocaleTimeString('ar-SA');
+  mToast('✅ تم تحديث البيانات من الخادم', 'success');
 }
 
 // ── Init ──────────────────────────────────────────
