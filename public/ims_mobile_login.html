@@ -108,27 +108,6 @@ body::before{
 .alert-error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
 .alert-success{background:#f0fdf4;color:#047857;border:1px solid #bbf7d0;}
 
-/* ── Demo hint ── */
-.demo-hint{
-  margin-top:14px;padding:12px 14px;
-  background:#f8fafc;border-radius:12px;
-  border:1px solid #e2e8f0;
-}
-.demo-hint-title{font-size:11px;font-weight:800;color:#64748b;margin-bottom:6px;}
-.demo-user{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:7px 10px;background:white;border-radius:9px;
-  border:1px solid #e2e8f0;margin-bottom:5px;cursor:pointer;
-  transition:border-color .15s;
-}
-.demo-user:hover{border-color:#3b82f6;}
-.demo-user:last-child{margin-bottom:0;}
-.demo-user-info{flex:1;}
-.demo-user-name{font-size:12px;font-weight:700;color:#1e293b;}
-.demo-user-role{font-size:11px;color:#64748b;}
-.demo-user-email{font-size:11px;color:#2563eb;direction:ltr;text-align:left;}
-.user-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0;margin-left:8px;}
-
 /* ── Register fields ── */
 .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .role-chip{
@@ -215,33 +194,6 @@ body::before{
         <span>دخول</span>
       </button>
 
-      <!-- Demo Users -->
-      <div class="demo-hint">
-        <div class="demo-hint-title"><i class="fas fa-users" style="margin-left:4px;"></i>حسابات تجريبية — انقر للدخول السريع</div>
-        <div class="demo-user" onclick="quickLogin('engineer@ims-qhse.com','محمد الزهراني')">
-          <div class="user-avatar" style="background:#047857;">مح</div>
-          <div class="demo-user-info">
-            <div class="demo-user-name">محمد الزهراني</div>
-            <div class="demo-user-role">مهندس عمليات</div>
-          </div>
-          <div class="demo-user-email">engineer@ims-qhse.com</div>
-        </div>
-        <div class="demo-user" onclick="quickLogin('auditor@ims-qhse.com','سارة القحطاني')">
-          <div class="user-avatar" style="background:#b45309;">سا</div>
-          <div class="demo-user-info">
-            <div class="demo-user-name">سارة القحطاني</div>
-            <div class="demo-user-role">مدقق جودة</div>
-          </div>
-          <div class="demo-user-email">auditor@ims-qhse.com</div>
-        </div>
-        <div class="demo-user" onclick="quickLogin('engineer2@ims-qhse.com','فهد الدوسري')">
-          <div class="user-avatar" style="background:#dc2626;">فه</div>
-          <div class="demo-user-info">
-            <div class="demo-user-name">فهد الدوسري</div>
-            <div class="demo-user-role">مهندس سلامة</div>
-          </div>
-          <div class="demo-user-email">engineer2@ims-qhse.com</div>
-        </div>
       </div>
     </div>
 
@@ -334,13 +286,6 @@ function togglePass() {
   const icon = document.getElementById('pass-icon');
   inp.type   = passVisible ? 'text' : 'password';
   icon.className = passVisible ? 'fas fa-eye-slash' : 'fas fa-lock';
-}
-
-// ── Quick login from demo ──
-function quickLogin(email, name) {
-  document.getElementById('login-email').value = email;
-  document.getElementById('login-pass').value  = 'demo123';
-  doMobileLogin();
 }
 
 const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
