@@ -18,7 +18,7 @@
   --mz-onyx: #0b1311;
   --mz-carbon: #2a2a2a;
   --mz-slate: #5c6360;
-  --mz-ash: #737373;
+  --mz-ash: #686868;
   --mz-fog: #b3b3b3;
   --mz-cloud: #d4d4d4;
   --mz-bone: #e8e8e8;
@@ -26,7 +26,7 @@
   --mz-plaster: #eef0f2;
 
   /* quality palette */
-  --mz-brand: #0f8a65;          /* conformance green */
+  --mz-brand: #0c7a59;          /* conformance green (4.9:1 on white) */
   --mz-brand-strong: #0b6b4f;
   --mz-brand-tint: #e7f5ef;
   --mz-brand-wash: #f3faf7;
@@ -54,7 +54,7 @@
   --mz-shadow-pop: 0 18px 48px -12px rgba(11,19,17,.28);
 
   --mz-ease: cubic-bezier(.33, 1, .68, 1);
-  --mz-quality-conic: conic-gradient(from 90deg, #0f8a65 0%, #16c0a4 22%, #0b6bcb 45%, #6aa8ef 58%, #f3c74f 76%, #c8941a 88%, #0f8a65 100%);
+  --mz-quality-conic: conic-gradient(from 90deg, #0c7a59 0%, #16c0a4 22%, #0b6bcb 45%, #6aa8ef 58%, #f3c74f 76%, #c8941a 88%, #0c7a59 100%);
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
@@ -78,7 +78,7 @@ html[data-surface] a { text-underline-offset: 3px; }
 /* ── Brand lockup (used by the rebrand markup) ────────────────────────── */
 .mz-mark { width: 36px; height: 36px; flex-shrink: 0; display: block; }
 .mz-wordmark { font-weight: 800 !important; font-size: 17px; color: var(--mz-onyx); line-height: 1.1; }
-.mz-wordmark small { display: block; font-family: var(--mz-mono) !important; font-weight: 400; font-size: 10px; letter-spacing: .08em; color: var(--mz-ash); text-transform: uppercase; }
+.mz-wordmark small { display: block; font-family: var(--mz-mono) !important; font-weight: 400; font-size: 11px; letter-spacing: .08em; color: var(--mz-ash); text-transform: uppercase; }
 
 /* ── Buttons — pills; ink is the primary action ───────────────────────── */
 html[data-surface] .btn,

@@ -54,7 +54,7 @@ img{display:block;max-width:100%;}
 .brand{display:flex;align-items:center;gap:10px;}
 .brand img{width:36px;height:36px;}
 .brand b{font-size:20px;font-weight:800;color:var(--mz-onyx);line-height:1;}
-.brand small{display:block;font-family:var(--mz-mono) !important;font-size:10px;letter-spacing:.1em;color:var(--mz-ash);margin-top:3px;}
+.brand small{display:block;font-family:var(--mz-mono) !important;font-size:11px;letter-spacing:.1em;color:var(--mz-ash);margin-top:3px;}
 .nav-links{display:flex;gap:4px;}
 .nav-links a{padding:7px 12px;border-radius:9999px;font-size:15px;font-weight:600;color:var(--mz-carbon);transition:background .15s;}
 .nav-links a:hover{background:rgba(0,0,0,.045);}
@@ -89,7 +89,7 @@ img{display:block;max-width:100%;}
 .mock-side div.it.on i{color:var(--mz-brand);}
 .mock-main{padding:16px 18px;}
 .mock-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.mock-head h4{font-size:15px;font-weight:800;}
+.mock-head .mock-title{font-size:15px;font-weight:800;}
 .mock-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .mock-kpi{border:1px solid var(--mz-bone);border-radius:10px;padding:9px 10px;}
 .mock-kpi b{display:block;font-size:20px;font-weight:800;color:var(--mz-onyx);line-height:1.1;}
@@ -347,16 +347,16 @@ img{display:block;max-width:100%;}
           <div class="it"><i class="fas fa-chart-line"></i>المؤشرات</div>
         </div>
         <div class="mock-main">
-          <div class="mock-head"><h4>عدم المطابقة</h4><span class="st st-info">ISO 45001</span></div>
+          <div class="mock-head"><b class="mock-title">عدم المطابقة</b><span class="st st-info">ISO 45001</span></div>
           <div class="mock-kpis">
             <div class="mock-kpi"><b>87%</b><span>معدل الامتثال</span><div class="bar"><i style="width:87%"></i></div></div>
             <div class="mock-kpi"><b>5</b><span>NC مفتوحة</span><div class="bar"><i style="width:36%;background:var(--mz-nc)"></i></div></div>
             <div class="mock-kpi"><b>71%</b><span>إغلاق RCA</span><div class="bar"><i style="width:71%;background:var(--mz-assure)"></i></div></div>
           </div>
-          <div class="mock-row"><span class="ref">NC-2026-014</span><span class="t">تسرب زيت في خط الإنتاج 3</span><span class="st st-nc">مفتوحة</span><span class="avs"><b style="background:#0f8a65">خ</b><b style="background:#0b6bcb">س</b></span></div>
-          <div class="mock-row"><span class="ref">NC-2026-015</span><span class="t">نقص معدات الوقاية الشخصية</span><span class="st st-obs">قيد المعالجة</span><span class="avs"><b style="background:#c8941a">أ</b></span></div>
+          <div class="mock-row"><span class="ref">NC-2026-014</span><span class="t">تسرب زيت في خط الإنتاج 3</span><span class="st st-nc">مفتوحة</span><span class="avs"><b style="background:#0c7a59">خ</b><b style="background:#0b6bcb">س</b></span></div>
+          <div class="mock-row"><span class="ref">NC-2026-015</span><span class="t">نقص معدات الوقاية الشخصية</span><span class="st st-obs">قيد المعالجة</span><span class="avs"><b style="background:#8a6408">أ</b></span></div>
           <div class="mock-row"><span class="ref">NC-2026-012</span><span class="t">ملصقات تحذير غير مقروءة</span><span class="st st-obs">قيد المعالجة</span><span class="avs"><b style="background:#0b6bcb">م</b><b style="background:#5b3aa6">ف</b></span></div>
-          <div class="mock-row"><span class="ref">NC-2026-011</span><span class="t">معايرة جهاز القياس متأخرة</span><span class="st st-pass">مغلقة</span><span class="avs"><b style="background:#0f8a65">ر</b></span></div>
+          <div class="mock-row"><span class="ref">NC-2026-011</span><span class="t">معايرة جهاز القياس متأخرة</span><span class="st st-pass">مغلقة</span><span class="avs"><b style="background:#0c7a59">ر</b></span></div>
         </div>
       </div>
     </div>
@@ -422,8 +422,8 @@ img{display:block;max-width:100%;}
         </div>
       </div>
       <div class="council" aria-hidden="true">
-        <div class="seat"><b style="background:#0f8a65">م</b><div>مدقق ISO 9001<small>نظام إدارة الجودة · المراجعة الداخلية</small></div></div>
-        <div class="seat"><b style="background:#c8941a">خ</b><div>أخصائي السلامة المهنية<small>ISO 45001 · تقييم المخاطر الميدانية</small></div></div>
+        <div class="seat"><b style="background:#0c7a59">م</b><div>مدقق ISO 9001<small>نظام إدارة الجودة · المراجعة الداخلية</small></div></div>
+        <div class="seat"><b style="background:#8a6408">خ</b><div>أخصائي السلامة المهنية<small>ISO 45001 · تقييم المخاطر الميدانية</small></div></div>
         <div class="seat"><b style="background:#0b6bcb">ر</b><div>خبير إدارة المخاطر<small>ISO 31000 · COSO · مصفوفة المخاطر</small></div></div>
         <div class="seat"><b style="background:#5b3aa6">ل</b><div>مستشار Lean Six Sigma<small>DMAIC · تقليل الهدر</small></div></div>
       </div>
@@ -567,9 +567,9 @@ img{display:block;max-width:100%;}
       <p class="lead">من النفط والطاقة إلى الصناعة والبنية التحتية.</p>
     </div>
     <div class="quotes">
-      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"وفّرنا أكثر من 40% من وقت إعداد تقارير الامتثال. أصبح التدقيق الخارجي لـ ISO 45001 سهلاً جداً بفضل التقارير الجاهزة للمراجعة."</p><figcaption class="who"><b style="background:#0f8a65">خا</b><div>خالد الشمري<small>مدير QHSE · أرامكو</small></div></figcaption></figure>
+      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"وفّرنا أكثر من 40% من وقت إعداد تقارير الامتثال. أصبح التدقيق الخارجي لـ ISO 45001 سهلاً جداً بفضل التقارير الجاهزة للمراجعة."</p><figcaption class="who"><b style="background:#0c7a59">خا</b><div>خالد الشمري<small>مدير QHSE · أرامكو</small></div></figcaption></figure>
       <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"ميزة تحليل الفجوة أعطتنا خارطة طريق واضحة لتحقيق ISO 14001 في أقل من 6 أشهر بدلاً من سنة كاملة."</p><figcaption class="who"><b style="background:#0b6bcb">سا</b><div>سارة المالكي<small>مديرة الجودة · SABIC</small></div></figcaption></figure>
-      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"التطبيق الجوال غيّر طريقة عمل مفتشينا الميدانيين. الآن كل شيء رقمي وفوري — لا ورق ولا تأخير في الإبلاغ."</p><figcaption class="who"><b style="background:#c8941a">أح</b><div>أحمد بن علي<small>مدير السلامة · الكهرباء السعودية</small></div></figcaption></figure>
+      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"التطبيق الجوال غيّر طريقة عمل مفتشينا الميدانيين. الآن كل شيء رقمي وفوري — لا ورق ولا تأخير في الإبلاغ."</p><figcaption class="who"><b style="background:#8a6408">أح</b><div>أحمد بن علي<small>مدير السلامة · الكهرباء السعودية</small></div></figcaption></figure>
     </div>
   </div>
 </section>
