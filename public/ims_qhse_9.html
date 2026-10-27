@@ -284,6 +284,23 @@ window.hydrateGlobalData = async function() {
       <span class="badge badge-red text-xs mr-auto" id="nc-count-badge" style="display:none">0</span>
     </div>
 
+    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الامتثال</div>
+    <div class="nav-item" onclick="navigate('incidents')">
+      <i class="fas fa-person-falling-burst w-4"></i><span class="sidebar-label">الحوادث والإصابات</span>
+    </div>
+    <div class="nav-item" onclick="navigate('risks')">
+      <i class="fas fa-shield-halved w-4"></i><span class="sidebar-label">سجل المخاطر</span>
+    </div>
+    <div class="nav-item" onclick="navigate('documents')">
+      <i class="fas fa-folder-tree w-4"></i><span class="sidebar-label">ضبط الوثائق</span>
+    </div>
+    <div class="nav-item" onclick="navigate('training')">
+      <i class="fas fa-user-graduate w-4"></i><span class="sidebar-label">التدريب والكفاءات</span>
+    </div>
+    <div class="nav-item" onclick="navigate('annual')">
+      <i class="fas fa-calendar-check w-4"></i><span class="sidebar-label">الخطة السنوية</span>
+    </div>
+
     <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">Lean Six Sigma</div>
     <div class="nav-item" onclick="navigate('rca')">
       <i class="fas fa-search w-4"></i><span class="sidebar-label">تحليل الأسباب RCA</span>
@@ -300,6 +317,9 @@ window.hydrateGlobalData = async function() {
     <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الإعدادات</div>
     <div class="nav-item" onclick="navigate('org')">
       <i class="fas fa-sitemap w-4"></i><span class="sidebar-label">المنظمة</span>
+    </div>
+    <div class="nav-item" onclick="navigate('profile')">
+      <i class="fas fa-id-badge w-4"></i><span class="sidebar-label">ملفي الشخصي</span>
     </div>
     <div class="nav-item" onclick="navigate('users')">
       <i class="fas fa-users-cog w-4"></i><span class="sidebar-label">إدارة المستخدمين</span>
@@ -9268,7 +9288,7 @@ async function saveOrgSettings(extraData = {}) {
 async function apiFetch(url, method = 'GET', body = null) {
   const token = localStorage.getItem('ims_token');
   if (!token) { window.location.href = '/'; return; }
-  const REAL_PREFIXES = ['/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health','/api/integrations'];
+  const REAL_PREFIXES = ['/api/incidents','/api/documents','/api/trainings','/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health','/api/integrations'];
   const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
   let fullUrl;
   if (isReal) {
@@ -13142,5 +13162,6 @@ function updateSidebarISO() {
   loadDashboard();
 })();
 </script>
+<script src="/assets/mizan-modules.js"></script>
 </body>
 </html>
