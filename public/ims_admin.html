@@ -87,14 +87,19 @@
     <div class="nav-item" onclick="navigate('tenants')"><i class="fas fa-building" style="width:16px;text-align:center;font-size:13px;"></i>المستأجرون</div>
     <div class="nav-item" onclick="navigate('plans')"><i class="fas fa-layer-group" style="width:16px;text-align:center;font-size:13px;"></i>إدارة الباقات</div>
     <div class="nav-item" onclick="navigate('invoices')"><i class="fas fa-file-invoice-dollar" style="width:16px;text-align:center;font-size:13px;"></i>الفواتير</div>
+    <div class="nav-section">المستخدمون</div>
+    <div class="nav-item" onclick="navigate('users')"><i class="fas fa-users" style="width:16px;text-align:center;font-size:13px;"></i>مستخدمو المنصة</div>
+    <div class="nav-item" onclick="navigate('activity')"><i class="fas fa-clock-rotate-left" style="width:16px;text-align:center;font-size:13px;"></i>سجل النشاط</div>
+    <div class="nav-item" onclick="navigate('announcements')"><i class="fas fa-bullhorn" style="width:16px;text-align:center;font-size:13px;"></i>الإعلانات</div>
     <div class="nav-section">النظام</div>
+    <div class="nav-item" onclick="navigate('health')"><i class="fas fa-heart-pulse" style="width:16px;text-align:center;font-size:13px;"></i>صحة النظام</div>
     <div class="nav-item" onclick="navigate('settings')"><i class="fas fa-cog" style="width:16px;text-align:center;font-size:13px;"></i>الإعدادات</div>
     <div class="nav-item" onclick="logout()" style="color:#dc2626;"><i class="fas fa-sign-out-alt" style="width:16px;text-align:center;font-size:13px;"></i>تسجيل الخروج</div>
   </div>
   <div style="padding:12px 16px;border-top:1px solid #f1f2f4;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:34px;height:34px;border-radius:50%;background:#0a4f99;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:800;flex-shrink:0;">SA</div>
-      <div><div style="font-size:13px;font-weight:700;color:#202020;">Super Admin</div><div style="font-size:11px;color:#646464;">admin@ims-qhse.com</div></div>
+      <div id="mza-me-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--mz-ink);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:800;flex-shrink:0;">م</div>
+      <div style="min-width:0"><div id="mza-me-name" style="font-size:13px;font-weight:700;color:#202020;">مدير المنصة</div><div id="mza-me-email" dir="ltr" style="font-size:11px;color:#646464;overflow:hidden;text-overflow:ellipsis;"></div></div>
     </div>
   </div>
 </aside>
@@ -195,7 +200,7 @@ function navigate(page){
   document.getElementById('page-title').textContent=t;
   document.getElementById('page-subtitle').textContent=s;
   document.getElementById('content').innerHTML='<div style="display:flex;justify-content:center;align-items:center;height:60vh;"><i class="fas fa-spinner fa-spin" style="font-size:28px;color:#0a4f99;"></i></div>';
-  ({dashboard:loadDashboard,analytics:loadAnalytics,tenants:loadTenants,plans:loadPlans,invoices:loadInvoices,settings:loadSettings}[page]||loadDashboard)();
+  ({dashboard:loadDashboard,analytics:loadAnalytics,tenants:loadTenants,plans:loadPlans,invoices:loadInvoices}[page]||loadDashboard)();
 }
 
 async function loadDashboard(){
@@ -402,21 +407,6 @@ async function loadInvoices(status=''){
   </div>`;
 }
 
-function loadSettings(){
-  document.getElementById('content').innerHTML=`
-  <div class="fade-in" style="max-width:580px;display:flex;flex-direction:column;gap:16px;">
-    <div class="card" style="padding:20px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:16px;">إعدادات النظام</div>
-      ${sr('فترة التجربة المجانية (أيام)','14')}${sr('معدل ضريبة القيمة المضافة (%)','15')}${sr('عملة الفوترة','SAR')}${sr('أيام الاستحقاق','7')}
-      <div style="margin-top:16px;"><button class="btn btn-primary" onclick="showToast('✅ تم حفظ الإعدادات')"><i class="fas fa-save ml-1"></i>حفظ</button></div>
-    </div>
-    <div class="card" style="padding:20px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">معلومات النظام</div>
-      <div style="background:#f8f9fa;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;color:#4a4a4a;line-height:1.8;">Backend: ${API}<br>Version: v1.0.0<br>Status: <span style="color:#059669;">🟢 Running</span></div>
-    </div>
-  </div>`;
-}
-function sr(l,v){return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f2f4;"><span style="font-size:13px;color:#2a2a2a;">${l}</span><input type="text" class="form-input" style="width:140px;" value="${v}"/></div>`;}
 
 // ── Modals ──────────────────────────────────────────────────
 async function openTenantModal(id){
@@ -561,11 +551,13 @@ async function doLogin(){
     document.querySelector('.sidebar').style.display='flex';
     document.querySelector('.main').style.marginRight='240px';
     navigate('dashboard');
+    if (window.MZA) MZA.fillMe();
   }catch(e){err.textContent='خطأ في الاتصال';err.style.display='block';}
 }
 
 // ── Init ─────────────────────────────────────────────────────
 (function(){const t=getToken();if(!t){showLoginScreen();return;}navigate('dashboard');})();
 </script>
+<script src="/assets/mizan-admin.js"></script>
 </body>
 </html>
