@@ -92,6 +92,18 @@
     /* Offline bar */
     #offline-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#d97706;color:white;padding:8px 16px;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:600;}
     /* PWA install prompt */
+    /* ── Polish: contrast, legibility, browser surfaces ── */
+    .bnav-item span{font-size:11px;}
+    .bnav-item{color:#64748b;}
+    .page .text-blue-500{color:#2563eb;}
+    .page .text-slate-400, .bottom-sheet .text-slate-400,
+    .page [style*="color:#94a3b8"], .bottom-sheet [style*="color:#94a3b8"]{color:#64748b !important;}
+    .badge-red{color:#b91c1c;} .badge-yellow{color:#92400e;} .badge-green{color:#047857;}
+    .btn-success{background:#047857;}
+    #offline-bar{background:#b45309 !important;}
+    ::selection{background:#bfdbfe;color:#1e293b;}
+    :focus-visible{outline:2px solid #3b82f6;outline-offset:2px;}
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}}
     #install-prompt{display:none;position:fixed;bottom:90px;left:16px;right:16px;z-index:9990;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.2);border:1px solid #e2e8f0;}
   </style>
 <script>
@@ -402,7 +414,7 @@
           <button onclick="mShowPage('m-notifications')" class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white">
             <i class="fas fa-bell text-sm"></i>
           </button>
-          <span class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold" id="notif-count">0</span>
+          <span class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold" id="notif-count" style="display:none">0</span>
         </div>
         <button onclick="mobileLogout()" class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white">
           <i class="fas fa-sign-out-alt text-sm"></i>
@@ -850,7 +862,7 @@
                 <div class="font-semibold text-slate-800 text-sm">الإشعارات</div>
                 <div class="text-xs text-slate-500">التنبيهات والتحديثات</div>
               </div>
-              <span class="badge badge-red" id="m-notif-badge-more">0</span>
+              <span class="badge badge-red" id="m-notif-badge-more" style="display:none">0</span>
             </button>
             <button onclick="mShowPage('m-lean')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-teal-50 active:bg-teal-100 transition-colors">
               <div class="w-9 h-9 bg-teal-100 rounded-xl flex items-center justify-center"><i class="fas fa-recycle text-teal-600"></i></div>
@@ -2843,7 +2855,9 @@ async function loadNotifications_m() {
   if (!el) return;
   const unread = data.filter(n => !n.is_read).length;
   const badge  = document.getElementById('notif-count');
-  if (badge) badge.textContent = unread;
+  if (badge) { badge.textContent = unread; badge.style.display = unread ? '' : 'none'; }
+  const moreBadge = document.getElementById('m-notif-badge-more');
+  if (moreBadge) { moreBadge.textContent = unread; moreBadge.style.display = unread ? '' : 'none'; }
   if (!data.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد إشعارات</div>'; return; }
   const priIcon = { critical:'fa-radiation text-red-500', high:'fa-exclamation-circle text-orange-500', normal:'fa-info-circle text-blue-400', low:'fa-check-circle text-green-500' };
   el.innerHTML = data.map(n => `
