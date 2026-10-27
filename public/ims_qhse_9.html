@@ -105,6 +105,43 @@
       .main-content { margin-right: 0 !important; }
       body.sidebar-collapsed .main-content { margin-right: 0 !important; }
     }
+
+    /* ── Polish: contrast ── */
+    /* sidebar captions were slate-500 on navy (3.1:1) */
+    .sidebar .text-slate-500 { color: #94a3b8 !important; }
+    .nav-item:hover, .nav-item.active { color: #93c5fd; }
+    /* secondary text on white/light surfaces: slate-400 (2.6:1) → slate-500 (4.8:1) */
+    .main-content .text-slate-400, .modal .text-slate-400,
+    .main-content [style*="color:#94a3b8"], .modal [style*="color:#94a3b8"] { color: #64748b !important; }
+    /* status badge text one step darker so it clears 4.5:1 on its own tint */
+    .badge-red { color: #b91c1c; }
+    .badge-yellow { color: #92400e; }
+    .badge-green { color: #047857; }
+
+    /* ── Polish: layout ── */
+    /* 4 KPI cards per row only when the content column (viewport − sidebar) can hold them without wrapping labels */
+    @media (min-width: 1024px) and (max-width: 1279px) {
+      #app-content .lg\:grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    /* data tables live in .card.overflow-hidden: scroll them sideways instead of clipping columns on narrow screens */
+    #app-content .card.overflow-hidden:has(> table) { overflow-x: auto; }
+    #app-content .card.overflow-hidden > table { min-width: 640px; }
+    @media (max-width: 640px) {
+      /* page header rows (counters + primary action) stack instead of squeezing both into one line */
+      #app-content .fade-in > .flex.items-center.justify-between { flex-direction: column; align-items: stretch; gap: 12px; }
+      #app-content .fade-in > .flex.items-center.justify-between > * { min-width: 0; }
+      #app-content .fade-in > .flex.items-center.justify-between > .flex > * { flex: 1 1 0; }
+      #app-content { padding: 16px; }
+    }
+
+    /* ── Polish: browser surfaces ── */
+    ::selection { background: #bfdbfe; color: #1e293b; }
+    :focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+    .nav-item:focus-visible { outline-offset: -2px; }
+    .main-content { scrollbar-color: #cbd5e1 transparent; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
   </style>
 
 <script>
@@ -467,13 +504,7 @@ window.hydrateGlobalData = async function() {
           <div>
             <label class="text-sm font-medium text-slate-700 block mb-1">معيار الأيزو</label>
             <select class="form-input" name="iso_standard" id="nc-iso-select">
-              ${(()=>{
-                const certified = window.MOCK_DB?.org_profile?.certified_standards || [];
-                const stds      = window.MOCK_DB?.iso_standards || [];
-                const active    = certified.length ? stds.filter(s => certified.includes(s.code)) : stds;
-                const opts = active.map(s => `<option value="${s.code}">${s.code.replace('_',' ')} — ${s.name||''}</option>`).join('');
-                return opts || '<option value="ISO_9001">ISO 9001 — الجودة</option>';
-              })()}
+              <option value="ISO_9001">ISO 9001 — الجودة</option>
             </select>
           </div>
           <div>
@@ -535,26 +566,7 @@ window.hydrateGlobalData = async function() {
         <div>
           <label class="text-sm font-medium text-slate-700 block mb-2">معيار الأيزو المطبَّق <span class="text-red-500">*</span></label>
           <div id="insp-iso-checkboxes" class="flex flex-wrap gap-2">
-            ${(()=>{
-              const certified = window.MOCK_DB?.org_profile?.certified_standards || [];
-              const stds      = window.MOCK_DB?.iso_standards || [];
-              const active    = certified.length ? stds.filter(s => certified.includes(s.code)) : stds;
-              const list      = active.length ? active : [{code:'ISO_9001',name:'الجودة',color:'#3b82f6'},{code:'ISO_45001',name:'السلامة',color:'#059669'},{code:'ISO_14001',name:'البيئة',color:'#d97706'}];
-              const colorMap  = {ISO_9001:'#3b82f6',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
-              return list.map(s => {
-                const c = s.color || colorMap[s.code] || '#64748b';
-                return `<label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;border:1.5px solid ${c}30;background:${c}08;cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;"
-                  class="insp-iso-cb-label"
-                  onmouseover="this.style.background='${c}18';this.style.borderColor='${c}'"
-                  onmouseout="this.querySelector('input').checked||(this.style.background='${c}08',this.style.borderColor='${c}30')">
-                  <input type="checkbox" class="insp-iso-cb" value="${s.code}"
-                    style="width:14px;height:14px;accent-color:${c};"
-                    onchange="this.closest('label').style.background=this.checked?'${c}20':'${c}08';this.closest('label').style.borderColor=this.checked?'${c}':'${c}30'"/>
-                  <span style="color:${c};">${s.code.replace('_',' ')}</span>
-                  <span style="color:#94a3b8;font-weight:400;">${s.name||''}</span>
-                </label>`;
-              }).join('');
-            })()}
+            <!-- filled by openNewInspectionModal() from the active ISO standards -->
           </div>
         </div>
         <div>
@@ -653,7 +665,7 @@ async function loadDashboard() {
         <div>
           <div class="text-blue-200 text-xs mb-1">لوحة التحكم الرئيسية — ${new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
           <h2 class="text-xl font-black text-white">${org.name || 'نظام IMS QHSE'}</h2>
-          <p class="text-blue-200 text-sm mt-1">${org.industry||''} · ${org.city||''} · ${(org.certified_standards||[]).map(s=>s.replace('_',' ')).join(' · ')}</p>
+          <p class="text-blue-200 text-sm mt-1">${[org.industry, org.city, ...(org.certified_standards||[]).map(s=>s.replace('_',' '))].filter(Boolean).join(' · ') || 'أكمل ملف المنظمة من الإعدادات'}</p>
         </div>
         <div class="flex gap-3 flex-wrap">
           <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
@@ -9044,7 +9056,9 @@ function openNewNCModal() {
         sel.innerHTML = '<option value="">-- اختر المشروع --</option>';
       });
   }
-  document.getElementById('modal-nc').classList.add('open');
+  const modal = document.getElementById('modal-nc');
+  populateISOSelects(modal);
+  modal.classList.add('open');
 }
 function openNewInspectionModal() {
   const modal = document.getElementById('modal-inspection');
