@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-surface="auth">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="IMS QHSE"/>
-<meta name="theme-color" content="#1e40af"/>
-<title>IMS QHSE — دخول التطبيق</title>
+<meta name="apple-mobile-web-app-title" content="ميزان"/>
+<meta name="theme-color" content="#0a4f99"/>
+<title>ميزان — دخول التطبيق</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',sans-serif;-webkit-tap-highlight-color:transparent;}
@@ -16,7 +16,7 @@
 
 body{
   min-height:100dvh;
-  background:linear-gradient(160deg,#0f172a 0%,#1e3a8a 55%,#312e81 100%);
+  background:linear-gradient(160deg,#111111 0%,#083f7a 55%,#312e81 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 20px);
   overflow-x:hidden;
@@ -41,7 +41,7 @@ body::before{
 
 /* ── Header ── */
 .card-header{
-  background:linear-gradient(135deg,#1e40af,#4f46e5);
+  background:linear-gradient(135deg,#0a4f99,#4f46e5);
   padding:32px 28px 28px;
   text-align:center;
   position:relative;overflow:hidden;
@@ -71,34 +71,34 @@ body::before{
 /* ── Tabs ── */
 .tabs{display:flex;gap:4px;background:rgba(255,255,255,.15);border-radius:12px;padding:4px;margin-top:18px;position:relative;z-index:1;}
 .tab-btn{flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:transparent;color:rgba(255,255,255,.65);transition:all .2s;font-family:'Tajawal',sans-serif;}
-.tab-btn.active{background:white;color:#1e40af;}
+.tab-btn.active{background:white;color:#0a4f99;}
 
 /* ── Body ── */
 .card-body{padding:24px 24px 28px;}
 
 /* ── Form ── */
 .form-group{margin-bottom:14px;}
-.form-group label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:5px;}
+.form-group label{display:block;font-size:12px;font-weight:700;color:#4a4a4a;margin-bottom:5px;}
 .input-wrap{position:relative;}
-.input-wrap i{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:14px;pointer-events:none;}
+.input-wrap i{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#767676;font-size:14px;pointer-events:none;}
 .form-input{
   width:100%;padding:12px 38px 12px 14px;
-  border:1.5px solid #e2e8f0;border-radius:12px;
+  border:1.5px solid #e8e8e8;border-radius:12px;
   font-size:14px;font-family:'Tajawal',sans-serif;
   transition:all .2s;outline:none;background:white;
-  color:#1e293b;
+  color:#202020;
 }
-.form-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+.form-input:focus{border-color:#2a86e0;box-shadow:0 0 0 3px rgba(42,134,224,.12);}
 
 /* ── Button ── */
 .btn-login{
   width:100%;padding:14px;margin-top:4px;
-  background:linear-gradient(135deg,#1e40af,#4f46e5);
+  background:linear-gradient(135deg,#0a4f99,#4f46e5);
   color:white;border:none;border-radius:14px;
   font-size:15px;font-weight:800;cursor:pointer;
   font-family:'Tajawal',sans-serif;
   transition:all .2s;
-  box-shadow:0 6px 20px rgba(30,64,175,.35);
+  box-shadow:0 6px 20px rgba(10,79,153,.35);
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .btn-login:active{transform:scale(.97);}
@@ -111,11 +111,11 @@ body::before{
 /* ── Register fields ── */
 .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .role-chip{
-  padding:10px 8px;border-radius:10px;border:1.5px solid #e2e8f0;
+  padding:10px 8px;border-radius:10px;border:1.5px solid #e8e8e8;
   text-align:center;cursor:pointer;transition:all .15s;
-  font-size:12px;font-weight:600;color:#64748b;
+  font-size:12px;font-weight:600;color:#646464;
 }
-.role-chip.selected{border-color:#1e40af;background:#eff6ff;color:#1e40af;}
+.role-chip.selected{border-color:#0a4f99;background:#f2f8fd;color:#0a4f99;}
 .role-chip i{display:block;font-size:18px;margin-bottom:4px;}
 
 /* ── Footer ── */
@@ -135,19 +135,23 @@ body::before{
 .card{animation:fadeUp .4s ease;}
 
 /* ── Polish: browser surfaces ── */
-::selection{background:#bfdbfe;color:#1e293b;}
-:focus-visible{outline:2px solid #3b82f6;outline-offset:2px;}
+::selection{background:#c9e1f8;color:#202020;}
+:focus-visible{outline:2px solid #2a86e0;outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+<link rel="icon" type="image/svg+xml" href="/assets/mizan-mark.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Sometype+Mono:wght@400;500&display=swap"/>
+<link rel="stylesheet" href="/assets/mizan.css"/>
 </head>
 <body>
 
 <div class="card">
   <!-- Header -->
   <div class="card-header">
-    <div class="app-icon"><i class="fas fa-shield-alt"></i></div>
-    <h1>IMS QHSE</h1>
+    <div class="app-icon"><img src="/assets/mizan-mark.svg" alt="" class="mz-mark" width="72" height="72" style="width:72px;height:72px"/></div>
+    <h1>ميزان</h1>
     <p>تطبيق الميدان · Field Inspection App</p>
     <div class="tabs">
       <button class="tab-btn active" id="tab-login"    onclick="switchTab('login')">دخول الأعضاء</button>
@@ -182,11 +186,11 @@ body::before{
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#64748b;">
-          <input type="checkbox" id="remember-me" style="width:14px;height:14px;accent-color:#1e40af;"/>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#646464;">
+          <input type="checkbox" id="remember-me" style="width:14px;height:14px;accent-color:#0a4f99;"/>
           تذكرني
         </label>
-        <a href="#" style="font-size:12px;color:#2563eb;font-weight:600;">نسيت كلمة المرور؟</a>
+        <a href="#" style="font-size:12px;color:#0b6bcb;font-weight:600;">نسيت كلمة المرور؟</a>
       </div>
 
       <button class="btn-login" id="login-btn" onclick="doMobileLogin()">
@@ -260,7 +264,7 @@ body::before{
     <a href="#">الدعم الفني</a> ·
     <a href="#">الخصوصية</a>
   </div>
-  <div>© 2026 IMS QHSE · نسخة الجوال 2.4.1</div>
+  <div>© 2026 ميزان · نسخة الجوال 2.4.1</div>
 </div>
 
 <script>

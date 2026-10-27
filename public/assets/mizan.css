@@ -1,0 +1,294 @@
+/* ==========================================================================
+   Mizan — design system
+   Structure follows the ClickUp reference (white canvas, ink pill CTAs, flat
+   hairline cards, 9999px pills, heavy display type); colour is re-keyed to
+   quality work:
+     ink        — primary action + headings (near-black, cool)
+     conformance— brand green: identity, active states, "pass"
+     assurance  — interactive blue: links, focus, outlined actions
+     certified  — gold: certification / premium / award moments only
+     status     — pass / observation / nonconformity / info keep their meaning
+   Every page sets <html data-surface="app|admin|mobile|auth|advisory">.
+   ========================================================================== */
+
+:root {
+  /* neutrals (ClickUp greys) */
+  --mz-white: #ffffff;
+  --mz-ink: #17201d;
+  --mz-onyx: #0b1311;
+  --mz-carbon: #2a2a2a;
+  --mz-slate: #5c6360;
+  --mz-ash: #737373;
+  --mz-fog: #b3b3b3;
+  --mz-cloud: #d4d4d4;
+  --mz-bone: #e8e8e8;
+  --mz-mist: #f8f9fa;
+  --mz-plaster: #eef0f2;
+
+  /* quality palette */
+  --mz-brand: #0f8a65;          /* conformance green */
+  --mz-brand-strong: #0b6b4f;
+  --mz-brand-tint: #e7f5ef;
+  --mz-brand-wash: #f3faf7;
+  --mz-assure: #0b6bcb;         /* assurance blue (links, focus) */
+  --mz-assure-tint: #e8f1fb;
+  --mz-gold: #c8941a;           /* certified */
+  --mz-gold-tint: #fbf3df;
+
+  --mz-pass: #0f7a52;     --mz-pass-bg: #e3f6ec;
+  --mz-obs: #9a5b00;      --mz-obs-bg: #fff3d6;
+  --mz-nc: #b42318;       --mz-nc-bg: #fde8e6;
+  --mz-info: #0b5cad;     --mz-info-bg: #e6f0fb;
+
+  --mz-font: 'Plus Jakarta Sans', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mz-font-ar: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --mz-mono: 'Sometype Mono', 'IBM Plex Sans Arabic', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --mz-r-input: 9px;
+  --mz-r-card: 12px;
+  --mz-r-card-lg: 20px;
+  --mz-r-pill: 9999px;
+
+  --mz-shadow-subtle: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px -1px rgba(0,0,0,.08);
+  --mz-shadow-layer: 0 1px 1px -.5px rgba(18,43,40,.05), 0 3px 3px -1.5px rgba(18,43,40,.05), 0 6px 6px -3px rgba(18,43,40,.05), 0 12px 12px -6px rgba(18,43,40,.05);
+  --mz-shadow-pop: 0 18px 48px -12px rgba(11,19,17,.28);
+
+  --mz-ease: cubic-bezier(.33, 1, .68, 1);
+  --mz-quality-conic: conic-gradient(from 90deg, #0f8a65 0%, #16c0a4 22%, #0b6bcb 45%, #6aa8ef 58%, #f3c74f 76%, #c8941a 88%, #0f8a65 100%);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+html[data-surface] body {
+  font-family: var(--mz-font) !important;
+  color: var(--mz-ink);
+  -webkit-font-smoothing: antialiased;
+}
+html[data-surface] :where(body *):not(i):not(.fa):not(.fas):not(.far):not(.fab):not([class*="fa-"]):not([class*="leaflet"]):not(code):not(pre) {
+  font-family: var(--mz-font) !important;
+}
+/* Arabic must keep letter-spacing at 0 — negative tracking detaches joined letters */
+html[data-surface] h1, html[data-surface] h2, html[data-surface] h3 { letter-spacing: 0; }
+html[data-surface] ::selection { background: #cdeee0; color: var(--mz-onyx); }
+html[data-surface] :focus-visible { outline: 2px solid var(--mz-assure) !important; outline-offset: 2px; }
+html[data-surface] ::-webkit-scrollbar { width: 9px; height: 9px; }
+html[data-surface] ::-webkit-scrollbar-thumb { background: var(--mz-cloud); border-radius: 9px; border: 2px solid transparent; background-clip: padding-box; }
+html[data-surface] ::-webkit-scrollbar-track { background: transparent; }
+html[data-surface] a { text-underline-offset: 3px; }
+
+/* ── Brand lockup (used by the rebrand markup) ────────────────────────── */
+.mz-mark { width: 36px; height: 36px; flex-shrink: 0; display: block; }
+.mz-wordmark { font-weight: 800 !important; font-size: 17px; color: var(--mz-onyx); line-height: 1.1; }
+.mz-wordmark small { display: block; font-family: var(--mz-mono) !important; font-weight: 400; font-size: 10px; letter-spacing: .08em; color: var(--mz-ash); text-transform: uppercase; }
+
+/* ── Buttons — pills; ink is the primary action ───────────────────────── */
+html[data-surface] .btn,
+html[data-surface] .btn-full,
+html[data-surface] .action-btn,
+html[data-surface] .btn-login {
+  border-radius: var(--mz-r-pill) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0;
+  box-shadow: none !important;
+  transition: background .15s var(--mz-ease), color .15s var(--mz-ease), border-color .15s var(--mz-ease), transform .15s var(--mz-ease);
+}
+html[data-surface] .btn-primary,
+html[data-surface] .btn-login { background: var(--mz-ink) !important; color: #fff !important; border: none !important; }
+html[data-surface] .btn-primary:hover,
+html[data-surface] .btn-login:hover { background: #2c3833 !important; }
+html[data-surface] .btn-primary:active { transform: translateY(1px); }
+html[data-surface] .btn-outline { background: transparent !important; color: var(--mz-ink) !important; border: 1px solid var(--mz-bone) !important; }
+html[data-surface] .btn-outline:hover { border-color: var(--mz-assure) !important; color: var(--mz-assure) !important; }
+html[data-surface] .btn-success { background: var(--mz-pass-bg) !important; color: var(--mz-pass) !important; border: none !important; }
+html[data-surface] .btn-danger  { background: var(--mz-nc-bg) !important; color: var(--mz-nc) !important; border: none !important; }
+html[data-surface="admin"] .btn-success { background: var(--mz-brand) !important; color: #fff !important; }
+html[data-surface="admin"] .btn-danger  { background: var(--mz-nc) !important; color: #fff !important; }
+html[data-surface] button:disabled, html[data-surface] .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Tailwind-built primary buttons (bg-blue-600 etc.) read as ink CTAs */
+html[data-surface] #app-content button.bg-blue-600,
+html[data-surface] #app-content button.bg-blue-500,
+html[data-surface] .modal button.bg-blue-600 { background: var(--mz-ink) !important; color: #fff !important; border-radius: var(--mz-r-pill) !important; }
+
+/* ── Cards — flat, hairline ───────────────────────────────────────────── */
+html[data-surface] .card,
+html[data-surface] .stat-card {
+  background: var(--mz-white);
+  border: 1px solid var(--mz-bone) !important;
+  border-radius: var(--mz-r-card) !important;
+  box-shadow: none !important;
+}
+html[data-surface] .stat-card { transition: border-color .15s var(--mz-ease); }
+html[data-surface] .stat-card:hover { border-color: var(--mz-cloud) !important; }
+
+/* ── Status pills ─────────────────────────────────────────────────────── */
+html[data-surface] .badge {
+  border-radius: var(--mz-r-pill) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 3px 10px;
+  letter-spacing: 0;
+}
+html[data-surface] .badge-green  { background: var(--mz-pass-bg) !important; color: var(--mz-pass) !important; }
+html[data-surface] .badge-yellow { background: var(--mz-obs-bg)  !important; color: var(--mz-obs)  !important; }
+html[data-surface] .badge-red    { background: var(--mz-nc-bg)   !important; color: var(--mz-nc)   !important; }
+html[data-surface] .badge-blue   { background: var(--mz-info-bg) !important; color: var(--mz-info) !important; }
+html[data-surface] .badge-gray   { background: var(--mz-plaster) !important; color: var(--mz-slate) !important; }
+html[data-surface] .badge-purple { background: #efe9fb !important; color: #5b3aa6 !important; }
+html[data-surface] .badge-teal   { background: #def6f1 !important; color: #0c6d5d !important; }
+
+/* ── Inputs ───────────────────────────────────────────────────────────── */
+html[data-surface] .form-input,
+html[data-surface="auth"] .form-group input,
+html[data-surface="auth"] .form-group select {
+  background: var(--mz-white);
+  border: 1px solid var(--mz-cloud) !important;
+  border-radius: var(--mz-r-input) !important;
+  color: var(--mz-ink);
+  box-shadow: none;
+  transition: border-color .15s var(--mz-ease), box-shadow .15s var(--mz-ease);
+}
+html[data-surface] .form-input:hover { border-color: var(--mz-fog) !important; }
+html[data-surface] .form-input:focus,
+html[data-surface="auth"] .form-group input:focus {
+  outline: none;
+  border-color: var(--mz-assure) !important;
+  box-shadow: 0 0 0 3px rgba(11, 107, 203, .14) !important;
+}
+html[data-surface] .form-input::placeholder { color: var(--mz-ash); }
+
+/* ── Misc components ─────────────────────────────────────────────────── */
+html[data-surface] .kpi-bar { background: var(--mz-plaster); border-radius: var(--mz-r-pill); }
+html[data-surface] .kpi-fill { border-radius: var(--mz-r-pill); }
+html[data-surface] .tab { color: var(--mz-slate); font-weight: 600; }
+html[data-surface] .tab:hover { color: var(--mz-ink); }
+html[data-surface] .tab.active { color: var(--mz-ink); border-bottom-color: var(--mz-brand); }
+html[data-surface] .modal,
+html[data-surface] .modal-overlay { background: rgba(11, 19, 17, .48) !important; }
+html[data-surface] .modal-content,
+html[data-surface] .modal-box { border-radius: var(--mz-r-card-lg) !important; border: 1px solid var(--mz-bone) !important; box-shadow: var(--mz-shadow-pop) !important; }
+/* modal header bands: flat ink instead of brand gradients (titles are white in markup) */
+html[data-surface] .modal-header,
+html[data-surface] .modal [class*="bg-gradient-to-r"][class*="from-blue"],
+html[data-surface] .modal [class*="bg-gradient-to-r"][class*="from-indigo"] { background: var(--mz-ink) !important; }
+html[data-surface] table th { color: var(--mz-slate); font-weight: 600; }
+html[data-surface] .table-row:hover,
+html[data-surface] .tbl tbody tr:hover { background: var(--mz-brand-wash) !important; }
+
+/* Mono meta labels (ClickUp "status" voice) */
+.mz-meta { font-family: var(--mz-mono) !important; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--mz-ash); }
+
+/* ==========================================================================
+   APP — tenant dashboard
+   ========================================================================== */
+html[data-surface="app"] body { background: var(--mz-white); }
+html[data-surface="app"] .sidebar {
+  background: var(--mz-mist) !important;
+  border-left: 1px solid var(--mz-bone);
+}
+html[data-surface="app"] .sidebar .text-white { color: var(--mz-onyx) !important; }
+html[data-surface="app"] .sidebar .text-slate-300,
+html[data-surface="app"] .sidebar .text-slate-400,
+html[data-surface="app"] .sidebar .text-slate-500 { color: var(--mz-ash) !important; }
+html[data-surface="app"] .sidebar .border-slate-700 { border-color: var(--mz-bone) !important; }
+html[data-surface="app"] .sidebar-collapse-btn { background: transparent !important; color: var(--mz-slate) !important; border-radius: var(--mz-r-pill) !important; }
+html[data-surface="app"] .sidebar-collapse-btn:hover { background: rgba(0,0,0,.05) !important; color: var(--mz-ink) !important; }
+html[data-surface="app"] .sidebar nav { scrollbar-color: var(--mz-cloud) transparent !important; }
+html[data-surface="app"] .sidebar-section-title { font-family: var(--mz-mono) !important; font-size: 11px !important; letter-spacing: .06em; color: var(--mz-ash) !important; }
+html[data-surface="app"] .nav-item {
+  color: var(--mz-carbon) !important;
+  border-radius: var(--mz-r-pill) !important;
+  padding: 8px 14px;
+  margin: 1px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  border-right: none !important;
+}
+html[data-surface="app"] .nav-item i { color: var(--mz-ash); }
+html[data-surface="app"] .nav-item:hover { background: rgba(0,0,0,.045) !important; color: var(--mz-onyx) !important; }
+html[data-surface="app"] .nav-item.active { background: var(--mz-brand-tint) !important; color: var(--mz-brand-strong) !important; font-weight: 700; }
+html[data-surface="app"] .nav-item.active i { color: var(--mz-brand); }
+html[data-surface="app"] .sidebar.collapsed .nav-item.active { border-right: none !important; }
+html[data-surface="app"] .sidebar > div:last-child { background: var(--mz-mist) !important; border-color: var(--mz-bone) !important; }
+html[data-surface="app"] .sidebar > div:last-child .text-white { color: var(--mz-onyx) !important; }
+html[data-surface="app"] #user-avatar { background: var(--mz-ink) !important; color: #fff !important; }
+html[data-surface="app"] .main-content > div:first-child {
+  background: rgba(255,255,255,.92) !important;
+  border-bottom: 1px solid var(--mz-bone) !important;
+  box-shadow: none !important;
+  backdrop-filter: saturate(160%) blur(8px);
+}
+html[data-surface="app"] #page-title { font-weight: 800 !important; font-size: 22px; color: var(--mz-onyx); }
+html[data-surface="app"] #page-subtitle { color: var(--mz-slate) !important; }
+html[data-surface="app"] #app-content .rounded-xl,
+html[data-surface="app"] #app-content .rounded-2xl { border-radius: var(--mz-r-card) !important; }
+html[data-surface="app"] #app-content .shadow-sm,
+html[data-surface="app"] #app-content .shadow,
+html[data-surface="app"] #app-content .shadow-md { box-shadow: none !important; }
+html[data-surface="app"] #app-content .bg-white.rounded-xl,
+html[data-surface="app"] #app-content .bg-white.rounded-2xl { border: 1px solid var(--mz-bone); }
+html[data-surface="app"] .task-card { border-radius: var(--mz-r-card) !important; border: 1px solid var(--mz-bone); box-shadow: none; }
+html[data-surface="app"] .task-card:hover { border-color: var(--mz-cloud); }
+html[data-surface="app"] .kanban-drop-zone.drag-over { background: var(--mz-brand-wash) !important; outline-color: var(--mz-brand); }
+html[data-surface="app"] .drop-placeholder { border-color: var(--mz-brand); background: var(--mz-brand-wash); }
+html[data-surface="app"] .notification-dot { background: var(--mz-nc); box-shadow: 0 0 0 2px #fff; }
+/* the dashboard welcome banner becomes the ClickUp "dark feature card" */
+html[data-surface="app"] #app-content .card[style*="linear-gradient(135deg,#0"] { background: linear-gradient(#17201d 24%, #0b1311) !important; border: none !important; }
+
+/* ==========================================================================
+   ADMIN — platform console
+   ========================================================================== */
+html[data-surface="admin"] body { background: var(--mz-white); }
+html[data-surface="admin"] .sidebar { background: var(--mz-mist) !important; border-left: 1px solid var(--mz-bone) !important; box-shadow: none !important; }
+html[data-surface="admin"] .nav-section { font-family: var(--mz-mono) !important; color: var(--mz-ash) !important; font-size: 11px !important; letter-spacing: .06em !important; }
+html[data-surface="admin"] .nav-item { color: var(--mz-carbon) !important; border-radius: var(--mz-r-pill) !important; font-size: 14px !important; font-weight: 500 !important; }
+html[data-surface="admin"] .nav-item:hover { background: rgba(0,0,0,.045) !important; }
+html[data-surface="admin"] .nav-item.active { background: var(--mz-brand-tint) !important; color: var(--mz-brand-strong) !important; font-weight: 700 !important; border-right: none !important; }
+html[data-surface="admin"] .topbar { background: rgba(255,255,255,.92) !important; border-bottom: 1px solid var(--mz-bone) !important; box-shadow: none !important; }
+html[data-surface="admin"] .toggle-slider { background: var(--mz-cloud) !important; }
+html[data-surface="admin"] .toggle input:checked + .toggle-slider { background: var(--mz-brand) !important; }
+
+/* ==========================================================================
+   MOBILE — field app
+   ========================================================================== */
+html[data-surface="mobile"] body { background: var(--mz-mist); }
+html[data-surface="mobile"] .topbar { background: var(--mz-ink) !important; }
+html[data-surface="mobile"] .card { border-radius: 16px !important; }
+html[data-surface="mobile"] .bottom-nav { background: rgba(255,255,255,.95) !important; border-top: 1px solid var(--mz-bone) !important; backdrop-filter: blur(8px); }
+html[data-surface="mobile"] .bnav-item { color: var(--mz-slate); }
+html[data-surface="mobile"] .bnav-item.active { color: var(--mz-brand-strong) !important; }
+html[data-surface="mobile"] .bnav-item.active i { background: var(--mz-brand-tint); border-radius: var(--mz-r-pill); padding: 4px 14px; }
+html[data-surface="mobile"] .bottom-sheet { border-radius: 20px 20px 0 0 !important; }
+html[data-surface="mobile"] .check-item { border-radius: var(--mz-r-card) !important; border-width: 1px !important; }
+html[data-surface="mobile"] .check-item.pass { border-color: var(--mz-pass) !important; background: var(--mz-pass-bg) !important; }
+html[data-surface="mobile"] .check-item.fail { border-color: var(--mz-nc) !important; background: var(--mz-nc-bg) !important; }
+html[data-surface="mobile"] .result-btn { border-radius: var(--mz-r-pill) !important; }
+html[data-surface="mobile"] .shutter-btn { border-color: var(--mz-brand) !important; }
+html[data-surface="mobile"] .login-bg { background: linear-gradient(160deg, #0b1311 0%, #17201d 55%, #0b6b4f 140%) !important; }
+
+/* ==========================================================================
+   AUTH — mobile login page
+   ========================================================================== */
+html[data-surface="auth"] body { background: linear-gradient(160deg, #0b1311 0%, #17201d 55%, #0b6b4f 140%) !important; }
+html[data-surface="auth"] .card { border-radius: var(--mz-r-card-lg) !important; box-shadow: var(--mz-shadow-pop) !important; border: none !important; }
+html[data-surface="auth"] .card-header { background: var(--mz-white) !important; border-bottom: 1px solid var(--mz-bone); }
+html[data-surface="auth"] .card-header::before,
+html[data-surface="auth"] .card-header::after { display: none; }
+html[data-surface="auth"] .card-header h1 { color: var(--mz-onyx) !important; font-weight: 800 !important; }
+html[data-surface="auth"] .card-header p { color: var(--mz-slate) !important; }
+html[data-surface="auth"] .app-icon { background: none !important; border: none !important; box-shadow: none !important; }
+html[data-surface="auth"] .tabs { background: var(--mz-plaster) !important; border-radius: var(--mz-r-pill) !important; }
+html[data-surface="auth"] .tab-btn { color: var(--mz-slate) !important; border-radius: var(--mz-r-pill) !important; }
+html[data-surface="auth"] .tab-btn.active { background: var(--mz-white) !important; color: var(--mz-onyx) !important; box-shadow: var(--mz-shadow-subtle); }
+
+/* ==========================================================================
+   ADVISORY — AI council
+   ========================================================================== */
+html[data-surface="advisory"] .sidebar-panel { background: linear-gradient(#17201d 24%, #0b1311) !important; }
+html[data-surface="advisory"] .premium-badge { background: linear-gradient(135deg, #8a5f00, var(--mz-gold), #8a5f00) !important; background-size: 200% auto !important; }
+
+/* ── Motion preference ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html[data-surface] *, html[data-surface] *::before, html[data-surface] *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+  }
+}
