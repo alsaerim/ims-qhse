@@ -605,11 +605,71 @@ tailwind.config = { theme: { extend: {
     </div>
 
     <!-- ─── MORE MENU ─── -->
+    <div class="page" id="m-incident">
+      <div class="space-y-4">
+        <div class="flex items-center gap-3 mb-1">
+          <button onclick="mShowPage('m-more')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center" aria-label="رجوع">
+            <i class="fas fa-arrow-right text-slate-600 text-sm"></i>
+          </button>
+          <h2 class="font-bold text-slate-800">الإبلاغ عن حادث</h2>
+        </div>
+        <div class="card p-4 space-y-3">
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-title">ماذا حدث؟ <span class="text-red-600">*</span></label>
+            <input id="mi-title" class="form-input" placeholder="انزلاق عامل عند مدخل المستودع"/>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-type">النوع</label>
+              <select id="mi-type" class="form-input">
+                <option value="near_miss">شبه حادث</option><option value="first_aid">إسعاف أولي</option><option value="medical">علاج طبي</option>
+                <option value="lost_time">إصابة مضيعة للوقت</option><option value="property_damage">ضرر بالممتلكات</option><option value="environmental">حادث بيئي</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-sev">الخطورة</label>
+              <select id="mi-sev" class="form-input"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option><option value="critical">حرجة</option></select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-date">التاريخ</label>
+              <input id="mi-date" type="date" class="form-input"/>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-loc">الموقع</label>
+              <input id="mi-loc" class="form-input" placeholder="المستودع — البوابة 2"/>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-desc">التفاصيل</label>
+            <textarea id="mi-desc" class="form-input" rows="3" placeholder="صف ما حدث ومن تأثّر"></textarea>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1" for="mi-action">الإجراء الفوري</label>
+            <textarea id="mi-action" class="form-input" rows="2" placeholder="مثال: عزل المنطقة وتنظيف الأرضية"></textarea>
+          </div>
+          <div class="text-xs text-slate-500"><i class="fas fa-location-dot ml-1"></i>يُرفق موقعك GPS تلقائياً إن كان متاحاً.</div>
+          <button class="btn-full btn-primary" id="mi-submit" onclick="submitIncidentM()"><i class="fas fa-paper-plane"></i> إرسال البلاغ</button>
+        </div>
+        <h3 class="font-bold text-slate-700 text-sm">بلاغاتي</h3>
+        <div id="mi-list"><div class="pull-refresh"><i class="fas fa-spinner fa-spin ml-2"></i>تحميل...</div></div>
+      </div>
+    </div>
+
     <div class="page" id="m-more">
       <div class="space-y-3">
         <div class="card p-4">
           <h3 class="font-bold text-slate-700 text-sm mb-3"><i class="fas fa-tools text-slate-400 mr-2"></i>أدوات إضافية</h3>
           <div class="space-y-2">
+            <button onclick="mShowPage('m-incident')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-red-50 active:bg-red-100 transition-colors">
+              <div class="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center"><i class="fas fa-person-falling-burst text-red-600"></i></div>
+              <div class="text-right flex-1">
+                <div class="font-semibold text-slate-800 text-sm">الإبلاغ عن حادث</div>
+                <div class="text-xs text-slate-500">حادث أو شبه حادث — ISO 45001</div>
+              </div>
+              <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+            </button>
             <button onclick="mShowPage('m-rca')" class="w-full flex items-center gap-3 p-3 rounded-xl bg-purple-50 active:bg-purple-100 transition-colors">
               <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-search text-purple-600"></i></div>
               <div class="text-right flex-1">
@@ -774,6 +834,23 @@ tailwind.config = { theme: { extend: {
           </div>
         </div>
 
+        <!-- Edit details -->
+        <div class="card p-4 space-y-3">
+          <h3 class="font-bold text-slate-700 text-sm">بياناتي</h3>
+          <div><label class="text-xs font-bold text-slate-600 block mb-1" for="mp-name">الاسم الكامل</label><input id="mp-name" class="form-input"/></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="text-xs font-bold text-slate-600 block mb-1" for="mp-phone">الجوال</label><input id="mp-phone" class="form-input" dir="ltr"/></div>
+            <div><label class="text-xs font-bold text-slate-600 block mb-1" for="mp-dept">القسم</label><input id="mp-dept" class="form-input"/></div>
+          </div>
+          <button class="btn-full btn-primary" onclick="saveProfileM()"><i class="fas fa-check"></i> حفظ البيانات</button>
+        </div>
+        <div class="card p-4 space-y-3">
+          <h3 class="font-bold text-slate-700 text-sm">تغيير كلمة المرور</h3>
+          <div><label class="text-xs font-bold text-slate-600 block mb-1" for="mp-pw1">كلمة المرور الجديدة</label><input id="mp-pw1" type="password" class="form-input" autocomplete="new-password"/></div>
+          <div><label class="text-xs font-bold text-slate-600 block mb-1" for="mp-pw2">تأكيدها</label><input id="mp-pw2" type="password" class="form-input" autocomplete="new-password"/></div>
+          <button class="btn-full btn-outline" onclick="savePasswordM()"><i class="fas fa-key"></i> تغيير كلمة المرور</button>
+        </div>
+
         <!-- Profile Info -->
         <div class="card p-4 space-y-3">
           <h3 class="font-bold text-slate-700 text-sm">معلومات الحساب</h3>
@@ -878,8 +955,6 @@ async function mobileLogin() {
       document.getElementById('m-user-name').textContent = d.user?.full_name || 'مستخدم';
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
-      // Sync shared data from web app first
-      syncFromWebApp();
       loadHomeStats();
       loadInspectionsList();
       loadNCList();
@@ -935,7 +1010,9 @@ async function mFetch(url, method='GET', body=null) {
   if (!r.ok) {
     // Endpoint not built on the server yet (see docs/api-contract.md): empty list instead of a broken page
     if (r.status === 404 && method === 'GET') { console.warn('[mFetch] not on server yet:', apiUrl); return []; }
-    throw new Error((json && (json.message || json.error)) || ('خطأ من الخادم ' + r.status));
+    const err = new Error((json && (json.message || json.error)) || ('خطأ من الخادم ' + r.status));
+    err.status = r.status;
+    throw err;
   }
   return mNormalize(json && json.data !== undefined ? json.data : json);
 }
@@ -957,12 +1034,14 @@ function mShowPage(pageId) {
   if (page) page.classList.add('active');
   const nav = document.getElementById('nav-' + pageId);
   if (nav) nav.classList.add('active');
-  const morePages = ['m-users', 'm-profile', 'm-rca', 'm-notifications', 'm-risks', 'm-plans', 'm-camera', 'm-lean'];
+  const morePages = ['m-incident', 'm-users', 'm-profile', 'm-rca', 'm-notifications', 'm-risks', 'm-plans', 'm-camera', 'm-lean'];
   if (morePages.includes(pageId)) {
     document.getElementById('nav-m-more')?.classList.add('active');
   }
   mState.currentPage = pageId;
   if (pageId === 'm-home')          loadHomeStats();
+  if (pageId === 'm-incident')      loadIncidentsM();
+  if (pageId === 'm-profile')       fillProfileFormM();
   if (pageId === 'm-tasks')         loadTasksList();
   if (pageId === 'm-nc')            loadNCList();
   if (pageId === 'm-rca')           loadRCAList();
@@ -2860,6 +2939,76 @@ function mTimeAgo(d) {
   const hrs = Math.floor(mins/60);
   if (hrs < 24)  return 'منذ ' + hrs + ' ساعة';
   return 'منذ ' + Math.floor(hrs/24) + ' يوم';
+}
+
+// ── Incident reporting ──────────────────────────────
+const mEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const M_INC_TYPE = { near_miss:'شبه حادث', first_aid:'إسعاف أولي', medical:'علاج طبي', lost_time:'مضيعة للوقت', property_damage:'ضرر ممتلكات', environmental:'بيئي' };
+const M_INC_STATUS = { reported:['مُبلَّغ','badge-yellow'], investigating:['قيد التحقيق','badge-blue'], closed:['مغلق','badge-green'] };
+async function loadIncidentsM() {
+  const d = document.getElementById('mi-date'); if (d && !d.value) d.value = new Date().toISOString().slice(0, 10);
+  const el = document.getElementById('mi-list');
+  let rows = [];
+  try { rows = mList(await mFetch('/api/incidents?mine=1')); } catch (e) { rows = []; }
+  if (!rows.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-500 text-sm">لا توجد بلاغات بعد</div>'; return; }
+  el.innerHTML = rows.map(r => { const st = M_INC_STATUS[r.status] || [mEsc(r.status || '—'), 'badge-gray'];
+    return `<div class="card p-4 mb-3"><div class="flex items-start justify-between gap-2">
+      <div class="flex-1"><div class="font-semibold text-slate-800 text-sm">${mEsc(r.title)}</div>
+      <div class="text-xs text-slate-500 mt-1">${M_INC_TYPE[r.type] || mEsc(r.type || '')} · ${mEsc(r.location || '—')} · ${r.occurred_at ? new Date(r.occurred_at).toLocaleDateString('ar-SA') : ''}</div></div>
+      <span class="badge ${st[1]}">${st[0]}</span></div></div>`; }).join('');
+}
+async function submitIncidentM() {
+  const title = document.getElementById('mi-title').value.trim();
+  if (!title) { mToast('اكتب وصفاً مختصراً لما حدث', 'error'); return; }
+  const btn = document.getElementById('mi-submit');
+  btn.disabled = true;
+  try {
+    await mFetch('/api/incidents', 'POST', {
+      title,
+      type: document.getElementById('mi-type').value,
+      severity: document.getElementById('mi-sev').value,
+      occurred_at: document.getElementById('mi-date').value || new Date().toISOString().slice(0, 10),
+      location: document.getElementById('mi-loc').value.trim() || null,
+      description: document.getElementById('mi-desc').value.trim() || null,
+      immediate_action: document.getElementById('mi-action').value.trim() || null,
+      latitude: mState.gps?.lat ?? null, longitude: mState.gps?.lng ?? null,
+      reported_by: mState.user?.id, status: 'reported',
+    });
+    ['mi-title', 'mi-loc', 'mi-desc', 'mi-action'].forEach(id => document.getElementById(id).value = '');
+    mToast('✅ تم إرسال البلاغ', 'success');
+    loadIncidentsM();
+  } catch (e) {
+    mToast(e.status === 404 ? 'البلاغات غير مفعّلة في الخادم بعد — حُفظ النص في النموذج' : ('❌ ' + e.message), 'error');
+  } finally { btn.disabled = false; }
+}
+
+// ── Profile editing ─────────────────────────────────
+function fillProfileFormM() {
+  const u = mState.user || {};
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+  set('mp-name', u.full_name); set('mp-phone', u.phone); set('mp-dept', u.department);
+}
+async function saveProfileM() {
+  const body = { full_name: document.getElementById('mp-name').value.trim(), phone: document.getElementById('mp-phone').value.trim(), department: document.getElementById('mp-dept').value.trim() };
+  if (!body.full_name) { mToast('الاسم مطلوب', 'error'); return; }
+  if (!mState.user?.id) { mToast('سجّل الدخول أولاً', 'error'); return; }
+  try {
+    await mFetch('/api/users/' + mState.user.id, 'PUT', body);
+    Object.assign(mState.user, body);
+    const n = document.getElementById('m-user-name'); if (n) n.textContent = body.full_name;
+    const pn = document.getElementById('m-profile-name'); if (pn) pn.textContent = body.full_name;
+    mToast('✅ تم حفظ البيانات', 'success');
+  } catch (e) { mToast('❌ ' + e.message, 'error'); }
+}
+async function savePasswordM() {
+  const a = document.getElementById('mp-pw1').value, b = document.getElementById('mp-pw2').value;
+  if (a.length < 8) { mToast('كلمة المرور 8 أحرف على الأقل', 'error'); return; }
+  if (a !== b) { mToast('كلمتا المرور غير متطابقتين', 'error'); return; }
+  try {
+    await mFetch('/api/users/' + mState.user.id, 'PUT', { password: a });
+    document.getElementById('mp-pw1').value = document.getElementById('mp-pw2').value = '';
+    mToast('✅ تم تغيير كلمة المرور', 'success');
+  } catch (e) { mToast('❌ ' + e.message, 'error'); }
 }
 
 function mToast(msg, type='info') {
