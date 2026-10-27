@@ -9,7 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',sans-serif;}
 :root{
-  --blue:#1e40af; --blue2:#3b82f6; --green:#059669;
+  --blue:#1e40af; --blue2:#2563eb; --green:#047857;
   --dark:#0f172a; --dark2:#1e293b;
 }
 body{background:#f1f5f9;color:#1e293b;overflow-x:hidden;}
@@ -37,14 +37,14 @@ nav{position:fixed;top:0;right:0;left:0;z-index:100;background:rgba(15,23,42,0.9
 .hero h1 span{background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .hero p{font-size:17px;color:rgba(255,255,255,.65);max-width:580px;margin:0 auto 36px;line-height:1.7;}
 .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
-.btn-hero-primary{padding:14px 32px;border-radius:14px;font-size:15px;font-weight:800;background:linear-gradient(135deg,var(--blue),#6366f1);color:white;border:none;cursor:pointer;transition:all .2s;box-shadow:0 8px 30px rgba(99,102,241,.4);}
+.btn-hero-primary{padding:14px 32px;border-radius:14px;font-size:15px;font-weight:800;background:linear-gradient(135deg,var(--blue),#4f46e5);color:white;border:none;cursor:pointer;transition:all .2s;box-shadow:0 8px 30px rgba(99,102,241,.4);}
 .btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(99,102,241,.55);}
 .btn-hero-ghost{padding:14px 28px;border-radius:14px;font-size:15px;font-weight:700;background:rgba(255,255,255,.08);color:white;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s;}
 .btn-hero-ghost:hover{background:rgba(255,255,255,.14);}
 .hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
 .hero-stat{text-align:center;}
 .hero-stat-num{font-size:28px;font-weight:900;color:white;}
-.hero-stat-lbl{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
+.hero-stat-lbl{font-size:12px;color:rgba(255,255,255,.68);margin-top:2px;}
 
 /* ── ISO BADGES ── */
 .iso-strip{background:white;border-bottom:1px solid #e2e8f0;padding:16px 24px;}
@@ -68,29 +68,29 @@ section{padding:80px 24px;}
 .feat-icon i{font-size:22px;color:white;}
 .feature-card h3{font-size:16px;font-weight:800;color:#1e293b;margin-bottom:8px;}
 .feature-card p{font-size:13px;color:#64748b;line-height:1.6;}
-.feat-tag{display:inline-block;margin-top:12px;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;}
+.feat-tag{display:inline-block;margin-top:12px;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
 
 /* ── PRICING ── */
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;align-items:start;}
 .pricing-card{background:white;border-radius:22px;padding:30px;border:2px solid #e2e8f0;transition:all .25s;position:relative;}
 .pricing-card.popular{border-color:var(--blue);box-shadow:0 16px 48px rgba(30,64,175,.15);}
-.popular-badge{position:absolute;top:-14px;right:50%;transform:translateX(50%);background:linear-gradient(135deg,var(--blue),#6366f1);color:white;padding:4px 18px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;}
+.popular-badge{position:absolute;top:-14px;right:50%;transform:translateX(50%);background:linear-gradient(135deg,var(--blue),#4f46e5);color:white;padding:4px 18px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;}
 .pricing-name{font-size:18px;font-weight:800;color:#1e293b;margin-bottom:4px;}
-.pricing-desc{font-size:12px;color:#94a3b8;margin-bottom:20px;}
+.pricing-desc{font-size:12px;color:#64748b;margin-bottom:20px;}
 .pricing-price{margin-bottom:4px;}
 .pricing-price .amount{font-size:36px;font-weight:900;color:#1e293b;}
 .pricing-price .currency{font-size:14px;color:#64748b;}
-.pricing-price .period{font-size:12px;color:#94a3b8;}
-.pricing-yearly{font-size:11px;color:#059669;font-weight:700;margin-bottom:20px;}
+.pricing-price .period{font-size:12px;color:#64748b;}
+.pricing-yearly{font-size:11px;color:#047857;font-weight:700;margin-bottom:20px;}
 .pricing-features{list-style:none;margin-bottom:24px;space-y:8px;}
 .pricing-features li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#475569;padding:5px 0;border-bottom:1px solid #f8fafc;}
-.pricing-features li i{color:#059669;margin-top:2px;flex-shrink:0;}
-.pricing-features li.disabled{color:#94a3b8;}
+.pricing-features li i{color:#047857;margin-top:2px;flex-shrink:0;}
+.pricing-features li.disabled{color:#64748b;}
 .pricing-features li.disabled i{color:#cbd5e1;}
 .btn-plan{width:100%;padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;border:none;}
 .btn-plan-outline{background:white;border:2px solid #e2e8f0;color:#1e293b;}
 .btn-plan-outline:hover{border-color:var(--blue);color:var(--blue);}
-.btn-plan-primary{background:linear-gradient(135deg,var(--blue),#6366f1);color:white;box-shadow:0 6px 20px rgba(30,64,175,.3);}
+.btn-plan-primary{background:linear-gradient(135deg,var(--blue),#4f46e5);color:white;box-shadow:0 6px 20px rgba(30,64,175,.3);}
 .btn-plan-primary:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(30,64,175,.45);}
 
 /* ── COMPARISON TABLE ── */
@@ -108,7 +108,7 @@ section{padding:80px 24px;}
 .test-author{display:flex;align-items:center;gap:10px;}
 .test-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;}
 .test-name{font-size:13px;font-weight:700;color:#1e293b;}
-.test-role{font-size:11px;color:#94a3b8;}
+.test-role{font-size:11px;color:#64748b;}
 .stars{color:#f59e0b;font-size:12px;margin-bottom:8px;}
 
 /* ── CTA ── */
@@ -120,12 +120,12 @@ section{padding:80px 24px;}
 footer{background:var(--dark);padding:48px 24px 24px;}
 .footer-inner{max-width:1200px;margin:0 auto;}
 .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
-.footer-brand p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;margin-top:12px;}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,.62);line-height:1.7;margin-top:12px;}
 .footer-col h4{font-size:13px;font-weight:800;color:white;margin-bottom:14px;}
-.footer-col a{display:block;font-size:12px;color:rgba(255,255,255,.4);margin-bottom:8px;transition:color .2s;}
+.footer-col a{display:block;font-size:12px;color:rgba(255,255,255,.62);margin-bottom:8px;transition:color .2s;}
 .footer-col a:hover{color:rgba(255,255,255,.8);}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
-.footer-bottom p{font-size:12px;color:rgba(255,255,255,.3);}
+.footer-bottom p{font-size:12px;color:rgba(255,255,255,.55);}
 
 /* ── LOGIN MODAL ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
@@ -139,22 +139,45 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 .form-group{margin-bottom:16px;}
 .form-group label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;}
 .form-group input,.form-group select{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:'Tajawal',sans-serif;transition:border-color .2s;outline:none;}
-.form-group input:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
-.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),#6366f1);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Tajawal',sans-serif;margin-top:4px;}
+.form-group input:focus,.form-group select:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),#4f46e5);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Tajawal',sans-serif;margin-top:4px;}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(30,64,175,.4);}
-.login-footer-txt{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px;}
+.login-footer-txt{text-align:center;font-size:12px;color:#64748b;margin-top:14px;}
 .login-footer-txt a{color:var(--blue);font-weight:700;}
-.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#94a3b8;font-size:12px;}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#64748b;font-size:12px;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0;}
-.error-msg{background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;border:1px solid #fecaca;display:none;}
-.success-msg{background:#f0fdf4;color:#059669;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;border:1px solid #bbf7d0;display:none;}
+.error-msg{background:#fef2f2;color:#b91c1c;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;border:1px solid #fecaca;display:none;}
+.success-msg{background:#f0fdf4;color:#047857;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;border:1px solid #bbf7d0;display:none;}
 
 /* ── MOBILE ── */
+.mobile-app-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+
 @media(max-width:768px){
   .nav-links{display:none;}
+  /* phone mockup stacks above the copy instead of squeezing both into 375px */
+  .mobile-app-grid{grid-template-columns:1fr;gap:40px;}
+  .mobile-app-grid > div:last-child > [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;}
+  .nav-inner{padding:0 16px;}
+  /* the mobile-app link is repeated in its own section; keep login + primary CTA in the bar */
+  .nav-cta a.btn-ghost{display:none !important;} /* beats its inline display:flex */
   .hero-stats{gap:24px;}
+  .compare-table{min-width:560px;}
   .footer-top{grid-template-columns:1fr 1fr;}
   .footer-brand{grid-column:1/-1;}
+}
+@media(max-width:480px){
+  /* the hero repeats the same "start free" CTA directly below */
+  .nav-cta .btn-solid{display:none;}
+  .nav-logo > div:last-child > div:last-child{display:none;}
+}
+
+/* ── BROWSER SURFACES ── */
+html{scroll-behavior:smooth;scroll-padding-top:76px;}
+::selection{background:#bfdbfe;color:#1e293b;}
+:focus-visible{outline:2px solid #3b82f6;outline-offset:2px;border-radius:6px;}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
 }
 @keyframes fadeInUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
 .fade-up{animation:fadeInUp .5s ease forwards;}
@@ -172,7 +195,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
       <div class="logo-icon"><i class="fas fa-shield-alt" style="color:white;font-size:18px;"></i></div>
       <div>
         <div style="font-weight:900;color:white;font-size:16px;">IMS QHSE</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.4);">نظام الامتثال المتكامل</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.62);">نظام الامتثال المتكامل</div>
       </div>
     </div>
     <div class="nav-links">
@@ -222,12 +245,12 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 <!-- ═══════ ISO STRIP ═══════ -->
 <div class="iso-strip">
   <div class="iso-strip-inner">
-    <span style="font-size:12px;color:#94a3b8;font-weight:600;">معايير مدعومة:</span>
+    <span style="font-size:12px;color:#64748b;font-weight:600;">معايير مدعومة:</span>
     <div class="iso-badge" style="color:#1d4ed8;border-color:#bfdbfe;background:#eff6ff;"><i class="fas fa-award" style="font-size:11px;"></i>ISO 9001 الجودة</div>
-    <div class="iso-badge" style="color:#059669;border-color:#6ee7b7;background:#f0fdf4;"><i class="fas fa-hard-hat" style="font-size:11px;"></i>ISO 45001 السلامة</div>
-    <div class="iso-badge" style="color:#d97706;border-color:#fcd34d;background:#fffbeb;"><i class="fas fa-leaf" style="font-size:11px;"></i>ISO 14001 البيئة</div>
+    <div class="iso-badge" style="color:#047857;border-color:#6ee7b7;background:#f0fdf4;"><i class="fas fa-hard-hat" style="font-size:11px;"></i>ISO 45001 السلامة</div>
+    <div class="iso-badge" style="color:#b45309;border-color:#fcd34d;background:#fffbeb;"><i class="fas fa-leaf" style="font-size:11px;"></i>ISO 14001 البيئة</div>
     <div class="iso-badge" style="color:#7c3aed;border-color:#c4b5fd;background:#f5f3ff;"><i class="fas fa-shield-alt" style="font-size:11px;"></i>ISO 27001 أمن المعلومات</div>
-    <div style="margin-right:auto;font-size:11px;color:#94a3b8;">+ معايير مخصصة</div>
+    <div style="margin-right:auto;font-size:11px;color:#64748b;">+ معايير مخصصة</div>
   </div>
 </div>
 
@@ -242,17 +265,17 @@ footer{background:var(--dark);padding:48px 24px 24px;}
     <div class="features-grid">
 
       <div class="feature-card" style="--c:#3b82f6;">
-        <div class="feat-icon" style="background:linear-gradient(135deg,#1e40af,#3b82f6);"><i class="fas fa-clipboard-check"></i></div>
+        <div class="feat-icon" style="background:linear-gradient(135deg,#1e40af,#2563eb);"><i class="fas fa-clipboard-check"></i></div>
         <h3>إدارة التفتيش والمراجعة</h3>
         <p>جدولة وتنفيذ وتوثيق عمليات التفتيش بقوائم تحقق ذكية. نتائج فورية ومرفقات صور مباشرة من الميدان.</p>
         <span class="feat-tag" style="background:#dbeafe;color:#1d4ed8;">ISO 9001 · 45001 · 14001</span>
       </div>
 
       <div class="feature-card">
-        <div class="feat-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444);"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="feat-icon" style="background:linear-gradient(135deg,#b91c1c,#dc2626);"><i class="fas fa-exclamation-triangle"></i></div>
         <h3>إدارة عدم المطابقة NC</h3>
         <p>تسجيل وتتبع حالات NC مع ربط تلقائي بتحليل الأسباب الجذرية RCA. تنبيهات ذكية للمواعيد النهائية.</p>
-        <span class="feat-tag" style="background:#fee2e2;color:#dc2626;">تحليل RCA تلقائي</span>
+        <span class="feat-tag" style="background:#fee2e2;color:#b91c1c;">تحليل RCA تلقائي</span>
       </div>
 
       <div class="feature-card">
@@ -264,17 +287,17 @@ footer{background:var(--dark);padding:48px 24px 24px;}
       </div>
 
       <div class="feature-card">
-        <div class="feat-icon" style="background:linear-gradient(135deg,#d97706,#fbbf24);"><i class="fas fa-shield-alt"></i></div>
+        <div class="feat-icon" style="background:linear-gradient(135deg,#b45309,#fbbf24);"><i class="fas fa-shield-alt"></i></div>
         <h3>إدارة المخاطر ISO 31000</h3>
         <p>مصفوفة المخاطر التفاعلية مع حساب RPN تلقائي. خطط معالجة وتتبع مباشر لكل خطر بما يتوافق مع ISO 31000.</p>
-        <span class="feat-tag" style="background:#fef3c7;color:#d97706;">Risk Matrix + COSO</span>
+        <span class="feat-tag" style="background:#fef3c7;color:#b45309;">Risk Matrix + COSO</span>
       </div>
 
       <div class="feature-card">
-        <div class="feat-icon" style="background:linear-gradient(135deg,#059669,#34d399);"><i class="fas fa-recycle"></i></div>
+        <div class="feat-icon" style="background:linear-gradient(135deg,#047857,#059669);"><i class="fas fa-recycle"></i></div>
         <h3>Lean Six Sigma & Muda</h3>
         <p>تحديد وتحليل أنواع الهدر السبعة. مؤشر Lean مباشر ومنهجية DMAIC مدمجة لدعم التحسين المستمر.</p>
-        <span class="feat-tag" style="background:#d1fae5;color:#059669;">DMAIC · 7 Types of Waste</span>
+        <span class="feat-tag" style="background:#d1fae5;color:#047857;">DMAIC · 7 Types of Waste</span>
       </div>
 
       <div class="feature-card">
@@ -292,7 +315,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 <section id="pricing" style="background:#f8fafc;">
   <div class="section-inner">
     <div class="section-header">
-      <span class="section-tag" style="background:#d1fae5;color:#059669;">الأسعار</span>
+      <span class="section-tag" style="background:#d1fae5;color:#047857;">الأسعار</span>
       <h2>استثمار يُحقق عائداً حقيقياً</h2>
       <p>وفّر تكاليف الاستشارات والمراجعات بنسبة تصل إلى 70% مقارنةً بالحلول التقليدية</p>
     </div>
@@ -302,7 +325,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
       <div style="display:flex;background:white;border-radius:12px;padding:4px;border:1px solid #e2e8f0;gap:4px;">
         <button id="bill-monthly" onclick="setBilling('monthly')" style="padding:8px 20px;border-radius:9px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:#1e40af;color:white;transition:all .2s;">شهري</button>
         <button id="bill-yearly"  onclick="setBilling('yearly')"  style="padding:8px 20px;border-radius:9px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
-          سنوي <span style="background:#d1fae5;color:#059669;padding:1px 7px;border-radius:6px;font-size:10px;margin-right:4px;">وفّر 16%</span>
+          سنوي <span style="background:#d1fae5;color:#047857;padding:1px 7px;border-radius:6px;font-size:11px;margin-right:4px;">وفّر 16%</span>
         </button>
       </div>
     </div>
@@ -392,7 +415,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 
     <!-- Guarantee -->
     <div style="text-align:center;margin-top:32px;padding:20px;background:white;border-radius:16px;border:1px solid #e2e8f0;max-width:480px;margin-left:auto;margin-right:auto;">
-      <i class="fas fa-shield-check" style="color:#059669;font-size:22px;margin-bottom:8px;display:block;"></i>
+      <i class="fas fa-shield-check" style="color:#047857;font-size:22px;margin-bottom:8px;display:block;"></i>
       <div style="font-weight:800;font-size:14px;color:#1e293b;margin-bottom:4px;">ضمان استرداد كامل خلال 14 يوماً</div>
       <div style="font-size:12px;color:#64748b;">لا توجد رسوم خفية · إلغاء في أي وقت · دعم فني مجاني</div>
     </div>
@@ -403,7 +426,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 <section id="compare" style="background:white;">
   <div class="section-inner">
     <div class="section-header">
-      <span class="section-tag" style="background:#ede9fe;color:#7c3aed;">المقارنة</span>
+      <span class="section-tag" style="background:#ede9fe;color:#6d28d9;">المقارنة</span>
       <h2>لماذا IMS QHSE؟</h2>
       <p>قارن بين الباقات واختر ما يناسب حجم عملك</p>
     </div>
@@ -439,7 +462,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 <section id="testimonials" style="background:#f8fafc;">
   <div class="section-inner">
     <div class="section-header">
-      <span class="section-tag" style="background:#fef3c7;color:#d97706;">آراء العملاء</span>
+      <span class="section-tag" style="background:#fef3c7;color:#92400e;">آراء العملاء</span>
       <h2>ثقة أكثر من 500 شركة</h2>
       <p>من قطاع النفط والطاقة إلى الصناعة والبنية التحتية — IMS QHSE يخدم المؤسسات الرائدة</p>
     </div>
@@ -456,7 +479,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
         <div class="stars">★★★★★</div>
         <p class="test-text">"ميزة تحليل الفجوة رائعة! أعطتنا خارطة طريق واضحة لتحقيق ISO 14001 في أقل من 6 أشهر بدلاً من سنة كاملة."</p>
         <div class="test-author">
-          <div class="test-avatar" style="background:#059669;">سا</div>
+          <div class="test-avatar" style="background:#047857;">سا</div>
           <div><div class="test-name">سارة المالكي</div><div class="test-role">مديرة الجودة · SABIC</div></div>
         </div>
       </div>
@@ -464,7 +487,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
         <div class="stars">★★★★★</div>
         <p class="test-text">"التطبيق الجوال غيّر طريقة عمل مفتشينا الميدانيين. الآن كل شيء رقمي وفوري — لا ورق ولا تأخير في الإبلاغ."</p>
         <div class="test-author">
-          <div class="test-avatar" style="background:#d97706;">أح</div>
+          <div class="test-avatar" style="background:#b45309;">أح</div>
           <div><div class="test-name">أحمد بن علي</div><div class="test-role">مدير السلامة · الكهرباء السعودية</div></div>
         </div>
       </div>
@@ -475,7 +498,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 <!-- ═══════ MOBILE APP ═══════ -->
 <section id="mobile-app" style="background:white;">
   <div class="section-inner">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+    <div class="mobile-app-grid">
 
       <!-- Left: Phone mockup with real app screens -->
       <div style="display:flex;justify-content:center;position:relative;">
@@ -516,7 +539,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
                   <div style="font-size:8px;color:#94a3b8;">تفتيشاتي</div>
                 </div>
                 <div style="background:white;border-radius:10px;padding:8px 10px;border:1px solid #fee2e2;">
-                  <div style="font-size:16px;font-weight:900;color:#dc2626;">2</div>
+                  <div style="font-size:16px;font-weight:900;color:#b91c1c;">2</div>
                   <div style="font-size:8px;color:#94a3b8;">NC مفتوحة</div>
                 </div>
               </div>
@@ -528,14 +551,14 @@ footer{background:var(--dark);padding:48px 24px 24px;}
                     <i class="fas fa-clipboard-check" style="color:#1e40af;font-size:10px;"></i>
                   </div>
                   <div style="font-size:10px;font-weight:700;color:#1e293b;flex:1;">تفتيش السلامة - الوحدة A</div>
-                  <span style="background:#fef3c7;color:#d97706;padding:2px 6px;border-radius:5px;font-size:8px;font-weight:700;">جارٍ</span>
+                  <span style="background:#fef3c7;color:#b45309;padding:2px 6px;border-radius:5px;font-size:8px;font-weight:700;">جارٍ</span>
                 </div>
                 <div style="height:4px;background:#f1f5f9;border-radius:2px;overflow:hidden;">
                   <div style="width:65%;height:100%;background:#1e40af;border-radius:2px;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;margin-top:3px;">
                   <span style="font-size:8px;color:#94a3b8;">65% مكتمل</span>
-                  <span style="font-size:8px;color:#d97706;">اليوم 14:00</span>
+                  <span style="font-size:8px;color:#b45309;">اليوم 14:00</span>
                 </div>
               </div>
 
@@ -545,7 +568,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
                   <i class="fas fa-plus" style="color:white;font-size:12px;display:block;margin-bottom:2px;"></i>
                   <span style="font-size:9px;color:white;font-weight:700;">تفتيش جديد</span>
                 </div>
-                <div style="background:linear-gradient(135deg,#dc2626,#ef4444);border-radius:10px;padding:9px;text-align:center;cursor:pointer;">
+                <div style="background:linear-gradient(135deg,#b91c1c,#dc2626);border-radius:10px;padding:9px;text-align:center;cursor:pointer;">
                   <i class="fas fa-exclamation-triangle" style="color:white;font-size:12px;display:block;margin-bottom:2px;"></i>
                   <span style="font-size:9px;color:white;font-weight:700;">بلّغ NC</span>
                 </div>
@@ -595,7 +618,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
           </div>
           <div>
             <div style="font-size:10px;font-weight:800;color:#1e293b;">PWA App</div>
-            <div style="font-size:8px;color:#059669;">يعمل بدون إنترنت</div>
+            <div style="font-size:8px;color:#047857;">يعمل بدون إنترنت</div>
           </div>
         </div>
       </div>
@@ -603,7 +626,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
       <!-- Right: Content -->
       <div>
         <span class="section-tag" style="background:#e0f2fe;color:#0369a1;">
-          <i class="fas fa-mobile-alt" style="font-size:10px;margin-left:4px;"></i>تطبيق الجوال PWA
+          <i class="fas fa-mobile-alt" style="font-size:11px;margin-left:4px;"></i>تطبيق الجوال PWA
         </span>
         <h2 style="font-size:clamp(24px,3.5vw,38px);font-weight:900;color:#1e293b;margin:14px 0 16px;line-height:1.2;">
           التفتيش الميداني<br>في راحة يدك
@@ -617,11 +640,11 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 
           <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
             <div style="width:34px;height:34px;border-radius:9px;background:#fee2e220;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="fas fa-wifi" style="color:#dc2626;font-size:13px;"></i>
+              <i class="fas fa-wifi" style="color:#b91c1c;font-size:13px;"></i>
             </div>
             <div>
               <div style="font-size:12px;font-weight:800;color:#1e293b;">يعمل بدون إنترنت</div>
-              <div style="font-size:11px;color:#94a3b8;">Offline-First PWA</div>
+              <div style="font-size:11px;color:#64748b;">Offline-First PWA</div>
             </div>
           </div>
 
@@ -631,27 +654,27 @@ footer{background:var(--dark);padding:48px 24px 24px;}
             </div>
             <div>
               <div style="font-size:12px;font-weight:800;color:#1e293b;">تصوير الحوادث</div>
-              <div style="font-size:11px;color:#94a3b8;">بالكاميرا مباشرة</div>
+              <div style="font-size:11px;color:#64748b;">بالكاميرا مباشرة</div>
             </div>
           </div>
 
           <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
             <div style="width:34px;height:34px;border-radius:9px;background:#d1fae5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="fas fa-clipboard-list" style="color:#059669;font-size:13px;"></i>
+              <i class="fas fa-clipboard-list" style="color:#047857;font-size:13px;"></i>
             </div>
             <div>
               <div style="font-size:12px;font-weight:800;color:#1e293b;">قوائم تفتيش ذكية</div>
-              <div style="font-size:11px;color:#94a3b8;">أكثر من 50 قالب</div>
+              <div style="font-size:11px;color:#64748b;">أكثر من 50 قالب</div>
             </div>
           </div>
 
           <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
             <div style="width:34px;height:34px;border-radius:9px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="fas fa-bell" style="color:#d97706;font-size:13px;"></i>
+              <i class="fas fa-bell" style="color:#b45309;font-size:13px;"></i>
             </div>
             <div>
               <div style="font-size:12px;font-weight:800;color:#1e293b;">إشعارات فورية</div>
-              <div style="font-size:11px;color:#94a3b8;">Push Notifications</div>
+              <div style="font-size:11px;color:#64748b;">Push Notifications</div>
             </div>
           </div>
 
@@ -661,7 +684,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
             </div>
             <div>
               <div style="font-size:12px;font-weight:800;color:#1e293b;">GPS تلقائي</div>
-              <div style="font-size:11px;color:#94a3b8;">تحديد موقع التفتيش</div>
+              <div style="font-size:11px;color:#64748b;">تحديد موقع التفتيش</div>
             </div>
           </div>
 
@@ -671,7 +694,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
             </div>
             <div>
               <div style="font-size:12px;font-weight:800;color:#1e293b;">مزامنة فورية</div>
-              <div style="font-size:11px;color:#94a3b8;">مع النظام الرئيسي</div>
+              <div style="font-size:11px;color:#64748b;">مع النظام الرئيسي</div>
             </div>
           </div>
 
@@ -685,7 +708,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
             onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(30,64,175,.3)'">
             <i class="fas fa-mobile-alt" style="font-size:18px;"></i>
             <div>
-              <div style="font-size:9px;opacity:.75;font-weight:400;">تسجيل الدخول للتطبيق</div>
+              <div style="font-size:11px;opacity:.75;font-weight:400;">تسجيل الدخول للتطبيق</div>
               <div>افتح تطبيق الجوال</div>
             </div>
           </a>
@@ -699,12 +722,12 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 
         <!-- Member CTA -->
         <div style="margin-top:20px;padding:14px 16px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;display:flex;align-items:center;gap:10px;">
-          <i class="fas fa-users" style="color:#059669;font-size:16px;flex-shrink:0;"></i>
+          <i class="fas fa-users" style="color:#047857;font-size:16px;flex-shrink:0;"></i>
           <div style="flex:1;">
-            <div style="font-size:12px;font-weight:700;color:#059669;">أنت موظف وتريد الدخول للتطبيق؟</div>
+            <div style="font-size:12px;font-weight:700;color:#047857;">أنت موظف وتريد الدخول للتطبيق؟</div>
             <div style="font-size:11px;color:#334155;">احصل على رمز الشركة من مديرك وسجّل حسابك مجاناً.</div>
           </div>
-          <a href="ims_mobile_login.html" style="padding:7px 14px;background:#059669;color:white;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;white-space:nowrap;">
+          <a href="ims_mobile_login.html" style="padding:7px 14px;background:#047857;color:white;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;white-space:nowrap;">
             سجّل الآن
           </a>
         </div>
@@ -719,7 +742,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
 <div class="cta-section">
   <div style="max-width:600px;margin:0 auto;position:relative;z-index:1;">
     <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.3);border-radius:999px;font-size:11px;font-weight:700;color:#a5b4fc;margin-bottom:18px;">
-      <i class="fas fa-clock" style="font-size:10px;"></i>تجربة مجانية 14 يوماً · لا بطاقة ائتمانية
+      <i class="fas fa-clock" style="font-size:11px;"></i>تجربة مجانية 14 يوماً · لا بطاقة ائتمانية
     </div>
     <h2>جاهز لرفع مستوى الامتثال لديك؟</h2>
     <p>انضم إلى مئات الشركات التي تستخدم IMS QHSE لتحقيق وصون معايير ISO بكل سهولة وكفاءة.</p>
@@ -743,7 +766,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
           <div class="logo-icon"><i class="fas fa-shield-alt" style="color:white;font-size:18px;"></i></div>
           <div>
             <div style="font-weight:900;color:white;font-size:16px;">IMS QHSE</div>
-            <div style="font-size:10px;color:rgba(255,255,255,.4);">نظام الامتثال المتكامل</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.62);">نظام الامتثال المتكامل</div>
           </div>
         </div>
         <p>المنصة الأولى عربياً لإدارة معايير ISO بشكل متكامل وذكي. من التفتيش إلى التقارير — كل شيء في مكان واحد.</p>
@@ -773,9 +796,9 @@ footer{background:var(--dark);padding:48px 24px 24px;}
     <div class="footer-bottom">
       <p>© 2026 IMS QHSE. جميع الحقوق محفوظة.</p>
       <div style="display:flex;gap:16px;">
-        <a href="#" style="color:rgba(255,255,255,.3);font-size:16px;"><i class="fab fa-twitter"></i></a>
-        <a href="#" style="color:rgba(255,255,255,.3);font-size:16px;"><i class="fab fa-linkedin"></i></a>
-        <a href="#" style="color:rgba(255,255,255,.3);font-size:16px;"><i class="fab fa-youtube"></i></a>
+        <a href="#" style="color:rgba(255,255,255,.55);font-size:16px;"><i class="fab fa-twitter"></i></a>
+        <a href="#" style="color:rgba(255,255,255,.55);font-size:16px;"><i class="fab fa-linkedin"></i></a>
+        <a href="#" style="color:rgba(255,255,255,.55);font-size:16px;"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
   </div>
@@ -789,9 +812,9 @@ footer{background:var(--dark);padding:48px 24px 24px;}
         <div class="logo-icon"><i class="fas fa-shield-alt" style="color:white;font-size:16px;"></i></div>
         <div>
           <div style="font-weight:900;color:white;font-size:15px;">IMS QHSE</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);">بوابة الشركات</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.68);">بوابة الشركات</div>
         </div>
-        <button onclick="closeLogin()" style="margin-right:auto;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:18px;"><i class="fas fa-times"></i></button>
+        <button onclick="closeLogin()" style="margin-right:auto;background:none;border:none;color:rgba(255,255,255,.68);cursor:pointer;font-size:18px;"><i class="fas fa-times"></i></button>
       </div>
       <div class="login-tabs">
         <button class="login-tab active" id="tab-login"    onclick="switchTab('login')">تسجيل الدخول</button>
@@ -813,11 +836,11 @@ footer{background:var(--dark);padding:48px 24px 24px;}
             onkeydown="if(event.key==='Enter')doLogin()"/>
         </div>
         <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-          <a href="#" style="font-size:12px;color:#3b82f6;font-weight:600;">نسيت كلمة المرور؟</a>
+          <a href="#" style="font-size:12px;color:#2563eb;font-weight:600;">نسيت كلمة المرور؟</a>
         </div>
         <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt" style="margin-left:8px;"></i>دخول</button>
         <div style="margin-top:14px;padding:12px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;">
-          <div style="font-size:11px;color:#059669;font-weight:700;margin-bottom:6px;"><i class="fas fa-info-circle ml-1"></i>للتجربة</div>
+          <div style="font-size:11px;color:#047857;font-weight:700;margin-bottom:6px;"><i class="fas fa-info-circle ml-1"></i>للتجربة</div>
           <div style="font-size:11px;color:#334155;line-height:1.6;">
             سجّل حساب شركة جديد من تبويب "حساب جديد" وابدأ فوراً
           </div>
@@ -859,7 +882,7 @@ footer{background:var(--dark);padding:48px 24px 24px;}
           <label>كلمة المرور</label>
           <input type="password" id="reg-pass" placeholder="8 أحرف على الأقل"/>
         </div>
-        <button class="btn-login" onclick="doRegister()" style="background:linear-gradient(135deg,#059669,#34d399);">
+        <button class="btn-login" onclick="doRegister()" style="background:linear-gradient(135deg,#065f46,#047857);">
           <i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً
         </button>
         <div class="login-footer-txt">بالتسجيل توافق على <a href="#">الشروط والأحكام</a> و<a href="#">سياسة الخصوصية</a></div>
@@ -930,7 +953,7 @@ function doLogin() {
       if (d.user)   localStorage.setItem('ims_user', JSON.stringify(d.user));
       if (d.tenant) localStorage.setItem('ims_tenant', JSON.stringify(d.tenant));
       btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم الدخول! جاري التحويل...';
-      btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+      btn.style.background = 'linear-gradient(135deg,#047857,#10b981)';
       setTimeout(() => { window.location.href = '/app'; }, 700);
     } else {
       btn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-left:8px;"></i>دخول';
@@ -981,7 +1004,7 @@ function doRegister() {
       suc.style.display = 'block';
       suc.innerHTML = '✅ مرحباً <strong>' + name + '</strong>! تم إنشاء حساب <strong>' + company + '</strong> بنجاح. جاري تحضير لوحة التحكم...';
       btn.innerHTML = '<i class="fas fa-check-circle" style="margin-left:8px;"></i>تم! جاري التحويل...';
-      btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+      btn.style.background = 'linear-gradient(135deg,#047857,#10b981)';
       setTimeout(() => { window.location.href = '/app'; }, 1500);
     } else {
       btn.disabled = false;
