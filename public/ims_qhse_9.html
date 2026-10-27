@@ -7691,12 +7691,17 @@ function leafletSelectProject(id, flyTo=true) {
   const detail   = window._mapBuildDetail;
   const clrFor   = window._mapClrFor || (v=>v>=90?'#059669':v>=75?'#d97706':'#dc2626');
   const p = projects.find(x=>x.id===id);
+  if (!p) return;
 
   const dc = document.getElementById('map-detail-card');
   if (dc && detail) dc.innerHTML = detail(p);
 
   document.querySelectorAll('[id^="rank-row-"]').forEach(el => {
     el.style.background = el.id==='rank-row-'+id ? '#f2f8fd' : '';
+  });
+  // project cards under the map share the selection (they used to call a removed selectMapProject)
+  document.querySelectorAll('[id^="proj-card-"]').forEach(el => {
+    el.style.boxShadow = el.id === 'proj-card-'+id ? '0 0 0 2px ' + clrFor(p.avg_compliance||0) : '';
   });
 
   const markers = window._leafletMarkers || {};
@@ -7713,7 +7718,7 @@ function buildProjectCard(p, clrFor) {
   const clr     = clrFor(p.avg_compliance||0);
   const isoAppl = [p.iso_9001&&'ISO 9001', p.iso_45001&&'ISO 45001', p.iso_14001&&'ISO 14001'].filter(Boolean);
   return `<div class="card p-5 hover:shadow-md transition-all cursor-pointer" id="proj-card-${p.id}"
-       style="border-right:4px solid ${clr}" onclick="selectMapProject('${p.id}')">
+       style="border-right:4px solid ${clr}" onclick="leafletSelectProject('${p.id}')">
     <div class="flex items-start gap-3 mb-3">
       <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${clr}15">
         <i class="fas fa-${p.status==='active'?'hard-hat':'flag-checkered'}" style="color:${clr}"></i>

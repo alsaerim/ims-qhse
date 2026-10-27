@@ -2941,6 +2941,165 @@ function mTimeAgo(d) {
   return 'منذ ' + Math.floor(hrs/24) + ' يوم';
 }
 
+// ── Camera (restored: these handlers were dropped in 6039c03 while the page still called them) ──
+async function startCamera() {
+  try {
+    const constraints = { video: { facingMode: mState.cameraFacing, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    mState.cameraStream = stream;
+    const video = document.getElementById('camera-video');
+    video.srcObject = stream;
+    video.style.display = 'block';
+    document.getElementById('cam-placeholder').style.display = 'none';
+    document.getElementById('cam-overlay').style.display = 'block';
+    document.getElementById('shutter-btn').style.display = 'flex';
+    document.getElementById('switch-cam-btn').style.display = 'flex';
+    document.getElementById('stop-cam-btn').style.display = 'flex';
+  } catch(e) {
+    mToast('تعذّر الوصول للكاميرا: ' + e.message, 'error');
+  }
+}
+
+function stopCamera() {
+  if (mState.cameraStream) {
+    mState.cameraStream.getTracks().forEach(t => t.stop());
+    mState.cameraStream = null;
+  }
+  const video = document.getElementById('camera-video');
+  if (!video) return;
+  video.srcObject = null;
+  video.style.display = 'none';
+  const show = (id, v) => { const el = document.getElementById(id); if (el) el.style.display = v; };
+  show('cam-placeholder', 'flex'); show('cam-overlay', 'none');
+  show('shutter-btn', 'none'); show('switch-cam-btn', 'none'); show('stop-cam-btn', 'none');
+}
+
+async function switchCamera() {
+  mState.cameraFacing = mState.cameraFacing === 'environment' ? 'user' : 'environment';
+  stopCamera();
+  await startCamera();
+}
+
+function capturePhoto() {
+  const video  = document.getElementById('camera-video');
+  const canvas = document.getElementById('camera-canvas');
+  if (!video.videoWidth) { mToast('الكاميرا غير جاهزة بعد', 'error'); return; }
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+  mState.capturedPhotos.push(dataUrl);
+  renderCapturedPhotos();
+  // Flash effect
+  const overlay = document.getElementById('cam-overlay');
+  overlay.style.background = 'rgba(255,255,255,0.6)';
+  setTimeout(() => { overlay.style.background = ''; }, 150);
+  mToast('📸 تم التقاط الصورة', 'success');
+}
+
+function uploadFromGallery(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (file.size > 5 * 1024 * 1024) { mToast('الصورة أكبر من 5MB', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      mState.capturedPhotos.push(ev.target.result);
+      renderCapturedPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderCapturedPhotos() {
+  const section = document.getElementById('captured-photos-section');
+  const grid    = document.getElementById('captured-photos-grid');
+  if (!grid) return;
+  if (mState.capturedPhotos.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  grid.innerHTML = mState.capturedPhotos.map((p, i) => `
+    <div class="relative">
+      <img src="${p}" class="photo-thumb w-full aspect-square object-cover"/>
+      <button onclick="removePhoto(${i})" class="absolute -top-1.5 -left-1.5 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">×</button>
+    </div>
+  `).join('');
+}
+
+function removePhoto(i) {
+  mState.capturedPhotos.splice(i, 1);
+  renderCapturedPhotos();
+}
+
+async function uploadCapturedPhotos() {
+  const entityType = document.getElementById('photo-entity-type').value;
+  const entityId   = document.getElementById('photo-entity-id').value.trim();
+  const caption    = document.getElementById('photo-caption').value.trim();
+  if (!entityId) { mToast('أدخل رقم التفتيش أو NC', 'error'); return; }
+  if (!mState.capturedPhotos.length) { mToast('لا توجد صور للرفع', 'error'); return; }
+
+  mToast('جاري رفع ' + mState.capturedPhotos.length + ' صورة...', 'info');
+  let uploaded = 0, lastErr = null;
+  for (const photo of mState.capturedPhotos) {
+    try {
+      await mFetch('/api/uploads/photo', 'POST', {
+        image_base64: photo, entity_type: entityType, entity_id: entityId,
+        caption: caption || null, latitude: mState.gps.lat, longitude: mState.gps.lng
+      });
+      uploaded++;
+    } catch(e) { lastErr = e; }
+  }
+  if (!uploaded) {
+    mToast(lastErr && lastErr.status === 404 ? 'رفع الصور غير مفعّل في الخادم بعد — الصور باقية هنا' : ('❌ تعذّر رفع الصور: ' + (lastErr ? lastErr.message : '')), 'error');
+    return;
+  }
+  const failed = mState.capturedPhotos.length - uploaded;
+  mToast(failed ? ('رُفعت ' + uploaded + ' وتعذّر رفع ' + failed) : ('✅ تم رفع ' + uploaded + ' صورة'), failed ? 'warning' : 'success');
+  mState.capturedPhotos = [];
+  renderCapturedPhotos();
+}
+
+function openCameraPage() { mShowPage('m-camera'); if (!mState.cameraStream) startCamera(); }
+
+function openCameraForInspection() {
+  // Take photos and store in wizardPhotos
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
+  input.onchange = e => {
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        mState.wizardPhotos.push(ev.target.result);
+        document.getElementById('wi-photos').innerHTML = mState.wizardPhotos.map((p, i) => `
+          <div class="relative"><img src="${p}" class="photo-thumb"/><button onclick="mState.wizardPhotos.splice(${i},1);document.getElementById('wi-photos').children[${i}]?.remove()" class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs">×</button></div>
+        `).join('');
+        mToast('📸 تمت إضافة الصورة', 'success');
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  input.click();
+}
+
+function openCameraForNC() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
+  input.onchange = e => {
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        mState.ncPhotos.push(ev.target.result);
+        const prev = document.getElementById('nc-photos-preview');
+        prev.innerHTML = mState.ncPhotos.map((p, i) => `
+          <div class="relative"><img src="${p}" class="photo-thumb"/><button onclick="mState.ncPhotos.splice(${i},1);this.parentElement.remove()" class="absolute -top-1 -left-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs">×</button></div>
+        `).join('');
+        mToast('📸 تمت إضافة الصورة', 'success');
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  input.click();
+}
+
 // ── Incident reporting ──────────────────────────────
 const mEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const M_INC_TYPE = { near_miss:'شبه حادث', first_aid:'إسعاف أولي', medical:'علاج طبي', lost_time:'مضيعة للوقت', property_damage:'ضرر ممتلكات', environmental:'بيئي' };
