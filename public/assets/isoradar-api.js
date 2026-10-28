@@ -15,7 +15,10 @@
    ========================================================================== */
 (function () {
   'use strict';
-  var ORIGIN = 'https://ims-qhse-backend-production.up.railway.app';
+  // On isoradar.com the API lives at api.isoradar.com; anywhere else (Railway's own
+  // address, local preview) keeps talking to the Railway backend directly.
+  var onDomain = /(^|\.)isoradar\.com$/i.test(location.hostname);
+  var ORIGIN = onDomain ? 'https://api.isoradar.com' : 'https://ims-qhse-backend-production.up.railway.app';
   window.IR_API_ORIGIN = window.IR_API_ORIGIN || ORIGIN;
 
   var KEY = 'ims_token', RKEY = 'ims_refresh_token';

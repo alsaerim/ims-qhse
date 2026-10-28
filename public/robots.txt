@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /$
+Allow: /en$
+Disallow: /app
+Disallow: /dashboard
+Disallow: /mobile
+Disallow: /mobile-login
+Disallow: /advisory-council
+Disallow: /admin
+
+Sitemap: https://isoradar.com/sitemap.xml
