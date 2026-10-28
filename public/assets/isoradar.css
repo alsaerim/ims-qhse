@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Mizan — design system
+   ISO Radar — design system
    Structure follows the ClickUp reference (white canvas, ink pill CTAs, flat
    hairline cards, 9999px pills, heavy display type); colour is re-keyed to
    quality work:
@@ -12,49 +12,58 @@
    ========================================================================== */
 
 :root {
-  /* neutrals (ClickUp greys) */
+  /* ISO Radar palette (Kippy component language)
+       navy   #142D4E  ink, headings, dark surfaces, primary navy actions
+       teal   #22A699  brand: fills, icons, active states, gradients
+       slate  #A7B0BC  borders and dividers (too light for text)
+       mist   #F4F7FA  app canvas / soft surfaces
+       gold   #D9A441  accent: highlights, premium, the radar blip (navy text on it)
+     Derived shades keep text at WCAG AA: teal-d #17796f (white text 5.3:1), muted #5d6b7e (5.4:1). */
   --mz-white: #ffffff;
-  --mz-ink: #17201d;
-  --mz-onyx: #0b1311;
-  --mz-carbon: #2a2a2a;
-  --mz-slate: #5c6360;
-  --mz-ash: #686868;
-  --mz-fog: #b3b3b3;
-  --mz-cloud: #d4d4d4;
-  --mz-bone: #e8e8e8;
-  --mz-mist: #f8f9fa;
-  --mz-plaster: #eef0f2;
+  --mz-ink: #142D4E;
+  --mz-onyx: #0d1f37;
+  --mz-carbon: #2a3e5c;
+  --mz-slate: #4f5f75;
+  --mz-ash: #5d6b7e;
+  --mz-fog: #A7B0BC;
+  --mz-cloud: #cbd2db;
+  --mz-bone: #e3e8ef;
+  --mz-mist: #F4F7FA;
+  --mz-plaster: #eaeff5;
 
-  /* quality palette */
-  --mz-brand: #0c7a59;          /* conformance green (4.9:1 on white) */
-  --mz-brand-strong: #0b6b4f;
-  --mz-brand-tint: #e7f5ef;
-  --mz-brand-wash: #f3faf7;
-  --mz-assure: #0b6bcb;         /* assurance blue (links, focus) */
-  --mz-assure-tint: #e8f1fb;
-  --mz-gold: #c8941a;           /* certified */
-  --mz-gold-tint: #fbf3df;
+  --mz-brand: #17796f;          /* teal for text/buttons (AA) */
+  --mz-brand-strong: #125f57;
+  --mz-brand-fill: #22A699;     /* the brand teal itself: fills, icons, rings */
+  --mz-brand-tint: #e3f5f2;
+  --mz-brand-wash: #f1faf8;
+  --mz-assure: #17796f;         /* links and focus follow the brand */
+  --mz-assure-tint: #e3f5f2;
+  --mz-gold: #D9A441;
+  --mz-gold-d: #8a6410;
+  --mz-gold-tint: #fbf2df;
 
-  --mz-pass: #0f7a52;     --mz-pass-bg: #e3f6ec;
-  --mz-obs: #9a5b00;      --mz-obs-bg: #fff3d6;
-  --mz-nc: #b42318;       --mz-nc-bg: #fde8e6;
-  --mz-info: #0b5cad;     --mz-info-bg: #e6f0fb;
+  --mz-pass: #12805a;     --mz-pass-bg: #e1f6ee;
+  --mz-obs: #9a5b00;      --mz-obs-bg: #fff4dc;
+  --mz-nc: #c43c3c;       --mz-nc-bg: #ffe8e8;
+  --mz-info: #142D4E;     --mz-info-bg: #e8eef6;
 
-  --mz-font: 'Plus Jakarta Sans', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --mz-font-ar: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --mz-mono: 'Sometype Mono', 'IBM Plex Sans Arabic', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --mz-font: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mz-font-head: 'Cairo', 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', sans-serif;
+  --mz-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
 
-  --mz-r-input: 9px;
-  --mz-r-card: 12px;
+  --mz-r-input: 10px;
+  --mz-r-btn: 10px;
+  --mz-r-card: 14px;
   --mz-r-card-lg: 20px;
-  --mz-r-pill: 9999px;
+  --mz-r-pill: 999px;
 
-  --mz-shadow-subtle: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px -1px rgba(0,0,0,.08);
-  --mz-shadow-layer: 0 1px 1px -.5px rgba(18,43,40,.05), 0 3px 3px -1.5px rgba(18,43,40,.05), 0 6px 6px -3px rgba(18,43,40,.05), 0 12px 12px -6px rgba(18,43,40,.05);
-  --mz-shadow-pop: 0 18px 48px -12px rgba(11,19,17,.28);
+  --mz-shadow-subtle: 0 4px 14px -6px rgba(20, 45, 78, .18);
+  --mz-shadow-layer: 0 4px 14px -6px rgba(20, 45, 78, .18);
+  --mz-shadow-pop: 0 20px 50px -20px rgba(20, 45, 78, .35);
 
   --mz-ease: cubic-bezier(.33, 1, .68, 1);
-  --mz-quality-conic: conic-gradient(from 90deg, #0c7a59 0%, #16c0a4 22%, #0b6bcb 45%, #6aa8ef 58%, #f3c74f 76%, #c8941a 88%, #0c7a59 100%);
+  --mz-grad: linear-gradient(270deg, #142D4E 0%, #1d6b7c 55%, #22A699 100%);
+  --mz-quality-conic: conic-gradient(from 90deg, #22A699 0%, #142D4E 40%, #D9A441 70%, #22A699 100%);
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
@@ -67,8 +76,8 @@ html[data-surface] :where(body *):not(i):not(.fa):not(.fas):not(.far):not(.fab):
   font-family: var(--mz-font) !important;
 }
 /* Arabic must keep letter-spacing at 0 — negative tracking detaches joined letters */
-html[data-surface] h1, html[data-surface] h2, html[data-surface] h3 { letter-spacing: 0; }
-html[data-surface] ::selection { background: #cdeee0; color: var(--mz-onyx); }
+html[data-surface] h1, html[data-surface] h2, html[data-surface] h3, html[data-surface] h4 { letter-spacing: 0; font-family: var(--mz-font-head) !important; }
+html[data-surface] ::selection { background: #c4ebe5; color: var(--mz-onyx); }
 html[data-surface] :focus-visible { outline: 2px solid var(--mz-assure) !important; outline-offset: 2px; }
 html[data-surface] ::-webkit-scrollbar { width: 9px; height: 9px; }
 html[data-surface] ::-webkit-scrollbar-thumb { background: var(--mz-cloud); border-radius: 9px; border: 2px solid transparent; background-clip: padding-box; }
@@ -85,16 +94,16 @@ html[data-surface] .btn,
 html[data-surface] .btn-full,
 html[data-surface] .action-btn,
 html[data-surface] .btn-login {
-  border-radius: var(--mz-r-pill) !important;
+  border-radius: var(--mz-r-btn) !important;
   font-weight: 700 !important;
   letter-spacing: 0;
   box-shadow: none !important;
   transition: background .15s var(--mz-ease), color .15s var(--mz-ease), border-color .15s var(--mz-ease), transform .15s var(--mz-ease);
 }
 html[data-surface] .btn-primary,
-html[data-surface] .btn-login { background: var(--mz-ink) !important; color: #fff !important; border: none !important; }
+html[data-surface] .btn-login { background: var(--mz-brand) !important; color: #fff !important; border: none !important; box-shadow: 0 6px 16px -8px var(--mz-brand) !important; }
 html[data-surface] .btn-primary:hover,
-html[data-surface] .btn-login:hover { background: #2c3833 !important; }
+html[data-surface] .btn-login:hover { background: var(--mz-brand-strong) !important; }
 html[data-surface] .btn-primary:active { transform: translateY(1px); }
 html[data-surface] .btn-outline { background: transparent !important; color: var(--mz-ink) !important; border: 1px solid var(--mz-bone) !important; }
 html[data-surface] .btn-outline:hover { border-color: var(--mz-assure) !important; color: var(--mz-assure) !important; }
@@ -107,7 +116,7 @@ html[data-surface] button:disabled, html[data-surface] .btn:disabled { opacity: 
 /* Tailwind-built primary buttons (bg-blue-600 etc.) read as ink CTAs */
 html[data-surface] #app-content button.bg-blue-600,
 html[data-surface] #app-content button.bg-blue-500,
-html[data-surface] .modal button.bg-blue-600 { background: var(--mz-ink) !important; color: #fff !important; border-radius: var(--mz-r-pill) !important; }
+html[data-surface] .modal button.bg-blue-600 { background: var(--mz-brand) !important; color: #fff !important; border-radius: var(--mz-r-btn) !important; }
 
 /* ── Cards — flat, hairline ───────────────────────────────────────────── */
 html[data-surface] .card,
@@ -196,9 +205,9 @@ html[data-surface="app"] .sidebar nav { scrollbar-color: var(--mz-cloud) transpa
 html[data-surface="app"] .sidebar-section-title { font-family: var(--mz-mono) !important; font-size: 11px !important; letter-spacing: .06em; color: var(--mz-ash) !important; }
 html[data-surface="app"] .nav-item {
   color: var(--mz-carbon) !important;
-  border-radius: var(--mz-r-pill) !important;
-  padding: 8px 14px;
-  margin: 1px 10px;
+  border-radius: 9px !important;
+  padding: 7px 12px;
+  margin: 1px 8px;
   font-size: 14px;
   font-weight: 500;
   border-right: none !important;
@@ -232,7 +241,7 @@ html[data-surface="app"] .kanban-drop-zone.drag-over { background: var(--mz-bran
 html[data-surface="app"] .drop-placeholder { border-color: var(--mz-brand); background: var(--mz-brand-wash); }
 html[data-surface="app"] .notification-dot { background: var(--mz-nc); box-shadow: 0 0 0 2px #fff; }
 /* the dashboard welcome banner becomes the ClickUp "dark feature card" */
-html[data-surface="app"] #app-content .card[style*="linear-gradient(135deg,#0"] { background: linear-gradient(#17201d 24%, #0b1311) !important; border: none !important; }
+html[data-surface="app"] #app-content .card[style*="linear-gradient(135deg,#0"] { background: var(--mz-grad) !important; border: none !important; }
 
 /* ==========================================================================
    ADMIN — platform console
@@ -240,7 +249,7 @@ html[data-surface="app"] #app-content .card[style*="linear-gradient(135deg,#0"] 
 html[data-surface="admin"] body { background: var(--mz-white); }
 html[data-surface="admin"] .sidebar { background: var(--mz-mist) !important; border-left: 1px solid var(--mz-bone) !important; box-shadow: none !important; }
 html[data-surface="admin"] .nav-section { font-family: var(--mz-mono) !important; color: var(--mz-ash) !important; font-size: 11px !important; letter-spacing: .06em !important; }
-html[data-surface="admin"] .nav-item { color: var(--mz-carbon) !important; border-radius: var(--mz-r-pill) !important; font-size: 14px !important; font-weight: 500 !important; }
+html[data-surface="admin"] .nav-item { color: var(--mz-carbon) !important; border-radius: 9px !important; font-size: 14px !important; font-weight: 500 !important; }
 html[data-surface="admin"] .nav-item:hover { background: rgba(0,0,0,.045) !important; }
 html[data-surface="admin"] .nav-item.active { background: var(--mz-brand-tint) !important; color: var(--mz-brand-strong) !important; font-weight: 700 !important; border-right: none !important; }
 html[data-surface="admin"] .topbar { background: rgba(255,255,255,.92) !important; border-bottom: 1px solid var(--mz-bone) !important; box-shadow: none !important; }
@@ -263,12 +272,12 @@ html[data-surface="mobile"] .check-item.pass { border-color: var(--mz-pass) !imp
 html[data-surface="mobile"] .check-item.fail { border-color: var(--mz-nc) !important; background: var(--mz-nc-bg) !important; }
 html[data-surface="mobile"] .result-btn { border-radius: var(--mz-r-pill) !important; }
 html[data-surface="mobile"] .shutter-btn { border-color: var(--mz-brand) !important; }
-html[data-surface="mobile"] .login-bg { background: linear-gradient(160deg, #0b1311 0%, #17201d 55%, #0b6b4f 140%) !important; }
+html[data-surface="mobile"] .login-bg { background: linear-gradient(160deg, #0d1f37 0%, #142D4E 60%, #17796f 140%) !important; }
 
 /* ==========================================================================
    AUTH — mobile login page
    ========================================================================== */
-html[data-surface="auth"] body { background: linear-gradient(160deg, #0b1311 0%, #17201d 55%, #0b6b4f 140%) !important; }
+html[data-surface="auth"] body { background: linear-gradient(160deg, #0d1f37 0%, #142D4E 60%, #17796f 140%) !important; }
 html[data-surface="auth"] .card { border-radius: var(--mz-r-card-lg) !important; box-shadow: var(--mz-shadow-pop) !important; border: none !important; }
 html[data-surface="auth"] .card-header { background: var(--mz-white) !important; border-bottom: 1px solid var(--mz-bone); }
 html[data-surface="auth"] .card-header::before,
@@ -283,8 +292,8 @@ html[data-surface="auth"] .tab-btn.active { background: var(--mz-white) !importa
 /* ==========================================================================
    ADVISORY — AI council
    ========================================================================== */
-html[data-surface="advisory"] .sidebar-panel { background: linear-gradient(#17201d 24%, #0b1311) !important; }
-html[data-surface="advisory"] .premium-badge { background: linear-gradient(135deg, #8a5f00, var(--mz-gold), #8a5f00) !important; background-size: 200% auto !important; }
+html[data-surface="advisory"] .sidebar-panel { background: var(--mz-grad) !important; }
+html[data-surface="advisory"] .premium-badge { color: var(--mz-ink) !important; background: linear-gradient(135deg, #e7bf6c, var(--mz-gold), #e7bf6c) !important; background-size: 200% auto !important; }
 
 /* ── Motion preference ───────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

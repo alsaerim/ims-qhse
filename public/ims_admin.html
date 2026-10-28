@@ -3,78 +3,78 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ميزان — Super Admin</title>
+  <title>آيزو رادار — Super Admin</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Tajawal',sans-serif;background:#f1f2f4;color:#202020;direction:rtl;font-size:14px;}
-    .sidebar{width:240px;background:white;border-left:1px solid #e8e8e8;height:100vh;position:fixed;right:0;top:0;z-index:50;display:flex;flex-direction:column;box-shadow:2px 0 8px rgba(0,0,0,.06);}
+    body{font-family:'Tajawal',sans-serif;background:#eef2f6;color:#142D4E;direction:rtl;font-size:14px;}
+    .sidebar{width:240px;background:white;border-left:1px solid #e3e8ef;height:100vh;position:fixed;right:0;top:0;z-index:50;display:flex;flex-direction:column;box-shadow:2px 0 8px rgba(0,0,0,.06);}
     .main{margin-right:240px;min-height:100vh;}
-    .nav-section{font-size:11px;color:#646464;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:6px 16px;margin-top:12px;}
-    .nav-item{padding:9px 16px;border-radius:8px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:10px;color:#646464;margin:1px 8px;font-size:13px;font-weight:500;}
-    .nav-item:hover{background:#f1f2f4;color:#202020;}
-    .nav-item.active{background:#f2f8fd;color:#0a4f99;font-weight:700;border-right:3px solid #0a4f99;}
-    .topbar{background:white;border-bottom:1px solid #e8e8e8;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-    .card{background:white;border-radius:12px;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-    .stat-card{background:white;border-radius:12px;border:1px solid #e8e8e8;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+    .nav-section{font-size:11px;color:#5d6b7e;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:6px 16px;margin-top:12px;}
+    .nav-item{padding:9px 16px;border-radius:8px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:10px;color:#5d6b7e;margin:1px 8px;font-size:13px;font-weight:500;}
+    .nav-item:hover{background:#eef2f6;color:#142D4E;}
+    .nav-item.active{background:#f1faf8;color:#125f57;font-weight:700;border-right:3px solid #125f57;}
+    .topbar{background:white;border-bottom:1px solid #e3e8ef;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+    .card{background:white;border-radius:12px;border:1px solid #e3e8ef;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+    .stat-card{background:white;border-radius:12px;border:1px solid #e3e8ef;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
     .badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;}
     .badge-green{background:#dcfce7;color:#166534;}
     .badge-yellow{background:#fef9c3;color:#854d0e;}
     .badge-red{background:#fee2e2;color:#991b1b;}
-    .badge-blue{background:#e3effb;color:#0a4f99;}
-    .badge-gray{background:#f1f2f4;color:#4a4a4a;}
+    .badge-blue{background:#e3f5f2;color:#125f57;}
+    .badge-gray{background:#eef2f6;color:#4f5f75;}
     .badge-purple{background:#ede9fe;color:#5b21b6;}
     .badge-teal{background:#ccfbf1;color:#0f766e;}
     .btn{padding:8px 18px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px;font-size:13px;border:none;font-family:'Tajawal',sans-serif;}
-    .btn-primary{background:#0a4f99;color:white;}
-    .btn-primary:hover{background:#083f7a;}
+    .btn-primary{background:#125f57;color:white;}
+    .btn-primary:hover{background:#0f4c46;}
     .btn-success{background:#059669;color:white;}
     .btn-danger{background:#dc2626;color:white;}
-    .btn-outline{background:white;color:#4a4a4a;border:1px solid #e8e8e8;}
-    .btn-outline:hover{border-color:#0a4f99;color:#0a4f99;}
+    .btn-outline{background:white;color:#4f5f75;border:1px solid #e3e8ef;}
+    .btn-outline:hover{border-color:#125f57;color:#125f57;}
     .btn-sm{padding:5px 12px;font-size:12px;border-radius:7px;}
-    .form-input{width:100%;padding:8px 12px;border:1.5px solid #e8e8e8;border-radius:8px;background:white;color:#202020;font-size:13px;outline:none;font-family:'Tajawal',sans-serif;transition:border-color .18s;}
-    .form-input:focus{border-color:#0a4f99;box-shadow:0 0 0 3px rgba(10,79,153,.08);}
+    .form-input{width:100%;padding:8px 12px;border:1.5px solid #e3e8ef;border-radius:8px;background:white;color:#142D4E;font-size:13px;outline:none;font-family:'Tajawal',sans-serif;transition:border-color .18s;}
+    .form-input:focus{border-color:#125f57;box-shadow:0 0 0 3px rgba(20,45,78,.08);}
     .tbl{width:100%;border-collapse:collapse;font-size:13px;}
-    .tbl thead tr{background:#f8f9fa;border-bottom:2px solid #e8e8e8;}
-    .tbl th{padding:10px 14px;text-align:right;font-weight:700;color:#4a4a4a;white-space:nowrap;}
-    .tbl td{padding:11px 14px;border-bottom:1px solid #f1f2f4;color:#2a2a2a;vertical-align:middle;}
+    .tbl thead tr{background:#F4F7FA;border-bottom:2px solid #e3e8ef;}
+    .tbl th{padding:10px 14px;text-align:right;font-weight:700;color:#4f5f75;white-space:nowrap;}
+    .tbl td{padding:11px 14px;border-bottom:1px solid #eef2f6;color:#2a3e5c;vertical-align:middle;}
     .tbl tbody tr:hover{background:#fafbff;}
     .tbl tbody tr:last-child td{border-bottom:none;}
     .toggle{position:relative;width:38px;height:20px;flex-shrink:0;}
     .toggle input{opacity:0;width:0;height:0;}
-    .toggle-slider{position:absolute;cursor:pointer;inset:0;background:#d4d4d4;border-radius:20px;transition:.25s;}
+    .toggle-slider{position:absolute;cursor:pointer;inset:0;background:#cbd2db;border-radius:20px;transition:.25s;}
     .toggle-slider:before{position:absolute;content:"";height:14px;width:14px;right:3px;bottom:3px;background:white;border-radius:50%;transition:.25s;}
-    .toggle input:checked+.toggle-slider{background:#0a4f99;}
+    .toggle input:checked+.toggle-slider{background:#125f57;}
     .toggle input:checked+.toggle-slider:before{transform:translateX(-18px);}
     .modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
     .modal.open{display:flex;}
-    .modal-box{background:white;border-radius:16px;border:1px solid #e8e8e8;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.12);}
+    .modal-box{background:white;border-radius:16px;border:1px solid #e3e8ef;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.12);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeUp .22s ease;}
     ::-webkit-scrollbar{width:4px;height:4px}
-    ::-webkit-scrollbar-thumb{background:#d4d4d4;border-radius:2px}
+    ::-webkit-scrollbar-thumb{background:#cbd2db;border-radius:2px}
       /* ── Polish: contrast & browser surfaces ── */
     .badge-green{color:#166534;} .badge-yellow{color:#854d0e;} .badge-red{color:#991b1b;}
-    ::selection{background:#c9e1f8;color:#202020;}
-    :focus-visible{outline:2px solid #2a86e0;outline-offset:2px;}
+    ::selection{background:#bfe8e1;color:#142D4E;}
+    :focus-visible{outline:2px solid #22A699;outline-offset:2px;}
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
   </style>
-<link rel="icon" type="image/svg+xml" href="/assets/mizan-mark.svg"/>
+<link rel="icon" type="image/svg+xml" href="/assets/isoradar-mark.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Sometype+Mono:wght@400;500&display=swap"/>
-<link rel="stylesheet" href="/assets/mizan.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="/assets/isoradar.css"/>
 </head>
 <body>
 
 <aside class="sidebar">
-  <div style="padding:16px;border-bottom:1px solid #f1f2f4;">
+  <div style="padding:16px;border-bottom:1px solid #eef2f6;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <img src="/assets/mizan-mark.svg" alt="" class="mz-mark" width="36" height="36" style="width:36px;height:36px"/>
+      <img src="/assets/isoradar-mark.svg" alt="" class="mz-mark" width="36" height="36" style="width:36px;height:36px"/>
       <div>
-        <div class="mz-wordmark">ميزان</div>
+        <div class="mz-wordmark">آيزو رادار</div>
         <div style="font-size:11px;font-weight:700;color:#b91c1c;letter-spacing:.5px;">SUPER ADMIN</div>
       </div>
     </div>
@@ -96,10 +96,10 @@
     <div class="nav-item" onclick="navigate('settings')"><i class="fas fa-cog" style="width:16px;text-align:center;font-size:13px;"></i>الإعدادات</div>
     <div class="nav-item" onclick="logout()" style="color:#dc2626;"><i class="fas fa-sign-out-alt" style="width:16px;text-align:center;font-size:13px;"></i>تسجيل الخروج</div>
   </div>
-  <div style="padding:12px 16px;border-top:1px solid #f1f2f4;">
+  <div style="padding:12px 16px;border-top:1px solid #eef2f6;">
     <div style="display:flex;align-items:center;gap:10px;">
       <div id="mza-me-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--mz-ink);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:800;flex-shrink:0;">م</div>
-      <div style="min-width:0"><div id="mza-me-name" style="font-size:13px;font-weight:700;color:#202020;">مدير المنصة</div><div id="mza-me-email" dir="ltr" style="font-size:11px;color:#646464;overflow:hidden;text-overflow:ellipsis;"></div></div>
+      <div style="min-width:0"><div id="mza-me-name" style="font-size:13px;font-weight:700;color:#142D4E;">مدير المنصة</div><div id="mza-me-email" dir="ltr" style="font-size:11px;color:#5d6b7e;overflow:hidden;text-overflow:ellipsis;"></div></div>
     </div>
   </div>
 </aside>
@@ -107,11 +107,11 @@
 <main class="main">
   <div class="topbar">
     <div>
-      <div style="font-size:17px;font-weight:800;color:#202020;" id="page-title">لوحة التحكم</div>
-      <div style="font-size:12px;color:#646464;" id="page-subtitle">نظرة شاملة على النظام والاشتراكات</div>
+      <div style="font-size:17px;font-weight:800;color:#142D4E;" id="page-title">لوحة التحكم</div>
+      <div style="font-size:12px;color:#5d6b7e;" id="page-subtitle">نظرة شاملة على النظام والاشتراكات</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
-      <div style="font-size:12px;color:#646464;" id="current-time"></div>
+      <div style="font-size:12px;color:#5d6b7e;" id="current-time"></div>
       <div style="display:flex;align-items:center;gap:5px;background:#dcfce7;padding:4px 12px;border-radius:999px;">
         <div style="width:6px;height:6px;border-radius:50%;background:#059669;"></div>
         <span style="font-size:11px;font-weight:700;color:#166534;">متصل</span>
@@ -120,7 +120,7 @@
   </div>
   <div style="padding:24px;" id="content">
     <div style="display:flex;justify-content:center;align-items:center;height:60vh;">
-      <i class="fas fa-spinner fa-spin" style="font-size:28px;color:#0a4f99;"></i>
+      <i class="fas fa-spinner fa-spin" style="font-size:28px;color:#125f57;"></i>
     </div>
   </div>
 </main>
@@ -128,9 +128,9 @@
 <!-- Modals -->
 <div class="modal" id="modal-tenant">
   <div class="modal-box" style="max-width:680px;margin:16px;">
-    <div style="padding:18px 20px;border-bottom:1px solid #f1f2f4;display:flex;align-items:center;justify-content:space-between;">
+    <div style="padding:18px 20px;border-bottom:1px solid #eef2f6;display:flex;align-items:center;justify-content:space-between;">
       <div style="font-size:16px;font-weight:800;" id="tenant-modal-title">تفاصيل المستأجر</div>
-      <button onclick="closeModal('modal-tenant')" style="background:none;border:none;cursor:pointer;color:#646464;font-size:18px;"><i class="fas fa-times"></i></button>
+      <button onclick="closeModal('modal-tenant')" style="background:none;border:none;cursor:pointer;color:#5d6b7e;font-size:18px;"><i class="fas fa-times"></i></button>
     </div>
     <div style="padding:20px;" id="tenant-modal-body"></div>
   </div>
@@ -138,9 +138,9 @@
 
 <div class="modal" id="modal-plan">
   <div class="modal-box" style="max-width:520px;margin:16px;">
-    <div style="padding:18px 20px;border-bottom:1px solid #f1f2f4;display:flex;align-items:center;justify-content:space-between;">
+    <div style="padding:18px 20px;border-bottom:1px solid #eef2f6;display:flex;align-items:center;justify-content:space-between;">
       <div style="font-size:16px;font-weight:800;" id="plan-modal-title">الباقة</div>
-      <button onclick="closeModal('modal-plan')" style="background:none;border:none;cursor:pointer;color:#646464;font-size:18px;"><i class="fas fa-times"></i></button>
+      <button onclick="closeModal('modal-plan')" style="background:none;border:none;cursor:pointer;color:#5d6b7e;font-size:18px;"><i class="fas fa-times"></i></button>
     </div>
     <div style="padding:20px;" id="plan-modal-body"></div>
   </div>
@@ -148,18 +148,18 @@
 
 <div class="modal" id="modal-assign">
   <div class="modal-box" style="max-width:400px;margin:16px;">
-    <div style="padding:18px 20px;border-bottom:1px solid #f1f2f4;display:flex;align-items:center;justify-content:space-between;">
+    <div style="padding:18px 20px;border-bottom:1px solid #eef2f6;display:flex;align-items:center;justify-content:space-between;">
       <div style="font-size:16px;font-weight:800;">تعيين باقة</div>
-      <button onclick="closeModal('modal-assign')" style="background:none;border:none;cursor:pointer;color:#646464;font-size:18px;"><i class="fas fa-times"></i></button>
+      <button onclick="closeModal('modal-assign')" style="background:none;border:none;cursor:pointer;color:#5d6b7e;font-size:18px;"><i class="fas fa-times"></i></button>
     </div>
     <div style="padding:20px;">
       <input type="hidden" id="assign-tenant-id"/>
       <div style="margin-bottom:14px;">
-        <label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:5px;">الباقة</label>
+        <label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:5px;">الباقة</label>
         <select class="form-input" id="assign-plan-id"></select>
       </div>
       <div style="margin-bottom:20px;">
-        <label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:5px;">دورة الفوترة</label>
+        <label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:5px;">دورة الفوترة</label>
         <select class="form-input" id="assign-billing">
           <option value="monthly">شهري</option>
           <option value="yearly">سنوي (خصم 16%)</option>
@@ -199,7 +199,7 @@ function navigate(page){
   const [t,s]=T[page]||['الصفحة',''];
   document.getElementById('page-title').textContent=t;
   document.getElementById('page-subtitle').textContent=s;
-  document.getElementById('content').innerHTML='<div style="display:flex;justify-content:center;align-items:center;height:60vh;"><i class="fas fa-spinner fa-spin" style="font-size:28px;color:#0a4f99;"></i></div>';
+  document.getElementById('content').innerHTML='<div style="display:flex;justify-content:center;align-items:center;height:60vh;"><i class="fas fa-spinner fa-spin" style="font-size:28px;color:#125f57;"></i></div>';
   ({dashboard:loadDashboard,analytics:loadAnalytics,tenants:loadTenants,plans:loadPlans,invoices:loadInvoices}[page]||loadDashboard)();
 }
 
@@ -209,29 +209,29 @@ async function loadDashboard(){
   document.getElementById('content').innerHTML=`
   <div class="fade-in" style="display:flex;flex-direction:column;gap:20px;">
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-      ${kpi('MRR',fSAR(r.mrr||0),'chart-line','#0a4f99','الإيراد الشهري المتكرر','#f2f8fd')}
+      ${kpi('MRR',fSAR(r.mrr||0),'chart-line','#125f57','الإيراد الشهري المتكرر','#f1faf8')}
       ${kpi('ARR',fSAR(r.arr||0),'chart-bar','#059669','الإيراد السنوي المتكرر','#f0fdf4')}
       ${kpi('مستأجرون نشطون',t.active||0,'building','#7c3aed','من '+(t.total||0)+' إجمالي','#faf5ff')}
       ${kpi('فواتير معلقة',r.pending_count||0,'clock','#d97706',fSAR(r.pending_amount||0),'#fffbeb')}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
       <div class="card" style="padding:18px;">
-        <div style="font-size:13px;font-weight:700;color:#202020;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#f2f8fd;display:flex;align-items:center;justify-content:center;"><i class="fas fa-layer-group" style="color:#0a4f99;font-size:11px;"></i></div>توزيع الباقات</div>
+        <div style="font-size:13px;font-weight:700;color:#142D4E;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#f1faf8;display:flex;align-items:center;justify-content:center;"><i class="fas fa-layer-group" style="color:#125f57;font-size:11px;"></i></div>توزيع الباقات</div>
         <canvas id="chart-plans" height="180"></canvas>
       </div>
       <div class="card" style="padding:18px;">
-        <div style="font-size:13px;font-weight:700;color:#202020;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;"><i class="fas fa-circle-check" style="color:#059669;font-size:11px;"></i></div>حالة الاشتراكات</div>
+        <div style="font-size:13px;font-weight:700;color:#142D4E;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;"><i class="fas fa-circle-check" style="color:#059669;font-size:11px;"></i></div>حالة الاشتراكات</div>
         ${sRow('نشطة',s.active||0,'#059669')}
         ${sRow('تجريبية',s.trial||0,'#d97706')}
         ${sRow('ملغاة',s.cancelled||0,'#dc2626')}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;">
-          <div style="padding:10px;border-radius:8px;background:#f0fdf4;text-align:center;"><div style="font-size:20px;font-weight:800;color:#059669;">${s.active||0}</div><div style="font-size:11px;color:#646464;">نشطة</div></div>
-          <div style="padding:10px;border-radius:8px;background:#fffbeb;text-align:center;"><div style="font-size:20px;font-weight:800;color:#d97706;">${s.trial||0}</div><div style="font-size:11px;color:#646464;">تجريبية</div></div>
-          <div style="padding:10px;border-radius:8px;background:#fee2e2;text-align:center;"><div style="font-size:20px;font-weight:800;color:#dc2626;">${s.cancelled||0}</div><div style="font-size:11px;color:#646464;">ملغاة</div></div>
+          <div style="padding:10px;border-radius:8px;background:#f0fdf4;text-align:center;"><div style="font-size:20px;font-weight:800;color:#059669;">${s.active||0}</div><div style="font-size:11px;color:#5d6b7e;">نشطة</div></div>
+          <div style="padding:10px;border-radius:8px;background:#fffbeb;text-align:center;"><div style="font-size:20px;font-weight:800;color:#d97706;">${s.trial||0}</div><div style="font-size:11px;color:#5d6b7e;">تجريبية</div></div>
+          <div style="padding:10px;border-radius:8px;background:#fee2e2;text-align:center;"><div style="font-size:20px;font-weight:800;color:#dc2626;">${s.cancelled||0}</div><div style="font-size:11px;color:#5d6b7e;">ملغاة</div></div>
         </div>
       </div>
       <div class="card" style="padding:18px;">
-        <div style="font-size:13px;font-weight:700;color:#202020;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#fffbeb;display:flex;align-items:center;justify-content:center;"><i class="fas fa-bolt" style="color:#d97706;font-size:11px;"></i></div>إجراءات سريعة</div>
+        <div style="font-size:13px;font-weight:700;color:#142D4E;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#fffbeb;display:flex;align-items:center;justify-content:center;"><i class="fas fa-bolt" style="color:#d97706;font-size:11px;"></i></div>إجراءات سريعة</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <button onclick="navigate('tenants')" class="btn btn-primary" style="justify-content:flex-start;width:100%;"><i class="fas fa-building"></i>إدارة المستأجرين</button>
           <button onclick="navigate('plans')" class="btn btn-outline" style="justify-content:flex-start;width:100%;"><i class="fas fa-layer-group"></i>تعديل الباقات والأسعار</button>
@@ -242,14 +242,14 @@ async function loadDashboard(){
     </div>
     <div class="card" style="padding:18px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#f8f9fa;display:flex;align-items:center;justify-content:center;"><i class="fas fa-users" style="color:#4a4a4a;font-size:11px;"></i></div>أحدث المستأجرين</div>
-        <button onclick="navigate('tenants')" style="background:none;border:none;cursor:pointer;color:#0a4f99;font-size:12px;font-weight:600;font-family:'Tajawal',sans-serif;">عرض الكل ←</button>
+        <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;"><div style="width:26px;height:26px;border-radius:7px;background:#F4F7FA;display:flex;align-items:center;justify-content:center;"><i class="fas fa-users" style="color:#4f5f75;font-size:11px;"></i></div>أحدث المستأجرين</div>
+        <button onclick="navigate('tenants')" style="background:none;border:none;cursor:pointer;color:#125f57;font-size:12px;font-weight:600;font-family:'Tajawal',sans-serif;">عرض الكل ←</button>
       </div>
       <div id="recent-tenants"></div>
     </div>
   </div>`;
   setTimeout(()=>{
-    if(plans.length){const ctx=document.getElementById('chart-plans');if(ctx){if(_charts.p)_charts.p.destroy();_charts.p=new Chart(ctx,{type:'doughnut',data:{labels:plans.map(p=>p.name_ar||p.name),datasets:[{data:plans.map(p=>Number(p.subscriber_count||0)),backgroundColor:['#0a4f99','#7c3aed','#059669','#d97706'],borderWidth:3,borderColor:'white',hoverOffset:6}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#4a4a4a',boxWidth:10,font:{family:'Tajawal',size:11}}}}}});}}
+    if(plans.length){const ctx=document.getElementById('chart-plans');if(ctx){if(_charts.p)_charts.p.destroy();_charts.p=new Chart(ctx,{type:'doughnut',data:{labels:plans.map(p=>p.name_ar||p.name),datasets:[{data:plans.map(p=>Number(p.subscriber_count||0)),backgroundColor:['#125f57','#7c3aed','#059669','#d97706'],borderWidth:3,borderColor:'white',hoverOffset:6}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#4f5f75',boxWidth:10,font:{family:'Tajawal',size:11}}}}}});}}
     loadRecentTenants();
   },100);
 }
@@ -258,8 +258,8 @@ async function loadRecentTenants(){
   const res=await apiFetch('/super-admin/tenants?limit=5');
   const rows=res?.data||res||[];
   const el=document.getElementById('recent-tenants');if(!el)return;
-  if(!rows.length){el.innerHTML='<div style="text-align:center;padding:20px;color:#646464;font-size:13px;">لا توجد بيانات</div>';return;}
-  el.innerHTML=`<table class="tbl"><thead><tr><th>المستأجر</th><th>الباقة</th><th>الحالة</th><th>المستخدمون</th><th></th></tr></thead><tbody>${rows.map(t=>`<tr style="cursor:pointer;" onclick="openTenantModal('${t.id}')"><td><div style="font-weight:600;">${t.name||'—'}</div><div style="font-size:11px;color:#646464;">${t.email||''}</div></td><td>${pBadge(t.plan_key||t.plan_name)}</td><td>${sBadge(t.status)}</td><td>${t.active_users||0}</td><td onclick="event.stopPropagation()"><button onclick="openAssignModal('${t.id}')" class="btn btn-outline btn-sm"><i class="fas fa-exchange-alt"></i></button></td></tr>`).join('')}</tbody></table>`;
+  if(!rows.length){el.innerHTML='<div style="text-align:center;padding:20px;color:#5d6b7e;font-size:13px;">لا توجد بيانات</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>المستأجر</th><th>الباقة</th><th>الحالة</th><th>المستخدمون</th><th></th></tr></thead><tbody>${rows.map(t=>`<tr style="cursor:pointer;" onclick="openTenantModal('${t.id}')"><td><div style="font-weight:600;">${t.name||'—'}</div><div style="font-size:11px;color:#5d6b7e;">${t.email||''}</div></td><td>${pBadge(t.plan_key||t.plan_name)}</td><td>${sBadge(t.status)}</td><td>${t.active_users||0}</td><td onclick="event.stopPropagation()"><button onclick="openAssignModal('${t.id}')" class="btn btn-outline btn-sm"><i class="fas fa-exchange-alt"></i></button></td></tr>`).join('')}</tbody></table>`;
 }
 
 async function loadAnalytics(){
@@ -273,12 +273,12 @@ async function loadAnalytics(){
     </div>
     <div class="card" style="padding:18px;">
       <div style="font-size:13px;font-weight:700;margin-bottom:14px;">الإيرادات حسب الباقة</div>
-      <table class="tbl"><thead><tr><th>الباقة</th><th>المشتركون</th><th>MRR</th></tr></thead><tbody>${byPlan.map(p=>`<tr><td style="font-weight:600;">${p.name_ar||p.name}</td><td>${p.subscribers||0}</td><td style="color:#059669;font-weight:700;">${fSAR(p.mrr||0)}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:#646464;padding:20px;">لا توجد بيانات</td></tr>'}</tbody></table>
+      <table class="tbl"><thead><tr><th>الباقة</th><th>المشتركون</th><th>MRR</th></tr></thead><tbody>${byPlan.map(p=>`<tr><td style="font-weight:600;">${p.name_ar||p.name}</td><td>${p.subscribers||0}</td><td style="color:#059669;font-weight:700;">${fSAR(p.mrr||0)}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:#5d6b7e;padding:20px;">لا توجد بيانات</td></tr>'}</tbody></table>
     </div>
   </div>`;
   setTimeout(()=>{
-    if(monthly.length){const ctx=document.getElementById('cr');if(ctx){if(_charts.r)_charts.r.destroy();_charts.r=new Chart(ctx,{type:'bar',data:{labels:monthly.map(m=>m.month),datasets:[{label:'الإيرادات (ريال)',data:monthly.map(m=>Number(m.revenue||0)),backgroundColor:'#0a4f9940',borderColor:'#0a4f99',borderWidth:2,borderRadius:6}]},options:{responsive:true,plugins:{legend:{labels:{color:'#4a4a4a',font:{family:'Tajawal'}}}},scales:{x:{ticks:{color:'#767676',font:{family:'Tajawal'}},grid:{color:'#f1f2f4'}},y:{ticks:{color:'#767676',font:{family:'Tajawal'},callback:v=>fSAR(v)},grid:{color:'#f1f2f4'}}}}});}}
-    if(byPlan.length){const ctx2=document.getElementById('cp');if(ctx2){if(_charts.pr)_charts.pr.destroy();_charts.pr=new Chart(ctx2,{type:'doughnut',data:{labels:byPlan.map(p=>p.name_ar||p.name),datasets:[{data:byPlan.map(p=>Number(p.mrr||0)),backgroundColor:['#0a4f99','#7c3aed','#059669','#d97706'],borderWidth:3,borderColor:'white'}]},options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#4a4a4a',boxWidth:10,font:{family:'Tajawal',size:11}}}}}});}}
+    if(monthly.length){const ctx=document.getElementById('cr');if(ctx){if(_charts.r)_charts.r.destroy();_charts.r=new Chart(ctx,{type:'bar',data:{labels:monthly.map(m=>m.month),datasets:[{label:'الإيرادات (ريال)',data:monthly.map(m=>Number(m.revenue||0)),backgroundColor:'#125f5740',borderColor:'#125f57',borderWidth:2,borderRadius:6}]},options:{responsive:true,plugins:{legend:{labels:{color:'#4f5f75',font:{family:'Tajawal'}}}},scales:{x:{ticks:{color:'#5d6b7e',font:{family:'Tajawal'}},grid:{color:'#eef2f6'}},y:{ticks:{color:'#5d6b7e',font:{family:'Tajawal'},callback:v=>fSAR(v)},grid:{color:'#eef2f6'}}}}});}}
+    if(byPlan.length){const ctx2=document.getElementById('cp');if(ctx2){if(_charts.pr)_charts.pr.destroy();_charts.pr=new Chart(ctx2,{type:'doughnut',data:{labels:byPlan.map(p=>p.name_ar||p.name),datasets:[{data:byPlan.map(p=>Number(p.mrr||0)),backgroundColor:['#125f57','#7c3aed','#059669','#d97706'],borderWidth:3,borderColor:'white'}]},options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#4f5f75',boxWidth:10,font:{family:'Tajawal',size:11}}}}}});}}
   },100);
 }
 
@@ -295,12 +295,12 @@ async function loadTenants(search='',status='',page=1){
           <option value="">كل الحالات</option><option value="ACTIVE" ${status==='ACTIVE'?'selected':''}>نشط</option><option value="TRIAL" ${status==='TRIAL'?'selected':''}>تجريبي</option><option value="CANCELLED" ${status==='CANCELLED'?'selected':''}>ملغى</option>
         </select>
       </div>
-      <span style="font-size:12px;color:#646464;">${total} مستأجر</span>
+      <span style="font-size:12px;color:#5d6b7e;">${total} مستأجر</span>
     </div>
     <div class="card" style="overflow:hidden;">
       <table class="tbl">
         <thead><tr><th>المستأجر</th><th>الباقة</th><th>الحالة</th><th>المستخدمون</th><th>تجديد</th><th>فواتير</th><th style="text-align:center;">إجراءات</th></tr></thead>
-        <tbody>${tenants.length?tenants.map(t=>`<tr style="cursor:pointer;" onclick="openTenantModal('${t.id}')"><td><div style="font-weight:600;">${t.name||'—'}</div><div style="font-size:11px;color:#646464;">${t.email||''}</div></td><td>${pBadge(t.plan_key||t.plan_name)}</td><td>${sBadge(t.status)}</td><td>${t.active_users||0}</td><td style="font-size:12px;color:#646464;">${t.current_period_end?new Date(t.current_period_end).toLocaleDateString('ar-SA'):'—'}</td><td>${t.paid_invoices||0}</td><td style="text-align:center;" onclick="event.stopPropagation()"><div style="display:flex;gap:6px;justify-content:center;"><button onclick="openTenantModal('${t.id}')" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button><button onclick="openAssignModal('${t.id}')" class="btn btn-primary btn-sm"><i class="fas fa-exchange-alt"></i></button></div></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:32px;color:#646464;">لا توجد بيانات</td></tr>'}</tbody>
+        <tbody>${tenants.length?tenants.map(t=>`<tr style="cursor:pointer;" onclick="openTenantModal('${t.id}')"><td><div style="font-weight:600;">${t.name||'—'}</div><div style="font-size:11px;color:#5d6b7e;">${t.email||''}</div></td><td>${pBadge(t.plan_key||t.plan_name)}</td><td>${sBadge(t.status)}</td><td>${t.active_users||0}</td><td style="font-size:12px;color:#5d6b7e;">${t.current_period_end?new Date(t.current_period_end).toLocaleDateString('ar-SA'):'—'}</td><td>${t.paid_invoices||0}</td><td style="text-align:center;" onclick="event.stopPropagation()"><div style="display:flex;gap:6px;justify-content:center;"><button onclick="openTenantModal('${t.id}')" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button><button onclick="openAssignModal('${t.id}')" class="btn btn-primary btn-sm"><i class="fas fa-exchange-alt"></i></button></div></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:32px;color:#5d6b7e;">لا توجد بيانات</td></tr>'}</tbody>
       </table>
     </div>
   </div>`;
@@ -327,24 +327,24 @@ async function loadPlans(){
     {k:'custom_branding',l:'Custom Branding'},{k:'sso',l:'SSO/LDAP'},
     {k:'sla',l:'SLA 99.9%'},{k:'dedicated_support',l:'دعم مخصص'},
   ];
-  const PC={starter:'#0a4f99',professional:'#7c3aed',enterprise:'#059669',custom:'#d97706'};
+  const PC={starter:'#125f57',professional:'#7c3aed',enterprise:'#059669',custom:'#d97706'};
 
   document.getElementById('content').innerHTML=`
   <div class="fade-in" style="display:flex;flex-direction:column;gap:16px;">
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:13px;color:#646464;">إدارة الباقات والمميزات والأسعار · ${plans.length} باقة</div>
+      <div style="font-size:13px;color:#5d6b7e;">إدارة الباقات والمميزات والأسعار · ${plans.length} باقة</div>
       <button onclick="openCreatePlanModal()" class="btn btn-primary"><i class="fas fa-plus ml-1"></i>باقة جديدة</button>
     </div>
     ${plans.length===0?`
     <div class="card" style="padding:48px;text-align:center;">
-      <i class="fas fa-layer-group" style="font-size:36px;color:#d4d4d4;display:block;margin-bottom:14px;"></i>
-      <div style="font-size:15px;font-weight:700;color:#4a4a4a;margin-bottom:6px;">لا توجد باقات</div>
-      <div style="font-size:13px;color:#646464;margin-bottom:16px;">تأكد من تنفيذ SQL Migration أو أضف باقة جديدة</div>
+      <i class="fas fa-layer-group" style="font-size:36px;color:#cbd2db;display:block;margin-bottom:14px;"></i>
+      <div style="font-size:15px;font-weight:700;color:#4f5f75;margin-bottom:6px;">لا توجد باقات</div>
+      <div style="font-size:13px;color:#5d6b7e;margin-bottom:16px;">تأكد من تنفيذ SQL Migration أو أضف باقة جديدة</div>
       <button onclick="openCreatePlanModal()" class="btn btn-primary"><i class="fas fa-plus ml-1"></i>إضافة باقة</button>
     </div>`:
     `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
       ${plans.map(plan=>{
-        const color=PC[plan.name]||'#4a4a4a';
+        const color=PC[plan.name]||'#4f5f75';
         const rawF=typeof plan.features==='string'?tryParse(plan.features):(plan.features||{});
         const feats={
          dashboard:true,projects:rawF.projects??true,inspections:rawF.inspections??true,
@@ -364,19 +364,19 @@ async function loadPlans(){
           <div style="padding:16px 18px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <div style="font-weight:800;font-size:15px;">${plan.name_ar||plan.name}</div>
-              <button onclick="openEditPlanModal('${plan.id}')" style="background:none;border:none;cursor:pointer;color:#646464;padding:4px;"><i class="fas fa-edit" style="font-size:13px;"></i></button>
+              <button onclick="openEditPlanModal('${plan.id}')" style="background:none;border:none;cursor:pointer;color:#5d6b7e;padding:4px;"><i class="fas fa-edit" style="font-size:13px;"></i></button>
             </div>
             <div style="font-size:26px;font-weight:900;color:${color};">${plan.price_monthly?Number(plan.price_monthly).toLocaleString()+' ريال':'تواصل'}</div>
-            <div style="font-size:11px;color:#646464;margin-bottom:12px;">شهرياً${plan.price_yearly?' · '+Number(plan.price_yearly).toLocaleString()+' ريال سنوياً':''}</div>
+            <div style="font-size:11px;color:#5d6b7e;margin-bottom:12px;">شهرياً${plan.price_yearly?' · '+Number(plan.price_yearly).toLocaleString()+' ريال سنوياً':''}</div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const u=plan.max_users??plan.limits?.users;return(!u||u<0||u>=999)?'∞':u;})()}</div><div style="font-size:11px;color:#646464;">مستخدم</div></div>
-              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const p=plan.max_projects??plan.limits?.projects;return(!p||p<0||p>=999)?'∞':p;})()}</div><div style="font-size:11px;color:#646464;">مشروع</div></div>
-              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const s=plan.storage_gb??plan.limits?.storage_gb;return(!s||s<0||s>=999)?'∞':s+'G';})()}</div><div style="font-size:11px;color:#646464;">تخزين</div></div>
+              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const u=plan.max_users??plan.limits?.users;return(!u||u<0||u>=999)?'∞':u;})()}</div><div style="font-size:11px;color:#5d6b7e;">مستخدم</div></div>
+              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const p=plan.max_projects??plan.limits?.projects;return(!p||p<0||p>=999)?'∞':p;})()}</div><div style="font-size:11px;color:#5d6b7e;">مشروع</div></div>
+              <div style="padding:6px;border-radius:7px;background:${color}10;text-align:center;"><div style="font-weight:800;color:${color};font-size:13px;">${(()=>{const s=plan.storage_gb??plan.limits?.storage_gb;return(!s||s<0||s>=999)?'∞':s+'G';})()}</div><div style="font-size:11px;color:#5d6b7e;">تخزين</div></div>
             </div>
-            <div style="font-size:11px;color:#646464;">${cnt} ميزة مفعّلة</div>
+            <div style="font-size:11px;color:#5d6b7e;">${cnt} ميزة مفعّلة</div>
           </div>
-          <div style="border-top:1px solid #f1f2f4;padding:10px 14px;max-height:230px;overflow-y:auto;">
-            ${FEATS.map(f=>{const en=feats[f.k]===true;return `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f8f9fa;"><span style="font-size:12px;color:${en?'#2a2a2a':'#767676'};">${f.l}</span><label class="toggle"><input type="checkbox" ${en?'checked':''} onchange="toggleFeature('${plan.id}','${f.k}',this.checked)"/><span class="toggle-slider"></span></label></div>`;}).join('')}
+          <div style="border-top:1px solid #eef2f6;padding:10px 14px;max-height:230px;overflow-y:auto;">
+            ${FEATS.map(f=>{const en=feats[f.k]===true;return `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F4F7FA;"><span style="font-size:12px;color:${en?'#2a3e5c':'#5d6b7e'};">${f.l}</span><label class="toggle"><input type="checkbox" ${en?'checked':''} onchange="toggleFeature('${plan.id}','${f.k}',this.checked)"/><span class="toggle-slider"></span></label></div>`;}).join('')}
           </div>
         </div>`;
       }).join('')}
@@ -396,12 +396,12 @@ async function loadInvoices(status=''){
       <select class="form-input" style="width:160px;" onchange="loadInvoices(this.value)">
         <option value="">كل الفواتير</option><option value="pending" ${status==='pending'?'selected':''}>معلقة</option><option value="paid" ${status==='paid'?'selected':''}>مدفوعة</option>
       </select>
-      <span style="font-size:12px;color:#646464;">${res.total||0} فاتورة</span>
+      <span style="font-size:12px;color:#5d6b7e;">${res.total||0} فاتورة</span>
     </div>
     <div class="card" style="overflow:hidden;">
       <table class="tbl">
         <thead><tr><th>رقم الفاتورة</th><th>المستأجر</th><th>الباقة</th><th>المبلغ</th><th>الإجمالي (VAT)</th><th>الحالة</th><th>التاريخ</th><th style="text-align:center;">إجراءات</th></tr></thead>
-        <tbody>${invs.length?invs.map(i=>`<tr><td style="font-family:monospace;color:#0a4f99;font-size:12px;">${i.invoice_number}</td><td style="font-weight:600;">${i.tenant_name||'—'}</td><td>${pBadge(i.plan_name)}</td><td>${fSAR(i.amount||0)}</td><td style="font-weight:700;">${fSAR(i.total_amount||0)}</td><td>${iBadge(i.status)}</td><td style="font-size:12px;color:#646464;">${new Date(i.created_at).toLocaleDateString('ar-SA')}</td><td style="text-align:center;">${i.status==='pending'?`<button onclick="payInvoice('${i.id}')" class="btn btn-success btn-sm"><i class="fas fa-check ml-1"></i>دفع</button>`:''}</td></tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:32px;color:#646464;">لا توجد فواتير</td></tr>'}</tbody>
+        <tbody>${invs.length?invs.map(i=>`<tr><td style="font-family:monospace;color:#125f57;font-size:12px;">${i.invoice_number}</td><td style="font-weight:600;">${i.tenant_name||'—'}</td><td>${pBadge(i.plan_name)}</td><td>${fSAR(i.amount||0)}</td><td style="font-weight:700;">${fSAR(i.total_amount||0)}</td><td>${iBadge(i.status)}</td><td style="font-size:12px;color:#5d6b7e;">${new Date(i.created_at).toLocaleDateString('ar-SA')}</td><td style="text-align:center;">${i.status==='pending'?`<button onclick="payInvoice('${i.id}')" class="btn btn-success btn-sm"><i class="fas fa-check ml-1"></i>دفع</button>`:''}</td></tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:32px;color:#5d6b7e;">لا توجد فواتير</td></tr>'}</tbody>
       </table>
     </div>
   </div>`;
@@ -420,7 +420,7 @@ async function openTenantModal(id){
     </div>
     <div style="font-size:13px;font-weight:700;margin-bottom:8px;">آخر الفواتير</div>
     <table class="tbl" style="margin-bottom:16px;"><thead><tr><th>رقم</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead>
-    <tbody>${invs.map(i=>`<tr><td style="font-family:monospace;font-size:11px;color:#0a4f99;">${i.invoice_number}</td><td>${fSAR(i.total_amount||0)}</td><td>${iBadge(i.status)}</td><td style="font-size:12px;color:#646464;">${new Date(i.created_at).toLocaleDateString('ar-SA')}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:#646464;padding:14px;">لا توجد فواتير</td></tr>'}</tbody></table>
+    <tbody>${invs.map(i=>`<tr><td style="font-family:monospace;font-size:11px;color:#125f57;">${i.invoice_number}</td><td>${fSAR(i.total_amount||0)}</td><td>${iBadge(i.status)}</td><td style="font-size:12px;color:#5d6b7e;">${new Date(i.created_at).toLocaleDateString('ar-SA')}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:#5d6b7e;padding:14px;">لا توجد فواتير</td></tr>'}</tbody></table>
     <div style="display:flex;gap:8px;"><button onclick="closeModal('modal-tenant');openAssignModal('${t.id}')" class="btn btn-primary" style="flex:1;justify-content:center;"><i class="fas fa-exchange-alt ml-1"></i>تغيير الباقة</button><button onclick="closeModal('modal-tenant')" class="btn btn-outline">إغلاق</button></div>`;
   openModal('modal-tenant');
 }
@@ -455,15 +455,15 @@ function openCreatePlanModal(){
 function planForm(p){
   return `<div style="display:flex;flex-direction:column;gap:12px;">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      ${!p?`<div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">الكود (إنجليزي)*</label><input class="form-input" id="pf-name" placeholder="basic"/></div>`:''}
-      <div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">الاسم العربي*</label><input class="form-input" id="pf-ar" value="${p?.name_ar||''}"/></div>
-      <div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">السعر الشهري (ريال)</label><input class="form-input" type="number" id="pf-m" value="${p?.price_monthly||0}"/></div>
-      <div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">السعر السنوي (ريال)</label><input class="form-input" type="number" id="pf-y" value="${p?.price_yearly||0}"/></div>
-      <div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمستخدمين</label><input class="form-input" type="number" id="pf-u" value="${p?.max_users??p?.limits?.users??5}"/></div>
-      <div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمشاريع</label><input class="form-input" type="number" id="pf-pr" value="${p?.max_projects??p?.limits?.projects??2}"/></div>
-      <div><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:4px;">التخزين (GB)</label><input class="form-input" type="number" id="pf-s" value="${p?.storage_gb??p?.limits?.storage_gb??5}"/></div>
+      ${!p?`<div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">الكود (إنجليزي)*</label><input class="form-input" id="pf-name" placeholder="basic"/></div>`:''}
+      <div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">الاسم العربي*</label><input class="form-input" id="pf-ar" value="${p?.name_ar||''}"/></div>
+      <div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">السعر الشهري (ريال)</label><input class="form-input" type="number" id="pf-m" value="${p?.price_monthly||0}"/></div>
+      <div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">السعر السنوي (ريال)</label><input class="form-input" type="number" id="pf-y" value="${p?.price_yearly||0}"/></div>
+      <div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمستخدمين</label><input class="form-input" type="number" id="pf-u" value="${p?.max_users??p?.limits?.users??5}"/></div>
+      <div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">الحد الأقصى للمشاريع</label><input class="form-input" type="number" id="pf-pr" value="${p?.max_projects??p?.limits?.projects??2}"/></div>
+      <div><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:4px;">التخزين (GB)</label><input class="form-input" type="number" id="pf-s" value="${p?.storage_gb??p?.limits?.storage_gb??5}"/></div>
     </div>
-    <div style="font-size:11px;color:#646464;">تلميح: 999 = غير محدود</div>
+    <div style="font-size:11px;color:#5d6b7e;">تلميح: 999 = غير محدود</div>
     <div style="display:flex;gap:10px;margin-top:4px;">
       <button onclick="${p?`savePlanEdit('${p.id}')`:'createPlan()'}" class="btn btn-primary" style="flex:1;justify-content:center;"><i class="fas fa-save ml-1"></i>${p?'حفظ التعديلات':'إنشاء الباقة'}</button>
       <button onclick="closeModal('modal-plan')" class="btn btn-outline">إلغاء</button>
@@ -503,16 +503,16 @@ async function payInvoice(id){
 // ── Helpers ─────────────────────────────────────────────────
 function fSAR(v){return Number(v||0).toLocaleString('ar-SA')+' ريال';}
 function pBadge(n){
-  const M={starter:['#e3effb','#0a4f99'],professional:['#ede9fe','#5b21b6'],enterprise:['#dcfce7','#166534'],custom:['#fef9c3','#854d0e']};
+  const M={starter:['#e3f5f2','#125f57'],professional:['#ede9fe','#5b21b6'],enterprise:['#dcfce7','#166534'],custom:['#fef9c3','#854d0e']};
   if(!n||n==='—')return `<span class="badge badge-gray">—</span>`;
-  const c=M[n]||M[n?.toLowerCase()]||['#f1f2f4','#4a4a4a'];
+  const c=M[n]||M[n?.toLowerCase()]||['#eef2f6','#4f5f75'];
   return `<span class="badge" style="background:${c[0]};color:${c[1]};font-size:11px;">${n}</span>`;
 }
-function sBadge(s){const M={ACTIVE:['#dcfce7','#166534','نشط'],TRIAL:['#fef9c3','#854d0e','تجريبي'],CANCELLED:['#fee2e2','#991b1b','ملغى'],EXPIRED:['#fee2e2','#991b1b','منتهي']};const c=M[s]||['#f1f2f4','#4a4a4a',s||'—'];return `<span class="badge" style="background:${c[0]};color:${c[1]};">${c[2]}</span>`;}
-function iBadge(s){const M={paid:['#dcfce7','#166534','مدفوعة'],pending:['#fef9c3','#854d0e','معلقة'],failed:['#fee2e2','#991b1b','فاشلة'],refunded:['#e3effb','#0a4f99','مسترجعة']};const c=M[s]||['#f1f2f4','#4a4a4a',s||'—'];return `<span class="badge" style="background:${c[0]};color:${c[1]};">${c[2]}</span>`;}
-function kpi(l,v,ic,col,sub,bg){return `<div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><div style="font-size:11px;color:#646464;font-weight:600;margin-bottom:4px;">${l}</div><div style="font-size:22px;font-weight:900;color:${col};">${v}</div><div style="font-size:11px;color:#646464;margin-top:3px;">${sub}</div></div><div style="width:40px;height:40px;border-radius:10px;background:${bg};display:flex;align-items:center;justify-content:center;"><i class="fas fa-${ic}" style="color:${col};font-size:15px;"></i></div></div></div>`;}
-function sRow(l,c,col){return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8f9fa;"><div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:50%;background:${col};"></div><span style="font-size:13px;color:#4a4a4a;">${l}</span></div><span style="font-weight:700;color:${col};">${c}</span></div>`;}
-function ib(l,v){return `<div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;"><div style="font-size:11px;color:#646464;margin-bottom:3px;">${l}</div><div style="font-size:14px;font-weight:600;">${v}</div></div>`;}
+function sBadge(s){const M={ACTIVE:['#dcfce7','#166534','نشط'],TRIAL:['#fef9c3','#854d0e','تجريبي'],CANCELLED:['#fee2e2','#991b1b','ملغى'],EXPIRED:['#fee2e2','#991b1b','منتهي']};const c=M[s]||['#eef2f6','#4f5f75',s||'—'];return `<span class="badge" style="background:${c[0]};color:${c[1]};">${c[2]}</span>`;}
+function iBadge(s){const M={paid:['#dcfce7','#166534','مدفوعة'],pending:['#fef9c3','#854d0e','معلقة'],failed:['#fee2e2','#991b1b','فاشلة'],refunded:['#e3f5f2','#125f57','مسترجعة']};const c=M[s]||['#eef2f6','#4f5f75',s||'—'];return `<span class="badge" style="background:${c[0]};color:${c[1]};">${c[2]}</span>`;}
+function kpi(l,v,ic,col,sub,bg){return `<div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><div style="font-size:11px;color:#5d6b7e;font-weight:600;margin-bottom:4px;">${l}</div><div style="font-size:22px;font-weight:900;color:${col};">${v}</div><div style="font-size:11px;color:#5d6b7e;margin-top:3px;">${sub}</div></div><div style="width:40px;height:40px;border-radius:10px;background:${bg};display:flex;align-items:center;justify-content:center;"><i class="fas fa-${ic}" style="color:${col};font-size:15px;"></i></div></div></div>`;}
+function sRow(l,c,col){return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F4F7FA;"><div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:50%;background:${col};"></div><span style="font-size:13px;color:#4f5f75;">${l}</span></div><span style="font-weight:700;color:${col};">${c}</span></div>`;}
+function ib(l,v){return `<div style="background:#F4F7FA;border-radius:8px;padding:10px 14px;"><div style="font-size:11px;color:#5d6b7e;margin-bottom:3px;">${l}</div><div style="font-size:14px;font-weight:600;">${v}</div></div>`;}
 function openModal(id){document.getElementById(id)?.classList.add('open');}
 function closeModal(id){document.getElementById(id)?.classList.remove('open');}
 function showToast(msg,type='success'){const d=document.createElement('div');d.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;padding:11px 22px;border-radius:10px;background:${type==='error'?'#dc2626':'#059669'};color:white;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.15);font-family:'Tajawal',sans-serif;`;d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),3200);}
@@ -525,15 +525,15 @@ function showLoginScreen(){
   document.querySelector('.main').style.marginRight='0';
   document.getElementById('content').innerHTML=`
   <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
-    <div style="background:white;border:1px solid #e8e8e8;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
+    <div style="background:white;border:1px solid #e3e8ef;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
       <div style="text-align:center;margin-bottom:28px;">
-        <div style="display:flex;justify-content:center;margin:0 auto 14px;"><img src="/assets/mizan-mark.svg" alt="" class="mz-mark" width="56" height="56" style="width:56px;height:56px"/></div>
-        <div style="font-size:20px;font-weight:800;color:#202020;">Super Admin</div>
-        <div style="font-size:13px;color:#646464;margin-top:4px;">ميزان · لوحة إدارة المنصة</div>
+        <div style="display:flex;justify-content:center;margin:0 auto 14px;"><img src="/assets/isoradar-mark.svg" alt="" class="mz-mark" width="56" height="56" style="width:56px;height:56px"/></div>
+        <div style="font-size:20px;font-weight:800;color:#142D4E;">Super Admin</div>
+        <div style="font-size:13px;color:#5d6b7e;margin-top:4px;">آيزو رادار · لوحة إدارة المنصة</div>
       </div>
       <div id="le" style="display:none;background:#fee2e2;border:1px solid #fca5a5;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:5px;">البريد الإلكتروني</label><input type="email" id="sa-em" class="form-input" placeholder="admin@company.com" autocomplete="username"/></div>
-      <div style="margin-bottom:20px;"><label style="font-size:12px;color:#646464;font-weight:600;display:block;margin-bottom:5px;">كلمة المرور</label><input type="password" id="sa-pw" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:5px;">البريد الإلكتروني</label><input type="email" id="sa-em" class="form-input" placeholder="admin@company.com" autocomplete="username"/></div>
+      <div style="margin-bottom:20px;"><label style="font-size:12px;color:#5d6b7e;font-weight:600;display:block;margin-bottom:5px;">كلمة المرور</label><input type="password" id="sa-pw" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <button onclick="doLogin()" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;"><i class="fas fa-sign-in-alt ml-2"></i>دخول لوحة التحكم</button>
     </div>
   </div>`;
@@ -558,6 +558,6 @@ async function doLogin(){
 // ── Init ─────────────────────────────────────────────────────
 (function(){const t=getToken();if(!t){showLoginScreen();return;}navigate('dashboard');})();
 </script>
-<script src="/assets/mizan-admin.js"></script>
+<script src="/assets/isoradar-admin.js"></script>
 </body>
 </html>

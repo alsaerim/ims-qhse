@@ -6,16 +6,16 @@
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="ميزان"/>
-  <meta name="theme-color" content="#0a4f99"/>
+  <meta name="apple-mobile-web-app-title" content="آيزو رادار"/>
+  <meta name="theme-color" content="#125f57"/>
   <link rel="manifest" href="/manifest.json"/>
   <link rel="apple-touch-icon" href="/icon-192.png"/>
-  <title>ميزان — تطبيق الميدان</title>
+  <title>آيزو رادار — تطبيق الميدان</title>
   <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = { theme: { extend: {
   fontFamily: { sans: ['Plus Jakarta Sans','IBM Plex Sans Arabic','ui-sans-serif','system-ui','sans-serif'] },
-  colors: { blue: {50:'#f2f8fd',100:'#e3effb',200:'#c9e1f8',300:'#9cc8f2',400:'#5aa3eb',500:'#2a86e0',600:'#0b6bcb',700:'#0a58ad',800:'#0a4f99',900:'#083f7a'}, indigo: {50:'#f2f8fd',100:'#e3effb',200:'#c9e1f8',300:'#9cc8f2',400:'#5aa3eb',500:'#2a86e0',600:'#0b6bcb',700:'#0a58ad',800:'#0a4f99',900:'#083f7a'}, slate: {50:'#f8f9fa',100:'#f1f2f4',200:'#e8e8e8',300:'#d4d4d4',400:'#9a9a9a',500:'#646464',600:'#4a4a4a',700:'#2a2a2a',800:'#202020',900:'#111111'}, gray: {50:'#f8f9fa',100:'#f1f2f4',200:'#e8e8e8',300:'#d4d4d4',400:'#9a9a9a',500:'#646464',600:'#4a4a4a',700:'#2a2a2a',800:'#202020',900:'#111111'} },
+  colors: { blue: {50:'#f1faf8',100:'#e3f5f2',200:'#bfe8e1',300:'#86d4c8',400:'#4fbfae',500:'#22A699',600:'#17796f',700:'#125f57',800:'#0f4c46',900:'#0c3d39'}, indigo: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, slate: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, gray: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'} },
 } } };
 </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
@@ -23,22 +23,22 @@ tailwind.config = { theme: { extend: {
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap');
     *{font-family:'Tajawal',sans-serif;-webkit-tap-highlight-color:transparent;}
     :root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
-    body{background:#f1f2f4;color:#202020;overflow-x:hidden;}
-    .topbar{background:linear-gradient(135deg,#0a4f99,#2a86e0);padding:calc(var(--safe-top) + 14px) 16px 14px;position:sticky;top:0;z-index:50;}
-    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e8e8e8;padding:8px 0 calc(var(--safe-bottom) + 8px);z-index:50;display:flex;justify-content:space-around;}
+    body{background:#eef2f6;color:#142D4E;overflow-x:hidden;}
+    .topbar{background:linear-gradient(135deg,#125f57,#22A699);padding:calc(var(--safe-top) + 14px) 16px 14px;position:sticky;top:0;z-index:50;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e3e8ef;padding:8px 0 calc(var(--safe-bottom) + 8px);z-index:50;display:flex;justify-content:space-around;}
     /* Bottom Sheet */
     .bs-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;}
     .bs-overlay.open{opacity:1;pointer-events:all;}
     .bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:white;border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,0,.67,0);max-height:90dvh;overflow-y:auto;padding-bottom:calc(var(--safe-bottom) + 16px);}
     .bottom-sheet.open{transform:translateY(0);}
-    .bs-handle{width:40px;height:4px;background:#e8e8e8;border-radius:2px;margin:12px auto 4px;}
+    .bs-handle{width:40px;height:4px;background:#e3e8ef;border-radius:2px;margin:12px auto 4px;}
     .action-row{display:flex;gap:8px;padding:12px 16px 8px;}
     .action-btn{flex:1;padding:12px;border-radius:14px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;border:none;transition:all .15s;}
     .action-btn:active{transform:scale(.97);}
     .icon-btn{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:all .15s;flex-shrink:0;}
     .icon-btn:active{transform:scale(.92);}
-    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;cursor:pointer;color:#767676;transition:color .2s;}
-    .bnav-item.active{color:#0a4f99;}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;cursor:pointer;color:#5d6b7e;transition:color .2s;}
+    .bnav-item.active{color:#125f57;}
     .bnav-item i{font-size:20px;}
     .bnav-item span{font-size:10px;font-weight:600;}
     .bnav-badge{position:absolute;top:-4px;left:-4px;min-width:16px;height:16px;background:#dc2626;border-radius:8px;color:white;font-size:9px;font-weight:bold;display:flex;align-items:center;justify-content:center;padding:0 3px;}
@@ -46,19 +46,19 @@ tailwind.config = { theme: { extend: {
     .page.active{display:block;}
     .card{background:white;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
     .btn-full{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:none;transition:all .2s;}
-    .btn-primary{background:#0a4f99;color:white;}
-    .btn-primary:active{background:#083f7a;}
+    .btn-primary{background:#125f57;color:white;}
+    .btn-primary:active{background:#0f4c46;}
     .btn-success{background:#059669;color:white;}
     .btn-danger{background:#dc2626;color:white;}
-    .btn-outline{background:white;color:#0a4f99;border:2px solid #0a4f99;}
-    .form-input{width:100%;padding:12px 14px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:15px;background:white;}
-    .form-input:focus{outline:none;border-color:#2a86e0;box-shadow:0 0 0 3px rgba(42,134,224,.15);}
+    .btn-outline{background:white;color:#125f57;border:2px solid #125f57;}
+    .form-input{width:100%;padding:12px 14px;border:1.5px solid #e3e8ef;border-radius:10px;font-size:15px;background:white;}
+    .form-input:focus{outline:none;border-color:#22A699;box-shadow:0 0 0 3px rgba(34,166,153,.15);}
     .badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;display:inline-block;}
     .badge-red{background:#fee2e2;color:#dc2626;}
     .badge-yellow{background:#fef3c7;color:#d97706;}
     .badge-green{background:#d1fae5;color:#059669;}
-    .badge-blue{background:#e3effb;color:#0a58ad;}
-    .badge-gray{background:#f1f2f4;color:#646464;}
+    .badge-blue{background:#e3f5f2;color:#17796f;}
+    .badge-gray{background:#eef2f6;color:#5d6b7e;}
 
     /* Camera styles */
     #camera-view{width:100%;border-radius:14px;background:#000;overflow:hidden;position:relative;}
@@ -71,51 +71,51 @@ tailwind.config = { theme: { extend: {
     .camera-corner.tr{top:12px;left:12px;border-top-width:3px;border-left-width:3px;border-radius:4px 0 0 0;}
     .camera-corner.bl{bottom:12px;right:12px;border-bottom-width:3px;border-right-width:3px;border-radius:0 0 0 4px;}
     .camera-corner.br{bottom:12px;left:12px;border-bottom-width:3px;border-left-width:3px;border-radius:0 0 4px 0;}
-    .shutter-btn{width:70px;height:70px;border-radius:50%;background:white;border:4px solid #2a86e0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 4px 15px rgba(0,0,0,.3);}
-    .shutter-btn:active{transform:scale(.92);background:#e3effb;}
-    .photo-thumb{width:70px;height:70px;object-fit:cover;border-radius:10px;border:2px solid #e8e8e8;}
-    .pull-refresh{display:flex;align-items:center;justify-content:center;padding:12px;color:#767676;font-size:13px;}
+    .shutter-btn{width:70px;height:70px;border-radius:50%;background:white;border:4px solid #22A699;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 4px 15px rgba(0,0,0,.3);}
+    .shutter-btn:active{transform:scale(.92);background:#e3f5f2;}
+    .photo-thumb{width:70px;height:70px;object-fit:cover;border-radius:10px;border:2px solid #e3e8ef;}
+    .pull-refresh{display:flex;align-items:center;justify-content:center;padding:12px;color:#5d6b7e;font-size:13px;}
 
     /* Inspection checklist styles */
-    .check-item{display:flex;align-items:center;gap:12px;padding:14px;background:white;border-radius:12px;border:1.5px solid #e8e8e8;margin-bottom:10px;transition:border-color .2s;}
+    .check-item{display:flex;align-items:center;gap:12px;padding:14px;background:white;border-radius:12px;border:1.5px solid #e3e8ef;margin-bottom:10px;transition:border-color .2s;}
     .check-item.pass{border-color:#059669;background:#f0fdf4;}
     .check-item.fail{border-color:#dc2626;background:#fef2f2;}
-    .check-item.na{border-color:#767676;background:#f8f9fa;opacity:.7;}
+    .check-item.na{border-color:#5d6b7e;background:#F4F7FA;opacity:.7;}
     .result-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:all .15s;}
     .result-btn.pass-btn{background:#d1fae5;color:#059669;}
     .result-btn.fail-btn{background:#fee2e2;color:#dc2626;}
-    .result-btn.na-btn{background:#f1f2f4;color:#646464;}
+    .result-btn.na-btn{background:#eef2f6;color:#5d6b7e;}
     .result-btn.active-pass{background:#059669;color:white;}
     .result-btn.active-fail{background:#dc2626;color:white;}
-    .result-btn.active-na{background:#767676;color:white;}
+    .result-btn.active-na{background:#5d6b7e;color:white;}
 
     /* Login screen */
-    .login-bg{min-height:100dvh;background:linear-gradient(135deg,#111111 0%,#0a4f99 60%,#2a86e0 100%);}
+    .login-bg{min-height:100dvh;background:linear-gradient(135deg,#0d1f37 0%,#125f57 60%,#22A699 100%);}
     @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
     .fade-up{animation:fadeInUp .4s ease;}
     @keyframes pulse-ring{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.4);opacity:0;}}
-    .pulse::before{content:'';position:absolute;inset:-6px;border-radius:50%;background:rgba(42,134,224,.3);animation:pulse-ring 1.5s ease-out infinite;}
+    .pulse::before{content:'';position:absolute;inset:-6px;border-radius:50%;background:rgba(34,166,153,.3);animation:pulse-ring 1.5s ease-out infinite;}
     /* Offline bar */
     #offline-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#d97706;color:white;padding:8px 16px;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:600;}
     /* PWA install prompt */
     /* ── Polish: contrast, legibility, browser surfaces ── */
     .bnav-item span{font-size:11px;}
-    .bnav-item{color:#646464;}
-    .page .text-blue-500{color:#0b6bcb;}
+    .bnav-item{color:#5d6b7e;}
+    .page .text-blue-500{color:#17796f;}
     .page .text-slate-400, .bottom-sheet .text-slate-400,
-    .page [style*="color:#767676"], .bottom-sheet [style*="color:#767676"]{color:#646464 !important;}
+    .page [style*="color:#5d6b7e"], .bottom-sheet [style*="color:#5d6b7e"]{color:#5d6b7e !important;}
     .badge-red{color:#b91c1c;} .badge-yellow{color:#92400e;} .badge-green{color:#047857;}
     .btn-success{background:#047857;}
     #offline-bar{background:#b45309 !important;}
-    ::selection{background:#c9e1f8;color:#202020;}
-    :focus-visible{outline:2px solid #2a86e0;outline-offset:2px;}
+    ::selection{background:#bfe8e1;color:#142D4E;}
+    :focus-visible{outline:2px solid #22A699;outline-offset:2px;}
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}}
-    #install-prompt{display:none;position:fixed;bottom:90px;left:16px;right:16px;z-index:9990;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.2);border:1px solid #e8e8e8;}
+    #install-prompt{display:none;position:fixed;bottom:90px;left:16px;right:16px;z-index:9990;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.2);border:1px solid #e3e8ef;}
   </style>
-<link rel="icon" type="image/svg+xml" href="/assets/mizan-mark.svg"/>
+<link rel="icon" type="image/svg+xml" href="/assets/isoradar-mark.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Sometype+Mono:wght@400;500&display=swap"/>
-<link rel="stylesheet" href="/assets/mizan.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="/assets/isoradar.css"/>
 </head>
 <body>
 
@@ -129,9 +129,9 @@ tailwind.config = { theme: { extend: {
 <!-- PWA INSTALL PROMPT -->
 <div id="install-prompt">
   <div class="flex items-center gap-3">
-    <img src="/assets/mizan-mark.svg" alt="" class="mz-mark" width="48" height="48" style="width:48px;height:48px"/>
+    <img src="/assets/isoradar-mark.svg" alt="" class="mz-mark" width="48" height="48" style="width:48px;height:48px"/>
     <div class="flex-1">
-      <div class="font-bold text-slate-800 text-sm">ثبّت تطبيق ميزان</div>
+      <div class="font-bold text-slate-800 text-sm">ثبّت تطبيق آيزو رادار</div>
       <div class="text-xs text-slate-500 mt-0.5">وصول سريع + يعمل بدون إنترنت</div>
     </div>
   </div>
@@ -146,9 +146,9 @@ tailwind.config = { theme: { extend: {
   <div class="w-full max-w-sm fade-up">
     <div class="text-center mb-8">
       <div class="relative inline-block">
-        <div class="mx-auto mb-4"><img src="/assets/mizan-mark.svg" alt="" class="mz-mark" width="80" height="80" style="width:80px;height:80px"/></div>
+        <div class="mx-auto mb-4"><img src="/assets/isoradar-mark.svg" alt="" class="mz-mark" width="80" height="80" style="width:80px;height:80px"/></div>
       </div>
-      <h1 class="text-2xl font-black text-white">ميزان</h1>
+      <h1 class="text-2xl font-black text-white">آيزو رادار</h1>
       <p class="text-blue-200 text-sm mt-1">نظام الامتثال المتكامل</p>
       <div class="flex justify-center gap-2 mt-3">
         <span class="px-2 py-0.5 rounded bg-white/10 text-white text-xs">ISO 9001</span>
@@ -181,9 +181,9 @@ tailwind.config = { theme: { extend: {
   <div class="topbar">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <img src="/assets/mizan-mark.svg" alt="" class="mz-mark" width="36" height="36" style="width:36px;height:36px"/>
+        <img src="/assets/isoradar-mark.svg" alt="" class="mz-mark" width="36" height="36" style="width:36px;height:36px"/>
         <div>
-          <div class="text-white font-bold text-base leading-tight">ميزان</div>
+          <div class="text-white font-bold text-base leading-tight">آيزو رادار</div>
           <div class="text-blue-200 text-xs" id="m-user-name">مهندس الميدان</div>
         </div>
       </div>
@@ -918,7 +918,7 @@ tailwind.config = { theme: { extend: {
 
 <script>
 // ═══════════════════════════════════════════════════
-// MIZAN MOBILE APP
+// ISO RADAR MOBILE APP
 // ═══════════════════════════════════════════════════
 const MAPI = 'https://ims-qhse-backend-production.up.railway.app';
 let mState = {
@@ -1443,7 +1443,7 @@ async function loadTasksList() {
   }
 
   const typeIcon={inspection:'clipboard-check',nc:'exclamation-triangle',rca:'search',audit:'file-search'};
-  const typeClr ={inspection:'#2a86e0',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
+  const typeClr ={inspection:'#22A699',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
   const typeLbl ={inspection:'تفتيش',nc:'NC',rca:'RCA',audit:'تدقيق'};
   const priClr  ={critical:'badge-red',high:'badge-yellow',medium:'badge-blue',low:'badge-gray'};
   const priLbl  ={critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
@@ -1451,7 +1451,7 @@ async function loadTasksList() {
   el.innerHTML = tasks.map(t=>{
     const isOverdue = t.due_date&&new Date(t.due_date)<now&&t.status!=='completed';
     const daysLeft  = t.due_date?Math.ceil((new Date(t.due_date)-now)/86400000):null;
-    const clr       = typeClr[t.type]||'#646464';
+    const clr       = typeClr[t.type]||'#5d6b7e';
     const ic        = typeIcon[t.type]||'tasks';
     return `<div class="card p-4 mb-3" style="border-right:3px solid ${clr}">
       <div class="flex items-start gap-3">
@@ -1469,7 +1469,7 @@ async function loadTasksList() {
           </div>
         </div>
         <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
-          <button onclick="viewTask('${t.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+          <button onclick="viewTask('${t.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
           <button onclick="editTask('${t.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
         </div>
       </div>
@@ -1481,13 +1481,13 @@ function viewTask(id) {
   mFetch('/api/tasks').then(data=>{
     const t   = mList(data).find(x=>x.id===id);
     if (!t) return;
-    const typeClr={inspection:'#2a86e0',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
+    const typeClr={inspection:'#22A699',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
     const typeLbl={inspection:'تفتيش',nc:'NC',rca:'RCA',audit:'تدقيق'};
-    const priClr={critical:'#dc2626',high:'#d97706',medium:'#2a86e0',low:'#059669'};
+    const priClr={critical:'#dc2626',high:'#d97706',medium:'#22A699',low:'#059669'};
     const priLbl={critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
     const stLbl={pending:'معلّقة',in_progress:'جارية',completed:'مكتملة'};
-    const stClr={pending:'#d97706',in_progress:'#2a86e0',completed:'#059669'};
-    const clr   = typeClr[t.type]||'#646464';
+    const stClr={pending:'#d97706',in_progress:'#22A699',completed:'#059669'};
+    const clr   = typeClr[t.type]||'#5d6b7e';
     const now   = new Date();
     const isOverdue = t.due_date&&new Date(t.due_date)<now&&t.status!=='completed';
     openBS(`
@@ -1506,13 +1506,13 @@ function viewTask(id) {
             <div class="text-xs text-slate-500 mb-1">النوع</div>
             <div class="font-bold text-sm" style="color:${clr}">${typeLbl[t.type]||t.type}</div>
           </div>
-          <div class="p-3 rounded-xl" style="background:${priClr[t.priority]||'#646464'}10">
+          <div class="p-3 rounded-xl" style="background:${priClr[t.priority]||'#5d6b7e'}10">
             <div class="text-xs text-slate-500 mb-1">الأولوية</div>
-            <div class="font-bold text-sm" style="color:${priClr[t.priority]||'#646464'}">${priLbl[t.priority]||''}</div>
+            <div class="font-bold text-sm" style="color:${priClr[t.priority]||'#5d6b7e'}">${priLbl[t.priority]||''}</div>
           </div>
-          <div class="p-3 rounded-xl" style="background:${stClr[t.status]||'#646464'}10">
+          <div class="p-3 rounded-xl" style="background:${stClr[t.status]||'#5d6b7e'}10">
             <div class="text-xs text-slate-500 mb-1">الحالة</div>
-            <div class="font-bold text-sm" style="color:${stClr[t.status]||'#646464'}">${stLbl[t.status]||t.status}</div>
+            <div class="font-bold text-sm" style="color:${stClr[t.status]||'#5d6b7e'}">${stLbl[t.status]||t.status}</div>
           </div>
           <div class="p-3 rounded-xl" style="background:${isOverdue?'#fee2e2':'#f0fdf4'}">
             <div class="text-xs text-slate-500 mb-1">الموعد</div>
@@ -1548,8 +1548,8 @@ function editTask(id) {
   mFetch('/api/tasks').then(data=>{
     const t   = mList(data).find(x=>x.id===id);
     if (!t) return;
-    const typeClr={inspection:'#2a86e0',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
-    const clr   = typeClr[t.type]||'#646464';
+    const typeClr={inspection:'#22A699',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
+    const clr   = typeClr[t.type]||'#5d6b7e';
     openBS(`
       <div class="px-4 pb-4 space-y-3">
         <div class="flex items-center gap-2 mt-2 mb-3">
@@ -1642,7 +1642,7 @@ async function loadRisksList() {
   const mitg   = risks.filter(r=>r.status==='mitigated'||r.status==='closed').length;
 
   if (sumEl) sumEl.innerHTML = [
-    {v:risks.length,l:'إجمالي',c:'#2a86e0'},
+    {v:risks.length,l:'إجمالي',c:'#22A699'},
     {v:crit,        l:'حرجة',  c:'#dc2626'},
     {v:mitg,        l:'معالجة',c:'#059669'},
   ].map(k=>`<div class="card p-3 text-center"><div class="text-xl font-black" style="color:${k.c}">${k.v}</div><div class="text-xs text-slate-500">${k.l}</div></div>`).join('');
@@ -1650,7 +1650,7 @@ async function loadRisksList() {
   if (!risks.length) { el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد مخاطر</div>'; return; }
 
   const sorted = risks.slice().sort((a,b)=>getRpn(b)-getRpn(a));
-  const lvClr  = rpn=>rpn>=15?'#dc2626':rpn>=8?'#d97706':'#2a86e0';
+  const lvClr  = rpn=>rpn>=15?'#dc2626':rpn>=8?'#d97706':'#22A699';
   const lvAr   = rpn=>rpn>=15?'حرجة':rpn>=8?'عالية':'متوسطة';
 
   el.innerHTML = sorted.map(r=>{
@@ -1672,7 +1672,7 @@ async function loadRisksList() {
           <div class="text-xs text-slate-400 mt-1"><i class="fas fa-user ml-1"></i>${owns}</div>
         </div>
         <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
-          <button onclick="viewRisk('${r.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+          <button onclick="viewRisk('${r.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
           <button onclick="editRisk('${r.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
         </div>
       </div>
@@ -1685,7 +1685,7 @@ function viewRisk(id) {
     const r   = mList(data).find(x=>x.id===id);
     if (!r) return;
     const rpn  = r.probability * r.impact;
-    const clr  = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#2a86e0';
+    const clr  = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#22A699';
     const lv   = rpn>=15?'حرجة':rpn>=8?'عالية':'متوسطة';
     const owns = Array.isArray(r.owners)?r.owners:(r.owners?[r.owners]:[]);
     const mits = Array.isArray(r.mitigation_points)?r.mitigation_points:(r.mitigation?[r.mitigation]:[]);
@@ -1836,7 +1836,7 @@ async function loadLeanList() {
   const saving= wastes.reduce((s,w)=>s+(w.estimated_saving||0),0);
 
   if (sumEl) sumEl.innerHTML=[
-    {v:wastes.length,l:'إجمالي',c:'#2a86e0'},
+    {v:wastes.length,l:'إجمالي',c:'#22A699'},
     {v:openW,l:'مفتوح',c:'#dc2626'},
     {v:inPW,l:'جارٍ',c:'#d97706'},
     {v:(saving/1000).toFixed(0)+'K',l:'وفر ر.س',c:'#059669'},
@@ -1847,18 +1847,18 @@ async function loadLeanList() {
   if (!wastes.length) { listEl.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد سجلات هدر</div>'; return; }
 
   const mudaAr ={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
-  const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#0b6bcb',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#646464'};
+  const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#17796f',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#5d6b7e'};
   const mudaIc ={defects:'exclamation-triangle',waiting:'clock',overproduction:'copy',motion:'walking',inventory:'boxes',over_processing:'cogs',transportation:'truck',skills:'user-slash'};
   const stBadge={open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
   const stLbl  ={open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
   const dmaicAr={define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
-  const dmaicCl={define:'#2a86e0',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#646464'};
+  const dmaicCl={define:'#22A699',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#5d6b7e'};
   const priBadge={critical:'badge-red',high:'badge-yellow',medium:'badge-blue',low:'badge-gray'};
   const priLbl ={critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
 
   listEl.innerHTML=wastes.map(w=>{
-    const mClr=mudaClr[w.muda_type]||'#646464';
-    const dClr=dmaicCl[w.dmaic_phase]||'#646464';
+    const mClr=mudaClr[w.muda_type]||'#5d6b7e';
+    const dClr=dmaicCl[w.dmaic_phase]||'#5d6b7e';
     return `<div class="card p-4 mb-3">
       <div class="flex items-start gap-3">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${mClr}15">
@@ -1877,7 +1877,7 @@ async function loadLeanList() {
         <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
           <div class="font-black text-sm" style="color:${w.impact_score>=8?'#dc2626':w.impact_score>=5?'#d97706':'#059669'}">${w.impact_score}/10</div>
           <div class="flex gap-1.5">
-            <button onclick="viewLean('${w.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+            <button onclick="viewLean('${w.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
             <button onclick="editLean('${w.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
           </div>
         </div>
@@ -1891,13 +1891,13 @@ function viewLean(id) {
     const w=mList(data).find(x=>x.id===id);
     if(!w) return;
     const mudaAr={defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط',motion:'الحركة',inventory:'المخزون',over_processing:'معالجة زائدة',transportation:'النقل',skills:'إهدار مهارات'};
-    const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#0b6bcb',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#646464'};
+    const mudaClr={defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#17796f',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#5d6b7e'};
     const dmaicAr={define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
-    const dmaicCl={define:'#2a86e0',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#646464'};
+    const dmaicCl={define:'#22A699',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#5d6b7e'};
     const stClr  ={open:'#dc2626',in_progress:'#d97706',closed:'#059669'};
     const stLbl  ={open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
     const dmaicSteps=['define','measure','analyze','improve','control'];
-    const mClr=mudaClr[w.muda_type]||'#646464';
+    const mClr=mudaClr[w.muda_type]||'#5d6b7e';
 
     openBS(`
       <div class="px-4 pb-4 space-y-4">
@@ -1925,8 +1925,8 @@ function viewLean(id) {
             <div class="font-black text-green-700 text-sm">${(w.estimated_saving||0).toLocaleString('ar-SA')}</div>
             <div class="text-xs text-slate-400">وفر متوقع ر.س</div>
           </div>
-          <div class="p-3 rounded-xl text-center" style="background:${stClr[w.status]||'#646464'}10">
-            <div class="font-bold text-sm" style="color:${stClr[w.status]||'#646464'}">${stLbl[w.status]||w.status}</div>
+          <div class="p-3 rounded-xl text-center" style="background:${stClr[w.status]||'#5d6b7e'}10">
+            <div class="font-bold text-sm" style="color:${stClr[w.status]||'#5d6b7e'}">${stLbl[w.status]||w.status}</div>
             <div class="text-xs text-slate-400">الحالة</div>
           </div>
         </div>
@@ -1941,7 +1941,7 @@ function viewLean(id) {
               return `<div class="flex items-center flex-1">
                 <div class="flex-1 flex flex-col items-center">
                   <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:${isA||isPast?c:c+'40'}">${isPast&&!isA?'✓':isA?'●':'○'}</div>
-                  <div class="text-xs mt-0.5 font-${isA?'bold':'normal'}" style="color:${isA?c:'#767676'}">${dmaicAr[ph]}</div>
+                  <div class="text-xs mt-0.5 font-${isA?'bold':'normal'}" style="color:${isA?c:'#5d6b7e'}">${dmaicAr[ph]}</div>
                 </div>
                 ${i<4?`<div class="h-0.5 flex-1 mx-1 mb-4" style="background:${dmaicCl[arr[i+1]]}40"></div>`:''}
               </div>`;
@@ -2045,12 +2045,12 @@ async function loadRCAList() {
   if (!items.length) { el.innerHTML = '<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تذاكر RCA</div>'; return; }
 
   const methLbl  = {'5_whys':'5 Whys','ishikawa':'Ishikawa','fmea':'FMEA','dmaic':'DMAIC'};
-  const methClr  = {'5_whys':'#2a86e0','ishikawa':'#7c3aed','fmea':'#dc2626','dmaic':'#059669'};
+  const methClr  = {'5_whys':'#22A699','ishikawa':'#7c3aed','fmea':'#dc2626','dmaic':'#059669'};
   const stBadge  = {open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
   const stLbl    = {open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
 
   el.innerHTML = items.map(r => {
-    const mClr = methClr[r.methodology]||'#646464';
+    const mClr = methClr[r.methodology]||'#5d6b7e';
     return `<div class="card p-4 mb-3">
       <div class="flex items-start gap-3">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${mClr}15">
@@ -2067,7 +2067,7 @@ async function loadRCAList() {
           </div>
         </div>
         <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
-          <button onclick="showRCADetail('${r.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+          <button onclick="showRCADetail('${r.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
           <button onclick="editRCAMethod('${r.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
         </div>
       </div>
@@ -2084,7 +2084,7 @@ async function showRCADetail(id) {
   const methLbl = {'5_whys':'5 Whys','ishikawa':'Ishikawa','fmea':'FMEA','dmaic':'DMAIC'};
   const stClr   = {open:'#dc2626',in_progress:'#d97706',closed:'#059669'};
   const stLbl   = {open:'مفتوح',in_progress:'جارٍ',closed:'مغلق'};
-  const clr     = stClr[r.status]||'#646464';
+  const clr     = stClr[r.status]||'#5d6b7e';
 
   const methods = [
     {id:'5whys',    label:'5 Whys',    icon:'question-circle'},
@@ -2114,7 +2114,7 @@ async function showRCADetail(id) {
         ${methods.map(m=>`<button onclick="switchRCATab('${m.id}')"
           class="rca-tab-btn flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border-2"
           id="rca-tab-${m.id}"
-          style="border-color:${m.id===defaultTab?'#2a86e0':'#e8e8e8'};background:${m.id===defaultTab?'#2a86e0':'white'};color:${m.id===defaultTab?'white':'#646464'}">
+          style="border-color:${m.id===defaultTab?'#22A699':'#e3e8ef'};background:${m.id===defaultTab?'#22A699':'white'};color:${m.id===defaultTab?'white':'#5d6b7e'}">
           <i class="fas fa-${m.icon} text-xs"></i>${m.label}
         </button>`).join('')}
       </div>
@@ -2124,7 +2124,7 @@ async function showRCADetail(id) {
         <div class="card p-4 space-y-3">
           <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-question-circle text-blue-400 ml-2"></i>تحليل 5 Whys</h4>
           ${[1,2,3,4,5].map(n=>`<div class="flex gap-3">
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-xs mt-1" style="background:${n<=2?'#2a86e0':n<=4?'#7c3aed':'#dc2626'}">${n}</div>
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-xs mt-1" style="background:${n<=2?'#22A699':n<=4?'#7c3aed':'#dc2626'}">${n}</div>
             <div class="flex-1"><div class="text-xs text-slate-400 mb-1">لماذا؟ (Why ${n})</div>
               <textarea class="form-input text-sm" rows="2" id="m-why-${n}" placeholder="السبب...">${r['why_'+n]||''}</textarea></div>
           </div>`).join('')}
@@ -2141,7 +2141,7 @@ async function showRCADetail(id) {
         <div class="card p-4 space-y-3">
           <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-project-diagram text-purple-500 ml-2"></i>Ishikawa — 6M</h4>
           ${[
-            {key:'man',label:'الإنسان',color:'#2a86e0',icon:'user'},
+            {key:'man',label:'الإنسان',color:'#22A699',icon:'user'},
             {key:'machine',label:'الآلة',color:'#7c3aed',icon:'cogs'},
             {key:'method',label:'الأسلوب',color:'#059669',icon:'clipboard-list'},
             {key:'material',label:'المواد',color:'#d97706',icon:'boxes'},
@@ -2243,7 +2243,7 @@ function switchRCATab(tab) {
     const panel = document.getElementById('rca-panel-'+t);
     const btn   = document.getElementById('rca-tab-'+t);
     if (panel) panel.style.display = t===tab?'':'none';
-    if (btn) { btn.style.background=t===tab?'#2a86e0':'white'; btn.style.color=t===tab?'white':'#646464'; btn.style.borderColor=t===tab?'#2a86e0':'#e8e8e8'; }
+    if (btn) { btn.style.background=t===tab?'#22A699':'white'; btn.style.color=t===tab?'white':'#5d6b7e'; btn.style.borderColor=t===tab?'#22A699':'#e3e8ef'; }
   });
 }
 
@@ -2340,20 +2340,20 @@ async function loadPlansList() {
   const avgP  = plans.length?Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length):0;
 
   if (sumEl) sumEl.innerHTML=[
-    {v:plans.length,l:'إجمالي',c:'#2a86e0'},
+    {v:plans.length,l:'إجمالي',c:'#22A699'},
     {v:inProg,      l:'جارية', c:'#d97706'},
     {v:done,        l:'مكتملة',c:'#059669'},
   ].map(k=>`<div class="card p-3 text-center"><div class="text-xl font-black" style="color:${k.c}">${k.v}</div><div class="text-xs text-slate-500">${k.l}</div></div>`).join('');
 
   if (!plans.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد مبادرات</div>';return;}
 
-  const stClr  ={completed:'#059669',in_progress:'#d97706',planned:'#2a86e0',delayed:'#dc2626'};
+  const stClr  ={completed:'#059669',in_progress:'#d97706',planned:'#22A699',delayed:'#dc2626'};
   const stLbl  ={completed:'مكتملة',in_progress:'جارية',planned:'مخطط',delayed:'متأخرة'};
   const stBadge={completed:'badge-green',in_progress:'badge-yellow',planned:'badge-gray',delayed:'badge-red'};
   const months =['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
   el.innerHTML=plans.map(p=>{
-    const clr  =stClr[p.status]||'#646464';
+    const clr  =stClr[p.status]||'#5d6b7e';
     const owns =Array.isArray(p.owners)?p.owners.join('، '):(p.owner||'—');
     return `<div class="card p-4 mb-3" style="border-right:3px solid ${clr}">
       <div class="flex items-start gap-3 mb-2">
@@ -2370,12 +2370,12 @@ async function loadPlansList() {
         <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
           <div class="text-xl font-black" style="color:${clr}">${p.progress}%</div>
           <div class="flex gap-1.5">
-            <button onclick="viewPlan('${p.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+            <button onclick="viewPlan('${p.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
             <button onclick="editPlan('${p.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
           </div>
         </div>
       </div>
-      <div style="height:6px;background:#e8e8e8;border-radius:3px;overflow:hidden">
+      <div style="height:6px;background:#e3e8ef;border-radius:3px;overflow:hidden">
         <div style="width:${p.progress}%;height:100%;background:${clr};border-radius:3px"></div>
       </div>
       <div class="text-xs text-slate-400 mt-1.5"><i class="fas fa-users ml-1"></i>${owns}</div>
@@ -2387,10 +2387,10 @@ function viewPlan(id) {
   mFetch('/api/annual-plans').then(data=>{
     const p=mList(data).find(x=>x.id===id);
     if(!p) return;
-    const stClr={completed:'#059669',in_progress:'#d97706',planned:'#2a86e0',delayed:'#dc2626'};
+    const stClr={completed:'#059669',in_progress:'#d97706',planned:'#22A699',delayed:'#dc2626'};
     const stLbl={completed:'مكتملة',in_progress:'جارية',planned:'مخطط',delayed:'متأخرة'};
     const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-    const clr=stClr[p.status]||'#2a86e0';
+    const clr=stClr[p.status]||'#22A699';
     const owns=Array.isArray(p.owners)?p.owners:(p.owner?[p.owner]:[]);
     openBS(`
       <div class="px-4 pb-4 space-y-4">
@@ -2404,12 +2404,12 @@ function viewPlan(id) {
         </div>
         <div class="p-4 rounded-xl" style="background:${clr}10;border:1px solid ${clr}20">
           <div class="flex justify-between mb-2"><span class="text-sm font-bold text-slate-700">نسبة الإنجاز</span><span class="text-xl font-black" style="color:${clr}">${p.progress}%</span></div>
-          <div style="height:10px;background:#e8e8e8;border-radius:5px;overflow:hidden">
+          <div style="height:10px;background:#e3e8ef;border-radius:5px;overflow:hidden">
             <div style="width:${p.progress}%;height:100%;background:${clr};border-radius:5px;transition:width .5s"></div>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الميزانية</div><div class="font-bold text-sm text-slate-800">${(p.budget||0).toLocaleString('ar-SA')} ر.س</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الآيزو رادارية</div><div class="font-bold text-sm text-slate-800">${(p.budget||0).toLocaleString('ar-SA')} ر.س</div></div>
           <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الأولوية</div><div class="font-bold text-sm text-slate-800">${p.priority==='critical'?'حرجة':p.priority==='high'?'عالية':'متوسطة'}</div></div>
         </div>
         ${owns.length?`<div class="p-3 bg-blue-50 rounded-xl"><div class="text-xs font-bold text-blue-700 mb-1"><i class="fas fa-users ml-1"></i>المسؤولون</div><div class="flex flex-wrap gap-1">${owns.map(o=>`<span class="badge badge-blue text-xs">${o}</span>`).join('')}</div></div>`:''}
@@ -2491,7 +2491,7 @@ async function loadInspectionsList() {
   const items = mList(data);
   if (!items.length){el.innerHTML='<div class="card p-6 text-center text-slate-400 text-sm">لا توجد تفتيشات</div>';return;}
 
-  const stClr={completed:'#059669',in_progress:'#d97706',pending:'#2a86e0',overdue:'#dc2626'};
+  const stClr={completed:'#059669',in_progress:'#d97706',pending:'#22A699',overdue:'#dc2626'};
   const stLbl={completed:'مكتمل',in_progress:'جارٍ',pending:'معلق',overdue:'متأخر'};
 
   el.innerHTML=items.map(i=>`
@@ -2504,12 +2504,12 @@ async function loadInspectionsList() {
           <div class="font-semibold text-slate-800 text-sm leading-tight">${i.title}</div>
           <div class="text-xs text-slate-400 mt-0.5">${i.ref_number} · ${i.project_name||'—'}</div>
           <div class="flex gap-2 mt-1.5 items-center flex-wrap">
-            <span class="badge text-xs" style="background:${(stClr[i.status]||'#646464')}15;color:${stClr[i.status]||'#646464'}">${stLbl[i.status]||i.status}</span>
+            <span class="badge text-xs" style="background:${(stClr[i.status]||'#5d6b7e')}15;color:${stClr[i.status]||'#5d6b7e'}">${stLbl[i.status]||i.status}</span>
             ${i.compliance_score!=null?`<span class="font-black text-sm" style="color:${i.compliance_score>=80?'#059669':'#dc2626'}">${i.compliance_score}%</span>`:''}
           </div>
         </div>
         <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
-          <button onclick="viewInspection('${i.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+          <button onclick="viewInspection('${i.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
           <button onclick="editInspection('${i.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
         </div>
       </div>
@@ -2520,9 +2520,9 @@ function viewInspection(id) {
   mFetch('/api/audits').then(data=>{
     const i=mList(data).find(x=>x.id===id);
     if(!i) return;
-    const stClr={completed:'#059669',in_progress:'#d97706',pending:'#2a86e0',overdue:'#dc2626'};
+    const stClr={completed:'#059669',in_progress:'#d97706',pending:'#22A699',overdue:'#dc2626'};
     const stLbl={completed:'مكتمل',in_progress:'جارٍ',pending:'معلق',overdue:'متأخر'};
-    const clr=stClr[i.status]||'#2a86e0';
+    const clr=stClr[i.status]||'#22A699';
     openBS(`
       <div class="px-4 pb-4 space-y-4">
         <div class="flex items-start gap-3 mt-2">
@@ -2538,7 +2538,7 @@ function viewInspection(id) {
         <div class="p-4 rounded-xl text-center" style="background:${i.compliance_score>=80?'#f0fdf4':'#fef2f2'}">
           <div class="text-4xl font-black" style="color:${i.compliance_score>=80?'#059669':'#dc2626'}">${i.compliance_score}%</div>
           <div class="text-xs text-slate-500 mt-1">نسبة الامتثال</div>
-          <div style="height:8px;background:#e8e8e8;border-radius:4px;overflow:hidden;margin-top:8px">
+          <div style="height:8px;background:#e3e8ef;border-radius:4px;overflow:hidden;margin-top:8px">
             <div style="width:${i.compliance_score}%;height:100%;background:${i.compliance_score>=80?'#059669':'#dc2626'};border-radius:4px"></div>
           </div>
         </div>`:
@@ -2554,7 +2554,7 @@ function viewInspection(id) {
           <div class="grid grid-cols-2 gap-2">
             ${['pending','in_progress','completed','overdue'].map(s=>`<button onclick="updateInspStatus('${id}','${s}')"
               class="py-2.5 rounded-xl text-xs font-bold border-2 transition-all active:scale-95"
-              style="border-color:${stClr[s]||'#646464'};background:${i.status===s?stClr[s]||'#646464':'white'};color:${i.status===s?'white':stClr[s]||'#646464'}">${stLbl[s]}</button>`).join('')}
+              style="border-color:${stClr[s]||'#5d6b7e'};background:${i.status===s?stClr[s]||'#5d6b7e':'white'};color:${i.status===s?'white':stClr[s]||'#5d6b7e'}">${stLbl[s]}</button>`).join('')}
           </div>
         </div>
         <button onclick="editInspection('${id}');closeBS()" class="btn-full" style="background:#fef3c7;color:#d97706;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700">
@@ -2638,7 +2638,7 @@ async function loadNCList() {
           ${n.rca_ref?`<div class="mt-1.5 text-xs bg-purple-50 rounded-lg px-2 py-1 text-purple-700"><i class="fas fa-search ml-1"></i>RCA: ${n.rca_ref}</div>`:''}
         </div>
         <div class="flex gap-1.5 flex-shrink-0 mt-0.5">
-          <button onclick="viewNC('${n.id}')" class="icon-btn" style="background:#e3effb"><i class="fas fa-eye text-xs" style="color:#2a86e0"></i></button>
+          <button onclick="viewNC('${n.id}')" class="icon-btn" style="background:#e3f5f2"><i class="fas fa-eye text-xs" style="color:#22A699"></i></button>
           <button onclick="editNC('${n.id}')" class="icon-btn" style="background:#fef3c7"><i class="fas fa-edit text-xs" style="color:#d97706"></i></button>
         </div>
       </div>
@@ -2649,11 +2649,11 @@ function viewNC(id) {
   mFetch('/api/nonconformances').then(data=>{
     const n=mList(data).find(x=>x.id===id);
     if(!n) return;
-    const tClr={critical:'#dc2626',major:'#d97706',minor:'#2a86e0'};
+    const tClr={critical:'#dc2626',major:'#d97706',minor:'#22A699'};
     const tLbl={critical:'حرجة',major:'رئيسية',minor:'ثانوية'};
     const sLbl={open:'مفتوحة',in_progress:'جارية',closed:'مغلقة'};
     const sBadge={open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
-    const clr=tClr[n.type]||'#646464';
+    const clr=tClr[n.type]||'#5d6b7e';
     const now=new Date();
     const isOverdue=n.due_date&&new Date(n.due_date)<now&&n.status!=='closed';
     openBS(`
@@ -3172,7 +3172,7 @@ async function savePasswordM() {
 
 function mToast(msg, type='info') {
   const div = document.createElement('div');
-  const colors = { success:'#059669', error:'#dc2626', info:'#2a86e0', warning:'#d97706' };
+  const colors = { success:'#059669', error:'#dc2626', info:'#22A699', warning:'#d97706' };
   div.style.cssText = `position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:12px;background:${colors[type]||colors.info};color:white;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.3);text-align:center;min-width:200px;max-width:90vw;animation:fadeInUp .3s ease;`;
   div.textContent = msg;
   document.body.appendChild(div);

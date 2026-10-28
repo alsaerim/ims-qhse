@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Mizan — compliance modules for the tenant app (ims_qhse_9.html)
+   ISO Radar — compliance modules for the tenant app (ims_qhse_9.html)
    Incidents · Document control · Training & competence · My profile,
    plus sidebar shortcuts to the risk register and annual plan (Org tabs).
 

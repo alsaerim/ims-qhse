@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Mizan — platform console modules (ims_admin.html)
+   ISO Radar — platform console modules (ims_admin.html)
    Platform users · Activity log · Announcements · System health · Settings
    Contracts for the endpoints used here are in docs/api-contract.md; when an
    endpoint is not on the server yet the page says so instead of failing.
@@ -197,7 +197,7 @@
       </div>
       <div class="card" style="padding:20px">
         <div style="font-weight:800;margin-bottom:10px">معلومات النظام</div>
-        <div style="background:var(--mz-mist);border-radius:9px;padding:12px;font-family:var(--mz-mono);font-size:12px;color:var(--mz-slate);line-height:1.9" dir="ltr">Backend: ${esc(API)}<br>Console: Mizan platform v1.0</div>
+        <div style="background:var(--mz-mist);border-radius:9px;padding:12px;font-family:var(--mz-mono);font-size:12px;color:var(--mz-slate);line-height:1.9" dir="ltr">Backend: ${esc(API)}<br>Console: ISO Radar platform v1.0</div>
       </div></div>`;
   }
   async function saveSettings(serverReady) {

@@ -1,13 +1,13 @@
-/* Mizan field-app service worker.
+/* ISO Radar field-app service worker.
    - App shell (pages, design system, icons) is cached so the field app opens offline.
    - Navigations are network-first: fresh pages online, cached copy offline.
    - API calls go to another origin and are never cached here. */
-const CACHE = 'mizan-shell-v1';
+const CACHE = 'isoradar-shell-v1';
 const SHELL = [
   '/mobile',
   '/mobile-login',
-  '/assets/mizan.css',
-  '/assets/mizan-mark.svg',
+  '/assets/isoradar.css',
+  '/assets/isoradar-mark.svg',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',

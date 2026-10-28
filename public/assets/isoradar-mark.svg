@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ISO Radar">
+  <!-- ISO Radar mark: radar rings + sweep (continuous monitoring) catching a gold blip (a finding) -->
+  <defs>
+    <linearGradient id="ir-sweep" x1="32" y1="32" x2="55" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22A699" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#22A699" stop-opacity=".75"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#142D4E"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#22A699" stroke-opacity=".35" stroke-width="2.6"/>
+  <circle cx="32" cy="32" r="12" fill="none" stroke="#22A699" stroke-opacity=".6" stroke-width="2.6"/>
+  <!-- sweep wedge -->
+  <path d="M32 32 L49.3 20 A21 21 0 0 0 32 11 Z" fill="url(#ir-sweep)"/>
+  <path d="M32 32 L49.3 20" stroke="#22A699" stroke-width="3" stroke-linecap="round"/>
+  <!-- the finding -->
+  <circle cx="41.5" cy="17.5" r="4.4" fill="#D9A441"/>
+  <circle cx="32" cy="32" r="3.4" fill="#ffffff"/>
+</svg>
