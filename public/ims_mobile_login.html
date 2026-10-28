@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="auth">
 <head>
+<script src="/assets/isoradar-api.js"></script>
 <script>/* ISO Radar i18n: load the English dictionary only when English is selected */
 (function () {
   var q = location.search, en = false;
@@ -301,7 +302,7 @@ function togglePass() {
   icon.className = passVisible ? 'fas fa-eye-slash' : 'fas fa-lock';
 }
 
-const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
+const API = window.IR_API_ORIGIN + '/api/v1';
 
 // ── Login ──
 function doMobileLogin() {

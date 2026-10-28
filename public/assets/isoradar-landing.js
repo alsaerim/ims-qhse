@@ -42,7 +42,7 @@
   if (EN) { try { localStorage.setItem('ir_lang', 'en'); } catch (e) {} }
 
   var $ = function (id) { return document.getElementById(id); };
-  var API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
+  var API = window.IR_API_ORIGIN + '/api/v1';
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var spinner = function () { return '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="40 20"/></svg>' + T.loading + '</span>'; };
   var icon = function (cls, text) { return '<i class="fas ' + cls + '"></i>' + text; };

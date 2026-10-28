@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="advisory">
 <head>
+<script src="/assets/isoradar-api.js"></script>
 <script>/* ISO Radar i18n: load the English dictionary only when English is selected */
 (function () {
   var q = location.search, en = false;
@@ -726,7 +727,7 @@ async function callAdvisorAPI(advisor, userMsg, fileContext, conversationContext
 
   const userContent = userMsg + fileContext + contextNote;
 
-  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/advisory-sessions/chat', {
+  const response = await fetch(window.IR_API_ORIGIN + '/api/advisory-sessions/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
     body: JSON.stringify({
@@ -767,7 +768,7 @@ async function callCouncilSynthesis(userMsg, advisorResponses) {
 
   const userContent = `الفكرة/المشروع المطروح: "${userMsg}"\n\nآراء المستشارين:\n\n${summaries}`;
 
-  const response = await fetch('https://ims-qhse-backend-production.up.railway.app/api/advisory-sessions/chat', {
+  const response = await fetch(window.IR_API_ORIGIN + '/api/advisory-sessions/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
     body: JSON.stringify({
@@ -1673,7 +1674,7 @@ function escapeForHTML(text) {
 //  BACKEND INTEGRATION
 // ═══════════════════════════════════════════════════════════════
 
-const BACKEND_API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
+const BACKEND_API = window.IR_API_ORIGIN + '/api/v1';
 
 // ── Read token from URL hash (passed from parent dashboard) ─────
 function getAuthToken() {

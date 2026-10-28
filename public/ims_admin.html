@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="admin">
 <head>
+<script src="/assets/isoradar-api.js"></script>
 <script>/* ISO Radar i18n: load the English dictionary only when English is selected */
 (function () {
   var q = location.search, en = false;
@@ -183,11 +184,11 @@
 </div>
 
 <script>
-const API='https://ims-qhse-backend-production.up.railway.app/api/v1';
+const API=window.IR_API_ORIGIN + '/api/v1';
 let _plans=[],_charts={};
 
 function getToken(){return localStorage.getItem('ims_token')||localStorage.getItem('sa_token');}
-function logout(){localStorage.removeItem('ims_token');showLoginScreen();}
+function logout(){localStorage.removeItem('ims_token'), localStorage.removeItem('ims_refresh_token');showLoginScreen();}
 
 async function apiFetch(url,method='GET',body=null){
   const token=getToken();

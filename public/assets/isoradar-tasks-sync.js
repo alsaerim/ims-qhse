@@ -39,8 +39,8 @@
     const out = [];
     for (const a of list || []) {
       if (a && typeof a.data === 'string' && a.data.startsWith('data:')) {
-        if (!/^data:image\/(png|jpe?g|webp);/i.test(a.data)) {
-          showToast('⚠️ يُحفظ على الخادم الصور فقط (JPG / PNG / WEBP) — لم يُحفظ ' + (a.name || 'الملف'), 'warning');
+        if (!/^data:(image\/(png|jpe?g|webp)|application\/pdf);/i.test(a.data)) {
+          showToast('⚠️ يُحفظ على الخادم الصور وملفات PDF فقط — لم يُحفظ ' + (a.name || 'الملف'), 'warning');
           continue;
         }
         const url = await uploadImage(a.data, taskId);

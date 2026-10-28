@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="app">
 <head>
+<script src="/assets/isoradar-api.js"></script>
 <script>/* ISO Radar i18n: load the English dictionary only when English is selected */
 (function () {
   var q = location.search, en = false;
@@ -185,7 +186,7 @@ window.MOCK_DB = {
 
 // Hydrate from API after login
 window.hydrateGlobalData = async function() {
-  const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
+  const API = window.IR_API_ORIGIN + '/api/v1';
   const token = localStorage.getItem('ims_token');
   if (!token) return;
 
@@ -646,7 +647,7 @@ window.hydrateGlobalData = async function() {
 // ISO Radar
 // ============================================================
 
-const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
+const API = window.IR_API_ORIGIN + '/api/v1';
 let currentPage = 'dashboard';
 let state = { projects: [], currentProject: 'proj-001', notifications: [], currentUser: null };
 
@@ -9310,7 +9311,7 @@ async function apiFetch(url, method = 'GET', body = null) {
   let fullUrl;
   if (isReal) {
     const path = url.replace('/api/', '/');
-    fullUrl = 'https://ims-qhse-backend-production.up.railway.app/api/v1' + path;
+    fullUrl = window.IR_API_ORIGIN + '/api/v1' + path;
   } else {
     fullUrl = url;
   }
@@ -9321,7 +9322,7 @@ async function apiFetch(url, method = 'GET', body = null) {
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(fullUrl, opts);
   if (res.status === 401) {
-    localStorage.removeItem('ims_token');
+    localStorage.removeItem('ims_token'), localStorage.removeItem('ims_refresh_token');
     window.location.href = '/';
     return;
   }
@@ -9384,7 +9385,7 @@ async function logout() {
   try {
     await apiFetch('/api/auth/logout', 'POST');
   } catch(e) {}
-  localStorage.removeItem('ims_token');
+  localStorage.removeItem('ims_token'), localStorage.removeItem('ims_refresh_token');
   localStorage.removeItem('ims_mobile_user');
   state.currentUser = null;
   showToast('تم تسجيل الخروج بنجاح', 'info');
@@ -11023,7 +11024,7 @@ const ADV_PERSONAS = {
   sustainability:`أنت د. منى — مستشارة الاستدامة. منهجيتك: ESG + رؤية 2030. قدّم: ### الأثر البيئي والاجتماعي ### التوافق مع رؤية 2030 ### مؤشرات الاستدامة ### مبادرات CSR. الرد بالعربية. انهِ بـ "درجة الاستدامة:" من 10.`,
 };
 
-const ADV_BACKEND = 'https://ims-qhse-backend-production.up.railway.app/api/advisory-sessions/chat';
+const ADV_BACKEND = window.IR_API_ORIGIN + '/api/advisory-sessions/chat';
 
 let advState = { selected:[], started:false, topic:null, history:[], sections:[], hasResponse:false, processing:false, uploadContent:null, uploadName:null };
 
@@ -13147,12 +13148,12 @@ function updateSidebarISO() {
       const av = document.getElementById('user-avatar');
       if (av) av.textContent = user.full_name?.charAt(0) || 'م';
     } else {
-      localStorage.removeItem('ims_token');
+      localStorage.removeItem('ims_token'), localStorage.removeItem('ims_refresh_token');
       window.location.href = '/';
       return;
     }
   } catch (e) {
-    localStorage.removeItem('ims_token');
+    localStorage.removeItem('ims_token'), localStorage.removeItem('ims_refresh_token');
     window.location.href = '/';
     return;
   }
