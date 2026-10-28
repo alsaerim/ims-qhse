@@ -6222,7 +6222,7 @@ function renderAnnualPlan() {
             ${p.iso && p.iso !== 'MULTI' ? `<span class="badge badge-blue text-xs">${p.iso.replace('_',' ')}</span>` : '<span class="badge badge-gray text-xs">متعدد</span>'}
             ${p.priority==='critical'?'<span class="badge badge-red text-xs">أولوية حرجة</span>':''}
           </div>
-          <div class="text-xs text-slate-500 mb-2">${Array.isArray(p.owners)&&p.owners.length ? p.owners.join('، ') : (p.owner||'—')} · ${months[p.start_month-1]} — ${months[p.end_month-1]} · الآيزو رادارية: ${p.budget?.toLocaleString('ar-SA')} ر.س</div>
+          <div class="text-xs text-slate-500 mb-2">${Array.isArray(p.owners)&&p.owners.length ? p.owners.join('، ') : (p.owner||'—')} · ${months[p.start_month-1]} — ${months[p.end_month-1]} · الميزانية: ${p.budget?.toLocaleString('ar-SA')} ر.س</div>
           <div class="flex items-center gap-2 mb-1">
             <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
               <div class="h-full rounded-full transition-all" style="width:${p.progress}%;background:${clr}"></div>
@@ -6307,7 +6307,7 @@ function openAnnualPlanModal(id) {
       <div class="grid grid-cols-2 gap-4">
         <div><label class="text-sm font-bold text-slate-700 block mb-1">نسبة الإنجاز %</label>
           <input class="form-input" type="number" id="ap-progress" min="0" max="100" value="${plan?.progress||0}"/></div>
-        <div><label class="text-sm font-bold text-slate-700 block mb-1">الآيزو رادارية (ر.س)</label>
+        <div><label class="text-sm font-bold text-slate-700 block mb-1">الميزانية (ر.س)</label>
           <input class="form-input" type="number" id="ap-budget" value="${plan?.budget||0}"/></div>
       </div>
 
@@ -7194,7 +7194,7 @@ function openAnnualPlanView(id) {
           <div class="text-sm font-bold text-slate-800">${Array.isArray(plan.owners)&&plan.owners.length ? plan.owners.join('، ') : (plan.owner||'-')}</div>
         </div>
         <div class="p-3 bg-slate-50 rounded-xl">
-          <div class="text-xs text-slate-500 mb-1">الآيزو رادارية</div>
+          <div class="text-xs text-slate-500 mb-1">الميزانية</div>
           <div class="text-sm font-bold text-slate-800">${plan.budget?.toLocaleString('ar-SA')||'-'} ر.س</div>
         </div>
         <div class="p-3 bg-slate-50 rounded-xl">
@@ -8561,7 +8561,7 @@ async function loadReports() {
         </div>`,
         "downloadReport('risks')")}
 
-      ${rptCard('تقرير الخطة السنوية','تقدم المبادرات والآيزو رادارية','calendar-alt','#059669',
+      ${rptCard('تقرير الخطة السنوية','تقدم المبادرات والميزانية','calendar-alt','#059669',
         `<div class="grid grid-cols-2 gap-2 text-center mt-2">
           <div class="p-2 bg-green-50 rounded-xl"><div class="font-black text-green-700">${avgPlan}%</div><div class="text-xs text-slate-500">متوسط التقدم</div></div>
           <div class="p-2 bg-green-50 rounded-xl"><div class="font-black text-green-700">${plans.filter(p=>p.status==='completed').length}/${plans.length}</div><div class="text-xs text-slate-500">مكتملة</div></div>
@@ -8846,7 +8846,7 @@ function buildReportHTML(type, preview=false) {
     const plans = db.annual_plans || [];
 
     body += (type==='all'?'<div style="page-break-before:always">':'');
-    body += header('تقرير الخطة السنوية', 'تقدم المبادرات والآيزو رادارية '+new Date().getFullYear(), '#059669');
+    body += header('تقرير الخطة السنوية', 'تقدم المبادرات والميزانية '+new Date().getFullYear(), '#059669');
     body += `<div style="padding:20px">`;
     const totalBudget = plans.reduce((s,p)=>s+(p.budget||0),0);
     const avgProg     = plans.length?Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length):0;
@@ -8854,7 +8854,7 @@ function buildReportHTML(type, preview=false) {
       ${kpiBox('إجمالي المبادرات', plans.length, '#059669')}
       ${kpiBox('متوسط التقدم', avgProg+'%', '#059669')}
       ${kpiBox('مكتملة', plans.filter(p=>p.status==='completed').length, '#059669')}
-      ${kpiBox('الآيزو رادارية الإجمالية', totalBudget.toLocaleString('ar-SA')+' ر.س', '#22A699')}
+      ${kpiBox('الميزانية الإجمالية', totalBudget.toLocaleString('ar-SA')+' ر.س', '#22A699')}
     </div>`;
 
     body += section('جدول المبادرات السنوية',
@@ -8863,7 +8863,7 @@ function buildReportHTML(type, preview=false) {
           <th style="${thStyle}">المبادرة</th><th style="${thStyle}">الفئة</th>
           <th style="${thStyle}">المعيار</th><th style="${thStyle}">المسؤولون</th>
           <th style="${thStyle}">التقدم</th><th style="${thStyle}">الحالة</th>
-          <th style="${thStyle}">الآيزو رادارية</th>
+          <th style="${thStyle}">الميزانية</th>
         </tr></thead>
         <tbody>
           ${plans.slice(0,preview?5:999).map((p,idx)=>{
