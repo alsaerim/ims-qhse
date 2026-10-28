@@ -17,7 +17,7 @@
 <script>
 tailwind.config = { theme: { extend: {
   fontFamily: { sans: ['Plus Jakarta Sans','IBM Plex Sans Arabic','ui-sans-serif','system-ui','sans-serif'] },
-  colors: { blue: {50:'#f1faf8',100:'#e3f5f2',200:'#bfe8e1',300:'#86d4c8',400:'#4fbfae',500:'#22A699',600:'#17796f',700:'#125f57',800:'#0f4c46',900:'#0c3d39'}, indigo: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, slate: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, gray: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'} },
+  colors: { blue: {50:'#f1faf8',100:'#e3f5f2',200:'#bfe8e1',300:'#86d4c8',400:'#4fbfae',500:'#22A699',600:'#17796f',700:'#125f57',800:'#0f4c46',900:'#0c3d39'}, indigo: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, slate: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, gray: {50:'#F4F7FA',100:'#eef2f6',200:'#e3e8ef',300:'#cbd2db',400:'#A7B0BC',500:'#5d6b7e',600:'#4f5f75',700:'#2a3e5c',800:'#142D4E',900:'#0d1f37'}, green: {50:'#f1faf8',100:'#e3f5f2',200:'#bfe8e1',300:'#86d4c8',400:'#4fbfae',500:'#22A699',600:'#17796f',700:'#125f57',800:'#0f4c46',900:'#0c3d39'}, emerald: {50:'#f1faf8',100:'#e3f5f2',200:'#bfe8e1',300:'#86d4c8',400:'#4fbfae',500:'#22A699',600:'#17796f',700:'#125f57',800:'#0f4c46',900:'#0c3d39'}, teal: {50:'#f1faf8',100:'#e3f5f2',200:'#bfe8e1',300:'#86d4c8',400:'#4fbfae',500:'#22A699',600:'#17796f',700:'#125f57',800:'#0f4c46',900:'#0c3d39'}, purple: {50:'#eef4fb',100:'#dbe7f6',200:'#b9d0ec',300:'#8bb1de',400:'#5a8dcb',500:'#2f6fb8',600:'#1d5fa8',700:'#174c87',800:'#133d6b',900:'#0f3055'}, violet: {50:'#eef4fb',100:'#dbe7f6',200:'#b9d0ec',300:'#8bb1de',400:'#5a8dcb',500:'#2f6fb8',600:'#1d5fa8',700:'#174c87',800:'#133d6b',900:'#0f3055'}, orange: {50:'#fdf8ec',100:'#fbf1dc',200:'#f4dfae',300:'#ecc97d',400:'#e2b458',500:'#D9A441',600:'#b7861f',700:'#9a6700',800:'#7a5208',900:'#5e3f06'}, amber: {50:'#fdf8ec',100:'#fbf1dc',200:'#f4dfae',300:'#ecc97d',400:'#e2b458',500:'#D9A441',600:'#b7861f',700:'#9a6700',800:'#7a5208',900:'#5e3f06'}, yellow: {50:'#fdf8ec',100:'#fbf1dc',200:'#f4dfae',300:'#ecc97d',400:'#e2b458',500:'#D9A441',600:'#b7861f',700:'#9a6700',800:'#7a5208',900:'#5e3f06'}, red: {50:'#fdf3f2',100:'#fde4e1',200:'#f9c7c1',300:'#f19d93',400:'#e4695b',500:'#d4402f',600:'#b42318',700:'#93190f',800:'#76160e',900:'#5f130d'} },
 } } };
 </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
@@ -25,11 +25,9 @@ tailwind.config = { theme: { extend: {
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap');
-    * { font-family: 'Tajawal', sans-serif; }
     :root {
       --primary: #125f57; --primary-light: #22A699; --primary-dark: #0f4c46;
-      --success: #059669; --warning: #d97706; --danger: #dc2626;
+      --success: #17796f; --warning: #9a6700; --danger: #b42318;
       --sidebar-width: 260px;
     }
     body { background: #eef2f6; color: #142D4E; }
@@ -42,12 +40,12 @@ tailwind.config = { theme: { extend: {
     .btn { padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
     .btn-primary { background: var(--primary); color: white; border: none; }
     .btn-primary:hover { background: var(--primary-dark); }
-    .btn-danger { background: #fee2e2; color: #dc2626; border: none; }
-    .btn-success { background: #d1fae5; color: #059669; border: none; }
+    .btn-danger { background: #fde4e1; color: #b42318; border: none; }
+    .btn-success { background: #e3f5f2; color: #17796f; border: none; }
     .badge { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-block; }
-    .badge-red { background: #fee2e2; color: #dc2626; }
-    .badge-yellow { background: #fef3c7; color: #d97706; }
-    .badge-green { background: #d1fae5; color: #059669; }
+    .badge-red { background: #fde4e1; color: #b42318; }
+    .badge-yellow { background: #fbf1dc; color: #9a6700; }
+    .badge-green { background: #e3f5f2; color: #17796f; }
     .badge-blue { background: #e3f5f2; color: #17796f; }
     .badge-gray { background: #eef2f6; color: #5d6b7e; }
     .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -80,7 +78,7 @@ tailwind.config = { theme: { extend: {
     .modal-body  { padding: 20px; overflow-y: auto; flex: 1; }
     .modal-footer { padding: 16px 20px; border-top: 1px solid #eef2f6; display: flex; gap: 10px; justify-content: flex-end; flex-shrink: 0; }
     .progress-ring { transform: rotate(-90deg); }
-    .notification-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; position: absolute; top: -2px; right: -2px; }
+    .notification-dot { width: 8px; height: 8px; background: #d4402f; border-radius: 50%; position: absolute; top: -2px; right: -2px; }
 
     /* ── Kanban Drag & Drop ── */
     .task-card { transition: box-shadow .2s, transform .2s, opacity .2s; }
@@ -344,7 +342,7 @@ window.hydrateGlobalData = async function() {
     <div class="nav-item" onclick="navigate('advisory')" style="position:relative;">
       <i class="fas fa-chess-king w-4"></i>
       <span class="sidebar-label">المجلس الاستشاري AI</span>
-      <span class="sidebar-label" style="margin-right:auto;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:800;">👑</span>
+      <span class="sidebar-label" style="margin-right:auto;background:linear-gradient(135deg,#1d5fa8,#a855f7);color:white;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:800;">👑</span>
     </div>
     <div class="nav-item" onclick="navigate('subscription')">
       <i class="fas fa-crown w-4"></i><span class="sidebar-label">الاشتراكات والفواتير</span>
@@ -493,7 +491,7 @@ window.hydrateGlobalData = async function() {
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="proj-iso9001" class="w-4 h-4"/> <span class="badge badge-blue">ISO 9001</span></label>
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="proj-iso45001" class="w-4 h-4"/> <span class="badge badge-green">ISO 45001</span></label>
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="proj-iso14001" class="w-4 h-4"/> <span class="badge badge-yellow">ISO 14001</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="proj-iso27001" class="w-4 h-4"/> <span class="badge" style="background:#e9d5ff;color:#7c3aed">ISO 27001</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="proj-iso27001" class="w-4 h-4"/> <span class="badge" style="background:#e9d5ff;color:#1d5fa8">ISO 27001</span></label>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-4">
@@ -674,6 +672,8 @@ function navigate(page) {
     org: ['المنظمة', 'الملف التنظيمي · الأهداف · معايير ISO ومقارنتها'],
     integrations: ['الأدوات والربط', 'ربط آيزو رادار مع الأنظمة الخارجية وإدارة تكاملات API'],
     subscription: ['الاشتراكات والفواتير', 'إدارة اشتراكك وتنزيل الفواتير وتغيير الباقة'],
+    tasks: ['المهام', 'لوحة المهام والجدول الزمني للفريق'],
+    advisory: ['المجلس الاستشاري', 'اطرح سؤالك على مستشارين متخصصين'],
   };
   
   const [title, sub] = titles[page] || ['الصفحة', ''];
@@ -741,15 +741,15 @@ async function loadDashboard() {
     <!-- Row 1: Core KPIs (8 cards) -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       ${statCard('المشاريع النشطة',    s.projects?.active||0,           'building',           '#22A699', 'من ' + (s.projects?.total||0) + ' إجمالي')}
-      ${statCard('معدل الامتثال',      (s.inspections?.avg_score||0)+'%','check-circle',       s.inspections?.avg_score>=90?'#059669':'#d97706', (s.inspections?.completed||0) + ' تفتيش مكتمل')}
-      ${statCard('NC مفتوحة',          s.nonconformances?.open||0,       'exclamation-triangle','#dc2626', (s.nonconformances?.critical||0) + ' حرجة · ' + (s.nonconformances?.overdue||0) + ' متأخرة')}
-      ${statCard('إغلاق RCA',          (s.rca?.closure_rate||0)+'%',     'search',             '#7c3aed', (s.rca?.open||0) + ' مفتوحة · ' + (s.rca?.closed||0) + ' مغلقة')}
+      ${statCard('معدل الامتثال',      (s.inspections?.avg_score||0)+'%','check-circle',       s.inspections?.avg_score>=90?'#17796f':'#9a6700', (s.inspections?.completed||0) + ' تفتيش مكتمل')}
+      ${statCard('NC مفتوحة',          s.nonconformances?.open||0,       'exclamation-triangle','#b42318', (s.nonconformances?.critical||0) + ' حرجة · ' + (s.nonconformances?.overdue||0) + ' متأخرة')}
+      ${statCard('إغلاق RCA',          (s.rca?.closure_rate||0)+'%',     'search',             '#1d5fa8', (s.rca?.open||0) + ' مفتوحة · ' + (s.rca?.closed||0) + ' مغلقة')}
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      ${statCard('المخاطر الحرجة',     s.risks?.critical||0,             'shield-alt',         '#dc2626', 'من ' + (s.risks?.total||0) + ' إجمالي · RPN متوسط: ' + (s.risks?.avg_rpn||0))}
-      ${statCard('الخطة السنوية',      (s.plans?.avg_progress||0)+'%',   'calendar-alt',       '#059669', (s.plans?.completed||0) + ' مكتملة · ' + (s.plans?.in_progress||0) + ' جارية')}
+      ${statCard('المخاطر الحرجة',     s.risks?.critical||0,             'shield-alt',         '#b42318', 'من ' + (s.risks?.total||0) + ' إجمالي · RPN متوسط: ' + (s.risks?.avg_rpn||0))}
+      ${statCard('الخطة السنوية',      (s.plans?.avg_progress||0)+'%',   'calendar-alt',       '#17796f', (s.plans?.completed||0) + ' مكتملة · ' + (s.plans?.in_progress||0) + ' جارية')}
       ${statCard('مؤشر Lean',          (s.lean?.score||0)+'%',           'recycle',            '#0891b2', (s.lean?.closed||0) + ' هدر معالج من ' + (s.lean?.total||0))}
-      ${statCard('مؤشرات الأداء',      (s.kpis?.good||0)+'/' +(s.kpis?.total||0),'chart-line', '#059669', (s.kpis?.critical||0) + ' بحاجة تدخل')}
+      ${statCard('مؤشرات الأداء',      (s.kpis?.good||0)+'/' +(s.kpis?.total||0),'chart-line', '#17796f', (s.kpis?.critical||0) + ' بحاجة تدخل')}
     </div>
 
     <!-- Row 2: Chart + ISO Gap -->
@@ -766,10 +766,10 @@ async function loadDashboard() {
             </div>
             <!-- Custom date range -->
             <div style="display:flex;gap:4px;align-items:center;">
-              <input type="month" id="trend-date-from" style="padding:3px 7px;border:1px solid #e3e8ef;border-radius:8px;font-size:11px;font-family:'Tajawal',sans-serif;"
+              <input type="month" id="trend-date-from" style="padding:3px 7px;border:1px solid #e3e8ef;border-radius:8px;font-size:11px;"
                 onchange="updateTrendChartCustom()"/>
               <span style="font-size:11px;color:#5d6b7e;">—</span>
-              <input type="month" id="trend-date-to" style="padding:3px 7px;border:1px solid #e3e8ef;border-radius:8px;font-size:11px;font-family:'Tajawal',sans-serif;"
+              <input type="month" id="trend-date-to" style="padding:3px 7px;border:1px solid #e3e8ef;border-radius:8px;font-size:11px;"
                 onchange="updateTrendChartCustom()"/>
             </div>
           </div>
@@ -779,7 +779,7 @@ async function loadDashboard() {
       <div class="card p-5">
         <div class="flex justify-between items-center mb-3">
           <h3 class="font-bold text-slate-800"><i class="fas fa-certificate text-purple-500 ml-2"></i>توزيع المعايير</h3>
-          <select id="iso-chart-metric" onchange="updateISOChart()" style="font-size:11px;padding:3px 8px;border:1px solid #e3e8ef;border-radius:8px;font-family:'Tajawal',sans-serif;color:#4f5f75;">
+          <select id="iso-chart-metric" onchange="updateISOChart()" style="font-size:11px;padding:3px 8px;border:1px solid #e3e8ef;border-radius:8px;color:#4f5f75;">
             <option value="compliance">معدل الامتثال</option>
             <option value="inspections">عدد التفتيشات</option>
             <option value="gap">تحليل الفجوة</option>
@@ -792,7 +792,7 @@ async function loadDashboard() {
     <!-- Row 3: ISO Cards (dynamic from standards) -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       ${((window.MOCK_DB?.iso_standards||[]).filter(function(s){var c=window.MOCK_DB?.org_profile?.certified_standards||[];return !c.length||c.includes(s.code);})).map(std => {
-        const clr   = std.color || {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'}[std.code] || '#5d6b7e';
+        const clr   = std.color || {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'}[std.code] || '#5d6b7e';
         const isoD  = (data.charts?.iso_breakdown||[]).find(b=>b.iso_standard===std.code);
         const score = isoD?.avg_compliance || 0;
         const gap   = window.MOCK_DB?.gap_analysis?.[std.code];
@@ -817,9 +817,9 @@ async function loadDashboard() {
           <div class="kpi-bar mb-2"><div class="kpi-fill" style="width:${score}%;background:${clr}"></div></div>` : ''}
           ${gapAvg !== null ? `
           <div class="flex justify-between text-xs text-slate-500 mb-1">
-            <span>تحليل الفجوة</span><span style="color:${gapAvg>=80?clr:'#dc2626'}">${gapAvg}%</span>
+            <span>تحليل الفجوة</span><span style="color:${gapAvg>=80?clr:'#b42318'}">${gapAvg}%</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-fill" style="width:${gapAvg}%;background:${gapAvg>=80?clr:'#dc2626'}"></div></div>` : ''}
+          <div class="kpi-bar"><div class="kpi-fill" style="width:${gapAvg}%;background:${gapAvg>=80?clr:'#b42318'}"></div></div>` : ''}
           <div class="text-xs text-slate-400 mt-2">${isoD?.total_inspections||0} تفتيش · ${isoD?.passed||0} ناجح</div>
         </div>`;
       }).join('')}
@@ -833,7 +833,7 @@ async function loadDashboard() {
         <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
           <h3 class="font-bold text-slate-800"><i class="fas fa-chart-bar text-orange-500 ml-2"></i>Pareto — NC حسب الفئة</h3>
           <div style="display:flex;gap:5px;">
-            <select id="pareto-filter-iso" onchange="updateParetoChart()" style="font-size:11px;padding:3px 7px;border:1px solid #e3e8ef;border-radius:7px;font-family:'Tajawal',sans-serif;color:#4f5f75;">
+            <select id="pareto-filter-iso" onchange="updateParetoChart()" style="font-size:11px;padding:3px 7px;border:1px solid #e3e8ef;border-radius:7px;color:#4f5f75;">
               <option value="">كل المعايير</option>
               ${(()=>{
                 const cert = window.MOCK_DB?.org_profile?.certified_standards||[];
@@ -842,7 +842,7 @@ async function loadDashboard() {
                 return list.map(s=>`<option value="${s.code}">${s.code.replace('_',' ')}</option>`).join('');
               })()}
             </select>
-            <select id="pareto-filter-status" onchange="updateParetoChart()" style="font-size:11px;padding:3px 7px;border:1px solid #e3e8ef;border-radius:7px;font-family:'Tajawal',sans-serif;color:#4f5f75;">
+            <select id="pareto-filter-status" onchange="updateParetoChart()" style="font-size:11px;padding:3px 7px;border:1px solid #e3e8ef;border-radius:7px;color:#4f5f75;">
               <option value="">كل الحالات</option>
               <option value="open">مفتوحة</option>
               <option value="in_progress">جارية</option>
@@ -862,7 +862,7 @@ async function loadDashboard() {
         <div class="space-y-2">
           ${(data.recent_risks||[]).map(r => {
             const rpn = r.probability * r.impact;
-            const clr = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#22A699';
+            const clr = rpn>=15?'#b42318':rpn>=8?'#9a6700':'#22A699';
             const owners = Array.isArray(r.owners)?r.owners:(r.owner?[r.owner]:[]);
             return `<div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
               <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-white text-xs" style="background:${clr}">${rpn}</div>
@@ -883,7 +883,7 @@ async function loadDashboard() {
         </div>
         <div class="space-y-2">
           ${(data.recent_plans||[]).map(p => {
-            const clr = {completed:'#059669',in_progress:'#d97706',planned:'#22A699',delayed:'#dc2626'}[p.status]||'#5d6b7e';
+            const clr = {completed:'#17796f',in_progress:'#9a6700',planned:'#22A699',delayed:'#b42318'}[p.status]||'#5d6b7e';
             const owners = Array.isArray(p.owners)?p.owners:(p.owner?[p.owner]:[]);
             return `<div class="p-3 bg-slate-50 rounded-xl">
               <div class="text-sm font-medium text-slate-800 truncate mb-1">${p.title}</div>
@@ -924,6 +924,12 @@ async function loadDashboard() {
   renderTrendChart(data.charts?.compliance_trend || []);
   renderISOChart(data.charts?.iso_breakdown || []);
   renderParetoChart(data.charts?.nc_by_category || []);
+}
+
+// The API returns the standard either as a code ("ISO_9001") or as the related row ({ code, name })
+function isoLabel(v) {
+  const code = v && typeof v === 'object' ? v.code : v;
+  return code ? String(code).replace('_', ' ') : '';
 }
 
 function statCard(title, value, icon, color, sub) {
@@ -1016,7 +1022,7 @@ function buildTrendData(months, fromMonth, toMonth) {
   });
 
   // Per-standard compliance from inspection data
-  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
   const datasets = [{
     label: 'الامتثال الإجمالي %',
     data: vals.map((v,i) => v || (88 + (i * 0.5))), // fill gaps
@@ -1065,7 +1071,7 @@ function renderTrendChart(trend) {
       responsive: true,
       interaction: { mode:'index', intersect:false },
       plugins: {
-        legend: { position:'bottom', labels:{ boxWidth:12, font:{ family:'Tajawal', size:11 } } },
+        legend: { position:'bottom', labels:{ boxWidth:12, font:{ size:11 } } },
         tooltip: {
           rtl: true,
           bodyFont: { family:'Tajawal' },
@@ -1074,8 +1080,8 @@ function renderTrendChart(trend) {
         }
       },
       scales: {
-        x: { ticks:{ font:{ family:'Tajawal', size:10 } } },
-        y: { min:50, max:100, ticks:{ callback: v => v+'%', font:{ family:'Tajawal', size:10 } },
+        x: { ticks:{ font:{ size:10 } } },
+        y: { min:50, max:100, ticks:{ callback: v => v+'%', font:{ size:10 } },
           grid:{ color:'rgba(0,0,0,0.04)' } }
       }
     }
@@ -1133,7 +1139,7 @@ function updateISOChart(isoData) {
   const stds   = (window.MOCK_DB?.iso_standards||[]).filter(s => !cert.length || cert.includes(s.code));
   const inspections = window.MOCK_DB?.inspections || [];
   const gap    = window.MOCK_DB?.gap_analysis || {};
-  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
 
   const useData = isoData || stds.map(s => {
     const stdInsp = inspections.filter(i => i.iso_standard===s.code && i.status==='completed');
@@ -1166,7 +1172,7 @@ function updateISOChart(isoData) {
     options: {
       responsive: true, cutout: '62%',
       plugins: {
-        legend: { position:'bottom', labels:{ boxWidth:12, font:{ family:'Tajawal', size:11 } } },
+        legend: { position:'bottom', labels:{ boxWidth:12, font:{ size:11 } } },
         tooltip: {
           rtl: true, bodyFont:{ family:'Tajawal' }, titleFont:{ family:'Tajawal' },
           callbacks: { label: ctx => ctx.label + ': ' + ctx.raw + (metric!=='inspections'?'%':' تفتيش') }
@@ -1221,7 +1227,7 @@ function updateParetoChart() {
   // Color bars: red for top 20%, orange for next 30%, blue rest (Pareto principle)
   const barColors = sorted.map((_,i) => {
     const pct = cumData[i];
-    return pct <= 60 ? '#dc2626' : pct <= 80 ? '#d97706' : '#22A699';
+    return pct <= 60 ? '#b42318' : pct <= 80 ? '#9a6700' : '#22A699';
   });
 
   window._dashCharts.pareto = new Chart(ctx, {
@@ -1234,7 +1240,7 @@ function updateParetoChart() {
         },
         {
           type:'line', label:'التراكمي %', data: cumData,
-          borderColor:'#7c3aed', pointBackgroundColor:'#7c3aed',
+          borderColor:'#1d5fa8', pointBackgroundColor:'#1d5fa8',
           yAxisID:'y2', tension:0.3, borderWidth:2,
           pointRadius:4, pointHoverRadius:7
         }
@@ -1244,7 +1250,7 @@ function updateParetoChart() {
       responsive: true,
       interaction: { mode:'index', intersect:false },
       plugins: {
-        legend: { position:'bottom', labels:{ boxWidth:12, font:{ family:'Tajawal', size:11 } } },
+        legend: { position:'bottom', labels:{ boxWidth:12, font:{ size:11 } } },
         tooltip: {
           rtl:true, bodyFont:{ family:'Tajawal' }, titleFont:{ family:'Tajawal' },
           callbacks: {
@@ -1255,16 +1261,16 @@ function updateParetoChart() {
         },
         annotation: {
           annotations: [{
-            type:'line', yMin:80, yMax:80, borderColor:'#ef4444',
+            type:'line', yMin:80, yMax:80, borderColor:'#d4402f',
             borderWidth:1.5, borderDash:[5,4], yScaleID:'y2',
             label:{ content:'80%', enabled:true, position:'end', font:{size:10} }
           }]
         }
       },
       scales: {
-        x:  { ticks:{ font:{ family:'Tajawal', size:10 } } },
-        y:  { beginAtZero:true, ticks:{ stepSize:1, font:{ family:'Tajawal', size:10 } }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        y2: { position:'right', min:0, max:100, ticks:{ callback:v=>v+'%', font:{ family:'Tajawal', size:10 } }, grid:{ display:false } }
+        x:  { ticks:{ font:{ size:10 } } },
+        y:  { beginAtZero:true, ticks:{ stepSize:1, font:{ size:10 } }, grid:{ color:'rgba(0,0,0,0.04)' } },
+        y2: { position:'right', min:0, max:100, ticks:{ callback:v=>v+'%', font:{ size:10 } }, grid:{ display:false } }
       }
     }
   });
@@ -1318,9 +1324,9 @@ async function loadProjects() {
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
       ${[
         ['إجمالي المشاريع', data.data?.length||0,'building','#22A699'],
-        ['نشطة', data.data?.filter(p=>p.status==='active').length||0,'play-circle','#059669'],
-        ['مكتملة', data.data?.filter(p=>p.status==='completed').length||0,'check-circle','#7c3aed'],
-        ['موقوفة/ملغاة', data.data?.filter(p=>p.status==='on_hold'||p.status==='cancelled').length||0,'pause-circle','#d97706']
+        ['نشطة', data.data?.filter(p=>p.status==='active').length||0,'play-circle','#17796f'],
+        ['مكتملة', data.data?.filter(p=>p.status==='completed').length||0,'check-circle','#1d5fa8'],
+        ['موقوفة/ملغاة', data.data?.filter(p=>p.status==='on_hold'||p.status==='cancelled').length||0,'pause-circle','#9a6700']
       ].map(([t,v,ic,c])=>`
         <div class="card p-4 flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${c}18">
@@ -1372,7 +1378,7 @@ function renderProjectsTable(projects, sL, sB) {
         <td class="p-4 text-slate-600 text-sm">${p.client_name||'-'}</td>
         <td class="p-4"><span class="badge ${sB[p.status]||'badge-gray'}">${sL[p.status]||p.status}</span></td>
         <td class="p-4"><div class="flex items-center gap-2">
-          <div class="kpi-bar w-20"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#059669':(p.avg_compliance||0)>=70?'#d97706':'#dc2626'}"></div></div>
+          <div class="kpi-bar w-20"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#17796f':(p.avg_compliance||0)>=70?'#9a6700':'#b42318'}"></div></div>
           <span class="text-xs font-medium">${p.avg_compliance||0}%</span>
         </div></td>
         <td class="p-4"><span class="font-bold ${(p.open_ncs||0)>0?'text-red-600':'text-green-600'}">${p.open_ncs||0}</span></td>
@@ -1482,9 +1488,9 @@ async function openProjectDetail(id) {
       ${p.description?`<div class="mt-4 p-3 bg-slate-50 rounded-lg text-sm text-slate-600">${p.description}</div>`:''}
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="card p-4 text-center"><div class="text-3xl font-black text-blue-600">${p.avg_compliance||0}%</div><div class="text-xs text-slate-500 mt-1">معدل الامتثال</div><div class="text-xs text-slate-400">${p.completed_inspections||0} مكتمل / ${p.total_inspections||0} إجمالي</div><div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#059669':'#d97706'}"></div></div></div>
+      <div class="card p-4 text-center"><div class="text-3xl font-black text-blue-600">${p.avg_compliance||0}%</div><div class="text-xs text-slate-500 mt-1">معدل الامتثال</div><div class="text-xs text-slate-400">${p.completed_inspections||0} مكتمل / ${p.total_inspections||0} إجمالي</div><div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${p.avg_compliance||0}%;background:${(p.avg_compliance||0)>=90?'#17796f':'#9a6700'}"></div></div></div>
       <div class="card p-4 text-center"><div class="text-3xl font-black text-red-600">${p.open_ncs||0}</div><div class="text-xs text-slate-500 mt-1">NC مفتوحة</div></div>
-      <div class="card p-4 text-center"><div class="text-2xl font-black mt-1" style="color:${sB[p.status]?.includes('green')?'#059669':sB[p.status]?.includes('blue')?'#22A699':'#d97706'}">${sL[p.status]||'-'}</div><div class="text-xs text-slate-500 mt-1">الحالة الحالية</div></div>
+      <div class="card p-4 text-center"><div class="text-2xl font-black mt-1" style="color:${sB[p.status]?.includes('green')?'#17796f':sB[p.status]?.includes('blue')?'#22A699':'#9a6700'}">${sL[p.status]||'-'}</div><div class="text-xs text-slate-500 mt-1">الحالة الحالية</div></div>
       <div class="card p-4 text-center"><div class="text-3xl font-black text-purple-600">${p.total_inspections||0}</div><div class="text-xs text-slate-500 mt-1">عمليات التفتيش</div></div>
     </div>
 
@@ -1763,7 +1769,7 @@ function renderInspectionsList(items) {
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-slate-800">${i.title}</div>
         <div class="text-xs text-slate-500 mt-1">${i.ref_number} · ${i.project_name} · ${i.assigned_name || 'غير محدد'}</div>
-        <div class="text-xs text-slate-400">${i.location_name || ''} ${i.iso_standard ? '· '+i.iso_standard.replace('_',' ') : ''}</div>
+        <div class="text-xs text-slate-400">${i.location_name || ''} ${i.iso_standard ? '· '+isoLabel(i.iso_standard) : ''}</div>
       </div>
       <div class="text-center flex-shrink-0">
         ${i.compliance_score != null ? `<div class="text-2xl font-bold ${i.compliance_score >= 90 ? 'text-green-600' : i.compliance_score >= 70 ? 'text-yellow-600' : 'text-red-600'}">${i.compliance_score}%</div><div class="text-xs text-slate-400">امتثال</div>` : ''}
@@ -1798,7 +1804,7 @@ async function openInspDetail(id) {
   if (!i) return;
 
   const resultMap  = {pass:'✅ ناجح', fail:'❌ فاشل', partial:'⚠️ جزئي'};
-  const statusClr  = {completed:'#059669', in_progress:'#d97706', pending:'#22A699', overdue:'#dc2626', cancelled:'#5d6b7e'};
+  const statusClr  = {completed:'#17796f', in_progress:'#9a6700', pending:'#22A699', overdue:'#b42318', cancelled:'#5d6b7e'};
   const headerClr  = statusClr[i.status] || '#22A699';
   const isOverdue  = i.status === 'overdue';
 
@@ -1823,16 +1829,16 @@ async function openInspDetail(id) {
           ${inspStatusAr(i.status)}
         </span>
         ${i.result ? `<span class="badge ${i.result==='pass'?'badge-green':i.result==='fail'?'badge-red':'badge-yellow'}">${resultMap[i.result]||i.result}</span>` : ''}
-        ${i.iso_standard ? `<span class="badge badge-blue text-xs">${i.iso_standard.replace('_',' ')}</span>` : ''}
+        ${i.iso_standard ? `<span class="badge badge-blue text-xs">${isoLabel(i.iso_standard)}</span>` : ''}
         ${isOverdue ? '<span class="badge badge-red"><i class="fas fa-clock ml-1"></i>متأخر</span>' : ''}
       </div>
 
       <!-- Score gauge -->
       ${i.compliance_score != null ? `
       <div class="p-4 rounded-xl text-center" style="background:${i.compliance_score>=90?'#f0fdf4':i.compliance_score>=70?'#fefce8':'#fef2f2'}">
-        <div class="text-4xl font-black mb-1" style="color:${i.compliance_score>=90?'#059669':i.compliance_score>=70?'#d97706':'#dc2626'}">${i.compliance_score}%</div>
+        <div class="text-4xl font-black mb-1" style="color:${i.compliance_score>=90?'#17796f':i.compliance_score>=70?'#9a6700':'#b42318'}">${i.compliance_score}%</div>
         <div class="text-sm font-bold text-slate-600">نسبة الامتثال</div>
-        <div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${i.compliance_score}%;background:${i.compliance_score>=90?'#059669':i.compliance_score>=70?'#d97706':'#dc2626'}"></div></div>
+        <div class="kpi-bar mt-2"><div class="kpi-fill" style="width:${i.compliance_score}%;background:${i.compliance_score>=90?'#17796f':i.compliance_score>=70?'#9a6700':'#b42318'}"></div></div>
       </div>` : ''}
 
       <!-- Info grid -->
@@ -2189,7 +2195,7 @@ function openNCDetail(id) {
   const n = ncs.find(x => x.id === id);
   if (!n) return;
 
-  const typeColor = {critical:'#dc2626', major:'#d97706', minor:'#22A699', observation:'#5d6b7e'};
+  const typeColor = {critical:'#b42318', major:'#9a6700', minor:'#22A699', observation:'#5d6b7e'};
   const color = typeColor[n.type] || '#5d6b7e';
   const isOverdue = n.due_date && new Date(n.due_date) < new Date() && n.status !== 'closed';
 
@@ -2373,7 +2379,7 @@ async function openNCEdit(id) {
           <select class="form-input" id="nce-status">${statusOpts}</select>
           <!-- Visual status pills -->
           <div class="flex flex-wrap gap-1 mt-2">
-            ${[['open','مفتوحة','#dc2626'],['in_progress','قيد المعالجة','#d97706'],['pending_verification','انتظار التحقق','#22A699'],['closed','مغلقة','#059669']].map(([v,l,c]) => `
+            ${[['open','مفتوحة','#b42318'],['in_progress','قيد المعالجة','#9a6700'],['pending_verification','انتظار التحقق','#22A699'],['closed','مغلقة','#17796f']].map(([v,l,c]) => `
             <button type="button" onclick="document.getElementById('nce-status').value='${v}'; highlightNCStatus('${v}')"
               id="nce-pill-${v}"
               class="nce-status-pill text-xs px-3 py-1.5 rounded-full font-bold border-2 transition-all"
@@ -2456,7 +2462,7 @@ async function openNCEdit(id) {
 }
 
 function highlightNCStatus(val) {
-  const colors = {open:'#dc2626', in_progress:'#d97706', pending_verification:'#22A699', closed:'#059669', under_investigation:'#d97706', cancelled:'#5d6b7e'};
+  const colors = {open:'#b42318', in_progress:'#9a6700', pending_verification:'#22A699', closed:'#17796f', under_investigation:'#9a6700', cancelled:'#5d6b7e'};
   document.querySelectorAll('.nce-status-pill').forEach(pill => {
     const pv = pill.id.replace('nce-pill-','');
     const c = colors[pv] || '#5d6b7e';
@@ -2586,7 +2592,7 @@ async function openNewRCAModal() {
         '<div>' +
           '<label class="text-sm font-bold text-slate-700 block mb-2">منهجية التحليل *</label>' +
           '<div class="grid grid-cols-2 gap-2" id="rca-meth-pills">' +
-            [['5_whys','🔍 5 Whys','#7c3aed'],['ishikawa','🐟 Ishikawa','#17796f'],['pareto','📊 Pareto','#d97706'],['fmea','⚙️ FMEA','#059669']].map(function(m){
+            [['5_whys','🔍 5 Whys','#1d5fa8'],['ishikawa','🐟 Ishikawa','#17796f'],['pareto','📊 Pareto','#9a6700'],['fmea','⚙️ FMEA','#17796f']].map(function(m){
               return '<button type="button" onclick="selectRCAMeth(\''+m[0]+'\')" id="rca-meth-'+m[0]+'" '+
                 'class="py-2.5 px-3 rounded-xl text-sm font-bold border-2 transition-all text-right" '+
                 'style="border-color:'+(m[0]==='5_whys'?m[2]:'#e3e8ef')+';background:'+(m[0]==='5_whys'?m[2]:'white')+';color:'+(m[0]==='5_whys'?'white':m[2])+'">'+
@@ -2627,7 +2633,7 @@ async function openNewRCAModal() {
         '</div>' +
 
         '<div class="flex gap-3 pt-3 border-t border-slate-100">' +
-          '<button onclick="submitNewRCA()" class="btn btn-primary flex-1" style="background:#7c3aed">' +
+          '<button onclick="submitNewRCA()" class="btn btn-primary flex-1" style="background:#1d5fa8">' +
             '<i class="fas fa-plus ml-1"></i>إنشاء التحليل والبدء' +
           '</button>' +
           '<button onclick="document.getElementById(\'modal-new-rca\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
@@ -2641,8 +2647,8 @@ async function openNewRCAModal() {
 
 function selectRCAMeth(val) {
   var colors = {
-    '5_whys':'#7c3aed', 'ishikawa':'#17796f',
-    'pareto':'#d97706', 'fmea':'#059669'
+    '5_whys':'#1d5fa8', 'ishikawa':'#17796f',
+    'pareto':'#9a6700', 'fmea':'#17796f'
   };
   var el = document.getElementById('rca-new-methodology');
   if (el) el.value = val;
@@ -2753,12 +2759,12 @@ async function loadRCA() {
   var methMap = {};
   rcas.forEach(function(r){ var m=r.methodology||'5_whys'; methMap[m]=(methMap[m]||0)+1; });
   var methAr  = {'5_whys':'5 Whys','five_whys':'5 Whys','ishikawa':'Ishikawa','pareto':'Pareto','fmea':'FMEA'};
-  var methClr = {'5_whys':'#7c3aed','five_whys':'#7c3aed','ishikawa':'#17796f','pareto':'#d97706','fmea':'#059669'};
+  var methClr = {'5_whys':'#1d5fa8','five_whys':'#1d5fa8','ishikawa':'#17796f','pareto':'#9a6700','fmea':'#17796f'};
 
   // ── تكرار فئات Ishikawa ──
   var catKeys = ['man','machine','method','material','environment','measurement'];
   var catAr   = {man:'الإنسان',machine:'الآلة',method:'الأسلوب',material:'المواد',environment:'البيئة',measurement:'القياس'};
-  var catClr  = {man:'#17796f',machine:'#7c3aed',method:'#d97706',material:'#059669',environment:'#0891b2',measurement:'#db2777'};
+  var catClr  = {man:'#17796f',machine:'#1d5fa8',method:'#9a6700',material:'#17796f',environment:'#0891b2',measurement:'#db2777'};
   var catIcon = {man:'user',machine:'cogs',method:'tasks',material:'box',environment:'leaf',measurement:'ruler'};
   var catCount = {};
   catKeys.forEach(function(k){catCount[k]=0;});
@@ -2776,11 +2782,11 @@ async function loadRCA() {
 
   // KPI cards
   var kpiHtml = '';
-  [{v:total,l:'إجمالي RCA',i:'clipboard-list',c:'#7c3aed'},
-   {v:openC,l:'مفتوحة',i:'exclamation-circle',c:'#dc2626'},
-   {v:inProg,l:'قيد التحليل',i:'search',c:'#d97706'},
-   {v:closed,l:'مُغلقة',i:'check-circle',c:'#059669'},
-   {v:overdue,l:'متأخرة',i:'clock',c:'#ef4444'}
+  [{v:total,l:'إجمالي RCA',i:'clipboard-list',c:'#1d5fa8'},
+   {v:openC,l:'مفتوحة',i:'exclamation-circle',c:'#b42318'},
+   {v:inProg,l:'قيد التحليل',i:'search',c:'#9a6700'},
+   {v:closed,l:'مُغلقة',i:'check-circle',c:'#17796f'},
+   {v:overdue,l:'متأخرة',i:'clock',c:'#d4402f'}
   ].forEach(function(k){
     kpiHtml += '<div class="card p-4 flex items-center gap-3">' +
       '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:'+k.c+'18">' +
@@ -2828,10 +2834,10 @@ async function loadRCA() {
   var gDash = gC - (actPct/100)*gC;
   var gaugeHtml = '<svg width="80" height="80" viewBox="0 0 80 80" style="display:block;margin:0 auto">' +
     '<circle cx="40" cy="40" r="30" fill="none" stroke="#e3e8ef" stroke-width="7"/>' +
-    '<circle cx="40" cy="40" r="30" fill="none" stroke="#059669" stroke-width="7"' +
+    '<circle cx="40" cy="40" r="30" fill="none" stroke="#17796f" stroke-width="7"' +
       ' stroke-dasharray="'+gC.toFixed(1)+'" stroke-dashoffset="'+gDash.toFixed(1)+'"' +
       ' stroke-linecap="round" transform="rotate(-90 40 40)"/>' +
-    '<text x="40" y="44" text-anchor="middle" font-size="14" font-weight="900" fill="#059669">'+actPct+'%</text>' +
+    '<text x="40" y="44" text-anchor="middle" font-size="14" font-weight="900" fill="#17796f">'+actPct+'%</text>' +
   '</svg>';
 
   // RCA list cards
@@ -2843,7 +2849,7 @@ async function loadRCA() {
       var isOverdue = r.target_date && new Date(r.target_date)<new Date() && r.status!=='closed';
       var sBadge = r.status==='closed'?'badge-green':r.status==='in_progress'?'badge-yellow':'badge-red';
       var sAr    = r.status==='closed'?'مُغلق':r.status==='in_progress'?'قيد التحليل':'مفتوح';
-      var mClr   = methClr[r.methodology]||'#7c3aed';
+      var mClr   = methClr[r.methodology]||'#1d5fa8';
       var mAr    = methAr[r.methodology]||(r.methodology||'5 Whys').replace('_',' ');
       var actCnt = (r.actions||[]).length;
       var doneCnt= (r.actions||[]).filter(function(a){return a.status==='completed';}).length;
@@ -2999,8 +3005,8 @@ async function loadRCADetail(id) {
   } catch(e) { ishData = {}; }
 
   var actions  = data.actions || [];
-  var methClr  = {'5_whys':'#7c3aed','five_whys':'#7c3aed','ishikawa':'#17796f','pareto':'#d97706','fmea':'#059669'};
-  var mClr     = methClr[data.methodology] || '#7c3aed';
+  var methClr  = {'5_whys':'#1d5fa8','five_whys':'#1d5fa8','ishikawa':'#17796f','pareto':'#9a6700','fmea':'#17796f'};
+  var mClr     = methClr[data.methodology] || '#1d5fa8';
   var sBadge   = data.status==='closed'?'badge-green':data.status==='in_progress'?'badge-yellow':'badge-red';
   var sAr      = data.status==='closed'?'مُغلق':data.status==='in_progress'?'قيد التحليل':'مفتوح';
 
@@ -3028,15 +3034,15 @@ async function loadRCADetail(id) {
     '<input class="form-input" id="rca_root_cause" value="' + (data.root_cause||'') + '" placeholder="السبب الجذري المستخلص من التحليل..."/></div>' +
     '<div class="flex gap-3 mt-4">' +
       '<button onclick="saveRCAWhys(\'' + id + '\')" class="btn btn-primary flex-1"><i class="fas fa-save ml-2"></i>حفظ 5 Whys</button>' +
-      '<button onclick="markRCAClosed(\'' + id + '\')" class="btn btn-primary flex-1" style="background:#059669"><i class="fas fa-check-circle ml-2"></i>إغلاق RCA</button>' +
+      '<button onclick="markRCAClosed(\'' + id + '\')" class="btn btn-primary flex-1" style="background:#17796f"><i class="fas fa-check-circle ml-2"></i>إغلاق RCA</button>' +
     '</div>';
 
   // Ishikawa
   var ishCats = [
     {key:'man',label:'الإنسان (Man)',icon:'user',color:'#17796f'},
-    {key:'machine',label:'الآلة (Machine)',icon:'cogs',color:'#7c3aed'},
-    {key:'method',label:'الأسلوب (Method)',icon:'tasks',color:'#d97706'},
-    {key:'material',label:'المواد (Material)',icon:'box',color:'#059669'},
+    {key:'machine',label:'الآلة (Machine)',icon:'cogs',color:'#1d5fa8'},
+    {key:'method',label:'الأسلوب (Method)',icon:'tasks',color:'#9a6700'},
+    {key:'material',label:'المواد (Material)',icon:'box',color:'#17796f'},
     {key:'environment',label:'البيئة (Environment)',icon:'leaf',color:'#0891b2'},
     {key:'measurement',label:'القياس (Measurement)',icon:'ruler',color:'#db2777'}
   ];
@@ -3061,7 +3067,7 @@ async function loadRCADetail(id) {
     actListHtml = '<div class="text-center py-6 text-slate-400"><i class="fas fa-clipboard-list text-3xl mb-2 block"></i>لا توجد إجراءات محددة بعد</div>';
   } else {
     actions.forEach(function(a, ai){
-      var aClr   = a.type==='corrective' ? '#17796f' : '#059669';
+      var aClr   = a.type==='corrective' ? '#17796f' : '#17796f';
       var aIcon  = a.type==='corrective' ? 'wrench' : 'shield-alt';
       var aTypeAr= a.type==='corrective' ? 'تصحيحي' : 'وقائي';
       var aBadge = a.status==='completed'?'badge-green':a.status==='in_progress'?'badge-yellow':'badge-red';
@@ -3199,7 +3205,7 @@ function buildParetoPanel(id, data) {
         '<td class="p-2 text-xs font-medium">' + item.cause + '</td>' +
         '<td class="p-2 text-center text-xs font-bold">' + (item.freq||0) + '</td>' +
         '<td class="p-2 text-center text-xs">' + pct + '%</td>' +
-        '<td class="p-2 text-center text-xs font-bold" style="color:' + (cumPct<=80?'#059669':'#d97706') + '">' + cumPct + '%</td>' +
+        '<td class="p-2 text-center text-xs font-bold" style="color:' + (cumPct<=80?'#17796f':'#9a6700') + '">' + cumPct + '%</td>' +
         '<td class="p-2">' +
           '<div class="h-3 rounded-full" style="width:' + pct + '%;background:' + barColor + ';min-width:4px"></div>' +
         '</td>' +
@@ -3237,7 +3243,7 @@ function buildParetoPanel(id, data) {
       '<div><label class="text-xs font-medium text-slate-600 block mb-1">عدد مرات التكرار</label>' +
       '<input class="form-input text-sm" type="number" id="pareto-freq" min="1" value="1"/></div>' +
     '</div>' +
-    '<button onclick="addParetoItem(\''+id+'\')" class="btn btn-primary w-full text-sm" style="background:#d97706">' +
+    '<button onclick="addParetoItem(\''+id+'\')" class="btn btn-primary w-full text-sm" style="background:#9a6700">' +
       '<i class="fas fa-plus ml-1"></i>إضافة' +
     '</button>' +
   '</div>';
@@ -3300,14 +3306,14 @@ function buildFMEAPanel(id, data) {
   if (fmea.length) {
     fmea.forEach(function(row, i) {
       var rpn = (row.severity||1) * (row.occurrence||1) * (row.detection||1);
-      var rpnClr = rpn >= 200 ? '#dc2626' : rpn >= 100 ? '#d97706' : '#059669';
+      var rpnClr = rpn >= 200 ? '#b42318' : rpn >= 100 ? '#9a6700' : '#17796f';
       rowsHtml +=
         '<tr class="border-b border-slate-100 hover:bg-slate-50">' +
           '<td class="p-2 text-xs text-slate-700">' + (row.function||'-') + '</td>' +
           '<td class="p-2 text-xs text-slate-700">' + (row.failure_mode||'-') + '</td>' +
           '<td class="p-2 text-xs text-slate-700">' + (row.effect||'-') + '</td>' +
-          '<td class="p-2 text-center"><span class="badge" style="background:#dc262618;color:#dc2626">' + (row.severity||'-') + '</span></td>' +
-          '<td class="p-2 text-center"><span class="badge" style="background:#d9770618;color:#d97706">' + (row.occurrence||'-') + '</span></td>' +
+          '<td class="p-2 text-center"><span class="badge" style="background:#b4231818;color:#b42318">' + (row.severity||'-') + '</span></td>' +
+          '<td class="p-2 text-center"><span class="badge" style="background:#9a670018;color:#9a6700">' + (row.occurrence||'-') + '</span></td>' +
           '<td class="p-2 text-center"><span class="badge" style="background:#22A69918;color:#22A699">' + (row.detection||'-') + '</span></td>' +
           '<td class="p-2 text-center"><span class="font-black text-sm" style="color:'+rpnClr+'">' + rpn + '</span></td>' +
           '<td class="p-2 text-xs text-slate-700">' + (row.action||'-') + '</td>' +
@@ -3368,7 +3374,7 @@ function buildFMEAPanel(id, data) {
           '<div><label class="text-xs font-medium text-blue-600 block mb-1">الكشف D (1-10)</label>' +
           '<input class="form-input text-sm" type="number" id="fmea-d" min="1" max="10" value="5" /></div>' +
         '</div>' +
-        '<button onclick="addFMEARow(\''+id+'\')" class="btn btn-primary w-full text-sm" style="background:#059669">' +
+        '<button onclick="addFMEARow(\''+id+'\')" class="btn btn-primary w-full text-sm" style="background:#17796f">' +
           '<i class="fas fa-plus ml-1"></i>إضافة السجل' +
         '</button>' +
       '</div>' +
@@ -3537,9 +3543,9 @@ async function loadKPIs() {
   }));
   window._kpisList = kpis;
   const catAr    = {quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'};
-  const catColors = {quality:'#22A699',safety:'#059669',environmental:'#d97706',compliance:'#7c3aed',operational:'#5d6b7e'};
+  const catColors = {quality:'#22A699',safety:'#17796f',environmental:'#9a6700',compliance:'#1d5fa8',operational:'#5d6b7e'};
   const catIcons  = {quality:'award',safety:'hard-hat',environmental:'leaf',compliance:'check-double',operational:'cogs'};
-  const isoColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#5d6b7e'};
+  const isoColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8',MULTI:'#5d6b7e'};
   const isoLabels = {ISO_9001:'ISO 9001',ISO_45001:'ISO 45001',ISO_14001:'ISO 14001',ISO_27001:'ISO 27001',MULTI:'متعدد'};
 
   const totalGood     = kpis.filter(k => k.status_level==='good').length;
@@ -3716,8 +3722,8 @@ async function loadKPIs() {
   // Draw mini spark charts
   setTimeout(() => {
     kpis.forEach(k => {
-      const hist = (window.MOCK_DB?.kpi_history || {})[k.id];
-      if (hist && document.getElementById('spark-' + k.id)) {
+      const hist = window.IR_kpiHist ? IR_kpiHist(k) : [];
+      if (hist.length > 1 && document.getElementById('spark-' + k.id)) {
         drawSparkline('spark-' + k.id, hist.map(h => h.val), isoColors[k.iso_standard] || '#22A699');
       }
     });
@@ -3729,11 +3735,11 @@ function renderKPIRow(k) {
   const target = k.target_value ?? 0;
   const warn   = k.warning_threshold ?? 0;
   const pct    = target > 0 ? Math.min(100, Math.max(0, (val / target) * 100)) : 0;
-  const color  = k.status_level==='good' ? '#059669' : k.status_level==='warning' ? '#d97706' : k.status_level==='critical' ? '#dc2626' : '#5d6b7e';
+  const color  = k.status_level==='good' ? '#17796f' : k.status_level==='warning' ? '#9a6700' : k.status_level==='critical' ? '#b42318' : '#5d6b7e';
   const icon   = k.status_level==='good' ? 'check-circle' : k.status_level==='warning' ? 'exclamation-circle' : k.status_level==='critical' ? 'times-circle' : 'question-circle';
-  const isoColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#5d6b7e'};
+  const isoColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8',MULTI:'#5d6b7e'};
   const isoColor  = isoColors[k.iso_standard] || '#5d6b7e';
-  const hasHist   = !!(window.MOCK_DB?.kpi_history||{})[k.id];
+  const hasHist   = (window.IR_kpiHist ? IR_kpiHist(k) : []).length > 1;
 
   return `<div class="p-4 hover:bg-slate-50 transition-colors kpi-row" data-cat="${k.category}" data-iso="${k.iso_standard}" data-status="${k.status_level}">
     <div class="flex items-center gap-3">
@@ -3741,7 +3747,7 @@ function renderKPIRow(k) {
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2 flex-wrap mb-1">
           <span class="text-sm font-semibold text-slate-800">${k.name}</span>
-          <span class="badge text-xs" style="background:${isoColor}18;color:${isoColor}">${k.iso_standard?.replace('_',' ')}</span>
+          <span class="badge text-xs" style="background:${isoColor}18;color:${isoColor}">${isoLabel(k.iso_standard)}</span>
           <span class="font-mono text-xs text-slate-400">${k.code}</span>
         </div>
         <div class="flex items-center gap-4">
@@ -3882,9 +3888,9 @@ async function deleteKPI(id) {
 async function openKPIDetail(id) {
   const kpi = (window._kpisList || []).find(k => k.id === id);
   if (!kpi) return;
-  const hist = [];
-  const color = kpi.status_level==='good' ? '#059669' : kpi.status_level==='warning' ? '#d97706' : '#dc2626';
-  const isoColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed',MULTI:'#5d6b7e'};
+  const hist = window.IR_kpiHist ? IR_kpiHist(kpi) : [];
+  const color = kpi.status_level==='good' ? '#17796f' : kpi.status_level==='warning' ? '#9a6700' : '#b42318';
+  const isoColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8',MULTI:'#5d6b7e'};
   const isoC = isoColors[kpi.iso_standard] || '#5d6b7e';
 
   const header = document.getElementById('kpi-detail-header');
@@ -3894,7 +3900,7 @@ async function openKPIDetail(id) {
   const pct = kpi.target_value > 0 ? Math.min(100, ((kpi.latest_value ?? 0) / kpi.target_value) * 100) : 0;
   const trend = hist.length >= 2 ? (hist[hist.length-1].val - hist[hist.length-2].val) : 0;
   const trendIcon = trend > 0 ? 'arrow-up' : trend < 0 ? 'arrow-down' : 'minus';
-  const trendColor = trend > 0 ? '#059669' : trend < 0 ? '#dc2626' : '#5d6b7e';
+  const trendColor = trend > 0 ? '#17796f' : trend < 0 ? '#b42318' : '#5d6b7e';
 
   document.getElementById('kpi-detail-body').innerHTML = `
     <div class="space-y-5">
@@ -3922,7 +3928,7 @@ async function openKPIDetail(id) {
       </div>
       ${hist.length ? `
       <div>
-        <div class="text-sm font-bold text-slate-700 mb-2">اتجاه آخر 6 أشهر</div>
+        <div class="text-sm font-bold text-slate-700 mb-2">اتجاه القراءات</div>
         <canvas id="chart-kpi-trend-${id}" height="120"></canvas>
       </div>` : '<p class="text-slate-400 text-sm text-center py-4">لا توجد بيانات تاريخية</p>'}
       <div class="grid grid-cols-2 gap-3 text-xs">
@@ -3932,7 +3938,7 @@ async function openKPIDetail(id) {
         </div>
         <div class="p-3 rounded-xl" style="background:${isoC}12">
           <div class="text-slate-500 mb-1">معيار ISO</div>
-          <div class="font-bold" style="color:${isoC}">${kpi.iso_standard?.replace('_',' ')}</div>
+          <div class="font-bold" style="color:${isoC}">${isoLabel(kpi.iso_standard)}</div>
         </div>
       </div>
       <div class="flex gap-2">
@@ -3943,35 +3949,7 @@ async function openKPIDetail(id) {
 
   document.getElementById('modal-kpi-detail').classList.add('open');
 
-  if (hist.length) {
-    setTimeout(() => {
-      const ctx = document.getElementById('chart-kpi-trend-' + id);
-      if (!ctx) return;
-      new Chart(ctx, {
-        type:'line',
-        data:{
-          labels: hist.map(h => h.month),
-          datasets:[{
-            label: kpi.name,
-            data: hist.map(h => h.val),
-            borderColor: color,
-            backgroundColor: color + '22',
-            fill: true, tension: 0.4, pointBackgroundColor: color, pointRadius: 4
-          },{
-            label:'الهدف',
-            data: hist.map(() => kpi.target_value),
-            borderColor:'#5d6b7e',
-            borderDash:[5,5], pointRadius:0, fill:false
-          }]
-        },
-        options:{
-          responsive:true,
-          plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
-          scales:{y:{ticks:{callback: v => v + (kpi.unit||'')}}}
-        }
-      });
-    }, 100);
-  }
+  if (hist.length) setTimeout(() => window.IR_drawKpiChart && IR_drawKpiChart('chart-kpi-trend-' + id, kpi, color), 60);
 }
 
 // ── Organization Page ─────────────────────────
@@ -4063,7 +4041,7 @@ function orgNodeMenu(nodeId) {
   if (!n) return;
   document.getElementById('org-node-modal')?.remove();
 
-  const colorOpts = ['#125f57','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#5d6b7e','#f59e0b'];
+  const colorOpts = ['#125f57','#17796f','#9a6700','#1d5fa8','#b42318','#0891b2','#5d6b7e','#b7861f'];
   const iconOpts  = ['fa-crown','fa-shield-alt','fa-cogs','fa-award','fa-hard-hat','fa-sitemap','fa-users','fa-clipboard-check','fa-search','fa-chart-bar','fa-leaf','fa-building'];
   const roleOpts  = [{v:'ceo',l:'رئيس تنفيذي'},{v:'manager',l:'مدير'},{v:'supervisor',l:'مشرف'},{v:'staff',l:'موظف'},{v:'auditor',l:'مدقق'}];
 
@@ -4109,8 +4087,8 @@ function orgNodeMenu(nodeId) {
         </div>
         <div class="flex gap-2 pt-2 border-t border-slate-100">
           <button onclick="orgNodeSave('${nodeId}')" class="btn btn-primary flex-1 text-xs" style="padding:8px;"><i class="fas fa-save ml-1"></i>حفظ</button>
-          <button onclick="orgNodeAdd('${nodeId}')" class="btn text-xs" style="background:#f0fdf4;color:#059669;padding:8px 12px;border:none;border-radius:8px;font-weight:600;cursor:pointer;"><i class="fas fa-plus ml-1"></i>إضافة تابع</button>
-          ${n.parent ? `<button onclick="orgNodeDelete('${nodeId}')" class="btn text-xs" style="background:#fff1f2;color:#dc2626;padding:8px 12px;border:none;border-radius:8px;font-weight:600;cursor:pointer;"><i class="fas fa-trash ml-1"></i>حذف</button>` : ''}
+          <button onclick="orgNodeAdd('${nodeId}')" class="btn text-xs" style="background:#f0fdf4;color:#17796f;padding:8px 12px;border:none;border-radius:8px;font-weight:600;cursor:pointer;"><i class="fas fa-plus ml-1"></i>إضافة تابع</button>
+          ${n.parent ? `<button onclick="orgNodeDelete('${nodeId}')" class="btn text-xs" style="background:#fff1f2;color:#b42318;padding:8px 12px;border:none;border-radius:8px;font-weight:600;cursor:pointer;"><i class="fas fa-trash ml-1"></i>حذف</button>` : ''}
         </div>
       </div>
     </div>
@@ -4174,9 +4152,9 @@ function orgPolicyCard(p) {
   const sid = 'pol_' + Math.random().toString(36).slice(2,8);
   // Store data on the node so we can read it back for edit
   const statusStyles = {
-    'معتمدة':       { bg:'#d1fae5', color:'#059669', icon:'fa-check-circle' },
-    'قيد المراجعة': { bg:'#fef3c7', color:'#d97706', icon:'fa-clock'        },
-    'ملغاة':        { bg:'#fee2e2', color:'#dc2626', icon:'fa-times-circle'  },
+    'معتمدة':       { bg:'#e3f5f2', color:'#17796f', icon:'fa-check-circle' },
+    'قيد المراجعة': { bg:'#fbf1dc', color:'#9a6700', icon:'fa-clock'        },
+    'ملغاة':        { bg:'#fde4e1', color:'#b42318', icon:'fa-times-circle'  },
     'مسودة':        { bg:'#eef2f6', color:'#5d6b7e', icon:'fa-file-alt'      },
   };
   const ss = statusStyles[p.status] || statusStyles['مسودة'];
@@ -4214,8 +4192,8 @@ function orgPolicyCard(p) {
           <button title="معاينة السياسة"
             onclick="orgViewPolicy('${sid}')"
             style="width:32px;height:32px;border-radius:9px;background:#f0fdf4;border:1.5px solid #6ee7b7;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;"
-            onmouseover="this.style.background='#d1fae5'" onmouseout="this.style.background='#f0fdf4'">
-            <i class="fas fa-eye" style="color:#059669;font-size:13px;"></i>
+            onmouseover="this.style.background='#e3f5f2'" onmouseout="this.style.background='#f0fdf4'">
+            <i class="fas fa-eye" style="color:#17796f;font-size:13px;"></i>
           </button>
           <!-- Edit -->
           <button title="تعديل السياسة"
@@ -4228,8 +4206,8 @@ function orgPolicyCard(p) {
           <button title="حذف السياسة"
             onclick="document.getElementById('${sid}').remove()"
             style="width:32px;height:32px;border-radius:9px;background:#fff1f2;border:1.5px solid #fca5a5;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;"
-            onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fff1f2'">
-            <i class="fas fa-trash" style="color:#dc2626;font-size:12px;"></i>
+            onmouseover="this.style.background='#fde4e1'" onmouseout="this.style.background='#fff1f2'">
+            <i class="fas fa-trash" style="color:#b42318;font-size:12px;"></i>
           </button>
         </div>
       </div>
@@ -4244,9 +4222,9 @@ function orgViewPolicy(sid) {
   if (!card) return;
   const d = card.dataset;
   const statusStyles = {
-    'معتمدة':       { bg:'#d1fae5', color:'#059669', icon:'fa-check-circle' },
-    'قيد المراجعة': { bg:'#fef3c7', color:'#d97706', icon:'fa-clock'        },
-    'ملغاة':        { bg:'#fee2e2', color:'#dc2626', icon:'fa-times-circle'  },
+    'معتمدة':       { bg:'#e3f5f2', color:'#17796f', icon:'fa-check-circle' },
+    'قيد المراجعة': { bg:'#fbf1dc', color:'#9a6700', icon:'fa-clock'        },
+    'ملغاة':        { bg:'#fde4e1', color:'#b42318', icon:'fa-times-circle'  },
     'مسودة':        { bg:'#eef2f6', color:'#5d6b7e', icon:'fa-file-alt'      },
   };
   const ss = statusStyles[d.status] || statusStyles['مسودة'];
@@ -4296,7 +4274,7 @@ function orgEditPolicy(sid) {
 
   const statusList = ['معتمدة','قيد المراجعة','مسودة','ملغاة'];
   const isoList    = ['ISO 9001','ISO 45001','ISO 14001','ISO 27001','MULTI'];
-  const colorList  = ['#22A699','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#5d6b7e'];
+  const colorList  = ['#22A699','#17796f','#9a6700','#1d5fa8','#b42318','#0891b2','#5d6b7e'];
   const iconList   = ['fa-award','fa-hard-hat','fa-leaf','fa-shield-alt','fa-file-contract','fa-gavel','fa-handshake','fa-globe'];
 
   document.body.insertAdjacentHTML('beforeend', `
@@ -4634,10 +4612,10 @@ function openGapAssessment(stdId, stdCode, stdName, stdColor) {
         <div style="font-size:13px;color:#2a3e5c;margin-bottom:10px;line-height:1.5;">${q}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           ${[
-            {v:100, l:'متوافق تماماً',  bg:'#d1fae5', c:'#059669', border:'#6ee7b7'},
+            {v:100, l:'متوافق تماماً',  bg:'#e3f5f2', c:'#17796f', border:'#6ee7b7'},
             {v:75,  l:'متوافق جزئياً', bg:'#e3f5f2', c:'#17796f', border:'#86d4c8'},
-            {v:50,  l:'قيد التطبيق',   bg:'#fef3c7', c:'#d97706', border:'#fcd34d'},
-            {v:25,  l:'بدأ التطبيق',   bg:'#fee2e2', c:'#dc2626', border:'#fca5a5'},
+            {v:50,  l:'قيد التطبيق',   bg:'#fbf1dc', c:'#9a6700', border:'#fcd34d'},
+            {v:25,  l:'بدأ التطبيق',   bg:'#fde4e1', c:'#b42318', border:'#fca5a5'},
             {v:0,   l:'لم يُطبَّق',    bg:'#eef2f6', c:'#5d6b7e', border:'#cbd2db'},
           ].map(opt => `
             <label style="display:flex;align-items:center;gap:5px;cursor:pointer;padding:5px 10px;border-radius:8px;border:1.5px solid ${opt.border};background:${opt.bg};transition:all .15s;" class="qa-opt">
@@ -4706,11 +4684,11 @@ function openGapAssessment(stdId, stdCode, stdName, stdColor) {
           <span id="qa-answered-count">0</span> من ${totalQ} سؤال تمت الإجابة عليه
         </div>
         <button onclick="document.getElementById('modal-gap-assessment').remove()"
-          style="padding:9px 18px;background:#eef2f6;color:#2a3e5c;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;font-family:'Tajawal',sans-serif;">
+          style="padding:9px 18px;background:#eef2f6;color:#2a3e5c;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;">
           تخطي الآن
         </button>
         <button onclick="submitGapAssessment('${stdId}','${code}','${color}')"
-          style="padding:9px 22px;background:${color};color:white;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:6px;">
+          style="padding:9px 22px;background:${color};color:white;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;">
           <i class="fas fa-check-circle"></i>حفظ التقييم وتحديث الفجوة
         </button>
       </div>
@@ -4818,7 +4796,7 @@ async function loadOrganization() {
     window._orgLogo = org.logo_url;
   }
 
-  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
   const stdIcons  = {ISO_9001:'award',ISO_45001:'hard-hat',ISO_14001:'leaf',ISO_27001:'shield-alt'};
   const objStatus = {good:'badge-green',in_progress:'badge-blue',warning:'badge-yellow',critical:'badge-red'};
   const objStatusAr={good:'مُحقق',in_progress:'قيد التنفيذ',warning:'يحتاج مراجعة',critical:'متأخر'};
@@ -5012,7 +4990,7 @@ async function loadOrganization() {
                   <button onclick="toggleStdCertified('${std.code}')"
                     id="std-cert-btn-${std.code}"
                     class="badge text-xs cursor-pointer transition-all hover:opacity-80"
-                    style="background:${(org.certified_standards||[]).includes(std.code)?'#d1fae5':'#eef2f6'};color:${(org.certified_standards||[]).includes(std.code)?'#059669':'#5d6b7e'};border:none"
+                    style="background:${(org.certified_standards||[]).includes(std.code)?'#e3f5f2':'#eef2f6'};color:${(org.certified_standards||[]).includes(std.code)?'#17796f':'#5d6b7e'};border:none"
                     title="انقر لتغيير حالة الاعتماد">
                     ${(org.certified_standards||[]).includes(std.code) ? '✅ معتمد' : '⏳ غير معتمد'}
                   </button>
@@ -5215,7 +5193,7 @@ async function loadOrganization() {
             <h3 class="font-bold text-slate-800"><i class="fas fa-shield-alt text-red-500 ml-2"></i>إدارة المخاطر وتحليل الفجوة</h3>
             <p class="text-xs text-slate-500 mt-1">تقييم المخاطر · مصفوفة الاحتمالية والتأثير · تحليل الفجوة مقابل معايير ISO</p>
           </div>
-          <button onclick="openRiskModal()" class="btn btn-primary text-sm" style="background:#dc2626"><i class="fas fa-plus ml-1"></i>إضافة مخاطرة</button>
+          <button onclick="openRiskModal()" class="btn btn-primary text-sm" style="background:#b42318"><i class="fas fa-plus ml-1"></i>إضافة مخاطرة</button>
         </div>
 
         <!-- Risk KPI Summary -->
@@ -5225,7 +5203,7 @@ async function loadOrganization() {
         <div class="card p-5 mb-5">
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-bold text-slate-700 text-sm"><i class="fas fa-chart-bar text-purple-500 ml-2"></i>تحليل الفجوة — مقابل معايير ISO</h4>
-            <button onclick="openGapEditModal()" class="btn text-xs" style="background:#f5f3ff;color:#7c3aed;border:1px solid #e9d5ff;padding:5px 12px;">
+            <button onclick="openGapEditModal()" class="btn text-xs" style="background:#f5f3ff;color:#1d5fa8;border:1px solid #e9d5ff;padding:5px 12px;">
               <i class="fas fa-edit ml-1"></i>تعديل البيانات
             </button>
           </div>
@@ -5288,7 +5266,7 @@ async function loadOrganization() {
           <div>
             <label class="text-sm font-medium text-slate-700 block mb-1">معايير ISO المرتبطة</label>
             <div class="space-y-1" id="obj-iso-list">
-              ${(window.MOCK_DB?.iso_standards||[{code:'ISO_9001',name:'إدارة الجودة',color:'#22A699'},{code:'ISO_45001',name:'السلامة',color:'#059669'},{code:'ISO_14001',name:'البيئة',color:'#d97706'},{code:'ISO_27001',name:'أمن المعلومات',color:'#7c3aed'}]).map(s => `
+              ${(window.MOCK_DB?.iso_standards||[{code:'ISO_9001',name:'إدارة الجودة',color:'#22A699'},{code:'ISO_45001',name:'السلامة',color:'#17796f'},{code:'ISO_14001',name:'البيئة',color:'#9a6700'},{code:'ISO_27001',name:'أمن المعلومات',color:'#1d5fa8'}]).map(s => `
               <label class="flex items-center gap-2 text-sm cursor-pointer">
                 <input type="checkbox" class="obj-iso-cb" value="${s.code}" />
                 <span class="badge text-xs" style="background:${(s.color||stdColors[s.code]||'#5d6b7e')}18;color:${s.color||stdColors[s.code]||'#5d6b7e'}">${s.code.replace('_',' ')}</span>
@@ -5530,7 +5508,7 @@ async function deleteProcedure(stdId, procId) {
 function openAddStandardModal() {
   document.getElementById('modal-add-standard')?.remove();
 
-  var colorOptions = ['#22A699','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#db2777'];
+  var colorOptions = ['#22A699','#17796f','#9a6700','#1d5fa8','#b42318','#0891b2','#db2777'];
   var colorPills = colorOptions.map(function(c){
     return '<button type="button" onclick="selectStdColor(\''+c+'\')" id="std-col-'+c.replace('#','')+'" '+
       'class="w-8 h-8 rounded-lg border-2 border-transparent transition-all" '+
@@ -5721,7 +5699,7 @@ function openEditStandardModal(stdId) {
   document.getElementById('modal-edit-standard')?.remove();
 
   var color = std.color || '#5d6b7e';
-  var colorOptions = ['#22A699','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#db2777'];
+  var colorOptions = ['#22A699','#17796f','#9a6700','#1d5fa8','#b42318','#0891b2','#db2777'];
   var colorPills = colorOptions.map(function(c){
     return '<button type="button" onclick="selectEditStdColor(\''+c+'\')" id="estd-col-'+c.replace('#','')+'" '+
       'class="w-8 h-8 rounded-lg border-2 transition-all" '+
@@ -5956,8 +5934,8 @@ function toggleStdCertified(code) {
   if (btn) {
     if (!isCert) {
       btn.textContent = '✅ معتمد';
-      btn.style.background = '#d1fae5';
-      btn.style.color = '#059669';
+      btn.style.background = '#e3f5f2';
+      btn.style.color = '#17796f';
     } else {
       btn.textContent = '⏳ غير معتمد';
       btn.style.background = '#eef2f6';
@@ -6057,7 +6035,7 @@ function openEditComparisonModal() {
         '</div>' +
 
         '<div class="flex gap-3 pt-2 border-t border-slate-100">' +
-          '<button onclick="submitComparisonEdit()" class="btn btn-primary flex-1" style="background:#7c3aed">' +
+          '<button onclick="submitComparisonEdit()" class="btn btn-primary flex-1" style="background:#1d5fa8">' +
             '<i class="fas fa-save ml-1"></i>حفظ المصفوفة' +
           '</button>' +
           '<button onclick="document.getElementById(\'modal-edit-comparison\').remove()" class="btn btn-danger px-5">إلغاء</button>' +
@@ -6168,7 +6146,7 @@ function renderAnnualPlan() {
   const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
   const statusMap = {completed:'مكتمل', in_progress:'جارٍ', planned:'مخطط', delayed:'متأخر'};
-  const statusClr = {completed:'#059669', in_progress:'#d97706', planned:'#22A699', delayed:'#dc2626'};
+  const statusClr = {completed:'#17796f', in_progress:'#9a6700', planned:'#22A699', delayed:'#b42318'};
   const statusBadge= {completed:'badge-green', in_progress:'badge-yellow', planned:'badge-gray', delayed:'badge-red'};
   const catIcon   = {safety:'hard-hat', quality:'award', environmental:'leaf', audit:'search', training:'graduation-cap', certification:'certificate'};
 
@@ -6182,9 +6160,9 @@ function renderAnnualPlan() {
   const summaryEl = document.getElementById('annual-summary');
   if (summaryEl) summaryEl.innerHTML = [
     {v:total, l:'إجمالي المبادرات', c:'#22A699', i:'layer-group'},
-    {v:completed, l:'مكتملة', c:'#059669', i:'check-circle'},
-    {v:inProg, l:'جارية', c:'#d97706', i:'spinner'},
-    {v:avgProgress+'%', l:'متوسط التقدم', c:'#7c3aed', i:'chart-line'},
+    {v:completed, l:'مكتملة', c:'#17796f', i:'check-circle'},
+    {v:inProg, l:'جارية', c:'#9a6700', i:'spinner'},
+    {v:avgProgress+'%', l:'متوسط التقدم', c:'#1d5fa8', i:'chart-line'},
   ].map(k=>`<div class="card p-4 flex items-center gap-3">
     <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${k.c}18">
       <i class="fas fa-${k.i}" style="color:${k.c}"></i>
@@ -6416,9 +6394,9 @@ function renderRisks() {
   const summEl  = document.getElementById('risk-summary-cards');
   if (summEl) summEl.innerHTML = [
     {v:totalR,  l:'إجمالي المخاطر', c:'#22A699', i:'shield-alt'},
-    {v:critR,   l:'مخاطر حرجة',     c:'#dc2626', i:'exclamation-triangle'},
-    {v:highR,   l:'مخاطر عالية',    c:'#d97706', i:'exclamation-circle'},
-    {v:mitigR,  l:'تم معالجتها',    c:'#059669', i:'check-circle'},
+    {v:critR,   l:'مخاطر حرجة',     c:'#b42318', i:'exclamation-triangle'},
+    {v:highR,   l:'مخاطر عالية',    c:'#9a6700', i:'exclamation-circle'},
+    {v:mitigR,  l:'تم معالجتها',    c:'#17796f', i:'check-circle'},
   ].map(k=>`<div class="card p-4 flex items-center gap-3">
     <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:${k.c}18">
       <i class="fas fa-${k.i}" style="color:${k.c}"></i>
@@ -6441,7 +6419,7 @@ function renderRisks() {
   el.innerHTML = filtered.map(r => {
     const lv   = getRiskLevel(r.probability, r.impact);
     const rpn  = r.probability * r.impact;
-    const lvClr= {critical:'#dc2626', high:'#d97706', medium:'#22A699', low:'#059669'}[lv];
+    const lvClr= {critical:'#b42318', high:'#9a6700', medium:'#22A699', low:'#17796f'}[lv];
     const owners   = Array.isArray(r.owners) ? r.owners : (r.owner ? [r.owner] : []);
     const mitPoints= Array.isArray(r.mitigation_points) ? r.mitigation_points : (r.mitigation ? [r.mitigation] : []);
 
@@ -6478,7 +6456,7 @@ function renderRisks() {
 function renderRiskMatrix() {
   const risks = window.MOCK_DB?.risks || [];
   const getRiskLevel = (p,i) => { const s=p*i; return s>=15?'critical':s>=8?'high':s>=4?'medium':'low'; };
-  const lvlClr = {critical:'#dc2626', high:'#d97706', medium:'#22A699', low:'#059669'};
+  const lvlClr = {critical:'#b42318', high:'#9a6700', medium:'#22A699', low:'#17796f'};
   const el = document.getElementById('risk-matrix-grid');
   if (!el) return;
 
@@ -6504,7 +6482,7 @@ function renderRiskMatrix() {
   html += '</div>';
   // Legend
   html += '<div class="flex gap-3 mt-3 flex-wrap">';
-  [{l:'حرجة (RPN≥15)',c:'#dc2626'},{l:'عالية (RPN≥8)',c:'#d97706'},{l:'متوسطة (RPN≥4)',c:'#22A699'},{l:'منخفضة',c:'#059669'}]
+  [{l:'حرجة (RPN≥15)',c:'#b42318'},{l:'عالية (RPN≥8)',c:'#9a6700'},{l:'متوسطة (RPN≥4)',c:'#22A699'},{l:'منخفضة',c:'#17796f'}]
     .forEach(x=>{ html += `<div class="flex items-center gap-1 text-xs"><div class="w-3 h-3 rounded" style="background:${x.c}"></div>${x.l}</div>`; });
   html += '</div>';
   el.innerHTML = html;
@@ -6517,7 +6495,7 @@ function renderGapAnalysis() {
   const sumEl = document.getElementById('gap-summary-cards');
   if (!el) return;
 
-  const stdColors= {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors= {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
   const clauseAr = {4:'السياق',5:'القيادة',6:'التخطيط',7:'الدعم',8:'التشغيل',9:'تقييم الأداء',10:'التحسين'};
 
   const allClausesSet = new Set();
@@ -6551,7 +6529,7 @@ function renderGapAnalysis() {
       if (val === null) return;
       const clr    = s.color || stdColors[s.code] || '#5d6b7e';
       const gapVal = 100 - val;
-      const gapClr = gapVal >= 35 ? '#dc2626' : gapVal >= 20 ? '#d97706' : '#5d6b7e';
+      const gapClr = gapVal >= 35 ? '#b42318' : gapVal >= 20 ? '#9a6700' : '#5d6b7e';
       html += `
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
@@ -6596,13 +6574,13 @@ function renderGapAnalysis() {
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${weakClauses?'6px':'0'};">
           <span style="font-size:11px;color:#5d6b7e;">متوسط الامتثال</span>
-          <span style="font-size:11px;font-weight:700;color:${gapAvg>25?'#dc2626':gapAvg>15?'#d97706':'#059669'};">
+          <span style="font-size:11px;font-weight:700;color:${gapAvg>25?'#b42318':gapAvg>15?'#9a6700':'#17796f'};">
             فجوة ${gapAvg}%
           </span>
         </div>
-        ${weakClauses ? `<div style="font-size:10px;color:#dc2626;background:#fef2f2;border-radius:6px;padding:4px 8px;">
+        ${weakClauses ? `<div style="font-size:10px;color:#b42318;background:#fef2f2;border-radius:6px;padding:4px 8px;">
           <i class="fas fa-exclamation-circle" style="margin-left:4px;"></i>بنود تحتاج تحسين: ${weakClauses}
-        </div>` : `<div style="font-size:10px;color:#059669;background:#f0fdf4;border-radius:6px;padding:4px 8px;">
+        </div>` : `<div style="font-size:10px;color:#17796f;background:#f0fdf4;border-radius:6px;padding:4px 8px;">
           <i class="fas fa-check-circle" style="margin-left:4px;"></i>جميع البنود ضمن المستوى المقبول
         </div>`}
       </div>`;
@@ -6620,7 +6598,7 @@ function openGapEditModal() {
   const stds    = (window.MOCK_DB?.iso_standards||[]).filter(s => gap[s.code]);
   const clauses = [4,5,6,7,8,9,10];
   const clauseAr= {4:'السياق',5:'القيادة',6:'التخطيط',7:'الدعم',8:'التشغيل',9:'تقييم الأداء',10:'التحسين'};
-  const stdColors= {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors= {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
 
   // Build table header
   const thCols = stds.map(s => {
@@ -6726,7 +6704,7 @@ function openGapEditModal() {
       </div>` : ''}
 
       <div class="flex gap-3 pt-3 border-t border-slate-100">
-        <button onclick="submitGapEdit()" class="btn btn-primary flex-1" style="background:#7c3aed">
+        <button onclick="submitGapEdit()" class="btn btn-primary flex-1" style="background:#1d5fa8">
           <i class="fas fa-save ml-1"></i>حفظ تحليل الفجوة
         </button>
         <button onclick="document.getElementById('modal-gap-edit').remove()" class="btn btn-danger px-5">إلغاء</button>
@@ -6746,7 +6724,7 @@ function updateAllGapPreviews() {
   const gap      = window.MOCK_DB?.gap_analysis || {};
   const stds     = (window.MOCK_DB?.iso_standards||[]).filter(s => gap[s.code]);
   const clauses  = [4,5,6,7,8,9,10];
-  const stdColors= {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors= {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
   const chipsEl  = document.getElementById('gap-avg-chips');
   if (!chipsEl) return;
 
@@ -6790,7 +6768,7 @@ function addGapClauseRow() {
 
   // Get current standards columns from header
   const stds = (window.MOCK_DB?.iso_standards||[]).filter(s => window.MOCK_DB?.gap_analysis?.[s.code]);
-  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
 
   // Build row
   const cells = stds.map(s => {
@@ -6898,7 +6876,7 @@ function openRiskEdit(id) {
   const ownersCbs  = users.map(u=>`
     <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
       <input type="checkbox" class="risk-owner-cb" value="${u.full_name}" ${ownersList.includes(u.full_name)?'checked':''}
-        style="accent-color:#dc2626" />
+        style="accent-color:#b42318" />
       <span class="text-sm text-slate-700">${u.full_name}</span>
       <span class="text-xs text-slate-400">${{admin:'مدير نظام',manager:'مدير',engineer:'مهندس',auditor:'مدقق'}[u.role]||u.role}</span>
     </label>`).join('');
@@ -6980,7 +6958,7 @@ function openRiskEdit(id) {
       </div>
 
       <div class="flex gap-3 pt-3 border-t border-slate-100">
-        <button onclick="submitRisk('${risk?.id||''}')" class="btn btn-primary flex-1" style="background:#dc2626">
+        <button onclick="submitRisk('${risk?.id||''}')" class="btn btn-primary flex-1" style="background:#b42318">
           <i class="fas fa-save ml-1"></i>حفظ المخاطرة
         </button>
         <button onclick="document.getElementById('modal-risk').remove()" class="btn btn-danger px-5">إلغاء</button>
@@ -7010,7 +6988,7 @@ function updateRpnPreview() {
   const p = parseInt(document.getElementById('risk-probability')?.value)||1;
   const i = parseInt(document.getElementById('risk-impact')?.value)||1;
   const rpn = p*i;
-  const clr = rpn>=15?'#dc2626':rpn>=8?'#d97706':rpn>=4?'#22A699':'#059669';
+  const clr = rpn>=15?'#b42318':rpn>=8?'#9a6700':rpn>=4?'#22A699':'#17796f';
   const lv  = rpn>=15?'حرجة':rpn>=8?'عالية':rpn>=4?'متوسطة':'منخفضة';
   const el  = document.getElementById('rpn-preview');
   if (el) { el.textContent = rpn + ' — ' + lv; el.style.background=clr+'18'; el.style.color=clr; }
@@ -7075,7 +7053,7 @@ function openRiskView(id) {
 
   const rpn    = risk.probability * risk.impact;
   const lv     = rpn>=15?'critical':rpn>=8?'high':rpn>=4?'medium':'low';
-  const lvClr  = {critical:'#dc2626',high:'#d97706',medium:'#22A699',low:'#059669'}[lv];
+  const lvClr  = {critical:'#b42318',high:'#9a6700',medium:'#22A699',low:'#17796f'}[lv];
   const lvAr   = {critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'}[lv];
   const stAr   = {open:'مفتوحة',mitigated:'مُعالجة',monitoring:'مراقبة',closed:'مغلقة'}[risk.status]||risk.status;
   const catAr  = {compliance:'امتثال',safety:'سلامة',quality:'جودة',environmental:'بيئة',security:'أمن',financial:'مالي',operational:'تشغيلي'}[risk.category]||risk.category;
@@ -7157,7 +7135,7 @@ function openAnnualPlanView(id) {
   document.getElementById('modal-plan-view')?.remove();
 
   const months  = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-  const stClr   = {completed:'#059669',in_progress:'#d97706',planned:'#22A699',delayed:'#dc2626'};
+  const stClr   = {completed:'#17796f',in_progress:'#9a6700',planned:'#22A699',delayed:'#b42318'};
   const stAr    = {completed:'مكتمل',in_progress:'جارٍ',planned:'مخطط',delayed:'متأخر'};
   const stBadge = {completed:'badge-green',in_progress:'badge-yellow',planned:'badge-gray',delayed:'badge-red'};
   const prAr    = {critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
@@ -7238,7 +7216,7 @@ function openOrgEdit() {
   document.getElementById('modal-org-edit')?.remove();
 
   const certStds   = org.certified_standards || [];
-  const stdColors  = {ISO_9001:'#22A699', ISO_45001:'#059669', ISO_14001:'#d97706', ISO_27001:'#7c3aed'};
+  const stdColors  = {ISO_9001:'#22A699', ISO_45001:'#17796f', ISO_14001:'#9a6700', ISO_27001:'#1d5fa8'};
   const stdNames   = {ISO_9001:'ISO 9001', ISO_45001:'ISO 45001', ISO_14001:'ISO 14001', ISO_27001:'ISO 27001'};
 
   const stdCheckboxes = ['ISO_9001','ISO_45001','ISO_14001','ISO_27001'].map(s => `
@@ -7409,7 +7387,7 @@ function refreshIsoCheckboxes(checkedCodes) {
   var list = document.getElementById('obj-iso-list');
   if (!list) return;
   var standards = window.MOCK_DB?.iso_standards || [];
-  var stdColors  = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  var stdColors  = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
   list.innerHTML = standards.map(function(s){
     var color = s.color || stdColors[s.code] || '#5d6b7e';
     var checked = checkedCodes && checkedCodes.includes(s.code) ? 'checked' : '';
@@ -7517,7 +7495,7 @@ async function loadMap() {
       completed_inspections: completedProjAudits.length,
     };
   });
-  const clrFor   = v => v>=90?'#059669':v>=75?'#d97706':'#dc2626';
+  const clrFor   = v => v>=90?'#17796f':v>=75?'#9a6700':'#b42318';
   const lblFor   = v => v>=90?'ممتاز':v>=75?'جيد':'يحتاج تحسين';
 
   const activeP     = projects.filter(p=>p.status==='active');
@@ -7552,8 +7530,8 @@ async function loadMap() {
       <div class="grid grid-cols-3 gap-2 mb-3">
         ${[
           {l:'تفتيش',     v:p.total_inspections||0, sub:(p.completed_inspections||0)+' مكتمل', c:'#22A699'},
-          {l:'NC مفتوحة', v:p.open_nc_count||0,     sub:(p.critical_nc_count||0)+' حرجة',    c:(p.open_nc_count||0)>0?'#dc2626':'#059669'},
-          {l:'RCA',        v:p.open_rca_count||0,    sub:'مفتوحة',                             c:(p.open_rca_count||0)>0?'#d97706':'#059669'},
+          {l:'NC مفتوحة', v:p.open_nc_count||0,     sub:(p.critical_nc_count||0)+' حرجة',    c:(p.open_nc_count||0)>0?'#b42318':'#17796f'},
+          {l:'RCA',        v:p.open_rca_count||0,    sub:'مفتوحة',                             c:(p.open_rca_count||0)>0?'#9a6700':'#17796f'},
         ].map(k=>`<div class="p-2 rounded-xl text-center" style="background:${k.c}10">
           <div class="text-xl font-black" style="color:${k.c}">${k.v}</div>
           <div class="text-xs font-bold" style="color:${k.c}">${k.l}</div>
@@ -7571,9 +7549,9 @@ async function loadMap() {
       ${[
         {l:'إجمالي المشاريع', v:projects.length,               sub:activeP.length+' نشط',         c:'#22A699', i:'building'},
         {l:'متوسط الامتثال',  v:totalComp+'%',                 sub:lblFor(totalComp),              c:clrFor(totalComp), i:'check-circle'},
-        {l:'NC مفتوحة',       v:totalOpenNC,                    sub:totalCritNC+' حرجة',            c:'#dc2626', i:'exclamation-triangle'},
-        {l:'إجمالي التفتيش',  v:totalInsp,                      sub:'عبر كل المشاريع',              c:'#7c3aed', i:'clipboard-check'},
-        {l:'مشاريع مكتملة',  v:projects.length-activeP.length, sub:'من '+projects.length,          c:'#059669', i:'flag-checkered'},
+        {l:'NC مفتوحة',       v:totalOpenNC,                    sub:totalCritNC+' حرجة',            c:'#b42318', i:'exclamation-triangle'},
+        {l:'إجمالي التفتيش',  v:totalInsp,                      sub:'عبر كل المشاريع',              c:'#1d5fa8', i:'clipboard-check'},
+        {l:'مشاريع مكتملة',  v:projects.length-activeP.length, sub:'من '+projects.length,          c:'#17796f', i:'flag-checkered'},
       ].map(k=>`<div class="stat-card">
         <div class="flex justify-between items-start">
           <div>
@@ -7593,9 +7571,9 @@ async function loadMap() {
         <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
           <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-map-marked-alt text-blue-500 ml-2"></i>خريطة المشاريع التفاعلية</h3>
           <div class="flex gap-3">
-            <span class="flex items-center gap-1 text-xs"><span style="width:10px;height:10px;border-radius:50%;background:#059669;display:inline-block"></span>≥90%</span>
-            <span class="flex items-center gap-1 text-xs"><span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block"></span>75-89%</span>
-            <span class="flex items-center gap-1 text-xs"><span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block"></span>&lt;75%</span>
+            <span class="flex items-center gap-1 text-xs"><span style="width:10px;height:10px;border-radius:50%;background:#17796f;display:inline-block"></span>≥90%</span>
+            <span class="flex items-center gap-1 text-xs"><span style="width:10px;height:10px;border-radius:50%;background:#9a6700;display:inline-block"></span>75-89%</span>
+            <span class="flex items-center gap-1 text-xs"><span style="width:10px;height:10px;border-radius:50%;background:#b42318;display:inline-block"></span>&lt;75%</span>
           </div>
         </div>
         <div id="leaflet-map" style="height:420px;width:100%;z-index:1;"></div>
@@ -7612,7 +7590,7 @@ async function loadMap() {
             <div class="flex items-center gap-2 py-1.5 px-2 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors"
                  id="rank-row-${p.id}" onclick="leafletSelectProject('${p.id}')">
               <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 text-white"
-                style="background:${i===0?'#f59e0b':i===1?'#5d6b7e':i===2?'#b45309':clrFor(p.avg_compliance||0)}">${i+1}</span>
+                style="background:${i===0?'#b7861f':i===1?'#5d6b7e':i===2?'#b45309':clrFor(p.avg_compliance||0)}">${i+1}</span>
               <div class="flex-1 min-w-0">
                 <div class="text-xs font-bold text-slate-800 truncate">${p.city}</div>
                 <div class="kpi-bar mt-0.5" style="height:4px">
@@ -7657,14 +7635,14 @@ async function loadMap() {
       const icon = L.divIcon({
         html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${clr};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:${p.status==='active'?10:9}px;font-weight:800;color:white;font-family:Arial;position:relative;">
           ${p.avg_compliance||0}%
-          ${(p.critical_nc_count||0)>0?`<div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#dc2626;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;color:white;">${p.critical_nc_count}</div>`:''}
+          ${(p.critical_nc_count||0)>0?`<div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#b42318;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;color:white;">${p.critical_nc_count}</div>`:''}
         </div>`,
         className:'', iconSize:[sz,sz], iconAnchor:[sz/2,sz/2], popupAnchor:[0,-sz/2-4]
       });
 
       const isoList = [p.iso_9001&&'ISO 9001',p.iso_45001&&'ISO 45001',p.iso_14001&&'ISO 14001'].filter(Boolean).join(' · ');
       const marker = L.marker([lat,lng],{icon}).addTo(map);
-      marker.bindPopup(`<div style="font-family:Tajawal,Arial;direction:rtl;min-width:190px;padding:4px 2px;">
+      marker.bindPopup(`<div style="direction:rtl;min-width:190px;padding:4px 2px;">
         <div style="font-weight:800;font-size:13px;color:#142D4E;margin-bottom:2px;">${p.name}</div>
         <div style="font-size:11px;color:#5d6b7e;margin-bottom:6px;">${p.client_name||''} · ${p.city}</div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
@@ -7676,8 +7654,8 @@ async function loadMap() {
         </div>
         <div style="font-size:10px;color:#5d6b7e;">${isoList}</div>
         <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;">
-          <span style="background:${p.status==='active'?'#d1fae5':'#eef2f6'};color:${p.status==='active'?'#059669':'#5d6b7e'};padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;">${p.status==='active'?'نشط':'مكتمل'}</span>
-          ${(p.open_nc_count||0)>0?`<span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;">${p.open_nc_count} NC</span>`:''}
+          <span style="background:${p.status==='active'?'#e3f5f2':'#eef2f6'};color:${p.status==='active'?'#17796f':'#5d6b7e'};padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;">${p.status==='active'?'نشط':'مكتمل'}</span>
+          ${(p.open_nc_count||0)>0?`<span style="background:#fde4e1;color:#b42318;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;">${p.open_nc_count} NC</span>`:''}
         </div>
       </div>`, {maxWidth:230, className:'leaflet-popup-rtl'});
 
@@ -7701,7 +7679,7 @@ async function loadMap() {
 function leafletSelectProject(id, flyTo=true) {
   const projects = window._mapProjects    || [];
   const detail   = window._mapBuildDetail;
-  const clrFor   = window._mapClrFor || (v=>v>=90?'#059669':v>=75?'#d97706':'#dc2626');
+  const clrFor   = window._mapClrFor || (v=>v>=90?'#17796f':v>=75?'#9a6700':'#b42318');
   const p = projects.find(x=>x.id===id);
   if (!p) return;
 
@@ -7754,9 +7732,9 @@ function buildProjectCard(p, clrFor) {
     <div class="grid grid-cols-4 gap-2 text-center">
       ${[
         {l:'تفتيش',    v:p.total_inspections||0,    c:'#22A699'},
-        {l:'NC',       v:p.open_nc_count||0,         c:(p.open_nc_count||0)>0?'#dc2626':'#059669'},
-        {l:'حرجة',    v:p.critical_nc_count||0,     c:(p.critical_nc_count||0)>0?'#dc2626':'#059669'},
-        {l:'متأخرة',  v:p.overdue_nc_count||0,      c:(p.overdue_nc_count||0)>0?'#d97706':'#059669'},
+        {l:'NC',       v:p.open_nc_count||0,         c:(p.open_nc_count||0)>0?'#b42318':'#17796f'},
+        {l:'حرجة',    v:p.critical_nc_count||0,     c:(p.critical_nc_count||0)>0?'#b42318':'#17796f'},
+        {l:'متأخرة',  v:p.overdue_nc_count||0,      c:(p.overdue_nc_count||0)>0?'#9a6700':'#17796f'},
       ].map(k=>`<div class="p-2 rounded-xl" style="background:${k.c}10">
         <div class="font-bold text-sm" style="color:${k.c}">${k.v}</div>
         <div class="text-xs text-slate-400">${k.l}</div>
@@ -7813,12 +7791,12 @@ async function loadLean() {
 
   const mudaTypeAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط في الإنتاج',motion:'الحركة الزائدة',inventory:'المخزون الزائد',over_processing:'المعالجة الزائدة',transportation:'النقل الزائد',skills:'إهدار المهارات'};
   const mudaIcon  = {defects:'exclamation-triangle',waiting:'clock',overproduction:'copy',motion:'walking',inventory:'boxes',over_processing:'cogs',transportation:'truck',skills:'user-slash'};
-  const mudaColor = {defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#17796f',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#5d6b7e'};
+  const mudaColor = {defects:'#b42318',waiting:'#9a6700',overproduction:'#1d5fa8',motion:'#17796f',inventory:'#17796f',over_processing:'#db2777',transportation:'#0891b2',skills:'#5d6b7e'};
   const priorityBadge = {critical:'badge-red',high:'badge-yellow',medium:'badge-blue',low:'badge-gray'};
   const priorityAr = {critical:'حرجة',high:'عالية',medium:'متوسطة',low:'منخفضة'};
   const statusBadge = {open:'badge-red',in_progress:'badge-yellow',closed:'badge-green'};
   const statusAr = {open:'مفتوحة',in_progress:'قيد المعالجة',closed:'مغلقة'};
-  const dmaicColor = {define:'#22A699',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#5d6b7e'};
+  const dmaicColor = {define:'#22A699',measure:'#2f6fb8',analyze:'#b7861f',improve:'#22A699',control:'#5d6b7e'};
   const dmaicAr = {define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
   const freqAr = {high:'مرتفع',medium:'متوسط',low:'منخفض'};
 
@@ -7865,7 +7843,7 @@ async function loadLean() {
         '</div>' +
       '</td>' +
       '<td class="p-3"><div class="flex items-center gap-1">' +
-        '<span class="font-bold text-sm" style="color:' + (w.impact_score >= 8 ? '#dc2626' : w.impact_score >= 5 ? '#d97706' : '#059669') + '">' + w.impact_score + '</span>' +
+        '<span class="font-bold text-sm" style="color:' + (w.impact_score >= 8 ? '#b42318' : w.impact_score >= 5 ? '#9a6700' : '#17796f') + '">' + w.impact_score + '</span>' +
         '<span class="text-xs text-slate-400">/10</span>' +
       '</div></td>' +
       '<td class="p-3"><span class="badge ' + (statusBadge[w.status] || 'badge-gray') + '">' + (statusAr[w.status] || w.status) + '</span></td>' +
@@ -7928,10 +7906,10 @@ async function loadLean() {
     // KPI cards
     '<div class="grid grid-cols-2 lg:grid-cols-5 gap-3">' +
       leanKpiCard('إجمالي الهدر', totalWastes, 'layer-group', '#22A699') +
-      leanKpiCard('مفتوحة', openWastes, 'exclamation-circle', '#dc2626') +
-      leanKpiCard('قيد المعالجة', inProgress, 'spinner', '#d97706') +
-      leanKpiCard('مُعالجة', closedWastes, 'check-circle', '#059669') +
-      leanKpiCard('التوفير المتوقع', Number(totalSaving).toLocaleString('ar-SA') + ' ر.س', 'coins', '#7c3aed') +
+      leanKpiCard('مفتوحة', openWastes, 'exclamation-circle', '#b42318') +
+      leanKpiCard('قيد المعالجة', inProgress, 'spinner', '#9a6700') +
+      leanKpiCard('مُعالجة', closedWastes, 'check-circle', '#17796f') +
+      leanKpiCard('التوفير المتوقع', Number(totalSaving).toLocaleString('ar-SA') + ' ر.س', 'coins', '#1d5fa8') +
     '</div>' +
 
     // Digitalization + DMAIC row
@@ -7943,7 +7921,7 @@ async function loadLean() {
         '<p class="text-xs text-slate-400 mb-4">يُحسب من البيانات الحقيقية تلقائياً</p>' +
         '<div class="flex items-center justify-around">' +
           leanGauge(totalWastes > 0 ? Math.round((closedWastes + inProgress * 0.5) / totalWastes * 100) : 0, 'مؤشر Lean', '#22A699') +
-          leanGauge(totalWastes > 0 ? Math.round(closedWastes / totalWastes * 100) : 0, 'نسبة الإغلاق', '#059669') +
+          leanGauge(totalWastes > 0 ? Math.round(closedWastes / totalWastes * 100) : 0, 'نسبة الإغلاق', '#17796f') +
         '</div>' +
         '<div class="mt-4 grid grid-cols-2 gap-3">' +
           '<div class="p-3 bg-green-50 rounded-xl">' +
@@ -8185,9 +8163,9 @@ async function openWasteDetail(id) {
     return;
   }
   const mudaTypeAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط في الإنتاج',motion:'الحركة الزائدة',inventory:'المخزون الزائد',over_processing:'المعالجة الزائدة',transportation:'النقل الزائد',skills:'إهدار المهارات'};
-  const dmaicColor = {define:'#22A699',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#5d6b7e'};
+  const dmaicColor = {define:'#22A699',measure:'#2f6fb8',analyze:'#b7861f',improve:'#22A699',control:'#5d6b7e'};
   const dmaicAr = {define:'تعريف',measure:'قياس',analyze:'تحليل',improve:'تحسين',control:'تحكم'};
-  const mudaColor = {defects:'#dc2626',waiting:'#d97706',overproduction:'#7c3aed',motion:'#17796f',inventory:'#059669',over_processing:'#db2777',transportation:'#0891b2',skills:'#5d6b7e'};
+  const mudaColor = {defects:'#b42318',waiting:'#9a6700',overproduction:'#1d5fa8',motion:'#17796f',inventory:'#17796f',over_processing:'#db2777',transportation:'#0891b2',skills:'#5d6b7e'};
   const statusAr = {open:'مفتوحة',in_progress:'قيد المعالجة',closed:'مغلقة'};
   const color = mudaColor[w.muda_type] || '#5d6b7e';
   const dmaicPhases = ['define','measure','analyze','improve','control'];
@@ -8230,7 +8208,7 @@ async function openWasteDetail(id) {
       // Info grid
       '<div class="grid grid-cols-2 gap-3">' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">نوع الهدر</div><div class="font-bold text-slate-800">' + (mudaTypeAr[w.muda_type] || w.muda_type) + '</div></div>' +
-        '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">درجة الأثر</div><div class="font-bold text-2xl" style="color:' + (w.impact_score >= 8 ? '#dc2626' : '#d97706') + '">' + w.impact_score + '<span class="text-sm text-slate-400">/10</span></div></div>' +
+        '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">درجة الأثر</div><div class="font-bold text-2xl" style="color:' + (w.impact_score >= 8 ? '#b42318' : '#9a6700') + '">' + w.impact_score + '<span class="text-sm text-slate-400">/10</span></div></div>' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">العملية</div><div class="font-medium text-slate-800">' + (w.process || '-') + '</div></div>' +
         '<div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المشروع</div><div class="font-medium text-slate-800">' + (w.project_id ? ((window._leanProjects||[]).find(p=>p.id===w.project_id)?.metadata?.name || (window._leanProjects||[]).find(p=>p.id===w.project_id)?.title || 'مشروع') : '-') + '</div></div>' +
         '<div class="p-3 bg-green-50 rounded-xl col-span-2"><div class="text-xs text-slate-500 mb-1">التوفير المالي المتوقع</div><div class="font-black text-green-700 text-xl">' + Number(w.estimated_saving||0).toLocaleString('ar-SA') + ' ريال</div></div>' +
@@ -8281,7 +8259,7 @@ async function openWasteEdit(id) {
 
   const mudaTypeAr = {defects:'العيوب',waiting:'الانتظار',overproduction:'الإفراط في الإنتاج',motion:'الحركة الزائدة',inventory:'المخزون الزائد',over_processing:'المعالجة الزائدة',transportation:'النقل الزائد',skills:'إهدار المهارات'};
   const dmaicAr    = {define:'تعريف (Define)',measure:'قياس (Measure)',analyze:'تحليل (Analyze)',improve:'تحسين (Improve)',control:'تحكم (Control)'};
-  const dmaicColor = {define:'#22A699',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#5d6b7e'};
+  const dmaicColor = {define:'#22A699',measure:'#2f6fb8',analyze:'#b7861f',improve:'#22A699',control:'#5d6b7e'};
   const dmaicPhases = ['define','measure','analyze','improve','control'];
 
   let editModal = document.getElementById('modal-waste-edit');
@@ -8423,7 +8401,7 @@ async function openWasteEdit(id) {
 }
 
 function selectDmaicPhase(phase) {
-  const dmaicColor = {define:'#22A699',measure:'#8b5cf6',analyze:'#f59e0b',improve:'#10b981',control:'#5d6b7e'};
+  const dmaicColor = {define:'#22A699',measure:'#2f6fb8',analyze:'#b7861f',improve:'#22A699',control:'#5d6b7e'};
   const phases = ['define','measure','analyze','improve','control'];
   document.getElementById('edit-w-dmaic').value = phase;
   phases.forEach(ph => {
@@ -8524,7 +8502,7 @@ async function loadReports() {
   const gapAvgs    = stds.filter(s=>gap[s.code]).map(s=>{const v=Object.values(gap[s.code]?.clauses||{});return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;});
   const overallGap = gapAvgs.length ? Math.round(gapAvgs.reduce((a,b)=>a+b,0)/gapAvgs.length) : 0;
 
-  const statusClr  = v => v>=90?'#059669':v>=70?'#d97706':'#dc2626';
+  const statusClr  = v => v>=90?'#17796f':v>=70?'#9a6700':'#b42318';
 
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in space-y-6">
@@ -8550,31 +8528,31 @@ async function loadReports() {
         </div>`,
         "downloadReport('compliance')")}
 
-      ${rptCard('تقرير عدم المطابقة NC','تحليل شامل + توزيع + RCA','exclamation-triangle','#dc2626',
+      ${rptCard('تقرير عدم المطابقة NC','تحليل شامل + توزيع + RCA','exclamation-triangle','#b42318',
         `<div class="grid grid-cols-2 gap-2 text-center mt-2">
-          <div class="p-2 rounded-xl" style="background:#fee2e2"><div class="font-black text-red-700">${openNCs}</div><div class="text-xs text-slate-500">مفتوحة</div></div>
+          <div class="p-2 rounded-xl" style="background:#fde4e1"><div class="font-black text-red-700">${openNCs}</div><div class="text-xs text-slate-500">مفتوحة</div></div>
           <div class="p-2 rounded-xl" style="background:#f0fdf4"><div class="font-black text-green-700">${rcaRate}%</div><div class="text-xs text-slate-500">إغلاق RCA</div></div>
         </div>`,
         "downloadReport('nc')")}
 
-      ${rptCard('تقرير إدارة المخاطر','مصفوفة + سجل + خطط المعالجة','shield-alt','#dc2626',
+      ${rptCard('تقرير إدارة المخاطر','مصفوفة + سجل + خطط المعالجة','shield-alt','#b42318',
         `<div class="grid grid-cols-2 gap-2 text-center mt-2">
-          <div class="p-2 rounded-xl" style="background:#fee2e2"><div class="font-black text-red-700">${critRisks}</div><div class="text-xs text-slate-500">مخاطر حرجة</div></div>
+          <div class="p-2 rounded-xl" style="background:#fde4e1"><div class="font-black text-red-700">${critRisks}</div><div class="text-xs text-slate-500">مخاطر حرجة</div></div>
           <div class="p-2 rounded-xl" style="background:#f0fdf4"><div class="font-black text-green-700">${risks.filter(r=>r.status==='mitigated').length}</div><div class="text-xs text-slate-500">تم معالجتها</div></div>
         </div>`,
         "downloadReport('risks')")}
 
-      ${rptCard('تقرير الخطة السنوية','تقدم المبادرات والميزانية','calendar-alt','#059669',
+      ${rptCard('تقرير الخطة السنوية','تقدم المبادرات والميزانية','calendar-alt','#17796f',
         `<div class="grid grid-cols-2 gap-2 text-center mt-2">
           <div class="p-2 bg-green-50 rounded-xl"><div class="font-black text-green-700">${avgPlan}%</div><div class="text-xs text-slate-500">متوسط التقدم</div></div>
           <div class="p-2 bg-green-50 rounded-xl"><div class="font-black text-green-700">${plans.filter(p=>p.status==='completed').length}/${plans.length}</div><div class="text-xs text-slate-500">مكتملة</div></div>
         </div>`,
         "downloadReport('plans')")}
 
-      ${rptCard('تقرير تحليل الفجوة','الامتثال لكل بند لكل معيار ISO','chart-bar','#7c3aed',
+      ${rptCard('تقرير تحليل الفجوة','الامتثال لكل بند لكل معيار ISO','chart-bar','#1d5fa8',
         `<div class="grid grid-cols-2 gap-2 text-center mt-2">
-          <div class="p-2 rounded-xl" style="background:#ede9fe"><div class="font-black" style="color:#7c3aed">${overallGap}%</div><div class="text-xs text-slate-500">متوسط الفجوة</div></div>
-          <div class="p-2 rounded-xl" style="background:#ede9fe"><div class="font-black" style="color:#7c3aed">${stds.filter(s=>gap[s.code]).length}</div><div class="text-xs text-slate-500">معايير محللة</div></div>
+          <div class="p-2 rounded-xl" style="background:#e8f1fb"><div class="font-black" style="color:#1d5fa8">${overallGap}%</div><div class="text-xs text-slate-500">متوسط الفجوة</div></div>
+          <div class="p-2 rounded-xl" style="background:#e8f1fb"><div class="font-black" style="color:#1d5fa8">${stds.filter(s=>gap[s.code]).length}</div><div class="text-xs text-slate-500">معايير محللة</div></div>
         </div>`,
         "downloadReport('gap')")}
 
@@ -8660,7 +8638,7 @@ function buildReportHTML(type, preview=false) {
   const org  = db.org_profile || {};
   const now  = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
   const stds = db.iso_standards || [];
-  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+  const stdColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
 
   const header = (title, subtitle, color='#0f4c46') => `
     <div style="background:linear-gradient(135deg,${color},${color}dd);padding:24px 32px;border-radius:12px 12px 0 0;margin:-1px">
@@ -8705,15 +8683,15 @@ function buildReportHTML(type, preview=false) {
     const avgC    = comp.length ? Math.round(comp.reduce((s,i)=>s+(i.compliance_score||0),0)/comp.length) : 0;
     const ncs     = db.nonconformances || [];
     const rcas    = db.rca_tickets || [];
-    const clr     = avgC>=90?'#059669':avgC>=75?'#d97706':'#dc2626';
+    const clr     = avgC>=90?'#17796f':avgC>=75?'#9a6700':'#b42318';
 
     body += header('تقرير الامتثال الشامل', 'Audit-Ready — ISO 9001 / ISO 45001 / ISO 14001', '#0f4c46');
     body += `<div style="padding:20px">`;
     body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
       ${kpiBox('معدل الامتثال', avgC+'%', clr)}
       ${kpiBox('تفتيش مكتمل', comp.length, '#22A699')}
-      ${kpiBox('NC مفتوحة', ncs.filter(n=>n.status!=='closed').length, '#dc2626')}
-      ${kpiBox('إغلاق RCA', (rcas.length?Math.round(rcas.filter(r=>r.status==='closed').length/rcas.length*100):0)+'%', '#7c3aed')}
+      ${kpiBox('NC مفتوحة', ncs.filter(n=>n.status!=='closed').length, '#b42318')}
+      ${kpiBox('إغلاق RCA', (rcas.length?Math.round(rcas.filter(r=>r.status==='closed').length/rcas.length*100):0)+'%', '#1d5fa8')}
     </div>`;
 
     body += section('سجل التفتيشات المكتملة',
@@ -8728,8 +8706,8 @@ function buildReportHTML(type, preview=false) {
             <td style="${tdStyle}">${i.ref_number}</td>
             <td style="${tdStyle}">${i.title}</td>
             <td style="${tdStyle}">${i.project_name}</td>
-            <td style="${tdStyle}">${i.iso_standard?.replace('_',' ')||'—'}</td>
-            <td style="${tdStyle};font-weight:bold;color:${i.compliance_score>=90?'#059669':i.compliance_score>=75?'#d97706':'#dc2626'}">${i.compliance_score||0}%</td>
+            <td style="${tdStyle}">${isoLabel(i.iso_standard)||'—'}</td>
+            <td style="${tdStyle};font-weight:bold;color:${i.compliance_score>=90?'#17796f':i.compliance_score>=75?'#9a6700':'#b42318'}">${i.compliance_score||0}%</td>
             <td style="${tdStyle}">${i.result==='pass'?'✅ ناجح':i.result==='fail'?'❌ فاشل':'—'}</td>
           </tr>`).join('')}
         </tbody>
@@ -8747,7 +8725,7 @@ function buildReportHTML(type, preview=false) {
             return `<div style="padding:12px;background:${clr2}0d;border-radius:8px;text-align:center;border:1px solid ${clr2}20">
               <div style="font-weight:900;font-size:20px;color:${clr2}">${avg2}%</div>
               <div style="font-size:11px;color:#5d6b7e">${s.code.replace('_',' ')}</div>
-              <div style="font-size:10px;color:${avg2>=80?'#059669':'#dc2626'}">${100-avg2>0?'فجوة '+(100-avg2)+'%':'✓ ممتاز'}</div>
+              <div style="font-size:10px;color:${avg2>=80?'#17796f':'#b42318'}">${100-avg2>0?'فجوة '+(100-avg2)+'%':'✓ ممتاز'}</div>
             </div>`;
           }).join('')}
         </div>`);
@@ -8763,19 +8741,19 @@ function buildReportHTML(type, preview=false) {
     ncs.forEach(n=>{byCat[n.category||'other']=(byCat[n.category||'other']||0)+1;});
 
     body += (type==='all'?'<div style="page-break-before:always">':'');
-    body += header('تقرير عدم المطابقة NC', 'تحليل شامل + توزيع حسب الفئة', '#dc2626');
+    body += header('تقرير عدم المطابقة NC', 'تحليل شامل + توزيع حسب الفئة', '#b42318');
     body += `<div style="padding:20px">`;
     body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
       ${kpiBox('إجمالي NC', ncs.length, '#22A699')}
-      ${kpiBox('مفتوحة', open.length, '#dc2626')}
-      ${kpiBox('حرجة', ncs.filter(n=>n.type==='critical').length, '#dc2626')}
-      ${kpiBox('مغلقة', ncs.filter(n=>n.status==='closed').length, '#059669')}
+      ${kpiBox('مفتوحة', open.length, '#b42318')}
+      ${kpiBox('حرجة', ncs.filter(n=>n.type==='critical').length, '#b42318')}
+      ${kpiBox('مغلقة', ncs.filter(n=>n.status==='closed').length, '#17796f')}
     </div>`;
 
     body += section('توزيع NC حسب الفئة',
       `<div style="display:flex;flex-wrap:wrap;gap:8px">
         ${Object.entries(byCat).map(([cat,cnt])=>
-          `<div style="padding:6px 12px;background:#fee2e2;border-radius:6px;font-size:12px"><b style="color:#dc2626">${cnt}</b> ${cat}</div>`
+          `<div style="padding:6px 12px;background:#fde4e1;border-radius:6px;font-size:12px"><b style="color:#b42318">${cnt}</b> ${cat}</div>`
         ).join('')}
       </div>`);
 
@@ -8790,10 +8768,10 @@ function buildReportHTML(type, preview=false) {
           ${ncs.slice(0,preview?5:999).map((n,idx)=>`<tr style="${idx%2===1?trAlt:''}">
             <td style="${tdStyle};color:#22A699;font-family:monospace">${n.ref_number}</td>
             <td style="${tdStyle}">${n.title.substring(0,45)}${n.title.length>45?'...':''}</td>
-            <td style="${tdStyle};font-weight:bold;color:${n.type==='critical'?'#dc2626':n.type==='major'?'#d97706':'#22A699'}">${n.type==='critical'?'حرجة':n.type==='major'?'رئيسية':'ثانوية'}</td>
+            <td style="${tdStyle};font-weight:bold;color:${n.type==='critical'?'#b42318':n.type==='major'?'#9a6700':'#22A699'}">${n.type==='critical'?'حرجة':n.type==='major'?'رئيسية':'ثانوية'}</td>
             <td style="${tdStyle}">${n.project_name}</td>
             <td style="${tdStyle}">${n.status==='open'?'مفتوحة':n.status==='in_progress'?'جارية':'مغلقة'}</td>
-            <td style="${tdStyle};color:${n.due_date&&new Date(n.due_date)<new Date()&&n.status!=='closed'?'#dc2626':'#5d6b7e'}">${n.due_date?new Date(n.due_date).toLocaleDateString('ar-SA'):'-'}</td>
+            <td style="${tdStyle};color:${n.due_date&&new Date(n.due_date)<new Date()&&n.status!=='closed'?'#b42318':'#5d6b7e'}">${n.due_date?new Date(n.due_date).toLocaleDateString('ar-SA'):'-'}</td>
           </tr>`).join('')}
         </tbody>
       </table>`);
@@ -8808,13 +8786,13 @@ function buildReportHTML(type, preview=false) {
     const sorted = risks.slice().sort((a,b)=>getRpn(b)-getRpn(a));
 
     body += (type==='all'?'<div style="page-break-before:always">':'');
-    body += header('تقرير إدارة المخاطر', 'سجل المخاطر + مصفوفة RPN + خطط المعالجة', '#7c3aed');
+    body += header('تقرير إدارة المخاطر', 'سجل المخاطر + مصفوفة RPN + خطط المعالجة', '#1d5fa8');
     body += `<div style="padding:20px">`;
     body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
-      ${kpiBox('إجمالي المخاطر', risks.length, '#7c3aed')}
-      ${kpiBox('حرجة RPN≥15', risks.filter(r=>getRpn(r)>=15).length, '#dc2626')}
-      ${kpiBox('عالية RPN≥8', risks.filter(r=>getRpn(r)>=8&&getRpn(r)<15).length, '#d97706')}
-      ${kpiBox('تم معالجتها', risks.filter(r=>r.status==='mitigated'||r.status==='closed').length, '#059669')}
+      ${kpiBox('إجمالي المخاطر', risks.length, '#1d5fa8')}
+      ${kpiBox('حرجة RPN≥15', risks.filter(r=>getRpn(r)>=15).length, '#b42318')}
+      ${kpiBox('عالية RPN≥8', risks.filter(r=>getRpn(r)>=8&&getRpn(r)<15).length, '#9a6700')}
+      ${kpiBox('تم معالجتها', risks.filter(r=>r.status==='mitigated'||r.status==='closed').length, '#17796f')}
     </div>`;
 
     body += section('سجل المخاطر مرتباً بالأولوية',
@@ -8827,7 +8805,7 @@ function buildReportHTML(type, preview=false) {
         <tbody>
           ${sorted.slice(0,preview?5:999).map((r,idx)=>{
             const rpn = getRpn(r);
-            const clr = rpn>=15?'#dc2626':rpn>=8?'#d97706':'#22A699';
+            const clr = rpn>=15?'#b42318':rpn>=8?'#9a6700':'#22A699';
             const owners = Array.isArray(r.owners)?r.owners.join('، '):(r.owner||'—');
             return `<tr style="${idx%2===1?trAlt:''}">
               <td style="${tdStyle};font-weight:900;color:${clr}">${rpn}</td>
@@ -8849,14 +8827,14 @@ function buildReportHTML(type, preview=false) {
     const plans = db.annual_plans || [];
 
     body += (type==='all'?'<div style="page-break-before:always">':'');
-    body += header('تقرير الخطة السنوية', 'تقدم المبادرات والميزانية '+new Date().getFullYear(), '#059669');
+    body += header('تقرير الخطة السنوية', 'تقدم المبادرات والميزانية '+new Date().getFullYear(), '#17796f');
     body += `<div style="padding:20px">`;
     const totalBudget = plans.reduce((s,p)=>s+(p.budget||0),0);
     const avgProg     = plans.length?Math.round(plans.reduce((s,p)=>s+(p.progress||0),0)/plans.length):0;
     body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
-      ${kpiBox('إجمالي المبادرات', plans.length, '#059669')}
-      ${kpiBox('متوسط التقدم', avgProg+'%', '#059669')}
-      ${kpiBox('مكتملة', plans.filter(p=>p.status==='completed').length, '#059669')}
+      ${kpiBox('إجمالي المبادرات', plans.length, '#17796f')}
+      ${kpiBox('متوسط التقدم', avgProg+'%', '#17796f')}
+      ${kpiBox('مكتملة', plans.filter(p=>p.status==='completed').length, '#17796f')}
       ${kpiBox('الميزانية الإجمالية', totalBudget.toLocaleString('ar-SA')+' ر.س', '#22A699')}
     </div>`;
 
@@ -8870,7 +8848,7 @@ function buildReportHTML(type, preview=false) {
         </tr></thead>
         <tbody>
           ${plans.slice(0,preview?5:999).map((p,idx)=>{
-            const clr2 = p.status==='completed'?'#059669':p.status==='in_progress'?'#d97706':p.status==='delayed'?'#dc2626':'#22A699';
+            const clr2 = p.status==='completed'?'#17796f':p.status==='in_progress'?'#9a6700':p.status==='delayed'?'#b42318':'#22A699';
             const owners = Array.isArray(p.owners)?p.owners.join('، '):(p.owner||'—');
             return `<tr style="${idx%2===1?trAlt:''}">
               <td style="${tdStyle};font-weight:600">${p.title.substring(0,35)}${p.title.length>35?'...':''}</td>
@@ -8896,7 +8874,7 @@ function buildReportHTML(type, preview=false) {
     const clauseAr = {4:'السياق',5:'القيادة',6:'التخطيط',7:'الدعم',8:'التشغيل',9:'تقييم الأداء',10:'التحسين'};
 
     body += (type==='all'?'<div style="page-break-before:always">':'');
-    body += header('تقرير تحليل الفجوة', 'الامتثال لكل بند لكل معيار ISO', '#7c3aed');
+    body += header('تقرير تحليل الفجوة', 'الامتثال لكل بند لكل معيار ISO', '#1d5fa8');
     body += `<div style="padding:20px">`;
 
     body += section('ملخص متوسط الامتثال لكل معيار',
@@ -8933,7 +8911,7 @@ function buildReportHTML(type, preview=false) {
               const val = gap[s.code]?.clauses?.[c] ?? '-';
               const clr2 = s.color||stdColors[s.code]||'#5d6b7e';
               const isLow = typeof val==='number' && val<80;
-              return `<td style="${tdStyle};font-weight:bold;color:${isLow?'#dc2626':clr2}">${val}${typeof val==='number'?'%':''}</td>`;
+              return `<td style="${tdStyle};font-weight:bold;color:${isLow?'#b42318':clr2}">${val}${typeof val==='number'?'%':''}</td>`;
             }).join('')}
           </tr>`).join('')}
         </tbody>
@@ -8957,8 +8935,8 @@ function buildReportHTML(type, preview=false) {
     body += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
       ${kpiBox('مؤشر Lean', score+'%', '#0891b2')}
       ${kpiBox('إجمالي الهدر', wastes.length, '#22A699')}
-      ${kpiBox('هدر مُعالج', closed, '#059669')}
-      ${kpiBox('الوفر المتوقع', saving.toLocaleString('ar-SA')+' ر.س', '#7c3aed')}
+      ${kpiBox('هدر مُعالج', closed, '#17796f')}
+      ${kpiBox('الوفر المتوقع', saving.toLocaleString('ar-SA')+' ر.س', '#1d5fa8')}
     </div>`;
 
     body += section('سجل الهدر المرصود',
@@ -8974,10 +8952,10 @@ function buildReportHTML(type, preview=false) {
             <td style="${tdStyle};color:#0891b2;font-family:monospace">${w.ref_number||w.ref||''}</td>
             <td style="${tdStyle}">${w.title.substring(0,35)}${w.title.length>35?'...':''}</td>
             <td style="${tdStyle}">${mudaAr[w.muda_type]||w.muda_type}</td>
-            <td style="${tdStyle};font-weight:bold;color:${w.priority==='critical'?'#dc2626':w.priority==='high'?'#d97706':'#22A699'}">${w.priority==='critical'?'حرجة':w.priority==='high'?'عالية':'متوسطة'}</td>
-            <td style="${tdStyle};font-weight:bold;color:${w.impact_score>=8?'#dc2626':w.impact_score>=5?'#d97706':'#059669'}">${w.impact_score}/10</td>
+            <td style="${tdStyle};font-weight:bold;color:${w.priority==='critical'?'#b42318':w.priority==='high'?'#9a6700':'#22A699'}">${w.priority==='critical'?'حرجة':w.priority==='high'?'عالية':'متوسطة'}</td>
+            <td style="${tdStyle};font-weight:bold;color:${w.impact_score>=8?'#b42318':w.impact_score>=5?'#9a6700':'#17796f'}">${w.impact_score}/10</td>
             <td style="${tdStyle}">${w.status==='closed'?'✅ مُعالج':w.status==='in_progress'?'🔄 جارٍ':'⭕ مفتوح'}</td>
-            <td style="${tdStyle};color:#059669;font-weight:bold">${(w.estimated_saving||0).toLocaleString('ar-SA')}</td>
+            <td style="${tdStyle};color:#17796f;font-weight:bold">${(w.estimated_saving||0).toLocaleString('ar-SA')}</td>
           </tr>`).join('')}
         </tbody>
       </table>`);
@@ -9142,8 +9120,8 @@ function openNewInspectionModal() {
     const certified = window.MOCK_DB?.org_profile?.certified_standards || [];
     const stds      = window.MOCK_DB?.iso_standards || [];
     const active    = certified.length ? stds.filter(s => certified.includes(s.code)) : stds;
-    const list      = active.length ? active : [{code:'ISO_9001',name:'الجودة',color:'#22A699'},{code:'ISO_45001',name:'السلامة',color:'#059669'},{code:'ISO_14001',name:'البيئة',color:'#d97706'}];
-    const colorMap  = {ISO_9001:'#22A699',ISO_45001:'#059669',ISO_14001:'#d97706',ISO_27001:'#7c3aed'};
+    const list      = active.length ? active : [{code:'ISO_9001',name:'الجودة',color:'#22A699'},{code:'ISO_45001',name:'السلامة',color:'#17796f'},{code:'ISO_14001',name:'البيئة',color:'#9a6700'}];
+    const colorMap  = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'};
 
     container.innerHTML = list.map(s => {
       const c = s.color || colorMap[s.code] || '#5d6b7e';
@@ -9357,7 +9335,7 @@ function inspStatusAr(s) { return {pending:'قيد الانتظار',in_progress
 
 function showToast(msg, type = 'info') {
   const div = document.createElement('div');
-  const colors = { success: '#059669', error: '#dc2626', info: '#22A699', warning: '#d97706' };
+  const colors = { success: '#17796f', error: '#b42318', info: '#22A699', warning: '#9a6700' };
   div.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;background:${colors[type]};color:white;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeIn 0.3s ease`;
   div.textContent = msg;
   document.body.appendChild(div);
@@ -9576,7 +9554,7 @@ function renderUsersTable(usersArr) {
 async function loadUserRoleStats() {
   const stats = await apiFetch('/api/users/stats/roles');
   const roleAr = {admin:'مدير النظام',manager:'مدير',engineer:'مهندس',auditor:'مراجع',viewer:'مشاهد'};
-  const roleColor = {admin:'#dc2626',manager:'#22A699',engineer:'#059669',auditor:'#d97706',viewer:'#5d6b7e'};
+  const roleColor = {admin:'#b42318',manager:'#22A699',engineer:'#17796f',auditor:'#9a6700',viewer:'#5d6b7e'};
   const el = document.getElementById('role-stats');
   if (!el) return;
   el.innerHTML = (stats || []).map(s => `
@@ -9758,10 +9736,10 @@ async function loadTasks() {
   var kpiHtml = '';
   [{v:total,l:'إجمالي المهام',i:'layer-group',c:'#22A699'},
    {v:todo,l:'قيد الانتظار',i:'clock',c:'#5d6b7e'},
-   {v:inprog,l:'قيد التنفيذ',i:'spinner',c:'#d97706'},
-   {v:review,l:'مراجعة',i:'eye',c:'#7c3aed'},
-   {v:done,l:'مكتملة',i:'check-circle',c:'#059669'},
-   {v:overdue,l:'متأخرة',i:'exclamation-circle',c:'#dc2626'}
+   {v:inprog,l:'قيد التنفيذ',i:'spinner',c:'#9a6700'},
+   {v:review,l:'مراجعة',i:'eye',c:'#1d5fa8'},
+   {v:done,l:'مكتملة',i:'check-circle',c:'#17796f'},
+   {v:overdue,l:'متأخرة',i:'exclamation-circle',c:'#b42318'}
   ].forEach(function(k){
     kpiHtml += '<div class="card p-4 flex items-center gap-3">' +
       '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:'+k.c+'18">' +
@@ -9779,7 +9757,7 @@ async function loadTasks() {
     var uDone   = uTasks.filter(function(t){return t.status==='done';}).length;
     var uPct    = uTasks.length ? Math.round(uDone/uTasks.length*100) : 0;
     var initials = u.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2);
-    var roleClr = {admin:'#7c3aed',manager:'#17796f',engineer:'#059669',auditor:'#d97706'}[u.role]||'#5d6b7e';
+    var roleClr = {admin:'#1d5fa8',manager:'#17796f',engineer:'#17796f',auditor:'#9a6700'}[u.role]||'#5d6b7e';
     teamHtml += '<div class="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">' +
       '<div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0" style="background:'+roleClr+'">'+initials+'</div>' +
       '<div class="flex-1 min-w-0">' +
@@ -9804,9 +9782,9 @@ async function loadTasks() {
   // ── بناء كولمنات كانبان ──
   var cols = [
     {key:'todo',    label:'قيد الانتظار', icon:'clock',         color:'#5d6b7e', bg:'#F4F7FA'},
-    {key:'inprogress',label:'قيد التنفيذ',icon:'bolt',          color:'#d97706', bg:'#fffbeb'},
-    {key:'review',  label:'مراجعة',       icon:'eye',           color:'#7c3aed', bg:'#faf5ff'},
-    {key:'done',    label:'مكتملة',       icon:'check-circle',  color:'#059669', bg:'#f0fdf4'}
+    {key:'inprogress',label:'قيد التنفيذ',icon:'bolt',          color:'#9a6700', bg:'#fffbeb'},
+    {key:'review',  label:'مراجعة',       icon:'eye',           color:'#1d5fa8', bg:'#faf5ff'},
+    {key:'done',    label:'مكتملة',       icon:'check-circle',  color:'#17796f', bg:'#f0fdf4'}
   ];
 
   var kanbanHtml = '';
@@ -9821,8 +9799,8 @@ async function loadTasks() {
         var assignee  = users.find(function(u){return u.id===t.assigned_to;});
         var aName     = assignee ? assignee.full_name : 'غير محدد';
         var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
-        var aClr      = assignee ? ({admin:'#7c3aed',manager:'#17796f',engineer:'#059689',auditor:'#d97706'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
-        var prioClr   = {high:'#dc2626',medium:'#d97706',low:'#059669'}[t.priority]||'#5d6b7e';
+        var aClr      = assignee ? ({admin:'#1d5fa8',manager:'#17796f',engineer:'#059689',auditor:'#9a6700'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
+        var prioClr   = {high:'#b42318',medium:'#9a6700',low:'#17796f'}[t.priority]||'#5d6b7e';
         var prioAr    = {high:'عالية',medium:'متوسطة',low:'منخفضة'}[t.priority]||'';
         var commentCount = (t.comments||[]).length;
         var attachCount  = (t.attachments||[]).length;
@@ -9970,10 +9948,10 @@ async function loadTasks() {
           '<div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">' +
             '<h3 class="text-sm font-bold text-slate-800"><i class="fas fa-stream text-blue-500 ml-2"></i>مخطط جانت — جدول المهام</h3>' +
             '<div class="flex items-center gap-3">' +
-              '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#059669;display:inline-block;"></span>مكتملة</div>' +
-              '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#d97706;display:inline-block;"></span>جارية</div>' +
+              '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#17796f;display:inline-block;"></span>مكتملة</div>' +
+              '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#9a6700;display:inline-block;"></span>جارية</div>' +
               '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#5d6b7e;display:inline-block;"></span>انتظار</div>' +
-              '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#dc2626;display:inline-block;"></span>متأخرة</div>' +
+              '<div class="flex items-center gap-1 text-xs text-slate-500"><span style="width:10px;height:10px;border-radius:3px;background:#b42318;display:inline-block;"></span>متأخرة</div>' +
             '</div>' +
           '</div>' +
           '<div id="gantt-container" style="overflow-x:auto;"></div>' +
@@ -10066,7 +10044,7 @@ function renderGantt() {
   var totalW = nameW + days.length * colW;
 
   // Status colors
-  var sClr = { done:'#059669', inprogress:'#d97706', review:'#7c3aed', todo:'#5d6b7e' };
+  var sClr = { done:'#17796f', inprogress:'#9a6700', review:'#1d5fa8', todo:'#5d6b7e' };
 
   // ── Header row ──
   var headerCells = '';
@@ -10120,12 +10098,12 @@ function renderGantt() {
     var barX     = nameW + startIdx * colW;
 
     var isOverdue = due < today && t.status !== 'done';
-    var barColor  = isOverdue ? '#dc2626' : (sClr[t.status] || '#5d6b7e');
+    var barColor  = isOverdue ? '#b42318' : (sClr[t.status] || '#5d6b7e');
     var barOpacity= t.status==='done' ? 1 : 0.85;
 
     var assignee  = users.find(function(u){ return u.id === t.assigned_to; });
     var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
-    var aClr      = assignee ? ({admin:'#7c3aed',manager:'#17796f',engineer:'#059669',auditor:'#d97706'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
+    var aClr      = assignee ? ({admin:'#1d5fa8',manager:'#17796f',engineer:'#17796f',auditor:'#9a6700'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
 
     var prioBadge = {high:'🔴',medium:'🟡',low:'🟢'}[t.priority]||'';
     var rowBg     = ri%2===0 ? 'white' : '#fafbfc';
@@ -10311,14 +10289,14 @@ function openTaskDetail(id) {
 
   var assignee = users.find(function(u){return u.id===task.assigned_to;});
   var aName    = assignee ? assignee.full_name : 'غير محدد';
-  var prioClr  = {high:'#dc2626',medium:'#d97706',low:'#059669'}[task.priority]||'#5d6b7e';
+  var prioClr  = {high:'#b42318',medium:'#9a6700',low:'#17796f'}[task.priority]||'#5d6b7e';
   var prioAr   = {high:'عالية',medium:'متوسطة',low:'منخفضة'}[task.priority]||'-';
 
   // Status options
   var statusBtns = '';
   [{s:'todo',l:'قيد الانتظار'},{s:'inprogress',l:'قيد التنفيذ'},{s:'review',l:'مراجعة'},{s:'done',l:'مكتملة'}].forEach(function(item){
     var active = task.status === item.s;
-    var clr = {todo:'#5d6b7e',inprogress:'#d97706',review:'#7c3aed',done:'#059669'}[item.s];
+    var clr = {todo:'#5d6b7e',inprogress:'#9a6700',review:'#1d5fa8',done:'#17796f'}[item.s];
     statusBtns += '<button onclick="moveTask(\''+id+'\',\''+item.s+'\')" ' +
       'class="flex-1 py-2 rounded-xl text-xs font-bold border-2 transition-all ' + (active ? 'text-white' : 'border-slate-200 text-slate-500 hover:border-blue-300') + '" ' +
       'style="' + (active ? 'background:'+clr+';border-color:'+clr : '') + '">' + item.l + '</button>';
@@ -10330,7 +10308,7 @@ function openTaskDetail(id) {
     var sender = users.find(function(u){return u.id===cm.user_id;});
     var sName  = sender ? sender.full_name : 'مستخدم';
     var sInit  = sName.split(' ').map(function(w){return w[0];}).join('').substring(0,2);
-    var sClr   = sender ? ({admin:'#7c3aed',manager:'#17796f',engineer:'#059669',auditor:'#d97706'}[sender.role]||'#5d6b7e') : '#5d6b7e';
+    var sClr   = sender ? ({admin:'#1d5fa8',manager:'#17796f',engineer:'#17796f',auditor:'#9a6700'}[sender.role]||'#5d6b7e') : '#5d6b7e';
     var cDate  = cm.created_at ? new Date(cm.created_at).toLocaleString('ar-SA') : '';
     commentsHtml += '<div class="flex gap-3 mb-4">' +
       '<div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-black flex-shrink-0" style="background:'+sClr+'">'+sInit+'</div>' +
@@ -10687,7 +10665,7 @@ function refreshKanbanBoard() {
   var users    = (window.MOCK_DB && window.MOCK_DB.users)    || [];
   var cols     = ['todo','inprogress','review','done'];
   var labelsAr = {todo:'قيد الانتظار',inprogress:'قيد التنفيذ',review:'مراجعة',done:'مكتملة'};
-  var colColors = {todo:'#5d6b7e',inprogress:'#d97706',review:'#7c3aed',done:'#059669'};
+  var colColors = {todo:'#5d6b7e',inprogress:'#9a6700',review:'#1d5fa8',done:'#17796f'};
   var colBg     = {todo:'#F4F7FA',inprogress:'#fffbeb',review:'#faf5ff',done:'#f0fdf4'};
   var colIcons  = {todo:'clock',inprogress:'bolt',review:'eye',done:'check-circle'};
 
@@ -10712,8 +10690,8 @@ function refreshKanbanBoard() {
         var assignee  = users.find(function(u){return u.id===t.assigned_to;});
         var aName     = assignee ? assignee.full_name : 'غير محدد';
         var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
-        var aClr      = assignee ? ({admin:'#7c3aed',manager:'#17796f',engineer:'#059669',auditor:'#d97706'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
-        var prioClr   = {high:'#dc2626',medium:'#d97706',low:'#059669'}[t.priority]||'#5d6b7e';
+        var aClr      = assignee ? ({admin:'#1d5fa8',manager:'#17796f',engineer:'#17796f',auditor:'#9a6700'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
+        var prioClr   = {high:'#b42318',medium:'#9a6700',low:'#17796f'}[t.priority]||'#5d6b7e';
         var prioAr    = {high:'عالية',medium:'متوسطة',low:'منخفضة'}[t.priority]||'';
         var commentCount = (t.comments||[]).length;
         var attachCount  = (t.attachments||[]).length;
@@ -10803,8 +10781,8 @@ function openTaskEdit(id) {
   var old = document.getElementById('modal-task-edit');
   if (old) old.parentNode.removeChild(old);
 
-  var prioColors = {high:'#dc2626', medium:'#d97706', low:'#059669'};
-  var statColors = {todo:'#5d6b7e', inprogress:'#d97706', review:'#7c3aed', done:'#059669'};
+  var prioColors = {high:'#b42318', medium:'#9a6700', low:'#17796f'};
+  var statColors = {todo:'#5d6b7e', inprogress:'#9a6700', review:'#1d5fa8', done:'#17796f'};
   var headerColor = statColors[task.status] || '#22A699';
 
   var html =
@@ -10838,7 +10816,7 @@ function openTaskEdit(id) {
         '<div>' +
           '<label class="text-sm font-bold text-slate-700 block mb-2"><i class="fas fa-exchange-alt text-slate-400 ml-1"></i>الحالة</label>' +
           '<div class="flex flex-wrap gap-2" id="te-status-pills">' +
-            [['todo','⏳ قيد الانتظار','#5d6b7e'],['inprogress','⚡ قيد التنفيذ','#d97706'],['review','👁 مراجعة','#7c3aed'],['done','✅ مكتملة','#059669']].map(function(s){
+            [['todo','⏳ قيد الانتظار','#5d6b7e'],['inprogress','⚡ قيد التنفيذ','#9a6700'],['review','👁 مراجعة','#1d5fa8'],['done','✅ مكتملة','#17796f']].map(function(s){
               var active = s[0] === task.status;
               return '<button type="button" onclick="selectTaskStatus(\''+s[0]+'\')" id="te-pill-'+s[0]+'" '+
                 'class="flex-1 py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all" '+
@@ -10901,7 +10879,7 @@ function openTaskEdit(id) {
 function selectTaskStatus(val) {
   var statusInput = document.getElementById('te-status');
   if (statusInput) statusInput.value = val;
-  var colors = {todo:'#5d6b7e', inprogress:'#d97706', review:'#7c3aed', done:'#059669'};
+  var colors = {todo:'#5d6b7e', inprogress:'#9a6700', review:'#1d5fa8', done:'#17796f'};
   ['todo','inprogress','review','done'].forEach(function(s){
     var btn = document.getElementById('te-pill-'+s);
     if (!btn) return;
@@ -11006,10 +10984,10 @@ function resetTaskFilters() {
 
 const ADV_ADVISORS = [
   { id:'strategy',     name:'د. سارة الاستراتيجية',  title:'خبيرة الاستراتيجية التنافسية',   expertise:"Porter's · Blue Ocean · BCG",  color:'#125f57', icon:'fa-chess',       methodology:"Porter's Five Forces + Blue Ocean", avatar:'سا', prompts:['ما هي المزايا التنافسية لهذه الفكرة؟','كيف نخلق قيمة في سوق مشبع؟','ما فرص التمايز المتاحة؟'] },
-  { id:'risk',         name:'م. خالد إدارة المخاطر',  title:'متخصص إدارة المخاطر والامتثال', expertise:'ISO 31000 · COSO · Risk Matrix', color:'#dc2626', icon:'fa-shield-alt',   methodology:'ISO 31000 + COSO ERM',              avatar:'خا', prompts:['ما المخاطر الرئيسية في هذا المشروع؟','كيف نبني إطار إدارة المخاطر؟','ما متطلبات الامتثال؟'] },
-  { id:'finance',      name:'أ. نورة التمويل',         title:'مستشارة مالية واقتصادية',        expertise:'DCF · NPV · Financial Modeling',color:'#059669', icon:'fa-chart-line',   methodology:'Financial Modeling + DCF',          avatar:'نو', prompts:['ما مؤشرات الجدوى المالية؟','ما النموذج المالي الأمثل؟','كيف نقيّم هذا المشروع؟'] },
-  { id:'innovation',   name:'د. فهد الابتكار',          title:'خبير الابتكار والتحول الرقمي',   expertise:'Design Thinking · Lean · Agile', color:'#7c3aed', icon:'fa-lightbulb',    methodology:'Design Thinking + Lean Startup',    avatar:'فه', prompts:['ما نموذج العمل الأكثر ابتكاراً؟','كيف نبني MVP فعّال؟','ما فرص التحول الرقمي؟'] },
-  { id:'operations',   name:'م. أحمد العمليات',         title:'خبير العمليات والتميز التشغيلي', expertise:'Lean Six Sigma · BSC · OKRs',   color:'#d97706', icon:'fa-cogs',         methodology:'Balanced Scorecard + Lean Six Sigma',avatar:'أح', prompts:['كيف نقيس الأداء التشغيلي؟','ما مؤشرات النجاح الرئيسية؟','كيف نحقق التميز التشغيلي؟'] },
+  { id:'risk',         name:'م. خالد إدارة المخاطر',  title:'متخصص إدارة المخاطر والامتثال', expertise:'ISO 31000 · COSO · Risk Matrix', color:'#b42318', icon:'fa-shield-alt',   methodology:'ISO 31000 + COSO ERM',              avatar:'خا', prompts:['ما المخاطر الرئيسية في هذا المشروع؟','كيف نبني إطار إدارة المخاطر؟','ما متطلبات الامتثال؟'] },
+  { id:'finance',      name:'أ. نورة التمويل',         title:'مستشارة مالية واقتصادية',        expertise:'DCF · NPV · Financial Modeling',color:'#17796f', icon:'fa-chart-line',   methodology:'Financial Modeling + DCF',          avatar:'نو', prompts:['ما مؤشرات الجدوى المالية؟','ما النموذج المالي الأمثل؟','كيف نقيّم هذا المشروع؟'] },
+  { id:'innovation',   name:'د. فهد الابتكار',          title:'خبير الابتكار والتحول الرقمي',   expertise:'Design Thinking · Lean · Agile', color:'#1d5fa8', icon:'fa-lightbulb',    methodology:'Design Thinking + Lean Startup',    avatar:'فه', prompts:['ما نموذج العمل الأكثر ابتكاراً؟','كيف نبني MVP فعّال؟','ما فرص التحول الرقمي؟'] },
+  { id:'operations',   name:'م. أحمد العمليات',         title:'خبير العمليات والتميز التشغيلي', expertise:'Lean Six Sigma · BSC · OKRs',   color:'#9a6700', icon:'fa-cogs',         methodology:'Balanced Scorecard + Lean Six Sigma',avatar:'أح', prompts:['كيف نقيس الأداء التشغيلي؟','ما مؤشرات النجاح الرئيسية؟','كيف نحقق التميز التشغيلي؟'] },
   { id:'market',       name:'د. ليلى التسويق',          title:'خبيرة التسويق الاستراتيجي',      expertise:'STP · 7Ps · Customer Journey',  color:'#0891b2', icon:'fa-bullseye',     methodology:'STP Framework + Marketing Mix',     avatar:'لي', prompts:['من هو العميل المستهدف؟','ما استراتيجية التموضع الأمثل؟','كيف ندخل السوق؟'] },
   { id:'sustainability',name:'د. منى الاستدامة',        title:'مستشارة الاستدامة والمسؤولية',   expertise:'ESG · SDGs · رؤية 2030',        color:'#16a34a', icon:'fa-leaf',         methodology:'ESG Framework + Triple Bottom Line', avatar:'من', prompts:['ما تأثير المشروع على الاستدامة؟','كيف نتوافق مع رؤية 2030؟','ما معايير ESG الواجب مراعاتها؟'] },
 ];
@@ -11145,7 +11123,7 @@ async function loadAdvisoryCouncil() {
   if (subtitleEl) subtitleEl.textContent = 'تحليل استراتيجي بالذكاء الاصطناعي · AI-Powered Advisory Council';
 
   const el = document.getElementById('app-content');
-  el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:60vh;"><div style="text-align:center;"><i class="fas fa-circle-notch fa-spin" style="font-size:28px;color:#7c3aed;margin-bottom:12px;display:block;"></i><div style="color:#5d6b7e;font-size:14px;">جاري التحقق...</div></div></div>';
+  el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:60vh;"><div style="text-align:center;"><i class="fas fa-circle-notch fa-spin" style="font-size:28px;color:#1d5fa8;margin-bottom:12px;display:block;"></i><div style="color:#5d6b7e;font-size:14px;">جاري التحقق...</div></div></div>';
 
   let plan = 'unknown';
   try {
@@ -11154,7 +11132,7 @@ async function loadAdvisoryCouncil() {
   } catch(e) { try { plan = JSON.parse(localStorage.getItem('ims_user')||'{}').plan||'unknown'; } catch(e2) {} }
 
   if (!['enterprise','Enterprise','المؤسسي','ACTIVE','TRIAL'].includes(plan)) {
-    el.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px;"><div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#7c3aed15,#125f5710);border:2px dashed #7c3aed40;display:flex;align-items:center;justify-content:center;margin-bottom:20px;"><i class="fas fa-chess-king" style="font-size:36px;color:#7c3aed;opacity:.5;"></i></div><h2 style="font-size:20px;font-weight:800;color:#142D4E;margin:0 0 10px;">المجلس الاستشاري الافتراضي</h2><p style="color:#5d6b7e;font-size:14px;max-width:400px;line-height:1.7;margin:0 0 24px;">هذه الميزة متاحة حصراً لباقة <strong style="color:#7c3aed;">المؤسسي</strong>.<br>باقتك الحالية: <strong>'+plan+'</strong></p><button onclick="navigate(\'subscription\')" style="padding:12px 28px;background:linear-gradient(135deg,#7c3aed,#125f57);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;"><i class="fas fa-crown" style="margin-left:8px;"></i> الترقية إلى المؤسسي</button></div>';
+    el.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px;"><div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#1d5fa815,#125f5710);border:2px dashed #1d5fa840;display:flex;align-items:center;justify-content:center;margin-bottom:20px;"><i class="fas fa-chess-king" style="font-size:36px;color:#1d5fa8;opacity:.5;"></i></div><h2 style="font-size:20px;font-weight:800;color:#142D4E;margin:0 0 10px;">المجلس الاستشاري الافتراضي</h2><p style="color:#5d6b7e;font-size:14px;max-width:400px;line-height:1.7;margin:0 0 24px;">هذه الميزة متاحة حصراً لباقة <strong style="color:#1d5fa8;">المؤسسي</strong>.<br>باقتك الحالية: <strong>'+plan+'</strong></p><button onclick="navigate(\'subscription\')" style="padding:12px 28px;background:linear-gradient(135deg,#1d5fa8,#125f57);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;"><i class="fas fa-crown" style="margin-left:8px;"></i> الترقية إلى المؤسسي</button></div>';
     return;
   }
 
@@ -11162,7 +11140,7 @@ async function loadAdvisoryCouncil() {
 
   el.innerHTML = `
 <div id="adv-prog" style="position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:#e3e8ef;display:none;">
-  <div id="adv-prog-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#125f57,#7c3aed,#0891b2);transition:width .4s ease;"></div>
+  <div id="adv-prog-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#125f57,#1d5fa8,#0891b2);transition:width .4s ease;"></div>
 </div>
 <style>
 #adv-wrap{display:flex;flex-direction:column;height:calc(100vh - 130px);overflow:hidden;}
@@ -11181,7 +11159,7 @@ async function loadAdvisoryCouncil() {
 @keyframes advP{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.7);}}
 .adv-fade{animation:advFU .3s ease;}
 @keyframes advFU{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.adv-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#92400e,#d97706,#fbbf24,#d97706,#92400e);background-size:200%;animation:advSh 3s linear infinite;color:white;padding:3px 9px;border-radius:999px;font-size:9px;font-weight:800;}
+.adv-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#92400e,#9a6700,#fbbf24,#9a6700,#92400e);background-size:200%;animation:advSh 3s linear infinite;color:white;padding:3px 9px;border-radius:999px;font-size:9px;font-weight:800;}
 @keyframes advSh{0%{background-position:0%;}50%{background-position:100%;}100%{background-position:0%;}}
 </style>
 <div id="adv-wrap">
@@ -11193,7 +11171,7 @@ async function loadAdvisoryCouncil() {
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <button onclick="advReset()" style="padding:6px 14px;background:#eef2f6;color:#4f5f75;border:1px solid #e3e8ef;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;"><i class="fas fa-plus" style="margin-left:4px;font-size:10px;"></i> جلسة جديدة</button>
-      <button id="adv-pdf-btn" onclick="advGenPDF()" style="display:none;align-items:center;gap:5px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;padding:7px 14px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;"><i class="fas fa-file-pdf"></i> تقرير PDF</button>
+      <button id="adv-pdf-btn" onclick="advGenPDF()" style="display:none;align-items:center;gap:5px;background:linear-gradient(135deg,#1d5fa8,#a855f7);color:white;border:none;padding:7px 14px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;"><i class="fas fa-file-pdf"></i> تقرير PDF</button>
     </div>
   </div>
   <div id="adv-body">
@@ -11213,7 +11191,7 @@ async function loadAdvisoryCouncil() {
     <div id="adv-main">
       <div id="adv-chat">
         <div id="adv-welcome" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:32px 20px;min-height:300px;">
-          <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#125f57,#7c3aed);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#125f57,#1d5fa8);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
             <i class="fas fa-chess-king" style="color:white;font-size:22px;"></i>
           </div>
           <h3 style="font-size:16px;font-weight:800;color:#142D4E;margin:0 0 8px;">ابدأ جلستك الاستشارية</h3>
@@ -11333,8 +11311,8 @@ function advHandleFile(input) {
   var lbl=document.getElementById('adv-upload-lbl');
   if(file.name.endsWith('.pdf')){advState.uploadContent='[ملف PDF: '+file.name+']';advState.uploadName=file.name;}
   else{var r=new FileReader();r.onload=function(e){advState.uploadContent=e.target.result.substring(0,6000);advState.uploadName=file.name;};r.readAsText(file,'UTF-8');}
-  if(uz)uz.style.borderColor='#059669';
-  if(lbl)lbl.innerHTML='<i class="fas fa-check-circle" style="color:#059669;margin-left:4px;"></i>'+file.name+' — جاهز';
+  if(uz)uz.style.borderColor='#17796f';
+  if(lbl)lbl.innerHTML='<i class="fas fa-check-circle" style="color:#17796f;margin-left:4px;"></i>'+file.name+' — جاهز';
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -11377,7 +11355,7 @@ async function advSend() {
       advRemoveTyping(typings[advisor.id]);done++;
       if(bar)bar.style.width=Math.min(95,Math.round((done/total)*90))+'%';
       if(lbl)lbl.textContent='يحلّل '+done+'/'+total+' مستشار...';
-      if(!txt){advAddBot(advisor.name,advisor.color,'fa-exclamation-circle','','<div style="color:#dc2626;font-size:13px;">لم يُرجع المستشار رداً.</div>');return;}
+      if(!txt){advAddBot(advisor.name,advisor.color,'fa-exclamation-circle','','<div style="color:#b42318;font-size:13px;">لم يُرجع المستشار رداً.</div>');return;}
       advAddBot(advisor.name,advisor.color,advisor.icon,advisor.methodology,advMdToHtml(txt,advisor.color,false));
       advState.sections.push({advisor:advisor,body:txt,isCouncil:false});
       results.push({advisor:advisor,body:txt});
@@ -11385,7 +11363,7 @@ async function advSend() {
     }catch(err){
       advRemoveTyping(typings[advisor.id]);done++;
       if(bar)bar.style.width=Math.round((done/total)*90)+'%';
-      advAddBot(advisor.name,advisor.color,'fa-exclamation-circle','','<div style="color:#dc2626;font-size:13px;">خطأ: '+(err.message||'')+'</div>');
+      advAddBot(advisor.name,advisor.color,'fa-exclamation-circle','','<div style="color:#b42318;font-size:13px;">خطأ: '+(err.message||'')+'</div>');
     }
   });
 
@@ -11448,9 +11426,9 @@ function advAddCouncil(html){
   var wrapper=document.createElement('div');wrapper.className='adv-fade';wrapper.style.cssText='width:100%;display:block;';
   var bubble=document.createElement('div');bubble.style.cssText='background:linear-gradient(135deg,#f1faf8,#f5f3ff);border:1.5px solid #c7d7fe;border-radius:12px;box-shadow:0 2px 12px rgba(20,45,78,.1);display:block;width:100%;';
   var hdr=document.createElement('div');hdr.style.cssText='display:flex;align-items:center;gap:8px;padding:12px 16px 10px;border-bottom:1px solid #e0e7ff;';
-  hdr.innerHTML='<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#125f57,#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-chess-king" style="font-size:12px;color:white;"></i></div>'+
+  hdr.innerHTML='<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#125f57,#1d5fa8);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-chess-king" style="font-size:12px;color:white;"></i></div>'+
     '<div><div style="font-weight:800;font-size:13px;color:#125f57;">المجلس الموحد — القرار النهائي</div><div style="font-size:10px;color:#5d6b7e;">Consensus Decision</div></div>'+
-    '<span style="margin-right:auto;display:flex;gap:3px;">'+'<i class="fas fa-star" style="font-size:9px;color:#f59e0b;"></i>'.repeat(4)+'<i class="fas fa-star" style="font-size:9px;color:#e3e8ef;"></i>'+'</span>';
+    '<span style="margin-right:auto;display:flex;gap:3px;">'+'<i class="fas fa-star" style="font-size:9px;color:#b7861f;"></i>'.repeat(4)+'<i class="fas fa-star" style="font-size:9px;color:#e3e8ef;"></i>'+'</span>';
   var body=document.createElement('div');body.style.cssText='display:block !important;padding:16px 20px;font-size:13px;line-height:1.8;color:#2a3e5c;min-height:20px;overflow:visible;';
   body.innerHTML=html;
   bubble.appendChild(hdr);bubble.appendChild(body);wrapper.appendChild(bubble);chat.appendChild(wrapper);chat.scrollTop=chat.scrollHeight;
@@ -11658,8 +11636,8 @@ function advGenPDF() {
 
         // شركاء رئيسيون
         + '<td style="'+bodyStyle+'width:18%;background:#fef9ff;" rowspan="2">'
-        + '<div style="font-weight:800;font-size:10px;color:#7c3aed;border-bottom:1px solid #7c3aed30;padding-bottom:4px;margin-bottom:6px;">🤝 الشركاء الرئيسيون</div>'
-        + cell(partners,'#7c3aed','#fef9ff')+'</td>'
+        + '<div style="font-weight:800;font-size:10px;color:#1d5fa8;border-bottom:1px solid #1d5fa830;padding-bottom:4px;margin-bottom:6px;">🤝 الشركاء الرئيسيون</div>'
+        + cell(partners,'#1d5fa8','#fef9ff')+'</td>'
 
         // أنشطة رئيسية
         + '<td style="'+bodyStyle+'width:16%;background:#f1faf8;">'
@@ -11667,19 +11645,19 @@ function advGenPDF() {
         + cell(activities,'#125f57','#f1faf8')+'</td>'
 
         // القيمة المقدمة — أكبر خلية
-        + '<td style="'+bodyStyle+'width:22%;background:#f0fdf4;border:2px solid #059669;" rowspan="2">'
-        + '<div style="font-weight:800;font-size:11px;color:#059669;border-bottom:2px solid #059669;padding-bottom:5px;margin-bottom:8px;text-align:center;">💎 القيمة المقدمة</div>'
-        + cell(value,'#059669','#f0fdf4')+'</td>'
+        + '<td style="'+bodyStyle+'width:22%;background:#f0fdf4;border:2px solid #17796f;" rowspan="2">'
+        + '<div style="font-weight:800;font-size:11px;color:#17796f;border-bottom:2px solid #17796f;padding-bottom:5px;margin-bottom:8px;text-align:center;">💎 القيمة المقدمة</div>'
+        + cell(value,'#17796f','#f0fdf4')+'</td>'
 
         // العلاقات مع العملاء
         + '<td style="'+bodyStyle+'width:16%;background:#fffbeb;">'
-        + '<div style="font-weight:800;font-size:10px;color:#d97706;border-bottom:1px solid #d97706 30;padding-bottom:4px;margin-bottom:6px;">❤️ علاقات العملاء</div>'
-        + cell(relations,'#d97706','#fffbeb')+'</td>'
+        + '<div style="font-weight:800;font-size:10px;color:#9a6700;border-bottom:1px solid #9a6700 30;padding-bottom:4px;margin-bottom:6px;">❤️ علاقات العملاء</div>'
+        + cell(relations,'#9a6700','#fffbeb')+'</td>'
 
         // شرائح العملاء
         + '<td style="'+bodyStyle+'width:28%;background:#fff5f5;" rowspan="2">'
-        + '<div style="font-weight:800;font-size:10px;color:#dc2626;border-bottom:1px solid #dc262630;padding-bottom:4px;margin-bottom:6px;">👥 شرائح العملاء</div>'
-        + cell(segments,'#dc2626','#fff5f5')+'</td>'
+        + '<div style="font-weight:800;font-size:10px;color:#b42318;border-bottom:1px solid #b4231830;padding-bottom:4px;margin-bottom:6px;">👥 شرائح العملاء</div>'
+        + cell(segments,'#b42318','#fff5f5')+'</td>'
 
       + '</tr>'
 
@@ -11691,22 +11669,22 @@ function advGenPDF() {
         + cell(resources,'#125f57','#f1faf8')+'</td>'
 
         + '<td style="'+bodyStyle+'background:#fffbeb;">'
-        + '<div style="font-weight:800;font-size:10px;color:#d97706;border-bottom:1px solid #d97706 30;padding-bottom:4px;margin-bottom:6px;">📡 القنوات</div>'
-        + cell(channels,'#d97706','#fffbeb')+'</td>'
+        + '<div style="font-weight:800;font-size:10px;color:#9a6700;border-bottom:1px solid #9a6700 30;padding-bottom:4px;margin-bottom:6px;">📡 القنوات</div>'
+        + cell(channels,'#9a6700','#fffbeb')+'</td>'
 
       + '</tr>'
 
       // ── الصف الأخير: هيكل التكاليف + مصادر الإيرادات ──
       + '<tr style="height:100px;background:#F4F7FA;">'
         + '<td colspan="2" style="'+bodyStyle+'background:#fef2f2;">'
-        + '<div style="font-weight:800;font-size:10px;color:#dc2626;border-bottom:1px solid #dc262630;padding-bottom:4px;margin-bottom:6px;">💸 هيكل التكاليف</div>'
-        + cell(costs,'#dc2626','#fef2f2')+'</td>'
+        + '<div style="font-weight:800;font-size:10px;color:#b42318;border-bottom:1px solid #b4231830;padding-bottom:4px;margin-bottom:6px;">💸 هيكل التكاليف</div>'
+        + cell(costs,'#b42318','#fef2f2')+'</td>'
 
         + '<td style="'+bodyStyle+'background:white;border:none;"></td>' // خلية فاصلة
 
         + '<td colspan="2" style="'+bodyStyle+'background:#f0fdf4;">'
-        + '<div style="font-weight:800;font-size:10px;color:#059669;border-bottom:1px solid #05966930;padding-bottom:4px;margin-bottom:6px;">💰 مصادر الإيرادات</div>'
-        + cell(revenues,'#059669','#f0fdf4')+'</td>'
+        + '<div style="font-weight:800;font-size:10px;color:#17796f;border-bottom:1px solid #17796f30;padding-bottom:4px;margin-bottom:6px;">💰 مصادر الإيرادات</div>'
+        + cell(revenues,'#17796f','#f0fdf4')+'</td>'
       + '</tr>'
 
       + '</table>'
@@ -11775,7 +11753,7 @@ function advGenPDF() {
   var councilPage = '';
   if (council) {
     councilPage = '<div style="page-break-before:always;">'
-      + '<div style="background:linear-gradient(135deg,#125f57,#7c3aed);padding:18px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'
+      + '<div style="background:linear-gradient(135deg,#125f57,#1d5fa8);padding:18px 22px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:14px;">'
         + '<div style="font-size:22px;">♟</div>'
         + '<div>'
           + '<div style="font-size:18px;font-weight:900;color:white;">قرار المجلس الموحد</div>'
@@ -11942,7 +11920,7 @@ function advGenPDF() {
 
     // بطاقات KPI
     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">'
-      +[{l:'مستوى الثقة',v:'85%',icon:'🎯',c:'#125f57'},{l:'عدد المستشارين',v:advisors.length,icon:'👥',c:'#7c3aed'},{l:'عمق التحليل',v:'عالٍ',icon:'🔬',c:'#059669'},{l:'التوصية',v:'مجدي',icon:'✅',c:'#d97706'}].map(function(k){
+      +[{l:'مستوى الثقة',v:'85%',icon:'🎯',c:'#125f57'},{l:'عدد المستشارين',v:advisors.length,icon:'👥',c:'#1d5fa8'},{l:'عمق التحليل',v:'عالٍ',icon:'🔬',c:'#17796f'},{l:'التوصية',v:'مجدي',icon:'✅',c:'#9a6700'}].map(function(k){
         return '<div style="background:'+k.c+'08;border:1.5px solid '+k.c+'20;border-radius:10px;padding:14px;text-align:center;">'
           +'<div style="font-size:22px;margin-bottom:4px;">'+k.icon+'</div>'
           +'<div style="font-size:20px;font-weight:900;color:'+k.c+';">'+k.v+'</div>'
@@ -11960,14 +11938,14 @@ function advGenPDF() {
   // ══ مصفوفة المخاطر + الخطة التنفيذية ════════════════════
   +'<div class="a4">'
     // مصفوفة المخاطر
-    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #dc262620;">'
-      +'<div style="width:38px;height:38px;border-radius:10px;background:#dc262612;display:flex;align-items:center;justify-content:center;font-size:18px;">⚠️</div>'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #b4231820;">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:#b4231812;display:flex;align-items:center;justify-content:center;font-size:18px;">⚠️</div>'
       +'<div><div style="font-size:20px;font-weight:800;">مصفوفة المخاطر</div><div style="font-size:12px;color:#5d6b7e;">Risk Matrix · تحديد وتصنيف المخاطر الرئيسية</div></div>'
     +'</div>'
     +'<table style="border-collapse:collapse;font-size:12px;margin-bottom:28px;">'
       +'<thead><tr style="background:#142D4E;"><th style="padding:9px 14px;color:white;font-weight:700;border:none;text-align:center;width:90px;">المستوى</th><th style="padding:9px 14px;color:white;font-weight:700;border:none;text-align:right;">المخاطر المحددة</th></tr></thead>'
       +'<tbody>'
-        +[{l:'حرجة',c:'#dc2626',bg:'#fff5f5',items:['منافسة شديدة في السوق المستهدف','ضعف التدفق النقدي في المرحلة الأولى','تغيير مفاجئ في التشريعات والأنظمة']},{l:'متوسطة',c:'#d97706',bg:'#fffbeb',items:['صعوبة الحصول على كوادر متخصصة','تأخر تراخيص التشغيل']},{l:'منخفضة',c:'#059669',bg:'#f0fdf4',items:['تقلبات العملة وأسعار الصرف','تغير تفضيلات العملاء على المدى البعيد']}].map(function(r){
+        +[{l:'حرجة',c:'#b42318',bg:'#fff5f5',items:['منافسة شديدة في السوق المستهدف','ضعف التدفق النقدي في المرحلة الأولى','تغيير مفاجئ في التشريعات والأنظمة']},{l:'متوسطة',c:'#9a6700',bg:'#fffbeb',items:['صعوبة الحصول على كوادر متخصصة','تأخر تراخيص التشغيل']},{l:'منخفضة',c:'#17796f',bg:'#f0fdf4',items:['تقلبات العملة وأسعار الصرف','تغير تفضيلات العملاء على المدى البعيد']}].map(function(r){
           return '<tr><td style="padding:10px 14px;background:'+r.bg+';border:1px solid '+r.c+'20;text-align:center;vertical-align:middle;">'
             +'<span style="background:'+r.c+';color:white;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">'+r.l+'</span>'
           +'</td><td style="padding:10px 14px;border:1px solid #e3e8ef;background:'+r.bg+'60;">'
@@ -11978,14 +11956,14 @@ function advGenPDF() {
     +'</table>'
 
     // الخطة التنفيذية
-    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #05966920;">'
-      +'<div style="width:38px;height:38px;border-radius:10px;background:#05966912;display:flex;align-items:center;justify-content:center;font-size:18px;">🗓️</div>'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #17796f20;">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:#17796f12;display:flex;align-items:center;justify-content:center;font-size:18px;">🗓️</div>'
       +'<div><div style="font-size:20px;font-weight:800;">الخطة التنفيذية</div><div style="font-size:12px;color:#5d6b7e;">Execution Roadmap · الإجراءات التنفيذية الأولى</div></div>'
     +'</div>'
     +'<table style="border-collapse:collapse;font-size:12px;margin-bottom:24px;">'
       +'<thead><tr style="background:#0d1f37;"><th style="padding:9px 14px;color:white;text-align:center;border:none;width:120px;">المرحلة</th><th style="padding:9px 14px;color:white;text-align:right;border:none;">الإجراءات التنفيذية</th></tr></thead>'
       +'<tbody>'
-        +[{p:'الأشهر 1-3',l:'تأسيس',c:'#125f57',items:['دراسة الجدوى التفصيلية وتحليل السوق التنافسي','تسجيل الكيان القانوني والحصول على التراخيص','تشكيل الفريق التأسيسي وتحديد الهيكل التنظيمي']},{p:'الأشهر 4-6',l:'إطلاق',c:'#7c3aed',items:['إطلاق النسخة الأولى MVP وجمع ملاحظات العملاء','تنفيذ استراتيجية التسويق الرقمي والمحتوى','تحسين المنتج بناءً على بيانات الاستخدام الفعلي']},{p:'الأشهر 7-12',l:'نمو',c:'#059669',items:['توسيع قنوات التوزيع والوصول لأسواق جديدة','تحقيق التعادل المالي وبدء التدفق النقدي الإيجابي','التحضير لجولة التمويل الأولى (Series A)']}].map(function(ph,i){
+        +[{p:'الأشهر 1-3',l:'تأسيس',c:'#125f57',items:['دراسة الجدوى التفصيلية وتحليل السوق التنافسي','تسجيل الكيان القانوني والحصول على التراخيص','تشكيل الفريق التأسيسي وتحديد الهيكل التنظيمي']},{p:'الأشهر 4-6',l:'إطلاق',c:'#1d5fa8',items:['إطلاق النسخة الأولى MVP وجمع ملاحظات العملاء','تنفيذ استراتيجية التسويق الرقمي والمحتوى','تحسين المنتج بناءً على بيانات الاستخدام الفعلي']},{p:'الأشهر 7-12',l:'نمو',c:'#17796f',items:['توسيع قنوات التوزيع والوصول لأسواق جديدة','تحقيق التعادل المالي وبدء التدفق النقدي الإيجابي','التحضير لجولة التمويل الأولى (Series A)']}].map(function(ph,i){
           return '<tr style="background:'+(i%2===0?'white':'#f9fafb')+';">'
             +'<td style="padding:10px 14px;border:1px solid #e3e8ef;text-align:center;vertical-align:middle;">'
               +'<div style="background:'+ph.c+';color:white;padding:5px 8px;border-radius:7px;font-size:11px;font-weight:700;margin-bottom:3px;">'+ph.p+'</div>'
@@ -12030,8 +12008,8 @@ function loadSubscription() {
   const PLANS = {
     starter:      { name:'Starter',      nameAr:'المبتدئ',      price:299,   priceY:2990,  color:'#5d6b7e', icon:'fa-seedling',   users:5,   projects:2,  storage:'5GB',  support:'بريد إلكتروني',        features:['لوحة تحكم أساسية','إدارة NC','تقارير PDF','ISO 9001 فقط','تطبيق الجوال'] },
     professional: { name:'Professional', nameAr:'الاحترافي',    price:799,   priceY:7990,  color:'#125f57', icon:'fa-rocket',     users:25,  projects:10, storage:'50GB', support:'أولوية 24 ساعة',       features:['كل مميزات Starter','ISO 9001 + 45001 + 14001','تحليل RCA و Lean','خريطة المشاريع','ربط API خارجي','مؤشرات KPI متقدمة'] },
-    enterprise:   { name:'Enterprise',   nameAr:'المؤسسي',      price:1999,  priceY:19990, color:'#7c3aed', icon:'fa-building',   users:999, projects:999,storage:'500GB',support:'مدير حساب مخصص',      features:['كل مميزات Professional','ISO 27001','مستخدمون غير محدودون','SSO / LDAP','SLA 99.9%','تدريب مخصص','نشر On-Premise'] },
-    custom:       { name:'Custom',       nameAr:'مخصص',         price:null,  priceY:null,  color:'#059669', icon:'fa-infinity',   users:'∞', projects:'∞',storage:'∞',    support:'فريق مخصص 24/7',       features:['كل المميزات','بنية تحتية مخصصة','تطوير مخصص','اتفاقية SLA مخصصة','تدريب ميداني','دعم متعدد اللغات'] },
+    enterprise:   { name:'Enterprise',   nameAr:'المؤسسي',      price:1999,  priceY:19990, color:'#1d5fa8', icon:'fa-building',   users:999, projects:999,storage:'500GB',support:'مدير حساب مخصص',      features:['كل مميزات Professional','ISO 27001','مستخدمون غير محدودون','SSO / LDAP','SLA 99.9%','تدريب مخصص','نشر On-Premise'] },
+    custom:       { name:'Custom',       nameAr:'مخصص',         price:null,  priceY:null,  color:'#17796f', icon:'fa-infinity',   users:'∞', projects:'∞',storage:'∞',    support:'فريق مخصص 24/7',       features:['كل المميزات','بنية تحتية مخصصة','تطوير مخصص','اتفاقية SLA مخصصة','تدريب ميداني','دعم متعدد اللغات'] },
   };
   const CURRENT = { plan:'professional', billing:'monthly', status:'active', nextBilling:'2026-04-19', startDate:'2025-10-19', seats:14, projectsUsed:4, storageUsed:18.4 };
   const INVOICES = [
@@ -12090,7 +12068,7 @@ function loadSubscription() {
         <button class="btn btn-primary text-sm" onclick="subOpenUpgrade()"><i class="fas fa-arrow-up ml-1"></i>ترقية الباقة</button>
         <button class="btn text-sm" style="background:#eef2f6;color:#125f57;" onclick="subToggleBilling()"><i class="fas fa-sync-alt ml-1"></i>التبديل إلى سنوي (وفّر 16%)</button>
         <button class="btn text-sm" style="background:#eef2f6;color:#2a3e5c;" onclick="subUpdateCard()"><i class="fas fa-credit-card ml-1"></i>تحديث بطاقة الدفع</button>
-        <button class="btn text-sm" style="background:#fee2e2;color:#dc2626;margin-right:auto;" onclick="subCancelConfirm()"><i class="fas fa-times-circle ml-1"></i>إلغاء الاشتراك</button>
+        <button class="btn text-sm" style="background:#fde4e1;color:#b42318;margin-right:auto;" onclick="subCancelConfirm()"><i class="fas fa-times-circle ml-1"></i>إلغاء الاشتراك</button>
       </div>
     </div>
 
@@ -12106,7 +12084,7 @@ function loadSubscription() {
         ${subDetailRow('fa-headset','الدعم الفني', cp.support)}
         ${subDetailRow('fa-users','المقاعد النشطة', CURRENT.seats + ' من ' + cp.users)}
         <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;">
-          <div style="font-size:12px;color:#059669;font-weight:700;"><i class="fas fa-shield-alt ml-1"></i>ضمان استرداد 14 يوماً</div>
+          <div style="font-size:12px;color:#17796f;font-weight:700;"><i class="fas fa-shield-alt ml-1"></i>ضمان استرداد 14 يوماً</div>
         </div>
       </div>
       <!-- Features -->
@@ -12132,7 +12110,7 @@ function loadSubscription() {
         <h3 class="font-bold text-slate-800 text-base"><i class="fas fa-th-large text-purple-500 ml-2"></i>مقارنة الباقات المتاحة</h3>
         <div style="display:flex;background:#eef2f6;border-radius:10px;padding:3px;gap:2px;">
           <button id="sub-bill-m" onclick="subShowPricing('monthly')" style="padding:5px 16px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:white;color:#125f57;box-shadow:0 1px 3px rgba(0,0,0,.1);transition:all .2s;">شهري</button>
-          <button id="sub-bill-y" onclick="subShowPricing('yearly')"  style="padding:5px 16px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:transparent;color:#5d6b7e;transition:all .2s;">سنوي <span style="color:#059669;font-size:10px;">وفّر 16%</span></button>
+          <button id="sub-bill-y" onclick="subShowPricing('yearly')"  style="padding:5px 16px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:transparent;color:#5d6b7e;transition:all .2s;">سنوي <span style="color:#17796f;font-size:10px;">وفّر 16%</span></button>
         </div>
       </div>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="sub-plans-grid">
@@ -12175,7 +12153,7 @@ function loadSubscription() {
               <td style="padding:13px 16px;font-weight:700;color:#142D4E;">${inv.amount > 0 ? inv.amount.toLocaleString()+' ر.س' : '—'}</td>
               <td style="padding:13px 16px;">
                 ${inv.status==='paid'
-                  ? '<span style="background:#d1fae5;color:#059669;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;"><i class="fas fa-check ml-1"></i>مدفوعة</span>'
+                  ? '<span style="background:#e3f5f2;color:#17796f;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;"><i class="fas fa-check ml-1"></i>مدفوعة</span>'
                   : '<span style="background:#eef2f6;color:#5d6b7e;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;">تجريبي</span>'}
               </td>
               <td style="padding:13px 16px;">
@@ -12183,7 +12161,7 @@ function loadSubscription() {
                   ? `<button onclick="subDownloadInvoice('${inv.id}','${inv.file}')"
                        style="background:#f1faf8;color:#17796f;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background .2s;"
                        onmouseover="this.style.background='#e3f5f2'" onmouseout="this.style.background='#f1faf8'">
-                       <i class="fas fa-file-pdf" style="color:#dc2626;"></i>PDF</button>`
+                       <i class="fas fa-file-pdf" style="color:#b42318;"></i>PDF</button>`
                   : '<span style="color:#5d6b7e;font-size:12px;">—</span>'}
               </td>
             </tr>`).join('')}
@@ -12196,11 +12174,11 @@ function loadSubscription() {
     <div id="sub-cancel-box" style="display:none;">
       <div style="background:#fef2f2;border:2px solid #fecaca;border-radius:14px;padding:22px;">
         <div class="flex items-start gap-4">
-          <div style="width:48px;height:48px;border-radius:14px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="fas fa-exclamation-triangle" style="color:#dc2626;font-size:20px;"></i>
+          <div style="width:48px;height:48px;border-radius:14px;background:#fde4e1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-exclamation-triangle" style="color:#b42318;font-size:20px;"></i>
           </div>
           <div class="flex-1">
-            <div style="font-size:16px;font-weight:800;color:#dc2626;margin-bottom:6px;">تأكيد إلغاء الاشتراك</div>
+            <div style="font-size:16px;font-weight:800;color:#b42318;margin-bottom:6px;">تأكيد إلغاء الاشتراك</div>
             <div style="font-size:13px;color:#7f1d1d;line-height:1.7;margin-bottom:14px;">
               سيتم إلغاء اشتراكك في <strong>${new Date(CURRENT.nextBilling).toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'})}</strong>.
               ستحتفظ بصلاحية الوصول الكاملة حتى ذلك التاريخ، ولن يتم تجديد الاشتراك تلقائياً.
@@ -12208,7 +12186,7 @@ function loadSubscription() {
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button onclick="subConfirmCancel()"
-                style="background:#dc2626;color:white;border:none;padding:10px 22px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;">
+                style="background:#b42318;color:white;border:none;padding:10px 22px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;">
                 <i class="fas fa-times-circle ml-1"></i>نعم، إلغاء الاشتراك
               </button>
               <button onclick="document.getElementById('sub-cancel-box').style.display='none'"
@@ -12229,7 +12207,7 @@ function loadSubscription() {
 // ── Subscription Helpers ──────────────────────
 function subUsageBar(label, used, max, pct, icon) {
   const isUnlimited = (max===999||max==='∞');
-  const barColor = pct>=90?'#dc2626':pct>=70?'#d97706':'rgba(255,255,255,.9)';
+  const barColor = pct>=90?'#b42318':pct>=70?'#9a6700':'rgba(255,255,255,.9)';
   return `<div>
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
       <i class="fas ${icon}" style="color:rgba(255,255,255,.6);font-size:11px;"></i>
@@ -12287,8 +12265,8 @@ function subShowPricing(billing) {
   const PLANS = {
     starter:      { name:'Starter',      nameAr:'المبتدئ',   price:299,  priceY:2990,  color:'#5d6b7e', icon:'fa-seedling', users:5,   projects:2,  features:['لوحة تحكم أساسية','إدارة NC','تقارير PDF','ISO 9001 فقط','تطبيق الجوال'] },
     professional: { name:'Professional', nameAr:'الاحترافي', price:799,  priceY:7990,  color:'#125f57', icon:'fa-rocket',   users:25,  projects:10, features:['كل مميزات Starter','ISO متعدد','RCA و Lean','خريطة المشاريع','API خارجي','KPI متقدمة'] },
-    enterprise:   { name:'Enterprise',   nameAr:'المؤسسي',   price:1999, priceY:19990, color:'#7c3aed', icon:'fa-building', users:999, projects:999,features:['كل مميزات Professional','ISO 27001','مستخدمون غير محدودون','SSO / LDAP','SLA 99.9%'] },
-    custom:       { name:'Custom',       nameAr:'مخصص',      price:null, priceY:null,  color:'#059669', icon:'fa-infinity', users:'∞', projects:'∞',features:['كل المميزات','بنية مخصصة','SLA مخصص','تدريب ميداني'] },
+    enterprise:   { name:'Enterprise',   nameAr:'المؤسسي',   price:1999, priceY:19990, color:'#1d5fa8', icon:'fa-building', users:999, projects:999,features:['كل مميزات Professional','ISO 27001','مستخدمون غير محدودون','SSO / LDAP','SLA 99.9%'] },
+    custom:       { name:'Custom',       nameAr:'مخصص',      price:null, priceY:null,  color:'#17796f', icon:'fa-infinity', users:'∞', projects:'∞',features:['كل المميزات','بنية مخصصة','SLA مخصص','تدريب ميداني'] },
   };
   const grid = document.getElementById('sub-plans-grid');
   if (!grid) return;
@@ -12338,7 +12316,7 @@ function subDownloadInvoice(id, file) {
   .row span:first-child{color:#5d6b7e;}
   .row strong{color:#142D4E;}
   .total-row{display:flex;justify-content:space-between;padding:14px 0;font-size:18px;font-weight:800;border-top:2px solid #125f57;margin-top:8px;}
-  .badge{background:#d1fae5;color:#059669;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;}
+  .badge{background:#e3f5f2;color:#17796f;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;}
   .footer{margin-top:28px;padding:16px;background:#F4F7FA;border-radius:10px;font-size:11px;color:#5d6b7e;text-align:center;}
   @media print{body{margin:0;max-width:none;}}
 </style></head>
@@ -12435,7 +12413,7 @@ async function loadIntegrationsData() {
       if (badge) {
         badge.className = isActive ? 'badge badge-green' : 'badge badge-gray';
         badge.innerHTML = isActive
-          ? '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;margin-left:5px"></span>متصل'
+          ? '<span style="width:8px;height:8px;border-radius:50%;background:#22A699;display:inline-block;margin-left:5px"></span>متصل'
           : 'غير متصل';
       }
       if (isActive) {
@@ -12482,7 +12460,7 @@ function loadIntegrations() {
 
           <!-- Odoo -->
           <div class="int-card" id="int-card-odoo" style="background:white;border-radius:16px;border:2px solid #6ee7b7;padding:20px;position:relative;overflow:hidden;transition:all .25s;">
-            <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#059669,#10b981)"></div>
+            <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#17796f,#22A699)"></div>
             <div class="flex items-start justify-between mb-4">
               <div class="flex items-center gap-3">
                 <div style="width:56px;height:56px;border-radius:14px;background:#714B67;display:flex;align-items:center;justify-content:center;">
@@ -12491,7 +12469,7 @@ function loadIntegrations() {
                 <div><div class="font-bold text-slate-800">Odoo ERP</div><div class="text-xs text-slate-500">Enterprise Resource Planning</div></div>
               </div>
               <span class="badge badge-green" style="display:flex;align-items:center;gap:5px;">
-                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>متصل
+                <span style="width:8px;height:8px;border-radius:50%;background:#22A699;display:inline-block;"></span>متصل
               </span>
             </div>
             <p class="text-xs text-slate-600 mb-3">ربط ثنائي الاتجاه مع Odoo لمزامنة المشاريع، الموظفين، الأصول، وأوامر العمل.</p>
@@ -12510,7 +12488,7 @@ function loadIntegrations() {
 
           <!-- ERPNext -->
           <div class="int-card" id="int-card-erpnext" style="background:white;border-radius:16px;border:2px solid #6ee7b7;padding:20px;position:relative;overflow:hidden;transition:all .25s;">
-            <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#059669,#10b981)"></div>
+            <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#17796f,#22A699)"></div>
             <div class="flex items-start justify-between mb-4">
               <div class="flex items-center gap-3">
                 <div style="width:56px;height:56px;border-radius:14px;background:#0089FF;display:flex;align-items:center;justify-content:center;">
@@ -12519,7 +12497,7 @@ function loadIntegrations() {
                 <div><div class="font-bold text-slate-800">ERPNext</div><div class="text-xs text-slate-500">Open Source ERP (Frappe)</div></div>
               </div>
               <span class="badge badge-green" style="display:flex;align-items:center;gap:5px;">
-                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>متصل
+                <span style="width:8px;height:8px;border-radius:50%;background:#22A699;display:inline-block;"></span>متصل
               </span>
             </div>
             <p class="text-xs text-slate-600 mb-3">ربط مع ERPNext لاستيراد طلبات الشراء، الموردين، والمستندات المالية المرتبطة بمتطلبات الجودة.</p>
@@ -12646,7 +12624,7 @@ function loadIntegrations() {
           <button class="btn btn-primary text-sm" onclick="intGenerateKey()"><i class="fas fa-key ml-1"></i>إنشاء مفتاح</button>
         </div>
         <div id="int-keys-list" class="space-y-3">
-          ${intKeyRow('Odoo Integration Key','ims_live_a7b3c9d4e2f1084b99c1623f8a','قراءة + كتابة','منذ 8 دقائق','#e9d5ff','#7c3aed')}
+          ${intKeyRow('Odoo Integration Key','ims_live_a7b3c9d4e2f1084b99c1623f8a','قراءة + كتابة','منذ 8 دقائق','#e9d5ff','#1d5fa8')}
           ${intKeyRow('ERPNext Read-Only Key','ims_ro_c9d4e2f10843b99c1623f9d2c','قراءة فقط','منذ ساعتين','#e3f5f2','#17796f')}
         </div>
         <div class="mt-5 bg-slate-900 rounded-xl p-4" dir="ltr">
@@ -12733,7 +12711,7 @@ function intKeyRow(name, fullKey, perms, lastUsed, iconBg, iconColor) {
         onclick="intRevokeKey('${uid}')"
         style="width:28px;height:28px;border-radius:7px;background:#fff1f2;border:1px solid #fecdd3;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;"
         onmouseover="this.style.background='#ffe4e6'" onmouseout="this.style.background='#fff1f2'">
-        <i class="fas fa-ban" style="color:#dc2626;font-size:10px;"></i>
+        <i class="fas fa-ban" style="color:#b42318;font-size:10px;"></i>
       </button>
     </div>
   </div>`;
@@ -12747,14 +12725,14 @@ function intToggleKey(uid) {
   code.textContent   = visible ? code.dataset.masked : code.dataset.full;
   code.dataset.visible = visible ? 'false' : 'true';
   eye.className = visible ? 'fas fa-eye' : 'fas fa-eye-slash';
-  eye.style.color   = visible ? '#5d6b7e' : '#059669';
+  eye.style.color   = visible ? '#5d6b7e' : '#17796f';
 }
 
 function intCopyKey(key, btn) {
   navigator.clipboard?.writeText(key).catch(()=>{});
   const orig = btn.innerHTML;
-  btn.innerHTML = '<i class="fas fa-check" style="color:#059669;font-size:10px;"></i>';
-  btn.style.background = '#d1fae5';
+  btn.innerHTML = '<i class="fas fa-check" style="color:#17796f;font-size:10px;"></i>';
+  btn.style.background = '#e3f5f2';
   btn.style.borderColor = '#6ee7b7';
   setTimeout(() => {
     btn.innerHTML = orig;
@@ -12781,7 +12759,7 @@ function intRevokeKey(uid) {
   if (row) {
     row.style.opacity = '0.4';
     const badge = row.querySelector('.badge');
-    if (badge) { badge.className = 'badge'; badge.style.background='#fee2e2'; badge.style.color='#dc2626'; badge.textContent='مُلغى'; }
+    if (badge) { badge.className = 'badge'; badge.style.background='#fde4e1'; badge.style.color='#b42318'; badge.textContent='مُلغى'; }
     row.querySelectorAll('button').forEach(b => b.disabled = true);
   }
   showToast('تم إلغاء المفتاح', 'error');
@@ -12805,7 +12783,7 @@ function intWhRow(icon, iconColor, iconBg, name, url, events, count) {
 }
 
 function intLogLine(type, src, msg, time) {
-  const color = type==='ok'?'#059669':type==='err'?'#dc2626':'#22A699';
+  const color = type==='ok'?'#17796f':type==='err'?'#b42318':'#22A699';
   const icon  = type==='ok'?'✔':type==='err'?'✘':'ℹ';
   return `<div style="display:flex;gap:10px;padding:4px 0;border-bottom:1px solid #eef2f6;font-size:12px;">
     <span style="color:#5d6b7e;flex-shrink:0;">${time}</span>
@@ -12941,7 +12919,7 @@ async function intSaveConfig(tool) {
     if (card) {
       card.style.borderColor = '#6ee7b7';
       const badge = card.querySelector('.badge');
-      if (badge) { badge.className='badge badge-green'; badge.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>متصل'; }
+      if (badge) { badge.className='badge badge-green'; badge.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#22A699;display:inline-block;"></span>متصل'; }
     }
     const el = document.getElementById('int-stat-active');
     if (el) el.textContent = parseInt(el.textContent||0) + 1;
@@ -12993,7 +12971,7 @@ function intGenerateKey() {
   const list = document.getElementById('int-keys-list');
   if (list) {
     const tmp = document.createElement('div');
-    tmp.innerHTML = intKeyRow('مفتاح جديد', key, 'قراءة فقط', 'الآن', '#d1fae5', '#059669');
+    tmp.innerHTML = intKeyRow('مفتاح جديد', key, 'قراءة فقط', 'الآن', '#e3f5f2', '#17796f');
     list.prepend(tmp.firstElementChild);
   }
   intCopyKey(key, document.createElement('button'));
@@ -13115,7 +13093,7 @@ function updateSidebarISO() {
     ISO_9001:  { cls: 'badge-blue',   style: '' },
     ISO_45001: { cls: 'badge-green',  style: '' },
     ISO_14001: { cls: 'badge-yellow', style: '' },
-    ISO_27001: { cls: '',             style: 'background:#e9d5ff;color:#7c3aed;' },
+    ISO_27001: { cls: '',             style: 'background:#e9d5ff;color:#1d5fa8;' },
   };
 
   if (!certified.length) {
@@ -13182,5 +13160,7 @@ function updateSidebarISO() {
 </script>
 <script src="/assets/isoradar-modules.js"></script>
 <script src="/assets/isoradar-tasks-sync.js"></script>
+<script src="/assets/isoradar-charts.js"></script>
+<script src="/assets/isoradar-motion.js"></script>
 </body>
 </html>

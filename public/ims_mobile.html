@@ -1034,6 +1034,12 @@ async function mFetch(url, method='GET', body=null) {
 // Lists arrive as plain arrays from the API (its interceptor unwraps {data,total}); accept both shapes
 function mList(d) { return Array.isArray(d) ? d : ((d && Array.isArray(d.data)) ? d.data : []); }
 
+// The API returns the standard either as a code ("ISO_9001") or as the related row ({ code, name })
+function isoLabel(v) {
+  const code = v && typeof v === 'object' ? v.code : v;
+  return code ? String(code).replace('_', ' ') : '';
+}
+
 // Any unhandled API failure surfaces as a toast instead of a silent stuck spinner
 window.addEventListener('unhandledrejection', e => {
   const msg = e.reason && e.reason.message ? e.reason.message : 'تعذّر إكمال العملية';
@@ -2561,7 +2567,7 @@ function viewInspection(id) {
         <div class="grid grid-cols-2 gap-2">
           <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الحالة</div><div class="font-bold text-sm" style="color:${clr}">${stLbl[i.status]||i.status}</div></div>
           <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الموقع</div><div class="font-bold text-sm text-slate-800">${i.location_name||'—'}</div></div>
-          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المعيار</div><div class="font-bold text-sm text-slate-800">${i.iso_standard?.replace('_',' ')||'—'}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المعيار</div><div class="font-bold text-sm text-slate-800">${isoLabel(i.iso_standard)||'—'}</div></div>
           <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المسؤول</div><div class="font-bold text-sm text-slate-800">${i.assigned_name||'—'}</div></div>
         </div>
         <!-- Quick status -->
@@ -2645,7 +2651,7 @@ async function loadNCList() {
         <div class="flex-1 min-w-0">
           <div class="text-xs font-mono text-blue-500 mb-1">${n.ref_number}</div>
           <div class="font-semibold text-slate-800 text-sm leading-tight">${n.title}</div>
-          <div class="text-xs text-slate-400 mt-0.5">${n.project_name||'—'} · ${n.iso_standard?.replace('_',' ')||''}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${n.project_name||'—'} · ${isoLabel(n.iso_standard)||''}</div>
           <div class="flex gap-2 mt-1.5 flex-wrap">
             <span class="badge ${n.type==='critical'?'badge-red':n.type==='major'?'badge-yellow':'badge-blue'} text-xs">${n.type==='critical'?'حرجة':n.type==='major'?'رئيسية':'ثانوية'}</span>
             <span class="badge ${n.status==='open'?'badge-red':n.status==='in_progress'?'badge-yellow':'badge-green'} text-xs">${n.status==='open'?'مفتوحة':n.status==='in_progress'?'جارية':'مغلقة'}</span>
@@ -2685,7 +2691,7 @@ function viewNC(id) {
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">الفئة</div><div class="font-bold text-sm text-slate-800">${n.category||'—'}</div></div>
-          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المعيار</div><div class="font-bold text-sm text-slate-800">${n.iso_standard?.replace('_',' ')||'—'}</div></div>
+          <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المعيار</div><div class="font-bold text-sm text-slate-800">${isoLabel(n.iso_standard)||'—'}</div></div>
           <div class="p-3 ${isOverdue?'bg-red-50':'bg-slate-50'} rounded-xl"><div class="text-xs text-slate-500 mb-1">الموعد</div><div class="font-bold text-sm ${isOverdue?'text-red-600':'text-slate-800'}">${n.due_date?new Date(n.due_date).toLocaleDateString('ar-SA'):'—'}</div></div>
           <div class="p-3 bg-slate-50 rounded-xl"><div class="text-xs text-slate-500 mb-1">المسؤول</div><div class="font-bold text-sm text-slate-800">${n.assigned_name||'—'}</div></div>
         </div>
