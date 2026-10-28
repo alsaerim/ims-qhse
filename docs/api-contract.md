@@ -19,7 +19,7 @@ from this file.
 
 ## Status of every endpoint the pages call
 
-Legend: ✅ exists · 🟡 exists, frontend adapted · ❌ missing (build it)
+Legend: ✅ exists · 🟡 exists, frontend adapted · ✅ missing (build it)
 
 ### Auth & users
 | Method | Path | Status | Used by |
@@ -28,7 +28,7 @@ Legend: ✅ exists · 🟡 exists, frontend adapted · ❌ missing (build it)
 | GET | `/auth/me` | ✅ | all |
 | GET/POST | `/users` · GET/PUT/DELETE `/users/:id` · POST `/users/:id/activate` | ✅ | app, mobile profile (PUT own name/phone/department/password) |
 | GET | `/users/stats/roles` | ✅ | app |
-| POST | `/users/:id/avatar` | ❌ | app user modal (multipart image → `{ avatar_url }`) |
+| POST | `/users/:id/avatar` | ✅ | app user modal, mobile profile (`{ image_base64 }` → `{ avatar_url }`; self or admin) |
 
 ### Quality core
 | Method | Path | Status | Notes |
@@ -39,34 +39,34 @@ Legend: ✅ exists · 🟡 exists, frontend adapted · ❌ missing (build it)
 | GET/POST, PUT/DELETE `:id` | `/rca`, `/risks`, `/kpis`, `/lean/wastes` | ✅ | |
 | GET | `/kpis/:id/history` | ✅ | |
 | GET/PUT | `/org/profile` · `/org/iso/standards` · `/org/objectives` | ✅ | app now calls `/org/iso/standards` (was `/org/iso-standards`) |
-| GET | `/org/objectives` (list) | ❌ | objectives are only returned inside `/org/profile` |
+| GET | `/org/objectives` (list) | ✅ | same objectives as inside `/org/profile` |
 | GET/POST/PUT/DELETE | `/iso/standards` | ✅ | |
 | GET/POST/PUT/DELETE | `/integrations` | ✅ | |
 | GET | `/dashboard/overview` | ✅ | |
-| GET / PUT `read` | `/dashboard/notifications` | 🟡 | returns `[]` — needs a `Notification` table |
+| GET / PUT `read` | `/dashboard/notifications` | ✅ | the signed-in user's own notifications (task assigned, high/critical incident); PUT `{ ids: [] }` marks all read |
 | POST | `/advisory-sessions/chat`, GET/POST/DELETE `/advisory-sessions` | ✅ | only module without `/v1` versioning |
 
-### Missing modules (frontend is built and waiting)
+### ISO Radar modules (built in migration `20261028000000_isoradar_modules`)
 | Method | Path | Page |
 |---|---|---|
-| GET/POST, PUT/DELETE `:id` | `/incidents` | app «الحوادث والإصابات», mobile «الإبلاغ عن حادث» |
-| GET/POST, PUT/DELETE `:id` | `/documents` | app «ضبط الوثائق» |
-| GET/POST, PUT/DELETE `:id` | `/trainings` | app «التدريب والكفاءات» |
-| GET/POST, PUT `:id` | `/tasks` · `/dashboard/tasks` | app Kanban, mobile «مهامي» |
-| GET/POST, PUT `:id` | `/annual-plans` | mobile «الخطة السنوية» (app keeps it in org profile settings) |
-| POST | `/uploads/photo` | mobile inspection / NC photos |
-| GET | `/db-stats` | mobile «المزيد» counters |
-| GET | `/health` | admin «صحة النظام» (`{ status:'ok', version, db:'ok', uptime }`) |
+| GET/POST, PUT/DELETE `:id` | `/incidents` ✅ | app «الحوادث والإصابات», mobile «الإبلاغ عن حادث» (any member may report; delete = manager) |
+| GET/POST, PUT/DELETE `:id` | `/documents` ✅ | app «ضبط الوثائق» (code unique per company) |
+| GET/POST, PUT/DELETE `:id` | `/trainings` ✅ | app «التدريب والكفاءات» (status derived from expiry) |
+| GET/POST, PUT/DELETE `:id` | `/tasks` ✅ · `/dashboard/tasks` ✅ | app Kanban (assets/isoradar-tasks-sync.js), mobile «مهامي» (`?mine=1`) |
+| GET/POST, PUT/DELETE `:id` | `/annual-plans` ✅ | mobile «الخطة السنوية» (managers edit) |
+| POST · GET · DELETE `:id` | `/uploads/photo` ✅ · `/uploads` · `/uploads/:id/file?sig=` | mobile inspection / NC / RCA / incident photos, task attachments |
+| GET | `/db-stats` ✅ | mobile profile counters (records the user created) |
+| GET | `/health` ✅ | admin «صحة النظام» (public) |
 
 ### Platform console (SUPER_ADMIN only)
 | Method | Path | Status | Page |
 |---|---|---|---|
 | GET | `/super-admin/stats`, `/revenue`, `/tenants`, `/tenants/:id`, `/plans`, `/invoices` | ✅ | dashboard, analytics, tenants, plans, invoices |
 | POST/PUT | `/super-admin/tenants/:id/assign-plan`, `/plans`, `/plans/:id`, `/plans/:id/features`, `/invoices/:id/pay`, `/invoices/generate` | ✅ | |
-| GET · PUT `:id` | `/super-admin/users` | ❌ | «مستخدمو المنصة» |
-| GET | `/super-admin/audit-log` | ❌ | «سجل النشاط» |
-| GET/POST · DELETE `:id` | `/super-admin/announcements` | ❌ | «الإعلانات» |
-| GET · PUT | `/super-admin/settings` | ❌ | «الإعدادات» |
+| GET · PUT `:id` | `/super-admin/users` | ✅ | «مستخدمو المنصة» |
+| GET | `/super-admin/audit-log` | ✅ | «سجل النشاط» |
+| GET/POST · DELETE `:id` | `/super-admin/announcements` | ✅ | «الإعلانات» |
+| GET · PUT | `/super-admin/settings` | ✅ | «الإعدادات» |
 
 ## Shapes for the missing endpoints
 
@@ -139,8 +139,10 @@ All rows also carry `id` (uuid), `tenant_id`, `created_at`, `updated_at`, `delet
 ```
 
 ### `/uploads/photo`
-Request `{ image_base64, entity_type: "inspection | nc | incident", entity_id, latitude, longitude }`
-→ `{ id, url }`. Store in object storage, not the database; cap the size (e.g. 5 MB).
+Request `{ image_base64, entity_type: "inspection | nc | rca | incident | task | document", entity_id, latitude, longitude }`
+→ `{ id, url }`. `entity_id` may be the record id or its number (`NC-2026-014`) and must belong to the caller's company.
+JPG / PNG / WEBP only (checked by content), 5 MB max. Stored in Postgres (`uploads`, bytea) because no object storage is configured;
+`url` is HMAC-signed (`UPLOAD_SIGNING_SECRET`, falls back to `JWT_SECRET`) so `<img>` can load it without a token.
 
 ### `/super-admin/users`
 `GET` → `[{ id, full_name, email, role, status, tenant_id, tenant_name, last_login_at }]` (supports `?search=&role=&status=&limit=`)
@@ -164,3 +166,11 @@ Tenant apps should later read active ones from `GET /announcements/active`.
 - Audit `result` enum is `PASS | FAIL | PARTIAL | PENDING`; status `DRAFT | SCHEDULED | IN_PROGRESS | COMPLETED | CANCELLED`.
 - NC `type` is `CRITICAL | MAJOR | MINOR | OBSERVATION`; status `OPEN | IN_PROGRESS | CLOSED | OVERDUE`.
 - Lists lose `total` in the interceptor; if pagination is needed later, return it in `meta` (the interceptor already passes `meta` through).
+
+## Security model (backend)
+- Every tenant query is scoped by `req.user.tenant_id` from the JWT; ids in the body are never trusted.
+- Roles: VIEWER reads; ENGINEER/AUDITOR write; MANAGER deletes and edits the annual plan; TENANT_ADMIN manages users; SUPER_ADMIN runs `/super-admin/*`.
+- New modules validate input with DTOs (`whitelist: true` drops unknown fields); `<` `>` are stripped from all JSON strings (stored-XSS defence).
+- Body limit 1 MB (8 MB for `/uploads/photo` and `/users/:id/avatar`); rate limits on login (5/min), register (3/min), uploads (40/min), advisory chat (20/min).
+- Suspended or cancelled companies lose access immediately (login and existing tokens); `maintenance_mode` blocks every login except SUPER_ADMIN.
+- Every successful change and every login / failed login is written to `audit_logs` (`/super-admin/audit-log`).

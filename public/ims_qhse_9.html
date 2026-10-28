@@ -208,17 +208,19 @@ window.hydrateGlobalData = async function() {
     get('/kpis'),
     get('/org/profile'),
     get('/org/iso/standards'),
-    get('/dashboard/tasks'),
+    get('/tasks'),
   ]);
 
   const db = window.MOCK_DB;
-  if (users)    db.users            = Array.isArray(users) ? users : (users?.data || []);
+  // the API sends status ACTIVE/INACTIVE; older screens filter on is_active
+  if (users)    db.users            = (Array.isArray(users) ? users : (users?.data || []))
+                                        .map(u => ({ ...u, is_active: u.is_active ?? String(u.status || '').toLowerCase() === 'active' }));
   if (projects) db.projects         = Array.isArray(projects) ? projects : (projects?.data || []);
   if (audits)   db.inspections      = Array.isArray(audits) ? audits : (audits?.data || []);
   if (ncs)      db.nonconformances  = Array.isArray(ncs) ? ncs : (ncs?.data || []);
   if (risks)    db.risks            = Array.isArray(risks) ? risks : (risks?.data || []);
   if (kpis)     db.kpis             = Array.isArray(kpis) ? kpis : (kpis?.data || []);
-  if (tasks)    db.tasks            = Array.isArray(tasks) ? tasks : (tasks?.data || []);
+  if (tasks)    db.tasks            = (window.IR_TASKS_FROM_SERVER || (x => x))(Array.isArray(tasks) ? tasks : (tasks?.data || []));
   if (org)      db.org_profile      = org;
   if (isoStds)  db.iso_standards    = Array.isArray(isoStds) ? isoStds : (isoStds?.data || []);
 
@@ -9069,8 +9071,9 @@ function printReport()         { window.print(); }
 
 // ── Notifications ─────────────────────────────
 async function loadNotifications() {
-  const userId = state.currentUser?.id || 'usr-mgr-001';
-  const data = await apiFetch('/api/dashboard/notifications?user_id=' + userId);
+  // the server returns the signed-in user's own notifications; text is escaped before rendering
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const data = (await apiFetch('/api/dashboard/notifications')) || [];
   const priIcon = { critical: 'fa-radiation text-red-500', high: 'fa-exclamation-circle text-orange-500', normal: 'fa-info-circle text-blue-500', low: 'fa-check-circle text-green-500' };
   document.getElementById('app-content').innerHTML = `
   <div class="fade-in">
@@ -9083,8 +9086,8 @@ async function loadNotifications() {
       <div class="card p-4 flex gap-3 ${!n.is_read ? 'border-r-4 border-blue-400' : 'opacity-75'}">
         <i class="fas ${priIcon[n.priority] || priIcon.normal} text-xl mt-1"></i>
         <div class="flex-1">
-          <div class="font-semibold text-slate-800">${n.title}</div>
-          <div class="text-sm text-slate-600 mt-1">${n.message}</div>
+          <div class="font-semibold text-slate-800">${esc(n.title)}</div>
+          <div class="text-sm text-slate-600 mt-1">${esc(n.message)}</div>
           <div class="text-xs text-slate-400 mt-1">${timeAgo(n.created_at)}</div>
         </div>
         ${!n.is_read ? '<div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>' : ''}
@@ -9302,7 +9305,7 @@ async function saveOrgSettings(extraData = {}) {
 async function apiFetch(url, method = 'GET', body = null) {
   const token = localStorage.getItem('ims_token');
   if (!token) { window.location.href = '/'; return; }
-  const REAL_PREFIXES = ['/api/incidents','/api/documents','/api/trainings','/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health','/api/integrations'];
+  const REAL_PREFIXES = ['/api/incidents','/api/documents','/api/trainings','/api/uploads','/api/annual-plans','/api/announcements','/api/auth','/api/dashboard','/api/projects','/api/users','/api/risks','/api/audits','/api/nonconformances','/api/kpis','/api/org','/api/rca','/api/lean','/api/iso','/api/tasks','/api/db-stats','/api/health','/api/integrations'];
   const isReal = REAL_PREFIXES.some(p => url.startsWith(p));
   let fullUrl;
   if (isReal) {
@@ -13177,5 +13180,6 @@ function updateSidebarISO() {
 })();
 </script>
 <script src="/assets/isoradar-modules.js"></script>
+<script src="/assets/isoradar-tasks-sync.js"></script>
 </body>
 </html>

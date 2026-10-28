@@ -998,7 +998,11 @@ function mNormalize(v) {
   if (v && typeof v === 'object') {
     for (const k of Object.keys(v)) {
       const x = v[k];
-      if (/^(status|type|result|severity|priority)$/.test(k) && typeof x === 'string' && /^[A-Z_]+$/.test(x)) v[k] = x.toLowerCase();
+      if (/^(status|type|result|severity|priority)$/.test(k) && typeof x === 'string' && /^[A-Z_]+$/.test(x)) {
+        v[k] = x.toLowerCase();
+        // tasks are stored TODO/IN_PROGRESS/REVIEW/DONE; the field app shows pending/in_progress/completed
+        if (k === 'status') v[k] = ({ todo: 'pending', review: 'in_progress', done: 'completed' })[v[k]] || v[k];
+      }
       else if (x && typeof x === 'object') v[k] = mNormalize(x);
     }
     // audits: the field app reads score / iso_standard as flat values
@@ -1437,7 +1441,7 @@ function filterTasks(f) {
 }
 
 async function loadTasksList() {
-  const data  = await mFetch('/api/tasks');
+  const data  = await mFetch('/api/tasks?mine=1');
   const el    = document.getElementById('m-tasks-list');
   if (!el) return;
   let tasks   = mList(data);
@@ -1487,7 +1491,7 @@ async function loadTasksList() {
 }
 
 function viewTask(id) {
-  mFetch('/api/tasks').then(data=>{
+  mFetch('/api/tasks?mine=1').then(data=>{
     const t   = mList(data).find(x=>x.id===id);
     if (!t) return;
     const typeClr={inspection:'#22A699',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
@@ -1554,7 +1558,7 @@ function viewTask(id) {
 }
 
 function editTask(id) {
-  mFetch('/api/tasks').then(data=>{
+  mFetch('/api/tasks?mine=1').then(data=>{
     const t   = mList(data).find(x=>x.id===id);
     if (!t) return;
     const typeClr={inspection:'#22A699',nc:'#dc2626',rca:'#7c3aed',audit:'#d97706'};
@@ -1628,7 +1632,7 @@ async function quickCompleteTask(id) {
 async function completeTask(id) { await quickCompleteTask(id); }
 
 function openTaskAction(id) {
-  mFetch('/api/tasks').then(data=>{
+  mFetch('/api/tasks?mine=1').then(data=>{
     const t=mList(data).find(x=>x.id===id);
     if(!t) return;
     if(t.type==='inspection') startNewInspection();
@@ -2476,7 +2480,8 @@ function editPlan(id) {
 async function savePlanEdit(id) {
   const title=document.getElementById('ep-title')?.value?.trim();
   if(!title){mToast('العنوان مطلوب','error');return;}
-  await mFetch(`/api/annual-plans/${id||'x'}`,'PUT',{
+  // an existing initiative is updated; a new one (no id yet) is created
+  await mFetch(id ? `/api/annual-plans/${id}` : '/api/annual-plans', id ? 'PUT' : 'POST', {
     title, status:document.getElementById('ep-status')?.value,
     progress:parseInt(document.getElementById('ep-progress')?.value)||0,
     start_month:parseInt(document.getElementById('ep-start')?.value),
