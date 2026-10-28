@@ -2160,5 +2160,17 @@ window.IR_EN = {"؟":"?",
 "support@isoradar.com · isoradar.com · هذه فاتورة إلكترونية معتمدة":"support@isoradar.com · isoradar.com · This is a certified electronic invoice",
 "training:تدريب":"training:Training",
 "Webhooks النشطة":"Active webhooks",
-"Webhooks نشطة":"Active webhooks"};
-window.IR_EN_PATTERNS = [["^منذ (\\d+) دقائق?$","$1 min ago"],["^منذ (\\d+) ساعات?$","$1 h ago"],["^منذ (\\d+) أيام$","$1 days ago"],["^منذ (\\d+) أسابيع$","$1 weeks ago"],["^منذ (\\d+) أشهر$","$1 months ago"],["^منذ ساعتين$","2 hours ago"],["^من (\\d+) إجمالي$","of $1 total"],["^(\\d+) من (\\d+)$","$1 of $2"],["^(\\d+) مستخدمي?ن?$","$1 users"],["^(\\d+) مستخدماً$","$1 users"],["^(\\d+) مشاريع$","$1 projects"],["^(\\d+) مستأجر$","$1 tenants"],["^(\\d+) فاتورة$","$1 invoices"],["^(\\d+) باقة$","$1 plans"],["^(\\d+) ميزة مفعّلة$","$1 features enabled"],["^(\\d+) مهمة$","$1 tasks"],["^(\\d+) حرجة$","$1 critical"],["^(\\d+) مفتوحة$","$1 open"],["^(\\d+) مغلقة$","$1 closed"],["^(\\d+) مكتملة$","$1 completed"],["^(\\d+) تفتيش مكتمل$","$1 inspections completed"],["^(\\d+) بحاجة تدخل$","$1 need attention"],["^([\\d.,]+) ر\\.س$","SAR $1"],["^([\\d.,]+) ريال$","SAR $1"],["^تم رفع (\\d+) صورة$","Uploaded $1 photos"],["^رُفعت (\\d+) وتعذّر رفع (\\d+)$","Uploaded $1, $2 failed"],["^تم نقل المهمة إلى (.+)$","Task moved to $1"],["^تم تحديث الحالة إلى (.+)$","Status updated to $1"],["^حذف (.+)؟ لا يمكن التراجع\\.?$","Delete $1? This cannot be undone."],["^إضافة (.+)$","Add $1"],["^تعديل (.+)$","Edit $1"],["^لا توجد (.+) مسجّلة بعد$","No $1 recorded yet"]];
+"Webhooks نشطة":"Active webhooks",
+"Language / اللغة":"Language",
+"وصف موجز للهدر":"Brief description of the waste",
+"مثال: التفتيش الميداني":"e.g. Field inspection",
+"ما سبب هذا الهدر؟":"What causes this waste?",
+"كيف نعالج هذا الهدر؟":"How do we treat this waste?",
+"إضافة مهمة":"Add task",
+"ترقية إلى المبتدئ":"Upgrade to Starter",
+"ترقية إلى الاحترافي":"Upgrade to Professional",
+"ترقية إلى المؤسسي":"Upgrade to Enterprise",
+"تخفيض إلى المبتدئ":"Downgrade to Starter",
+"تخفيض إلى الاحترافي":"Downgrade to Professional",
+"تخفيض إلى المؤسسي":"Downgrade to Enterprise"};
+window.IR_EN_PATTERNS = [["^(\\d+) نشط$","$1 active"],["^نشط · (-?\\d+) يوم متبقي$","Active · $1 days left"],["^حتى (\\S+) مستخدم · حتى (\\S+) مشروع$","Up to $1 users · up to $2 projects"],["^من (\\d+)$","of $1"],["^(-?\\d+) يوم$","$1 days"],["^(-?\\d+) أيام$","$1 days"],["^(\\d+) غير مقروءة$","$1 unread"],["^(\\d+) يوم متبقي$","$1 days left"],["^([\\d:]+) ص$","$1 AM"],["^([\\d:]+) م$","$1 PM"],["^منذ (\\d+) دقائق?$","$1 min ago"],["^منذ (\\d+) ساعات?$","$1 h ago"],["^منذ (\\d+) أيام$","$1 days ago"],["^منذ (\\d+) أسابيع$","$1 weeks ago"],["^منذ (\\d+) أشهر$","$1 months ago"],["^منذ ساعتين$","2 hours ago"],["^من (\\d+) إجمالي$","of $1 total"],["^(\\d+) من (\\d+)$","$1 of $2"],["^(\\d+) مستخدمي?ن?$","$1 users"],["^(\\d+) مستخدماً$","$1 users"],["^(\\d+) مشاريع$","$1 projects"],["^(\\d+) مستأجر$","$1 tenants"],["^(\\d+) فاتورة$","$1 invoices"],["^(\\d+) باقة$","$1 plans"],["^(\\d+) ميزة مفعّلة$","$1 features enabled"],["^(\\d+) مهمة$","$1 tasks"],["^(\\d+) حرجة$","$1 critical"],["^(\\d+) مفتوحة$","$1 open"],["^(\\d+) مغلقة$","$1 closed"],["^(\\d+) مكتملة$","$1 completed"],["^(\\d+) تفتيش مكتمل$","$1 inspections completed"],["^(\\d+) بحاجة تدخل$","$1 need attention"],["^([\\d.,]+) ر\\.س$","SAR $1"],["^([\\d.,]+) ريال$","SAR $1"],["^تم رفع (\\d+) صورة$","Uploaded $1 photos"],["^رُفعت (\\d+) وتعذّر رفع (\\d+)$","Uploaded $1, $2 failed"],["^تم نقل المهمة إلى (.+)$","Task moved to $1"],["^تم تحديث الحالة إلى (.+)$","Status updated to $1"],["^حذف (.+)؟ لا يمكن التراجع\\.?$","Delete $1? This cannot be undone."],["^إضافة (.+)$","Add $1"],["^تعديل (.+)$","Edit $1"],["^لا توجد (.+) مسجّلة بعد$","No $1 recorded yet"]];

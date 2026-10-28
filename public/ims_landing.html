@@ -1,543 +1,312 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-surface="landing">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>آيزو رادار — نظام إدارة الجودة والامتثال</title>
 <meta name="description" content="آيزو رادار: منصة عربية لإدارة الجودة والسلامة والبيئة وفق معايير ISO — تفتيش، عدم مطابقة، تحليل أسباب جذرية، مخاطر، وتقارير جاهزة للمراجعة."/>
-<meta name="theme-color" content="#17201d"/>
+<meta name="theme-color" content="#142D4E"/>
+<script>/* ISO Radar: ?lang=ar records Arabic; a saved English choice goes to /en */
+try {
+  if (/[?&]lang=ar(&|$)/.test(location.search)) localStorage.setItem('ir_lang', 'ar');
+  else if (localStorage.getItem('ir_lang') === 'en') location.replace('/en' + location.hash);
+} catch (e) {}
+</script>
 <link rel="icon" type="image/svg+xml" href="/assets/isoradar-mark.svg"/>
+<link rel="alternate" hreflang="ar" href="https://isoradar.com/"/>
+<link rel="alternate" hreflang="en" href="https://isoradar.com/en"/>
+<link rel="alternate" hreflang="x-default" href="https://isoradar.com/"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
-<link rel="stylesheet" href="/assets/isoradar.css"/>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;scroll-padding-top:80px;}
-body{background:var(--mz-white);color:var(--mz-ink);overflow-x:hidden;font-size:16px;line-height:1.5;}
-a{color:inherit;text-decoration:none;}
-img{display:block;max-width:100%;}
-.wrap{max-width:1200px;margin:0 auto;padding:0 24px;}
-
-/* ── Buttons ── */
-.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:9999px;font-weight:700;font-size:14px;line-height:1;cursor:pointer;border:1px solid transparent;transition:background .15s var(--mz-ease),border-color .15s var(--mz-ease),color .15s var(--mz-ease),transform .15s var(--mz-ease);white-space:nowrap;}
-.pill-ink{background:var(--mz-ink);color:#fff;padding:13px 24px;}
-.pill-ink:hover{background:#2c3833;}
-.pill-ink:active{transform:translateY(1px);}
-.pill-ghost{background:transparent;color:var(--mz-ink);border-color:var(--mz-bone);padding:12px 20px;}
-.pill-ghost:hover{border-color:var(--mz-assure);color:var(--mz-assure);}
-.pill-sm{padding:9px 16px;font-size:14px;}
-.pill-lg{padding:16px 28px;font-size:16px;}
-/* one animated quality-spectrum ring per viewport: the hero CTA */
-.ring{position:relative;display:inline-flex;border-radius:9999px;padding:2px;isolation:isolate;overflow:hidden;}
-.ring::before{content:'';position:absolute;inset:-60%;background:var(--mz-quality-conic);animation:mz-spin 3.2s linear infinite;z-index:-1;}
-.ring > .pill{position:relative;}
-@keyframes mz-spin{to{transform:rotate(360deg);}}
-
-/* ── Type ── */
-.meta{font-family:var(--mz-mono) !important;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mz-ash);}
-.display{font-weight:800;font-size:clamp(40px,6.2vw,72px);line-height:1.12;color:var(--mz-onyx);}
-.h2{font-weight:800;font-size:clamp(30px,4.2vw,52px);line-height:1.15;color:var(--mz-onyx);}
-.lead{font-size:18px;color:var(--mz-slate);line-height:1.7;max-width:56ch;}
-.sec{padding:96px 0;}
-.sec-band{background:var(--mz-plaster);}
-.sec-head{max-width:720px;margin-bottom:48px;}
-.sec-head.center{margin-inline:auto;text-align:center;}
-.sec-head .lead{margin-top:16px;}
-.sec-head.center .lead{margin-inline:auto;}
-
-/* ── Announcement + nav ── */
-.announce{background:var(--mz-ink);color:#e7ece9;font-size:13px;text-align:center;padding:9px 16px;}
-.announce a{color:#9fe3c6;font-weight:700;}
-.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--mz-bone);}
-.nav-in{height:68px;display:flex;align-items:center;gap:24px;}
-.brand{display:flex;align-items:center;gap:10px;}
-.brand img{width:36px;height:36px;}
-.brand b{font-size:20px;font-weight:800;color:var(--mz-onyx);line-height:1;}
-.brand small{display:block;font-family:var(--mz-mono) !important;font-size:11px;letter-spacing:.1em;color:var(--mz-ash);margin-top:3px;}
-.nav-links{display:flex;gap:4px;}
-.nav-links a{padding:7px 12px;border-radius:9999px;font-size:15px;font-weight:600;color:var(--mz-carbon);transition:background .15s;}
-.nav-links a:hover{background:rgba(0,0,0,.045);}
-.nav-cta{display:flex;gap:8px;margin-inline-start:auto;}
-
-/* ── Hero ── */
-.hero{padding:72px 0 40px;}
-.hero-grid{display:grid;grid-template-columns:1fr 1.08fr;gap:56px;align-items:center;}
-.hero .display{margin:16px 0 22px;}
-.hero .display em{font-style:normal;color:var(--mz-brand);}
-.checks{list-style:none;display:grid;gap:10px;margin-bottom:30px;}
-.checks li{display:flex;gap:10px;align-items:flex-start;font-size:16px;color:var(--mz-slate);}
-.checks i{color:var(--mz-brand);font-size:18px;margin-top:3px;}
-.checks b{color:var(--mz-ink);font-weight:700;}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px;}
-.tag{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9999px;background:var(--mz-mist);border:1px solid var(--mz-bone);font-size:14px;font-weight:700;color:var(--mz-ink);}
-.tag i{color:var(--mz-ash);font-size:13px;}
-
-/* product mock — real-looking app UI, not an illustration */
-.app-mock{border:1px solid var(--mz-bone);border-radius:16px;background:var(--mz-white);box-shadow:-30px 24px 60px -24px rgba(11,19,17,.28);overflow:hidden;}
-.mock-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--mz-mist);border-bottom:1px solid var(--mz-bone);}
-.mock-bar span{width:9px;height:9px;border-radius:50%;background:var(--mz-cloud);}
-.mock-bar .url{margin-inline-start:12px;font-family:var(--mz-mono) !important;font-size:11px;color:var(--mz-ash);background:#fff;border:1px solid var(--mz-bone);border-radius:9999px;padding:3px 12px;}
-.mock-body{display:grid;grid-template-columns:150px 1fr;min-height:360px;}
-.mock-side{background:var(--mz-mist);border-left:1px solid var(--mz-bone);padding:14px 10px;display:flex;flex-direction:column;gap:3px;}
-.mock-side .sb-brand{display:flex;align-items:center;gap:7px;padding:2px 6px 12px;font-weight:800;font-size:14px;}
-.mock-side .sb-brand img{width:22px;height:22px;}
-.mock-side div.it{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--mz-carbon);padding:6px 9px;border-radius:9999px;}
-.mock-side div.it i{width:13px;color:var(--mz-ash);font-size:11px;}
-.mock-side div.it.on{background:var(--mz-brand-tint);color:var(--mz-brand-strong);}
-.mock-side div.it.on i{color:var(--mz-brand);}
-.mock-main{padding:16px 18px;}
-.mock-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.mock-head .mock-title{font-size:15px;font-weight:800;}
-.mock-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
-.mock-kpi{border:1px solid var(--mz-bone);border-radius:10px;padding:9px 10px;}
-.mock-kpi b{display:block;font-size:20px;font-weight:800;color:var(--mz-onyx);line-height:1.1;}
-.mock-kpi span{font-size:11px;color:var(--mz-slate);}
-.mock-kpi .bar{height:5px;border-radius:9999px;background:var(--mz-plaster);margin-top:7px;overflow:hidden;}
-.mock-kpi .bar i{display:block;height:100%;border-radius:9999px;background:var(--mz-brand);}
-.mock-row{display:grid;grid-template-columns:76px 1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--mz-bone);font-size:12px;}
-.mock-row .ref{font-family:var(--mz-mono) !important;font-size:11px;color:var(--mz-assure);}
-.mock-row .t{font-weight:600;color:var(--mz-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.st{display:inline-block;padding:3px 9px;border-radius:9999px;font-size:11px;font-weight:700;}
-.st-pass{background:var(--mz-pass-bg);color:var(--mz-pass);}
-.st-obs{background:var(--mz-obs-bg);color:var(--mz-obs);}
-.st-nc{background:var(--mz-nc-bg);color:var(--mz-nc);}
-.st-info{background:var(--mz-info-bg);color:var(--mz-info);}
-.avs{display:flex;}
-.avs b{width:22px;height:22px;border-radius:50%;border:2px solid #fff;margin-inline-start:-7px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;}
-.avs b:first-child{margin-inline-start:0;}
-
-/* ── Standards strip ── */
-.standards{padding:28px 0 8px;}
-.standards .in{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 14px;}
-.std{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:9999px;border:1px solid var(--mz-bone);font-weight:700;font-size:14px;color:var(--mz-carbon);}
-.std i{font-size:13px;}
-
-/* ── Features ── */
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.feat{border:1px solid var(--mz-bone);border-radius:12px;padding:28px;background:var(--mz-white);transition:border-color .2s var(--mz-ease);}
-.feat:hover{border-color:var(--mz-cloud);}
-.feat h3{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;margin-bottom:10px;color:var(--mz-onyx);}
-.feat h3 i{font-size:17px;color:var(--mz-brand);}
-.feat p{font-size:15px;color:var(--mz-slate);line-height:1.7;}
-.feat .meta{display:block;margin-top:16px;}
-
-/* ── Stats band ── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
-.stat{padding:28px;border-inline-start:1px solid var(--mz-cloud);}
-.stat:first-child{border-inline-start:none;}
-.stat b{display:block;font-weight:800;font-size:clamp(40px,5vw,64px);line-height:1.1;color:var(--mz-onyx);}
-.stat span{font-size:17px;color:var(--mz-slate);}
-
-/* ── Dark feature card (AI council) ── */
-.dark-card{background:linear-gradient(#17201d 24%,#0b1311);border-radius:20px;color:#fff;padding:72px 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;}
-.dark-card .h2{color:#fff;}
-.dark-card p{color:#b3bdb8;font-size:17px;line-height:1.7;margin:18px 0 28px;}
-.dark-card .meta{color:#8fb9a8;}
-.dark-card .pill-ghost{color:#fff;border-color:#3a4641;}
-.dark-card .pill-ghost:hover{border-color:#9fe3c6;color:#9fe3c6;}
-.council{display:grid;gap:10px;}
-.council .seat{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;}
-.council .seat b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;}
-.council .seat div{font-size:14px;font-weight:700;}
-.council .seat small{display:block;font-size:12px;color:#93a39c;font-weight:500;margin-top:2px;}
-
-/* ── Mobile app ── */
-.mobile-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:64px;align-items:center;}
-.phone{width:270px;margin:0 auto;border-radius:38px;background:var(--mz-onyx);padding:10px;box-shadow:-24px 24px 54px -20px rgba(11,19,17,.35);}
-.phone-in{border-radius:30px;overflow:hidden;background:var(--mz-mist);}
-.phone-top{background:var(--mz-ink);color:#fff;padding:22px 16px 16px;display:flex;align-items:center;gap:10px;}
-.phone-top img{width:30px;height:30px;}
-.phone-top b{font-size:14px;}
-.phone-top small{display:block;font-size:11px;color:#b3bdb8;}
-.phone-body{padding:12px;display:grid;gap:9px;}
-.p-card{background:#fff;border:1px solid var(--mz-bone);border-radius:14px;padding:12px;}
-.p-card .row{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;}
-.p-card .bar{height:5px;border-radius:9999px;background:var(--mz-plaster);margin:9px 0 6px;overflow:hidden;}
-.p-card .bar i{display:block;height:100%;width:65%;background:var(--mz-brand);border-radius:9999px;}
-.p-card small{font-size:11px;color:var(--mz-slate);}
-.p-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.p-actions span{border-radius:14px;padding:14px 8px;text-align:center;font-size:12px;font-weight:700;}
-.m-feats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:28px 0 32px;}
-.m-feat{display:flex;gap:12px;align-items:flex-start;}
-.m-feat i{color:var(--mz-brand);margin-top:4px;}
-.m-feat b{display:block;font-size:15px;font-weight:700;}
-.m-feat span{font-size:14px;color:var(--mz-slate);}
-
-/* ── Pricing ── */
-.bill{display:inline-flex;background:var(--mz-white);border:1px solid var(--mz-bone);border-radius:9999px;padding:4px;margin-top:24px;}
-.bill button{border:none;background:transparent;border-radius:9999px;padding:9px 20px;font-weight:700;font-size:14px;color:var(--mz-slate);cursor:pointer;}
-.bill button.on{background:var(--mz-ink);color:#fff;}
-.bill .save{display:inline-block;margin-inline-start:6px;font-size:11px;color:var(--mz-pass);background:var(--mz-pass-bg);border-radius:9999px;padding:2px 7px;}
-.bill button.on .save{background:rgba(255,255,255,.15);color:#c8f1de;}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
-.plan{background:var(--mz-white);border:1px solid var(--mz-bone);border-radius:20px;padding:32px 28px;position:relative;}
-.plan.pop{border:2px solid var(--mz-ink);}
-.plan .badge-pop{position:absolute;top:-13px;inset-inline-start:24px;background:var(--mz-gold-tint);color:#7a5600;border:1px solid #ecd28f;border-radius:9999px;padding:4px 12px;font-size:12px;font-weight:700;}
-.plan h3{font-size:20px;font-weight:800;}
-.plan .who{font-size:14px;color:var(--mz-slate);margin-top:4px;}
-.plan .amt{margin:24px 0 4px;display:flex;align-items:baseline;gap:6px;}
-.plan .amt b{font-size:48px;font-weight:800;line-height:1;color:var(--mz-onyx);}
-.plan .amt span{font-size:14px;color:var(--mz-slate);}
-.plan .yr{font-size:13px;color:var(--mz-pass);font-weight:700;min-height:20px;display:none;}
-.plan ul{list-style:none;margin:20px 0 28px;display:grid;gap:10px;}
-.plan li{display:flex;gap:10px;font-size:14px;color:var(--mz-carbon);}
-.plan li i{color:var(--mz-brand);margin-top:3px;font-size:13px;}
-.plan .pill{width:100%;}
-.guarantee{margin-top:24px;text-align:center;font-size:14px;color:var(--mz-slate);}
-.guarantee b{color:var(--mz-ink);}
-
-/* ── Compare ── */
-.cmp-wrap{overflow-x:auto;border:1px solid var(--mz-bone);border-radius:12px;padding:4px;}
-.cmp{width:100%;border-collapse:collapse;min-width:620px;font-size:14px;}
-.cmp th,.cmp td{padding:14px 18px;text-align:center;border-bottom:1px solid var(--mz-bone);}
-.cmp th{background:var(--mz-mist);font-weight:700;color:var(--mz-carbon);}
-.cmp th:first-child,.cmp td:first-child{text-align:right;font-weight:600;color:var(--mz-ink);}
-.cmp tr:last-child td{border-bottom:none;}
-.cmp .hl{background:var(--mz-brand-wash);}
-.cmp .y{color:var(--mz-pass);} .cmp .n{color:var(--mz-fog);}
-
-/* ── Testimonials ── */
-.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.quote{border:1px solid var(--mz-bone);border-radius:12px;padding:28px;background:var(--mz-white);display:flex;flex-direction:column;}
-.quote p{font-size:16px;line-height:1.75;color:var(--mz-carbon);flex:1;}
-.quote .who{display:flex;align-items:center;gap:12px;margin-top:22px;}
-.quote .who b{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:13px;flex-shrink:0;}
-.quote .who div{font-weight:700;font-size:14px;}
-.quote .who small{display:block;font-weight:500;color:var(--mz-slate);font-size:13px;}
-.stars{color:var(--mz-gold);font-size:13px;margin-bottom:12px;letter-spacing:2px;}
-
-/* ── CTA + footer ── */
-.cta{background:linear-gradient(#17201d 24%,#0b1311);color:#fff;border-radius:20px;padding:72px 32px;text-align:center;}
-.cta .h2{color:#fff;}
-.cta p{color:#b3bdb8;font-size:17px;margin:16px auto 30px;max-width:52ch;}
-.cta .pill-ink{background:#fff;color:var(--mz-ink);}
-.cta .pill-ink:hover{background:#e7f5ef;}
-.cta .pill-ghost{color:#fff;border-color:#3a4641;}
-.foot{padding:64px 0 32px;border-top:1px solid var(--mz-bone);margin-top:96px;}
-.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;}
-.foot p{font-size:14px;color:var(--mz-slate);line-height:1.7;margin-top:14px;max-width:38ch;}
-.foot h4{font-size:14px;font-weight:800;margin-bottom:14px;}
-.foot nav a{display:block;font-size:14px;color:var(--mz-slate);padding:4px 0;}
-.foot nav a:hover{color:var(--mz-ink);}
-.foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:48px;padding-top:24px;border-top:1px solid var(--mz-bone);font-size:13px;color:var(--mz-ash);}
-.socials{display:flex;gap:6px;}
-.socials a{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--mz-bone);color:var(--mz-slate);}
-.socials a:hover{color:var(--mz-ink);border-color:var(--mz-cloud);}
-
-/* ── Login modal (ids/classes used by the script below) ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(11,19,17,.5);z-index:500;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.open{display:flex;}
-.login-modal{background:#fff;border-radius:20px;width:100%;max-width:440px;max-height:calc(100dvh - 32px);overflow:auto;box-shadow:var(--mz-shadow-pop);}
-.login-header{padding:24px 24px 0;}
-.login-header .top{display:flex;align-items:center;gap:10px;}
-.login-header .x{margin-inline-start:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--mz-bone);background:#fff;color:var(--mz-slate);cursor:pointer;}
-.login-tabs{display:flex;background:var(--mz-plaster);border-radius:9999px;padding:4px;margin-top:20px;}
-.login-tab{flex:1;border:none;background:transparent;border-radius:9999px;padding:9px;font-weight:700;font-size:14px;color:var(--mz-slate);cursor:pointer;}
-.login-tab.active{background:#fff;color:var(--mz-onyx);box-shadow:var(--mz-shadow-subtle);}
-.login-body{padding:22px 24px 26px;}
-.form-group{margin-bottom:14px;}
-.form-group label{display:block;font-size:13px;font-weight:700;color:var(--mz-carbon);margin-bottom:6px;}
-.form-group input,.form-group select{width:100%;padding:11px 13px;border:1px solid var(--mz-cloud);border-radius:9px;font-size:15px;background:#fff;color:var(--mz-ink);}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--mz-assure);box-shadow:0 0 0 3px rgba(11,107,203,.14);}
-.btn-login{width:100%;padding:14px;border-radius:9999px;border:none;background:var(--mz-ink);color:#fff;font-weight:700;font-size:15px;cursor:pointer;}
-.btn-login:hover{background:#2c3833;}
-.btn-login:disabled{opacity:.6;cursor:not-allowed;}
-.error-msg,.success-msg{display:none;padding:10px 13px;border-radius:9px;font-size:13px;margin-bottom:14px;}
-.error-msg{background:var(--mz-nc-bg);color:var(--mz-nc);}
-.success-msg{background:var(--mz-pass-bg);color:var(--mz-pass);}
-.hint{margin-top:14px;padding:12px 14px;background:var(--mz-mist);border:1px solid var(--mz-bone);border-radius:12px;font-size:13px;color:var(--mz-slate);line-height:1.6;}
-.login-footer-txt{text-align:center;font-size:12px;color:var(--mz-slate);margin-top:14px;}
-.login-footer-txt a{color:var(--mz-assure);font-weight:700;}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── Responsive ── */
-@media (max-width:980px){
-  .hero-grid,.dark-card,.mobile-grid{grid-template-columns:1fr;}
-  .app-mock{max-width:640px;}
-  .feat-grid,.quotes,.price-grid{grid-template-columns:1fr 1fr;}
-  .stats{grid-template-columns:1fr 1fr;}
-  .stat:nth-child(3){border-inline-start:none;}
-  .dark-card{padding:56px 32px;}
-}
-@media (max-width:760px){
-  .nav-links{display:none;}
-  .nav-cta .pill-ghost{display:none;}
-  .sec{padding:72px 0;}
-  .hero{padding:44px 0 24px;}
-  .feat-grid,.quotes,.price-grid,.m-feats,.foot-grid{grid-template-columns:1fr;}
-  .mock-body{grid-template-columns:1fr;}
-  .mock-side{display:none;}
-  .mock-row{grid-template-columns:68px 1fr auto;}
-  .mock-row .avs{display:none;}
-  .stats{grid-template-columns:1fr 1fr;}
-  .stat{padding:20px 12px;}
-  .dark-card{padding:44px 22px;border-radius:16px;}
-  .cta{padding:56px 22px;border-radius:16px;}
-  .two{grid-template-columns:1fr;}
-  .announce{font-size:12px;}
-}
-@media (prefers-reduced-motion:reduce){ .ring::before{animation:none;} html{scroll-behavior:auto;} }
-</style>
+<link rel="stylesheet" href="/assets/isoradar-landing.css"/>
 </head>
 <body>
 
-<div class="announce">جديد: المجلس الاستشاري بالذكاء الاصطناعي متاح الآن في الباقة الاحترافية — <a href="#ai">تعرّف عليه</a></div>
+<div class="announce"><b>جديد:</b> المجلس الاستشاري بالذكاء الاصطناعي متاح الآن في الباقة الاحترافية <a href="#ai">تعرّف عليه ←</a></div>
 
-<!-- ═══════ NAV ═══════ -->
-<header class="nav">
+<nav class="top" id="nav" aria-label="القائمة الرئيسية">
   <div class="wrap nav-in">
-    <a class="brand" href="#home" aria-label="آيزو رادار — الصفحة الرئيسية">
-      <img src="/assets/isoradar-mark.svg" alt="" width="36" height="36"/>
-      <div><b>آيزو رادار</b><small>ISORADAR.COM</small></div>
+    <a href="#top" class="logo" aria-label="آيزو رادار — الرئيسية">
+      <img src="/assets/isoradar-mark.svg" alt="" width="38" height="38"/>
+      <span>آيزو رادار<small>ISORADAR.COM</small></span>
     </a>
-    <nav class="nav-links" aria-label="أقسام الصفحة">
+    <div class="nav-links" id="navLinks">
       <a href="#features">المميزات</a>
-      <a href="#mobile-app">تطبيق الجوال</a>
+      <a href="#ai">المجلس الاستشاري</a>
+      <a href="#mobile-app">تطبيق الميدان</a>
       <a href="#pricing">الأسعار</a>
-      <a href="#compare">المقارنة</a>
-      <a href="#testimonials">العملاء</a>
-    </nav>
+      <a href="#faq">الأسئلة الشائعة</a>
+    </div>
     <div class="nav-cta">
-      <button class="pill pill-ghost pill-sm" onclick="openLogin('login')">تسجيل الدخول</button>
-      <button class="pill pill-ink pill-sm" onclick="openLogin('register')">ابدأ مجاناً</button>
+      <a class="lang" href="/en" hreflang="en" lang="en"><i class="fas fa-globe"></i>English</a>
+      <button class="login" onclick="openLogin('login')">تسجيل الدخول</button>
+      <button class="btn btn-grad" onclick="openLogin('register')">ابدأ مجاناً</button>
+      <button class="burger" id="burger" aria-label="القائمة" aria-expanded="false" aria-controls="navLinks"><i class="fas fa-bars fa-lg"></i></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <a class="pill" href="#ai"><span>AI</span> إدارة الامتثال، الآن بمساعدة الذكاء الاصطناعي ←</a>
+    <h1>قِس <span class="grad-text">جودتك</span>.<br/>أثبت <span class="grad-text">امتثالك</span>.</h1>
+    <p class="lead">كفى جداول إكسل متفرقة. آيزو رادار يجمع التفتيش وعدم المطابقة وتحليل الأسباب الجذرية والمخاطر والمؤشرات في منصة واحدة — لتعرف دائماً أين تقف من معايير ISO.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية <i class="fas fa-arrow-left"></i></button>
+      <a class="btn btn-ghost btn-lg" href="#features">شاهد كيف يعمل</a>
+    </div>
+    <div class="hero-note"><span>تجربة مجانية 14 يوماً</span><span>بدون بطاقة ائتمانية</span><span>إلغاء في أي وقت</span></div>
+
+    <div class="mock-stage" aria-hidden="true">
+      <div class="mock">
+        <div class="mock-bar"><i></i><i></i><i></i><div class="url">isoradar.com/app</div></div>
+        <div class="mock-body">
+          <aside class="side">
+            <div class="ws"><img src="/assets/isoradar-mark.svg" alt=""/>شركة الامتثال</div>
+            <a class="on"><span class="dot" style="background:#17796f"></span>نظرة عامة</a>
+            <a><span class="dot" style="background:#142D4E"></span>التفتيش</a>
+            <a><span class="dot" style="background:#c2410c"></span>عدم المطابقة</a>
+            <a><span class="dot" style="background:#D9A441"></span>تحليل RCA</a>
+            <a><span class="dot" style="background:#1d5fa8"></span>المخاطر</a>
+            <h6>المعايير</h6>
+            <a>ISO 9001</a><a>ISO 45001</a><a>ISO 14001</a><a>ISO 27001</a>
+          </aside>
+          <div class="main">
+            <div class="main-h"><h4>الامتثال 2026</h4><div class="tabs-mini"><span class="on">نظرة عامة</span><span>الفجوة</span><span>المخاطر</span></div></div>
+            <div class="kpis">
+              <div class="kpi"><small>معدل الامتثال</small><b>87%</b><div class="bar"><i style="width:87%;background:#17796f"></i></div></div>
+              <div class="kpi"><small>NC مفتوحة</small><b>5</b><div class="bar"><i style="width:36%;background:#c2410c"></i></div></div>
+              <div class="kpi"><small>تفتيش مكتمل</small><b>42/48</b><div class="bar"><i style="width:88%;background:#142D4E"></i></div></div>
+              <div class="kpi"><small>إغلاق RCA</small><b>71%</b><div class="bar"><i style="width:71%;background:#D9A441"></i></div></div>
+            </div>
+            <div class="grid2">
+              <div class="panel"><h5>الامتثال حسب الشهر <span>كل المشاريع</span></h5>
+                <div class="chart"><div style="height:45%"></div><div style="height:58%"></div><div style="height:52%"></div><div style="height:70%"></div><div style="height:66%"></div><div style="height:80%"></div><div style="height:78%"></div><div style="height:92%"></div></div>
+              </div>
+              <div class="panel"><h5>تحليل الفجوة <span>هذا الشهر</span></h5>
+                <div class="rows">
+                  <div class="row"><b>ISO 9001 الجودة</b><div class="bar"><i style="width:91%;background:#17796f"></i></div><span class="badge c1">91</span></div>
+                  <div class="row"><b>ISO 45001 السلامة</b><div class="bar"><i style="width:84%;background:#142D4E"></i></div><span class="badge c2">84</span></div>
+                  <div class="row"><b>ISO 14001 البيئة</b><div class="bar"><i style="width:76%;background:#D9A441"></i></div><span class="badge c3">76</span></div>
+                  <div class="row"><b>ISO 27001 الأمن</b><div class="bar"><i style="width:62%;background:#1d5fa8"></i></div><span class="badge c4">62</span></div>
+                  <div class="row"><b>معيار مخصص</b><div class="bar"><i style="width:44%;background:#c2410c"></i></div><span class="badge c6">44</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="float ai"><div class="who"><i>✦</i>المجلس الاستشاري</div><p>3 حالات عدم مطابقة في المستودع مصدرها واحد: غياب التدريب على معدات الوقاية. نقترح خطة تصحيحية خلال أسبوعين.</p></div>
+      <div class="float mail"><b>📍 تفتيش ميداني مكتمل</b><span style="color:var(--muted)">الوحدة A · 12 بنداً · مع الصور وموقع GPS</span></div>
     </div>
   </div>
 </header>
 
-<main>
-<!-- ═══════ HERO ═══════ -->
-<section class="hero" id="home">
-  <div class="wrap hero-grid">
-    <div>
-      <span class="meta">ISO 9001 · 45001 · 14001 · 27001</span>
-      <h1 class="display">قِس جودتك.<br/><em>أثبت امتثالك.</em></h1>
-      <ul class="checks">
-        <li><i class="fas fa-circle-check"></i><span><b>تفتيش ميداني</b> بقوائم تحقق ذكية ونتائج فورية مع الصور.</span></li>
-        <li><i class="fas fa-circle-check"></i><span><b>عدم مطابقة</b> مرتبطة تلقائياً بتحليل الأسباب الجذرية RCA.</span></li>
-        <li><i class="fas fa-circle-check"></i><span><b>تقارير جاهزة للمراجعة</b> لكل معيار ISO في مكان واحد.</span></li>
-      </ul>
-      <div class="hero-actions">
-        <span class="ring"><button class="pill pill-ink pill-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية 14 يوماً <i class="fas fa-arrow-left"></i></button></span>
-        <a class="pill pill-ghost pill-lg" href="#features">شاهد كيف يعمل</a>
-      </div>
-      <div class="tags" aria-label="وحدات النظام">
-        <span class="tag"><i class="fas fa-clipboard-check"></i>التفتيش</span>
-        <span class="tag"><i class="fas fa-triangle-exclamation"></i>عدم المطابقة</span>
-        <span class="tag"><i class="fas fa-magnifying-glass"></i>RCA</span>
-        <span class="tag"><i class="fas fa-shield-halved"></i>المخاطر</span>
-        <span class="tag"><i class="fas fa-recycle"></i>Lean</span>
-        <span class="tag"><i class="fas fa-chart-line"></i>KPIs</span>
-      </div>
-    </div>
-
-    <!-- Product UI (built from the real app's components) -->
-    <div class="app-mock" aria-hidden="true">
-      <div class="mock-bar"><span></span><span></span><span></span><div class="url">isoradar.com/nc</div></div>
-      <div class="mock-body">
-        <div class="mock-side">
-          <div class="sb-brand"><img src="/assets/isoradar-mark.svg" alt=""/>آيزو رادار</div>
-          <div class="it"><i class="fas fa-gauge"></i>نظرة عامة</div>
-          <div class="it"><i class="fas fa-clipboard-check"></i>التفتيش</div>
-          <div class="it on"><i class="fas fa-triangle-exclamation"></i>عدم المطابقة</div>
-          <div class="it"><i class="fas fa-magnifying-glass"></i>تحليل RCA</div>
-          <div class="it"><i class="fas fa-shield-halved"></i>المخاطر</div>
-          <div class="it"><i class="fas fa-chart-line"></i>المؤشرات</div>
-        </div>
-        <div class="mock-main">
-          <div class="mock-head"><b class="mock-title">عدم المطابقة</b><span class="st st-info">ISO 45001</span></div>
-          <div class="mock-kpis">
-            <div class="mock-kpi"><b>87%</b><span>معدل الامتثال</span><div class="bar"><i style="width:87%"></i></div></div>
-            <div class="mock-kpi"><b>5</b><span>NC مفتوحة</span><div class="bar"><i style="width:36%;background:var(--mz-nc)"></i></div></div>
-            <div class="mock-kpi"><b>71%</b><span>إغلاق RCA</span><div class="bar"><i style="width:71%;background:var(--mz-assure)"></i></div></div>
-          </div>
-          <div class="mock-row"><span class="ref">NC-2026-014</span><span class="t">تسرب زيت في خط الإنتاج 3</span><span class="st st-nc">مفتوحة</span><span class="avs"><b style="background:#0c7a59">خ</b><b style="background:#0b6bcb">س</b></span></div>
-          <div class="mock-row"><span class="ref">NC-2026-015</span><span class="t">نقص معدات الوقاية الشخصية</span><span class="st st-obs">قيد المعالجة</span><span class="avs"><b style="background:#8a6408">أ</b></span></div>
-          <div class="mock-row"><span class="ref">NC-2026-012</span><span class="t">ملصقات تحذير غير مقروءة</span><span class="st st-obs">قيد المعالجة</span><span class="avs"><b style="background:#0b6bcb">م</b><b style="background:#5b3aa6">ف</b></span></div>
-          <div class="mock-row"><span class="ref">NC-2026-011</span><span class="t">معايرة جهاز القياس متأخرة</span><span class="st st-pass">مغلقة</span><span class="avs"><b style="background:#0c7a59">ر</b></span></div>
-        </div>
-      </div>
-    </div>
+<div class="stats">
+  <div class="wrap stats-in">
+    <div class="stat"><b class="grad-text">4</b><span>معايير ISO مدعومة</span></div>
+    <div class="stat"><b class="grad-text">+100</b><span>سؤال تقييم لكل معيار</span></div>
+    <div class="stat"><b class="grad-text">14 يوماً</b><span>تجربة مجانية كاملة</span></div>
+    <div class="stat"><b class="grad-text">Offline</b><span>تطبيق ميداني بدون إنترنت</span></div>
   </div>
-</section>
+</div>
 
-<!-- ═══════ STANDARDS ═══════ -->
-<section class="standards" aria-label="المعايير المدعومة">
+<!-- FEATURES -->
+<section class="blk feat-bg" id="features">
   <div class="wrap">
-    <p class="meta" style="text-align:center;margin-bottom:16px;">المعايير المدعومة</p>
-    <div class="in">
-      <span class="std"><i class="fas fa-award" style="color:var(--mz-brand)"></i>ISO 9001 الجودة</span>
-      <span class="std"><i class="fas fa-helmet-safety" style="color:var(--mz-obs)"></i>ISO 45001 السلامة</span>
-      <span class="std"><i class="fas fa-leaf" style="color:var(--mz-pass)"></i>ISO 14001 البيئة</span>
-      <span class="std"><i class="fas fa-lock" style="color:var(--mz-assure)"></i>ISO 27001 أمن المعلومات</span>
-      <span class="std"><i class="fas fa-plus" style="color:var(--mz-ash)"></i>معايير مخصصة</span>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ FEATURES ═══════ -->
-<section class="sec" id="features">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="meta">المميزات</span>
-      <h2 class="h2" style="margin-top:12px;">دورة الامتثال كاملة،<br/>في منصة واحدة.</h2>
+    <div class="head reveal">
+      <span class="eyebrow">كل شيء في مكان واحد</span>
+      <h2>دورة الامتثال <span class="grad-text">كاملة</span>، في منصة واحدة</h2>
       <p class="lead">من التفتيش الميداني إلى تقارير المراجعة — آيزو رادار يغطي كل خطوة بين اكتشاف المشكلة وإغلاقها.</p>
     </div>
-    <div class="feat-grid">
-      <article class="feat"><h3><i class="fas fa-clipboard-check"></i>إدارة التفتيش والمراجعة</h3><p>جدولة وتنفيذ وتوثيق عمليات التفتيش بقوائم تحقق ذكية. نتائج فورية ومرفقات صور مباشرة من الميدان.</p><span class="meta">ISO 9001 · 45001 · 14001</span></article>
-      <article class="feat"><h3><i class="fas fa-triangle-exclamation"></i>إدارة عدم المطابقة NC</h3><p>تسجيل وتتبع حالات NC مع ربط تلقائي بتحليل الأسباب الجذرية RCA، وتنبيهات للمواعيد النهائية.</p><span class="meta">RCA تلقائي</span></article>
-      <article class="feat"><h3><i class="fas fa-chart-pie"></i>تحليل الفجوة</h3><p>استبيان بأكثر من 100 سؤال لكل معيار ISO، ونتائج فورية تُضاف لمخطط الفجوة مع خارطة طريق للامتثال.</p><span class="meta">Gap Analysis</span></article>
-      <article class="feat"><h3><i class="fas fa-shield-halved"></i>إدارة المخاطر ISO 31000</h3><p>مصفوفة مخاطر تفاعلية مع حساب RPN تلقائي، وخطط معالجة تُتابَع لكل خطر.</p><span class="meta">Risk Matrix · COSO</span></article>
-      <article class="feat"><h3><i class="fas fa-recycle"></i>Lean Six Sigma والهدر</h3><p>تحديد وتحليل أنواع الهدر السبعة، مع مؤشر Lean مباشر ومنهجية DMAIC للتحسين المستمر.</p><span class="meta">DMAIC · 7 Wastes</span></article>
-      <article class="feat"><h3><i class="fas fa-mobile-screen"></i>تطبيق الميدان</h3><p>تطبيق جوال يعمل بدون إنترنت: صوّر الحوادث، عبّئ قوائم التفتيش، وتُزامَن البيانات عند عودة الاتصال.</p><span class="meta">iOS · Android · Offline</span></article>
+    <div class="stds reveal" aria-label="المعايير المدعومة" style="margin:0 0 40px">
+      <span class="std"><i class="fas fa-award" style="color:#17796f"></i>ISO 9001 الجودة</span>
+      <span class="std"><i class="fas fa-helmet-safety" style="color:#8a6410"></i>ISO 45001 السلامة</span>
+      <span class="std"><i class="fas fa-leaf" style="color:#13734f"></i>ISO 14001 البيئة</span>
+      <span class="std"><i class="fas fa-lock" style="color:#1d5fa8"></i>ISO 27001 أمن المعلومات</span>
+      <span class="std"><i class="fas fa-plus" style="color:#5d6b7e"></i>معايير مخصصة</span>
+    </div>
+    <div class="feat-grid reveal">
+      <article class="feat"><span class="ic c1"><i class="fas fa-clipboard-check"></i></span><h3>التفتيش والمراجعة</h3><p>جدولة وتنفيذ وتوثيق عمليات التفتيش بقوائم تحقق ذكية، ونتائج فورية مع صور من الميدان.</p><small>ISO 9001 · 45001 · 14001</small></article>
+      <article class="feat"><span class="ic c6"><i class="fas fa-triangle-exclamation"></i></span><h3>عدم المطابقة NC</h3><p>تسجيل وتتبع حالات NC مع ربط تلقائي بتحليل الأسباب الجذرية، وتنبيهات للمواعيد النهائية.</p><small>RCA AUTO-LINK</small></article>
+      <article class="feat"><span class="ic c3"><i class="fas fa-magnifying-glass-chart"></i></span><h3>تحليل الأسباب الجذرية</h3><p>5 Whys ومخطط إيشيكاوا وFMEA في مكان واحد، مع إجراءات تصحيحية تُتابَع حتى الإغلاق.</p><small>5 WHYS · ISHIKAWA · FMEA</small></article>
+      <article class="feat"><span class="ic c2"><i class="fas fa-chart-pie"></i></span><h3>تحليل الفجوة</h3><p>استبيان بأكثر من 100 سؤال لكل معيار، ونتائج فورية تُضاف لمخطط الفجوة مع خارطة طريق للامتثال.</p><small>GAP ANALYSIS</small></article>
+      <article class="feat"><span class="ic c4"><i class="fas fa-shield-halved"></i></span><h3>إدارة المخاطر</h3><p>مصفوفة مخاطر تفاعلية مع حساب RPN تلقائي، وسجل مخاطر وخطط معالجة لكل خطر.</p><small>ISO 31000 · RISK MATRIX</small></article>
+      <article class="feat"><span class="ic c5"><i class="fas fa-recycle"></i></span><h3>Lean Six Sigma</h3><p>تحديد أنواع الهدر السبعة وتحليلها بمنهجية DMAIC، مع مؤشر Lean مباشر للتحسين المستمر.</p><small>DMAIC · 7 WASTES</small></article>
     </div>
   </div>
 </section>
 
-<!-- ═══════ STATS ═══════ -->
-<section class="sec sec-band" aria-label="أرقام">
+<!-- AI COUNCIL -->
+<section class="blk" id="ai">
   <div class="wrap">
-    <div class="stats">
-      <div class="stat"><b>+500</b><span>شركة تستخدم المنصة</span></div>
-      <div class="stat"><b>98%</b><span>رضا العملاء</span></div>
-      <div class="stat"><b>4</b><span>معايير ISO مدعومة</span></div>
-      <div class="stat"><b>24/7</b><span>دعم فني</span></div>
+    <div class="head reveal">
+      <span class="eyebrow">✦ المجلس الاستشاري</span>
+      <h2>خبراء الجودة، <span class="grad-text">على طاولة واحدة</span></h2>
+      <p class="lead">اختر مستشاريك واطرح سؤالك. يراجع المجلس بيانات منظمتك ويقدّم توصيات قابلة للتنفيذ في تقرير PDF.</p>
     </div>
-  </div>
-</section>
-
-<!-- ═══════ AI COUNCIL ═══════ -->
-<section class="sec" id="ai">
-  <div class="wrap">
-    <div class="dark-card">
-      <div>
-        <span class="meta">المجلس الاستشاري · AI</span>
-        <h2 class="h2" style="margin-top:12px;">خبراء الجودة،<br/>على طاولة واحدة.</h2>
-        <p>اختر مستشاريك — مدقق ISO، أخصائي سلامة، خبير مخاطر — واطرح سؤالك. يراجع المجلس بيانات منظمتك ويقدّم توصيات قابلة للتنفيذ في تقرير PDF.</p>
-        <div class="hero-actions">
-          <button class="pill pill-ink pill-lg" style="background:#fff;color:var(--mz-ink)" onclick="openLogin('register')">جرّب المجلس الاستشاري</button>
-          <a class="pill pill-ghost pill-lg" href="#pricing">متاح في الباقة الاحترافية</a>
+    <div class="ai-wrap reveal">
+      <div class="ai-tabs" role="tablist">
+        <button class="ai-tab on" role="tab"><h3><span class="ic c1"><i class="fas fa-users"></i></span>شكّل مجلسك</h3><p>مدقق ISO، أخصائي سلامة، خبير مخاطر، مستشار Lean — حتى 4 مستشارين لكل جلسة.</p><span class="prog"></span></button>
+        <button class="ai-tab" role="tab"><h3><span class="ic c2"><i class="fas fa-comments"></i></span>اطرح سؤالك</h3><p>كل مستشار يحلّل بمنهجيته الخاصة وبناءً على بيانات التفتيش وعدم المطابقة لديك.</p><span class="prog"></span></button>
+        <button class="ai-tab" role="tab"><h3><span class="ic c3"><i class="fas fa-file-pdf"></i></span>قرار موحّد</h3><p>يجمع المجلس الآراء في قرار واحد مع خطة تنفيذ، وتقرير PDF جاهز للإدارة العليا.</p><span class="prog"></span></button>
+      </div>
+      <div class="ai-view">
+        <div class="ai-pane on">
+          <div class="card seats">
+            <div class="seat"><b style="background:#17796f">م</b><div>مدقق ISO 9001<small>نظام إدارة الجودة · المراجعة الداخلية</small></div></div>
+            <div class="seat"><b style="background:#8a6410">خ</b><div>أخصائي السلامة المهنية<small>ISO 45001 · تقييم المخاطر الميدانية</small></div></div>
+            <div class="seat"><b style="background:#142D4E">ر</b><div>خبير إدارة المخاطر<small>ISO 31000 · مصفوفة المخاطر</small></div></div>
+            <div class="seat"><b style="background:#1d5fa8">ل</b><div>مستشار Lean Six Sigma<small>DMAIC · تقليل الهدر</small></div></div>
+          </div>
+        </div>
+        <div class="ai-pane">
+          <div class="card chat">
+            <div class="msg me">لماذا تتكرر حالات عدم المطابقة في المستودع؟</div>
+            <div class="msg bot"><b>أخصائي السلامة:</b> 3 من آخر 5 حالات مرتبطة بمعدات الوقاية الشخصية في <b>البوابة 2</b> — والسبب الجذري المشترك هو غياب تدريب المناوبة الليلية.</div>
+            <div class="msg bot"><b>مستشار Lean:</b> ننصح بقائمة تحقق قبل كل مناوبة وقياس المؤشر أسبوعياً لمدة شهر.</div>
+          </div>
+        </div>
+        <div class="ai-pane">
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:14px">✦ قرار المجلس الموحّد</div>
+            <div class="gen-list">
+              <div class="gen"><span class="dd-ic c1"><i class="fas fa-bullseye"></i></span>تدريب إلزامي على معدات الوقاية<span class="tag c1">إجراء تصحيحي</span></div>
+              <div class="gen"><span class="dd-ic c2"><i class="fas fa-chart-line"></i></span>نسبة الالتزام بمعدات الوقاية<span class="tag c2">مؤشر KPI</span></div>
+              <div class="gen"><span class="dd-ic c3"><i class="fas fa-list-check"></i></span>قائمة تحقق قبل المناوبة<span class="tag c3">تفتيش</span></div>
+              <div class="gen"><span class="dd-ic c5"><i class="fas fa-file-pdf"></i></span>تقرير للإدارة العليا<span class="tag c5">PDF</span></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="council" aria-hidden="true">
-        <div class="seat"><b style="background:#0c7a59">م</b><div>مدقق ISO 9001<small>نظام إدارة الجودة · المراجعة الداخلية</small></div></div>
-        <div class="seat"><b style="background:#8a6408">خ</b><div>أخصائي السلامة المهنية<small>ISO 45001 · تقييم المخاطر الميدانية</small></div></div>
-        <div class="seat"><b style="background:#0b6bcb">ر</b><div>خبير إدارة المخاطر<small>ISO 31000 · COSO · مصفوفة المخاطر</small></div></div>
-        <div class="seat"><b style="background:#5b3aa6">ل</b><div>مستشار Lean Six Sigma<small>DMAIC · تقليل الهدر</small></div></div>
-      </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════ MOBILE APP ═══════ -->
-<section class="sec sec-band" id="mobile-app">
-  <div class="wrap mobile-grid">
-    <div class="phone" aria-hidden="true">
-      <div class="phone-in">
-        <div class="phone-top"><img src="/assets/isoradar-mark.svg" alt=""/><div><b>آيزو رادار</b><small>مرحباً، محمد</small></div></div>
-        <div class="phone-body">
-          <div class="p-card"><div class="row"><span>تفتيش السلامة — الوحدة A</span><span class="st st-obs">جارٍ</span></div><div class="bar"><i></i></div><small>65% مكتمل · اليوم 14:00</small></div>
-          <div class="p-card"><div class="row"><span>NC مفتوحة</span><span style="font-size:20px;font-weight:800;color:var(--mz-nc)">2</span></div></div>
-          <div class="p-actions"><span style="background:var(--mz-ink);color:#fff"><i class="fas fa-plus"></i><br/>تفتيش جديد</span><span style="background:var(--mz-nc-bg);color:var(--mz-nc)"><i class="fas fa-triangle-exclamation"></i><br/>بلّغ NC</span></div>
-          <div class="p-card"><div class="row"><span><i class="fas fa-camera" style="color:var(--mz-brand);margin-left:6px"></i>تصوير الحوادث</span></div><small>GPS تلقائي + رفع فوري</small></div>
+<!-- ROLES -->
+<section class="blk feat-bg" id="roles">
+  <div class="wrap" style="text-align:center">
+    <div class="head reveal">
+      <span class="eyebrow">لكل مستوى في المنظمة</span>
+      <h2>من الإدارة إلى الميدان، <span class="grad-text">الجميع على نفس الصفحة</span></h2>
+    </div>
+    <div class="role-switch" id="roleSwitch">
+      <button class="on" aria-pressed="true">الإدارة العليا</button><button aria-pressed="false">مدير الجودة</button><button aria-pressed="false">المفتش الميداني</button>
+    </div>
+    <div class="role-cards">
+      <div class="role-card"><span class="ic c1"><i class="fas fa-gauge-high"></i></span><small>رؤية</small><p>لوحة امتثال واحدة لكل المشاريع والمعايير، بدل تقارير متفرقة.</p></div>
+      <div class="role-card"><span class="ic c3"><i class="fas fa-triangle-exclamation"></i></span><small>مخاطر</small><p>المخاطر الحرجة وحالات NC المتأخرة تظهر أمامك قبل أن تصبح مشكلة.</p></div>
+      <div class="role-card"><span class="ic c2"><i class="fas fa-file-lines"></i></span><small>قرار</small><p>تقارير جاهزة للمراجعة وقرارات المجلس الاستشاري بصيغة PDF.</p></div>
+    </div>
+    <div class="role-cards" hidden>
+      <div class="role-card"><span class="ic c1"><i class="fas fa-chart-pie"></i></span><small>الفجوة</small><p>اعرف بالضبط أي بنود المعيار تحتاج عملاً، مع خارطة طريق واضحة.</p></div>
+      <div class="role-card"><span class="ic c3"><i class="fas fa-magnifying-glass"></i></span><small>RCA</small><p>كل عدم مطابقة تفتح تذكرة تحليل جذري تلقائياً — لا شيء يضيع.</p></div>
+      <div class="role-card"><span class="ic c2"><i class="fas fa-bullseye"></i></span><small>المؤشرات</small><p>مؤشرات الجودة والسلامة والبيئة تُحدَّث من البيانات الفعلية.</p></div>
+    </div>
+    <div class="role-cards" hidden>
+      <div class="role-card"><span class="ic c1"><i class="fas fa-wifi"></i></span><small>بدون إنترنت</small><p>عبّئ قوائم التفتيش في أي مكان، وتُزامَن البيانات عند عودة الاتصال.</p></div>
+      <div class="role-card"><span class="ic c3"><i class="fas fa-camera"></i></span><small>صور</small><p>صوّر الملاحظة مباشرة مع موقع GPS وأرفقها بالتفتيش أو NC.</p></div>
+      <div class="role-card"><span class="ic c2"><i class="fas fa-bell"></i></span><small>مهام</small><p>مهامك وحالاتك المسندة إليك في شاشة واحدة على جوالك.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPLITS -->
+<section class="blk" id="mobile-app">
+  <div class="wrap">
+    <div class="split reveal">
+      <div class="txt">
+        <span class="eyebrow">تطبيق الميدان · PWA</span>
+        <h3>التفتيش الميداني في راحة يدك</h3>
+        <p class="lead">يعمل حتى بدون إنترنت. صوّر الحوادث، عبّئ قوائم التفتيش، وأبلغ عن عدم المطابقة — وكل شيء يُزامَن مع آيزو رادار عند عودة الاتصال.</p>
+        <div class="m-feats">
+          <div class="m-feat"><i class="fas fa-wifi"></i><div><b>يعمل بدون إنترنت</b><span>Offline-First</span></div></div>
+          <div class="m-feat"><i class="fas fa-camera"></i><div><b>تصوير الحوادث</b><span>بالكاميرا مباشرة</span></div></div>
+          <div class="m-feat"><i class="fas fa-location-dot"></i><div><b>GPS تلقائي</b><span>موقع كل تفتيش</span></div></div>
+          <div class="m-feat"><i class="fas fa-rotate"></i><div><b>مزامنة فورية</b><span>مع النظام الرئيسي</span></div></div>
+        </div>
+        <a class="link" href="/mobile-login">افتح تطبيق الجوال <i class="fas fa-arrow-left"></i></a>
+      </div>
+      <div class="visual">
+        <div class="phone" aria-hidden="true">
+          <div class="phone-in">
+            <div class="phone-top"><img src="/assets/isoradar-mark.svg" alt=""/><div><b>آيزو رادار</b><small>مرحباً، محمد</small></div></div>
+            <div class="phone-body">
+              <div class="p-card"><div class="r"><span>تفتيش السلامة — الوحدة A</span><span class="badge c3">جارٍ</span></div><div class="bar"><i style="width:65%;background:#17796f"></i></div><small>65% مكتمل · اليوم 14:00</small></div>
+              <div class="p-card"><div class="r"><span>NC مفتوحة</span><span style="font-size:20px;font-weight:800;color:#c2410c">2</span></div></div>
+              <div class="p-actions"><span style="background:#142D4E;color:#fff"><i class="fas fa-plus"></i><br/>تفتيش جديد</span><span class="c6"><i class="fas fa-triangle-exclamation"></i><br/>بلّغ NC</span></div>
+              <div class="p-card"><div class="r"><span><i class="fas fa-camera" style="color:#17796f;margin-inline-end:6px"></i>تصوير الحوادث</span></div><small>GPS تلقائي + رفع فوري</small></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div>
-      <span class="meta">تطبيق الميدان · PWA</span>
-      <h2 class="h2" style="margin-top:12px;">التفتيش الميداني<br/>في راحة يدك.</h2>
-      <p class="lead" style="margin-top:16px;">يعمل حتى بدون إنترنت. صوّر الحوادث، عبّئ قوائم التفتيش، وأبلغ عن عدم المطابقة — وكل شيء يُزامَن مع آيزو رادار عند عودة الاتصال.</p>
-      <div class="m-feats">
-        <div class="m-feat"><i class="fas fa-wifi"></i><div><b>يعمل بدون إنترنت</b><span>Offline-First</span></div></div>
-        <div class="m-feat"><i class="fas fa-camera"></i><div><b>تصوير الحوادث</b><span>بالكاميرا مباشرة</span></div></div>
-        <div class="m-feat"><i class="fas fa-list-check"></i><div><b>قوائم تفتيش ذكية</b><span>أكثر من 50 قالباً</span></div></div>
-        <div class="m-feat"><i class="fas fa-bell"></i><div><b>إشعارات فورية</b><span>Push Notifications</span></div></div>
-        <div class="m-feat"><i class="fas fa-location-dot"></i><div><b>GPS تلقائي</b><span>موقع كل تفتيش</span></div></div>
-        <div class="m-feat"><i class="fas fa-rotate"></i><div><b>مزامنة فورية</b><span>مع النظام الرئيسي</span></div></div>
+    <div class="split rev reveal">
+      <div class="txt">
+        <span class="eyebrow">البدء</span>
+        <h3>جاهز من اليوم الأول</h3>
+        <p class="lead">أنشئ حساب شركتك، أضف مشاريعك ومعاييرك، وادعُ فريقك — ثم ابدأ أول تقييم فجوة خلال دقائق.</p>
+        <button class="link" style="background:none;border:0;cursor:pointer" onclick="openLogin('register')">أنشئ حسابك الآن <i class="fas fa-arrow-left"></i></button>
       </div>
-      <div class="hero-actions">
-        <a class="pill pill-ink pill-lg" href="/mobile-login">افتح تطبيق الجوال</a>
-        <a class="pill pill-ghost pill-lg" href="/mobile-login">انضم كعضو فريق</a>
-      </div>
+      <div class="visual"><div class="steps">
+        <div class="step"><span>1</span>أنشئ حساب الشركة<em>تم</em></div>
+        <div class="step"><span>2</span>أضف المشاريع والمعايير<em>تم</em></div>
+        <div class="step"><span style="background:#D9A441;color:#142D4E">3</span>ابدأ تقييم الفجوة<em style="color:#8a6410">جارٍ</em></div>
+        <div class="step"><span style="background:#5d6b7e">4</span>ادعُ فريقك الميداني</div>
+      </div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══════ PRICING ═══════ -->
-<section class="sec" id="pricing">
+<!-- PRICING -->
+<section class="blk feat-bg" id="pricing">
   <div class="wrap">
-    <div class="sec-head center">
-      <span class="meta">الأسعار</span>
-      <h2 class="h2" style="margin-top:12px;">استثمار يُحقق عائداً حقيقياً.</h2>
-      <p class="lead">وفّر تكاليف الاستشارات والمراجعات بنسبة تصل إلى 70% مقارنةً بالحلول التقليدية.</p>
+    <div class="head reveal">
+      <span class="eyebrow">الأسعار</span>
+      <h2>استثمار <span class="grad-text">يُحقق عائداً حقيقياً</span></h2>
+      <p class="lead">وفّر تكاليف الاستشارات والمراجعات مقارنةً بالحلول التقليدية. لا رسوم خفية، وإلغاء في أي وقت.</p>
       <div class="bill" role="group" aria-label="دورة الفوترة">
-        <button id="bill-monthly" class="on" onclick="setBilling('monthly')">شهري</button>
-        <button id="bill-yearly" onclick="setBilling('yearly')">سنوي<span class="save">وفّر 16%</span></button>
+        <button id="bill-monthly" class="on" aria-pressed="true" onclick="setBilling('monthly')">شهري</button>
+        <button id="bill-yearly" aria-pressed="false" onclick="setBilling('yearly')">سنوي<span class="save">وفّر 16%</span></button>
       </div>
     </div>
-    <div class="price-grid">
+    <div class="price-grid reveal">
       <div class="plan">
-        <h3>المبتدئ</h3><div class="who">للشركات الناشئة والصغيرة</div>
-        <div class="amt"><b id="price-starter">299</b><span>ر.س / شهر</span></div>
-        <div class="yr" id="yearly-starter">يُوفّر 598 ر.س سنوياً</div>
-        <ul>
-          <li><i class="fas fa-check"></i>5 مستخدمين</li>
-          <li><i class="fas fa-check"></i>مشروعان</li>
-          <li><i class="fas fa-check"></i>ISO 9001 فقط</li>
-          <li><i class="fas fa-check"></i>تفتيش وعدم مطابقة أساسي</li>
-          <li><i class="fas fa-check"></i>تطبيق الجوال</li>
-          <li><i class="fas fa-check"></i>تقارير PDF</li>
-        </ul>
-        <button class="pill pill-ghost" onclick="openLogin('register')">ابدأ مجاناً</button>
+        <h3>المبتدئ</h3><div class="lim">للشركات الناشئة والصغيرة</div>
+        <div class="price"><span id="price-starter">299</span><small>ر.س / شهر</small></div>
+        <div class="yr" id="yearly-starter"></div>
+        <ul><li>5 مستخدمين</li><li>مشروعان</li><li>ISO 9001</li><li>تفتيش وعدم مطابقة</li><li>تطبيق الجوال</li><li>تقارير PDF</li></ul>
+        <button class="btn btn-ghost" onclick="openLogin('register')">ابدأ مجاناً</button>
       </div>
       <div class="plan pop">
-        <span class="badge-pop"><i class="fas fa-star" style="margin-left:4px"></i>الأكثر طلباً</span>
-        <h3>الاحترافي</h3><div class="who">للشركات المتوسطة والكبيرة</div>
-        <div class="amt"><b id="price-pro">799</b><span>ر.س / شهر</span></div>
-        <div class="yr" id="yearly-pro">يُوفّر 1,598 ر.س سنوياً</div>
-        <ul>
-          <li><i class="fas fa-check"></i>25 مستخدماً</li>
-          <li><i class="fas fa-check"></i>10 مشاريع</li>
-          <li><i class="fas fa-check"></i>ISO 9001 + 45001 + 14001</li>
-          <li><i class="fas fa-check"></i>تحليل RCA و Lean Six Sigma</li>
-          <li><i class="fas fa-check"></i>تحليل الفجوة المتقدم</li>
-          <li><i class="fas fa-check"></i>خارطة المشاريع التفاعلية</li>
-          <li><i class="fas fa-check"></i>ربط API (Odoo, ERPNext)</li>
-          <li><i class="fas fa-check"></i>المجلس الاستشاري AI</li>
-        </ul>
-        <button class="pill pill-ink" onclick="openLogin('register')">ابدأ التجربة المجانية</button>
+        <span class="tagp">الأكثر طلباً</span>
+        <h3>الاحترافي</h3><div class="lim">للشركات المتوسطة والكبيرة</div>
+        <div class="price"><span id="price-pro">799</span><small>ر.س / شهر</small></div>
+        <div class="yr" id="yearly-pro"></div>
+        <ul><li>25 مستخدماً</li><li>10 مشاريع</li><li>ISO 9001 + 45001 + 14001</li><li>تحليل RCA و Lean Six Sigma</li><li>تحليل الفجوة المتقدم</li><li>ربط API (Odoo, ERPNext)</li><li>المجلس الاستشاري AI</li></ul>
+        <button class="btn btn-grad" onclick="openLogin('register')">ابدأ التجربة المجانية</button>
       </div>
       <div class="plan">
-        <h3>المؤسسي</h3><div class="who">للمؤسسات والشركات الكبرى</div>
-        <div class="amt"><b id="price-ent">1,999</b><span>ر.س / شهر</span></div>
-        <div class="yr" id="yearly-ent">يُوفّر 3,998 ر.س سنوياً</div>
-        <ul>
-          <li><i class="fas fa-check"></i>مستخدمون غير محدودين</li>
-          <li><i class="fas fa-check"></i>مشاريع غير محدودة</li>
-          <li><i class="fas fa-check"></i>جميع معايير ISO + 27001</li>
-          <li><i class="fas fa-check"></i>SSO / LDAP</li>
-          <li><i class="fas fa-check"></i>SLA 99.9%</li>
-          <li><i class="fas fa-check"></i>نشر On-Premise</li>
-          <li><i class="fas fa-check"></i>مدير حساب مخصص</li>
-          <li><i class="fas fa-check"></i>تدريب ميداني مخصص</li>
-        </ul>
-        <button class="pill pill-ghost" onclick="openLogin('register')">تواصل معنا</button>
+        <h3>المؤسسي</h3><div class="lim">للمؤسسات والشركات الكبرى</div>
+        <div class="price"><span id="price-ent">1,999</span><small>ر.س / شهر</small></div>
+        <div class="yr" id="yearly-ent"></div>
+        <ul><li>مستخدمون ومشاريع غير محدودة</li><li>جميع معايير ISO + 27001</li><li>SSO / LDAP</li><li>SLA 99.9%</li><li>نشر On-Premise</li><li>مدير حساب مخصص</li></ul>
+        <button class="btn btn-primary" onclick="openLogin('register')">تواصل معنا</button>
       </div>
     </div>
-    <p class="guarantee"><b>ضمان استرداد كامل خلال 14 يوماً</b> · لا رسوم خفية · إلغاء في أي وقت</p>
+    <div class="accel reveal">
+      <div><h3>🛡️ ضمان استرداد كامل خلال 14 يوماً</h3><p>إن لم يناسبك آيزو رادار، نعيد لك المبلغ كاملاً — بدون أسئلة.</p></div>
+      <a class="btn btn-ghost" href="#compare">قارن الباقات <i class="fas fa-arrow-down"></i></a>
+    </div>
   </div>
 </section>
 
-<!-- ═══════ COMPARE ═══════ -->
-<section class="sec sec-band" id="compare">
+<!-- COMPARE -->
+<section class="blk" id="compare">
   <div class="wrap">
-    <div class="sec-head center">
-      <span class="meta">المقارنة</span>
-      <h2 class="h2" style="margin-top:12px;">اختر ما يناسب حجم عملك.</h2>
-    </div>
-    <div class="cmp-wrap" style="background:#fff">
+    <div class="head reveal"><span class="eyebrow">المقارنة</span><h2>اختر ما <span class="grad-text">يناسب حجم عملك</span></h2></div>
+    <div class="cmp-wrap reveal">
       <table class="cmp">
         <thead><tr><th>الميزة</th><th>المبتدئ</th><th class="hl">الاحترافي</th><th>المؤسسي</th></tr></thead>
         <tbody>
@@ -558,116 +327,84 @@ img{display:block;max-width:100%;}
   </div>
 </section>
 
-<!-- ═══════ TESTIMONIALS ═══════ -->
-<section class="sec" id="testimonials">
+<!-- FAQ -->
+<section class="blk feat-bg" id="faq">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="meta">العملاء</span>
-      <h2 class="h2" style="margin-top:12px;">ثقة أكثر من 500 شركة.</h2>
-      <p class="lead">من النفط والطاقة إلى الصناعة والبنية التحتية.</p>
-    </div>
-    <div class="quotes">
-      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"وفّرنا أكثر من 40% من وقت إعداد تقارير الامتثال. أصبح التدقيق الخارجي لـ ISO 45001 سهلاً جداً بفضل التقارير الجاهزة للمراجعة."</p><figcaption class="who"><b style="background:#0c7a59">خا</b><div>خالد الشمري<small>مدير QHSE · أرامكو</small></div></figcaption></figure>
-      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"ميزة تحليل الفجوة أعطتنا خارطة طريق واضحة لتحقيق ISO 14001 في أقل من 6 أشهر بدلاً من سنة كاملة."</p><figcaption class="who"><b style="background:#0b6bcb">سا</b><div>سارة المالكي<small>مديرة الجودة · SABIC</small></div></figcaption></figure>
-      <figure class="quote"><div class="stars" aria-label="5 من 5">★★★★★</div><p>"التطبيق الجوال غيّر طريقة عمل مفتشينا الميدانيين. الآن كل شيء رقمي وفوري — لا ورق ولا تأخير في الإبلاغ."</p><figcaption class="who"><b style="background:#8a6408">أح</b><div>أحمد بن علي<small>مدير السلامة · الكهرباء السعودية</small></div></figcaption></figure>
+    <div class="head reveal"><span class="eyebrow">الأسئلة الشائعة</span><h2>أسئلة؟ <span class="grad-text">إجابات.</span></h2></div>
+    <div class="faq reveal">
+      <details open><summary>هل يمكنني التجربة قبل الدفع؟</summary><p>نعم، التجربة المجانية 14 يوماً تشمل كل المميزات، وبدون بطاقة ائتمانية.</p></details>
+      <details><summary>ما معايير ISO المدعومة؟</summary><p>ISO 9001 و45001 و14001 و27001، ويمكنك إضافة معايير مخصصة بمتطلباتها وأسئلة تقييمها.</p></details>
+      <details><summary>هل يعمل التطبيق الميداني بدون إنترنت؟</summary><p>نعم. تُحفظ عمليات التفتيش والصور على الجهاز وتُزامَن تلقائياً عند عودة الاتصال.</p></details>
+      <details><summary>هل يدعم النظام اللغة الإنجليزية؟</summary><p>نعم، النظام كامل باللغتين العربية والإنجليزية، ويمكن لكل مستخدم التبديل من زر اللغة في أعلى الصفحة.</p></details>
+      <details><summary>هل يمكن ربطه بأنظمتنا الحالية؟</summary><p>في الباقة الاحترافية والمؤسسية يمكن الربط مع Odoo وERPNext وSAP عبر API.</p></details>
+      <details><summary>هل توجد رسوم خفية؟</summary><p>لا. السعر يشمل كل مميزات الباقة، ويمكنك الإلغاء في أي وقت.</p></details>
     </div>
   </div>
 </section>
 
-<!-- ═══════ CTA ═══════ -->
-<section class="wrap" aria-label="ابدأ الآن">
-  <div class="cta">
-    <span class="meta" style="color:#8fb9a8">تجربة مجانية 14 يوماً · بدون بطاقة ائتمانية</span>
-    <h2 class="h2" style="margin-top:14px;">جاهز لقياس جودتك؟</h2>
-    <p>انضم إلى الشركات التي تستخدم آيزو رادار لتحقيق معايير ISO والحفاظ عليها بسهولة وكفاءة.</p>
-    <div class="hero-actions" style="justify-content:center">
-      <button class="pill pill-ink pill-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية الآن</button>
-      <button class="pill pill-ghost pill-lg" onclick="openLogin('login')">تسجيل الدخول</button>
+<!-- CTA -->
+<section class="blk" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>جاهز لقياس جودتك؟</h2>
+      <p>انضم إلى الشركات التي تستخدم آيزو رادار لتحقيق معايير ISO والحفاظ عليها بسهولة وكفاءة.</p>
+      <div class="btns">
+        <button class="btn btn-gold btn-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية <i class="fas fa-arrow-left"></i></button>
+        <button class="btn btn-o btn-lg" onclick="openLogin('login')">تسجيل الدخول</button>
+      </div>
     </div>
   </div>
 </section>
-</main>
 
-<!-- ═══════ FOOTER ═══════ -->
-<footer class="foot">
+<footer>
   <div class="wrap">
-    <div class="foot-grid">
+    <div class="foot">
       <div>
-        <a class="brand" href="#home"><img src="/assets/isoradar-mark.svg" alt="" width="36" height="36"/><div><b>آيزو رادار</b><small>ISORADAR.COM</small></div></a>
+        <a href="#top" class="logo"><img src="/assets/isoradar-mark.svg" alt="" width="38" height="38"/><span>آيزو رادار<small>ISORADAR.COM</small></span></a>
         <p>منصة عربية لإدارة الجودة والسلامة والبيئة وفق معايير ISO — من التفتيش إلى التقارير، في مكان واحد.</p>
+        <div class="socials"><a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a><a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a></div>
       </div>
-      <div><h4>المنتج</h4><nav><a href="#features">المميزات</a><a href="#pricing">الأسعار</a><a href="#compare">المقارنة</a><a href="#mobile-app">تطبيق الجوال</a></nav></div>
-      <div><h4>الموارد</h4><nav><a href="#">الوثائق</a><a href="#">دليل البدء السريع</a><a href="#">مدونة ISO</a><a href="#">الأسئلة الشائعة</a></nav></div>
-      <div><h4>الشركة</h4><nav><a href="#">من نحن</a><a href="#">تواصل معنا</a><a href="#">سياسة الخصوصية</a><a href="#">الشروط والأحكام</a></nav></div>
+      <div><h6>المنتج</h6><ul><li><a href="#features">المميزات</a></li><li><a href="#ai">المجلس الاستشاري</a></li><li><a href="#pricing">الأسعار</a></li><li><a href="#mobile-app">تطبيق الجوال</a></li></ul></div>
+      <div><h6>الشركة</h6><ul><li><a href="#">من نحن</a></li><li><a href="mailto:support@isoradar.com">تواصل معنا</a></li><li><a href="#">سياسة الخصوصية</a></li><li><a href="#">الشروط والأحكام</a></li></ul></div>
+      <div><h6>ابدأ</h6><ul><li><a href="#" onclick="openLogin('register');return false">حساب جديد</a></li><li><a href="#" onclick="openLogin('login');return false">تسجيل الدخول</a></li><li><a href="/mobile-login">تطبيق الميدان</a></li><li><a href="/en" hreflang="en" lang="en">English</a></li></ul></div>
     </div>
-    <div class="foot-bottom">
-      <span>© 2026 آيزو رادار. جميع الحقوق محفوظة.</span>
-      <div class="socials">
-        <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-      </div>
-    </div>
+    <div class="foot-bot"><span>© 2026 آيزو رادار. جميع الحقوق محفوظة.</span><span dir="ltr">isoradar.com</span></div>
   </div>
 </footer>
 
-<!-- ═══════ LOGIN MODAL ═══════ -->
+<!-- AUTH MODAL -->
 <div class="modal-overlay" id="login-overlay" onclick="if(event.target===this)closeLogin()" role="dialog" aria-modal="true" aria-label="بوابة الشركات">
   <div class="login-modal">
     <div class="login-header">
       <div class="top">
-        <img src="/assets/isoradar-mark.svg" alt="" width="34" height="34"/>
-        <div><div style="font-weight:800;font-size:16px;">آيزو رادار</div><div style="font-size:12px;color:var(--mz-slate);">بوابة الشركات</div></div>
+        <img src="/assets/isoradar-mark.svg" alt=""/>
+        <div><div style="font-weight:800;font-size:16px;">آيزو رادار</div><div style="font-size:12px;color:var(--muted);">بوابة الشركات</div></div>
         <button class="x" onclick="closeLogin()" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
       </div>
-      <div class="login-tabs">
-        <button class="login-tab active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</button>
-        <button class="login-tab" id="tab-register" onclick="switchTab('register')">حساب جديد</button>
+      <div class="login-tabs" role="tablist">
+        <button class="login-tab active" id="tab-login" role="tab" aria-selected="true" onclick="switchTab('login')">تسجيل الدخول</button>
+        <button class="login-tab" id="tab-register" role="tab" aria-selected="false" onclick="switchTab('register')">حساب جديد</button>
       </div>
     </div>
     <div class="login-body">
-      <!-- Login Form -->
       <div id="form-login">
         <div id="err-login" class="error-msg" role="alert"></div>
-        <div class="form-group">
-          <label for="login-email">البريد الإلكتروني</label>
-          <input type="email" id="login-email" placeholder="company@example.com" autocomplete="username"/>
-        </div>
-        <div class="form-group">
-          <label for="login-pass">كلمة المرور</label>
-          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-        </div>
-        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-          <a href="#" style="font-size:13px;color:var(--mz-assure);font-weight:700;">نسيت كلمة المرور؟</a>
-        </div>
-        <button class="btn-login" onclick="doLogin()"><i class="fas fa-right-to-bracket" style="margin-left:8px;"></i>دخول</button>
+        <div class="form-group"><label for="login-email">البريد الإلكتروني</label><input type="email" id="login-email" placeholder="company@example.com" autocomplete="username" dir="ltr"/></div>
+        <div class="form-group"><label for="login-pass">كلمة المرور</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <div class="forgot"><a href="mailto:support@isoradar.com">نسيت كلمة المرور؟</a></div>
+        <button class="btn-login" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i>دخول</button>
         <div class="hint">جديد على آيزو رادار؟ أنشئ حساب شركتك من تبويب «حساب جديد» وابدأ فوراً.</div>
       </div>
-
-      <!-- Register Form -->
       <div id="form-register" style="display:none;">
         <div id="err-register" class="error-msg" role="alert"></div>
         <div id="suc-register" class="success-msg" role="status"></div>
-        <div class="form-group">
-          <label for="reg-company">اسم الشركة</label>
-          <input type="text" id="reg-company" placeholder="شركة الامتثال للخدمات الصناعية" autocomplete="organization"/>
-        </div>
+        <div class="form-group"><label for="reg-company">اسم الشركة</label><input type="text" id="reg-company" placeholder="شركة الامتثال للخدمات الصناعية" autocomplete="organization"/></div>
         <div class="two">
-          <div class="form-group">
-            <label for="reg-name">الاسم الكامل</label>
-            <input type="text" id="reg-name" placeholder="أحمد العمري" autocomplete="name"/>
-          </div>
-          <div class="form-group">
-            <label for="reg-phone">رقم الجوال</label>
-            <input type="tel" id="reg-phone" placeholder="+966 5x xxx xxxx" autocomplete="tel" dir="ltr"/>
-          </div>
+          <div class="form-group"><label for="reg-name">الاسم الكامل</label><input type="text" id="reg-name" placeholder="أحمد العمري" autocomplete="name"/></div>
+          <div class="form-group"><label for="reg-phone">رقم الجوال</label><input type="tel" id="reg-phone" placeholder="+966 5x xxx xxxx" autocomplete="tel" dir="ltr"/></div>
         </div>
-        <div class="form-group">
-          <label for="reg-email">البريد الإلكتروني</label>
-          <input type="email" id="reg-email" placeholder="admin@company.com" autocomplete="email"/>
-        </div>
-        <div class="form-group">
-          <label for="reg-plan">الباقة</label>
+        <div class="form-group"><label for="reg-email">البريد الإلكتروني</label><input type="email" id="reg-email" placeholder="admin@company.com" autocomplete="email" dir="ltr"/></div>
+        <div class="form-group"><label for="reg-plan">الباقة</label>
           <select id="reg-plan">
             <option value="trial">تجربة مجانية 14 يوماً</option>
             <option value="starter">المبتدئ — 299 ر.س/شهر</option>
@@ -675,162 +412,14 @@ img{display:block;max-width:100%;}
             <option value="enterprise">المؤسسي — 1,999 ر.س/شهر</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="reg-pass">كلمة المرور</label>
-          <input type="password" id="reg-pass" placeholder="8 أحرف على الأقل" autocomplete="new-password"/>
-        </div>
-        <button class="btn-login" onclick="doRegister()"><i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً</button>
+        <div class="form-group"><label for="reg-pass">كلمة المرور</label><input type="password" id="reg-pass" placeholder="8 أحرف على الأقل" autocomplete="new-password"/></div>
+        <button class="btn-login" onclick="doRegister()"><i class="fas fa-rocket"></i>إنشاء الحساب مجاناً</button>
         <div class="login-footer-txt">بالتسجيل توافق على <a href="#">الشروط والأحكام</a> و<a href="#">سياسة الخصوصية</a></div>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-// ── Billing Toggle ──
-function setBilling(type) {
-  const isYear = type === 'yearly';
-  document.getElementById('price-starter').textContent = isYear ? (2990/12).toFixed(0) : 299;
-  document.getElementById('price-pro').textContent     = isYear ? (7990/12).toFixed(0) : 799;
-  document.getElementById('price-ent').textContent     = isYear ? (19990/12).toFixed(0) : '1,999';
-  ['starter','pro','ent'].forEach(k => {
-    document.getElementById('yearly-'+k).style.display = isYear ? 'block' : 'none';
-  });
-  document.getElementById('bill-monthly').classList.toggle('on', !isYear);
-  document.getElementById('bill-yearly').classList.toggle('on', isYear);
-}
-
-// ── Modal ──
-function openLogin(tab) {
-  document.getElementById('login-overlay').classList.add('open');
-  switchTab(tab || 'login');
-  setTimeout(() => document.getElementById(tab === 'register' ? 'reg-company' : 'login-email').focus(), 50);
-}
-function closeLogin() {
-  document.getElementById('login-overlay').classList.remove('open');
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLogin(); });
-function switchTab(tab) {
-  document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
-  document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
-  document.getElementById('tab-login').classList.toggle('active',    tab==='login');
-  document.getElementById('tab-register').classList.toggle('active', tab==='register');
-}
-
-const API = 'https://ims-qhse-backend-production.up.railway.app/api/v1';
-const SPINNER = '<span style="display:inline-flex;gap:8px;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="40 20"/></svg>جاري...</span>';
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-// ── Login ──
-function doLogin() {
-  const email   = document.getElementById('login-email').value.trim();
-  const pass    = document.getElementById('login-pass').value;
-  const err     = document.getElementById('err-login');
-  const btn     = document.querySelector('#form-login .btn-login');
-  if (!email || !pass) { showErr(err,'يرجى تعبئة جميع الحقول'); return; }
-
-  err.style.display = 'none';
-  btn.innerHTML  = SPINNER;
-  btn.disabled = true;
-
-  fetch(API + '/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password: pass })
-  })
-  .then(r => r.json())
-  .then(res => {
-    // NestJS TransformInterceptor wraps response: { success, data: { access_token, refresh_token, user, tenant } }
-    const d = res.data || res;
-    if (d.access_token) {
-      localStorage.setItem('ims_token', d.access_token);
-      if (d.refresh_token) localStorage.setItem('ims_refresh_token', d.refresh_token);
-      if (d.user)   localStorage.setItem('ims_user', JSON.stringify(d.user));
-      if (d.tenant) localStorage.setItem('ims_tenant', JSON.stringify(d.tenant));
-      btn.innerHTML = '<i class="fas fa-circle-check" style="margin-left:8px;"></i>تم الدخول! جاري التحويل...';
-      btn.style.background = 'var(--mz-brand)';
-      setTimeout(() => { window.location.href = '/app'; }, 700);
-    } else {
-      btn.innerHTML = '<i class="fas fa-right-to-bracket" style="margin-left:8px;"></i>دخول';
-      btn.disabled = false;
-      showErr(err, d.message || res.message || 'بيانات الدخول غير صحيحة');
-    }
-  })
-  .catch(() => {
-    btn.innerHTML = '<i class="fas fa-right-to-bracket" style="margin-left:8px;"></i>دخول';
-    btn.disabled = false;
-    showErr(err, 'تعذّر الاتصال بالخادم. تحقق من الإنترنت وحاول مجدداً.');
-  });
-}
-
-// ── Register ──
-function doRegister() {
-  const company = document.getElementById('reg-company').value.trim();
-  const name    = document.getElementById('reg-name').value.trim();
-  const email   = document.getElementById('reg-email').value.trim();
-  const phone   = document.getElementById('reg-phone')?.value.trim() || '';
-  const pass    = document.getElementById('reg-pass').value;
-  const err     = document.getElementById('err-register');
-  const suc     = document.getElementById('suc-register');
-  const btn     = document.querySelector('#form-register .btn-login');
-
-  if (!company || !name || !email || !pass) { showErr(err,'يرجى تعبئة جميع الحقول المطلوبة'); return; }
-  if (!email.includes('@')) { showErr(err,'يرجى إدخال بريد إلكتروني صحيح'); return; }
-  if (pass.length < 8) { showErr(err,'كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
-
-  err.style.display = 'none';
-  suc.style.display = 'none';
-  btn.innerHTML = SPINNER;
-  btn.disabled = true;
-
-  fetch(API + '/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ company_name: company, full_name: name, email, password: pass, phone })
-  })
-  .then(r => r.json())
-  .then(res => {
-    const d = res.data || res;
-    if (d.access_token) {
-      localStorage.setItem('ims_token', d.access_token);
-      if (d.refresh_token) localStorage.setItem('ims_refresh_token', d.refresh_token);
-      if (d.user)   localStorage.setItem('ims_user', JSON.stringify(d.user));
-      if (d.tenant) localStorage.setItem('ims_tenant', JSON.stringify(d.tenant));
-      suc.style.display = 'block';
-      // names come from the form: escape before inserting as HTML
-      suc.innerHTML = 'مرحباً <strong>' + esc(name) + '</strong>! تم إنشاء حساب <strong>' + esc(company) + '</strong>. جاري تحضير لوحة التحكم...';
-      btn.innerHTML = '<i class="fas fa-circle-check" style="margin-left:8px;"></i>تم! جاري التحويل...';
-      btn.style.background = 'var(--mz-brand)';
-      setTimeout(() => { window.location.href = '/app'; }, 1500);
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً';
-      showErr(err, d.message || res.message || 'تعذّر إنشاء الحساب');
-    }
-  })
-  .catch(() => {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-rocket" style="margin-left:8px;"></i>إنشاء الحساب مجاناً';
-    showErr(err, 'تعذّر الاتصال بالخادم. تحقق من الإنترنت وحاول مجدداً.');
-  });
-}
-
-function showErr(el, msg) {
-  el.textContent   = msg;
-  el.style.display = 'block';
-  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
-}
-
-// ── Auto-redirect if already logged in ──
-(function() {
-  const token = localStorage.getItem('ims_token');
-  if (token) {
-    fetch(API + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } })
-      .then(r => r.json())
-      .then(res => { if ((res.data && res.data.id) || res.id) window.location.href = '/app'; })
-      .catch(() => {});
-  }
-})();
-</script>
+<script src="/assets/isoradar-landing.js"></script>
 </body>
 </html>

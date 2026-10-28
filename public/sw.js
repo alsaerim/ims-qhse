@@ -2,7 +2,7 @@
    - App shell (pages, design system, icons) is cached so the field app opens offline.
    - Navigations are network-first: fresh pages online, cached copy offline.
    - API calls go to another origin and are never cached here. */
-const CACHE = 'isoradar-shell-v1';
+const CACHE = 'isoradar-shell-v2';
 const SHELL = [
   '/mobile',
   '/mobile-login',

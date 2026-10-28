@@ -55,10 +55,14 @@
   const LONG_KEYS = Object.keys(DICT).filter(k => k.length >= 4).sort((a, b) => b.length - a.length);
   const MISSING = I18N.missing = new Set();
 
+  const DIGITS = /[٠-٩]/g;
+  const latinDigits = s => s.replace(DIGITS, d => String(d.charCodeAt(0) - 0x660));
+
   function translate(raw) {
     if (!raw || !AR.test(raw)) return raw;
     const lead = raw.match(/^\s*/)[0], trail = raw.match(/\s*$/)[0];
-    const s = norm(raw);
+    const s = latinDigits(norm(raw)).replace(/[‎‏؜]/g, '');
+    if (!AR.test(s)) return lead + s + trail;
     let hit = DICT[s];
     if (hit === undefined) {
       // try without surrounding punctuation / emoji / bullets
@@ -100,6 +104,22 @@
   function fixAttrs(el) {
     for (const a of ATTRS) { const v = el.getAttribute?.(a); if (v && AR.test(v)) { const t = translate(v); if (t !== v) el.setAttribute(a, t); } }
     if ((el.tagName === 'INPUT') && /^(button|submit)$/i.test(el.type) && AR.test(el.value)) el.value = translate(el.value);
+  }
+
+  // dates and numbers the pages format with an Arabic locale ('ar-SA' …) come out in English
+  const enLoc = l => typeof l === 'string' && /^ar/i.test(l) ? 'en-GB' : Array.isArray(l) ? l.map(enLoc) : l;
+  for (const [proto, names] of [[Date.prototype, ['toLocaleString', 'toLocaleDateString', 'toLocaleTimeString']], [Number.prototype, ['toLocaleString']]]) {
+    for (const name of names) {
+      const orig = proto[name];
+      proto[name] = function (l, o) { return orig.call(this, enLoc(l), o); };
+    }
+  }
+  for (const name of ['DateTimeFormat', 'NumberFormat']) {
+    const Orig = Intl[name];
+    const Wrapped = function (l, o) { return new Orig(enLoc(l), o); };
+    Wrapped.prototype = Orig.prototype;
+    Wrapped.supportedLocalesOf = Orig.supportedLocalesOf;
+    Intl[name] = Wrapped;
   }
 
   // dialogs

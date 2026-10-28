@@ -8,6 +8,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const pages = {
   '/':                 'ims_landing.html',
+  '/en':               'ims_landing_en.html',
   '/app':              'ims_qhse_9.html',
   '/dashboard':        'ims_qhse_9.html',
   '/mobile':           'ims_mobile.html',

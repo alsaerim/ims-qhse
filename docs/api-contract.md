@@ -1,4 +1,4 @@
-# Mizan — API contract (frontend ⇄ backend)
+# ISO Radar — API contract (frontend ⇄ backend)
 
 What the frontend pages call, what the NestJS backend (`ims-qhse-backend`) already serves, and the
 exact shapes needed for the endpoints that do not exist yet. Written so the backend work can start

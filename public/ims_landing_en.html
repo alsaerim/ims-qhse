@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ISO Radar — Quality & Compliance Management</title>
+<meta name="description" content="ISO Radar: quality, safety and environmental management to ISO standards — inspections, nonconformities, root cause analysis, risk and audit-ready reports in one platform."/>
+<meta name="theme-color" content="#142D4E"/>
+<link rel="icon" type="image/svg+xml" href="/assets/isoradar-mark.svg"/>
+<link rel="alternate" hreflang="ar" href="https://isoradar.com/"/>
+<link rel="alternate" hreflang="en" href="https://isoradar.com/en"/>
+<link rel="alternate" hreflang="x-default" href="https://isoradar.com/"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@600&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="/assets/isoradar-landing.css"/>
+</head>
+<body>
+
+<div class="announce"><b>New:</b> the AI advisory council is now available on the Professional plan <a href="#ai">Learn more →</a></div>
+
+<nav class="top" id="nav" aria-label="Main">
+  <div class="wrap nav-in">
+    <a href="#top" class="logo" aria-label="ISO Radar home">
+      <img src="/assets/isoradar-mark.svg" alt="" width="38" height="38"/>
+      <span>ISO Radar<small>ISORADAR.COM</small></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">Features</a>
+      <a href="#ai">Advisory council</a>
+      <a href="#mobile-app">Field app</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a class="lang" href="/?lang=ar" hreflang="ar" lang="ar"><i class="fas fa-globe"></i>العربية</a>
+      <button class="login" onclick="openLogin('login')">Log in</button>
+      <button class="btn btn-grad" onclick="openLogin('register')">Start free</button>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><i class="fas fa-bars fa-lg"></i></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <a class="pill" href="#ai"><span>AI</span> Compliance management, now AI-assisted →</a>
+    <h1>Measure your <span class="grad-text">quality</span>.<br/>Prove your <span class="grad-text">compliance</span>.</h1>
+    <p class="lead">Stop juggling spreadsheets. ISO Radar brings inspections, nonconformities, root cause analysis, risk and KPIs into one platform — so you always know where you stand against ISO standards.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" onclick="openLogin('register')">Start your free trial <i class="fas fa-arrow-right"></i></button>
+      <a class="btn btn-ghost btn-lg" href="#features">See how it works</a>
+    </div>
+    <div class="hero-note"><span>14-day free trial</span><span>No credit card</span><span>Cancel any time</span></div>
+
+    <div class="mock-stage" aria-hidden="true">
+      <div class="mock">
+        <div class="mock-bar"><i></i><i></i><i></i><div class="url">isoradar.com/app</div></div>
+        <div class="mock-body">
+          <aside class="side">
+            <div class="ws"><img src="/assets/isoradar-mark.svg" alt=""/>Compliance Co.</div>
+            <a class="on"><span class="dot" style="background:#17796f"></span>Overview</a>
+            <a><span class="dot" style="background:#142D4E"></span>Inspections</a>
+            <a><span class="dot" style="background:#c2410c"></span>Nonconformities</a>
+            <a><span class="dot" style="background:#D9A441"></span>RCA</a>
+            <a><span class="dot" style="background:#1d5fa8"></span>Risks</a>
+            <h6>Standards</h6>
+            <a>ISO 9001</a><a>ISO 45001</a><a>ISO 14001</a><a>ISO 27001</a>
+          </aside>
+          <div class="main">
+            <div class="main-h"><h4>Compliance 2026</h4><div class="tabs-mini"><span class="on">Overview</span><span>Gap</span><span>Risks</span></div></div>
+            <div class="kpis">
+              <div class="kpi"><small>Compliance rate</small><b>87%</b><div class="bar"><i style="width:87%;background:#17796f"></i></div></div>
+              <div class="kpi"><small>Open NCs</small><b>5</b><div class="bar"><i style="width:36%;background:#c2410c"></i></div></div>
+              <div class="kpi"><small>Inspections done</small><b>42/48</b><div class="bar"><i style="width:88%;background:#142D4E"></i></div></div>
+              <div class="kpi"><small>RCA closed</small><b>71%</b><div class="bar"><i style="width:71%;background:#D9A441"></i></div></div>
+            </div>
+            <div class="grid2">
+              <div class="panel"><h5>Compliance by month <span>All projects</span></h5>
+                <div class="chart"><div style="height:45%"></div><div style="height:58%"></div><div style="height:52%"></div><div style="height:70%"></div><div style="height:66%"></div><div style="height:80%"></div><div style="height:78%"></div><div style="height:92%"></div></div>
+              </div>
+              <div class="panel"><h5>Gap analysis <span>This month</span></h5>
+                <div class="rows">
+                  <div class="row"><b>ISO 9001 Quality</b><div class="bar"><i style="width:91%;background:#17796f"></i></div><span class="badge c1">91</span></div>
+                  <div class="row"><b>ISO 45001 Safety</b><div class="bar"><i style="width:84%;background:#142D4E"></i></div><span class="badge c2">84</span></div>
+                  <div class="row"><b>ISO 14001 Environment</b><div class="bar"><i style="width:76%;background:#D9A441"></i></div><span class="badge c3">76</span></div>
+                  <div class="row"><b>ISO 27001 Security</b><div class="bar"><i style="width:62%;background:#1d5fa8"></i></div><span class="badge c4">62</span></div>
+                  <div class="row"><b>Custom standard</b><div class="bar"><i style="width:44%;background:#c2410c"></i></div><span class="badge c6">44</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="float ai"><div class="who"><i>✦</i>Advisory council</div><p>3 warehouse nonconformities share one root cause: missing PPE training. We suggest a corrective plan within two weeks.</p></div>
+      <div class="float mail"><b>📍 Field inspection complete</b><span style="color:var(--muted)">Unit A · 12 items · with photos and GPS</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="wrap stats-in">
+    <div class="stat"><b class="grad-text">4</b><span>ISO standards supported</span></div>
+    <div class="stat"><b class="grad-text">100+</b><span>assessment questions per standard</span></div>
+    <div class="stat"><b class="grad-text">14 days</b><span>full free trial</span></div>
+    <div class="stat"><b class="grad-text">Offline</b><span>field app works without internet</span></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="blk feat-bg" id="features">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow">Everything in one place</span>
+      <h2>The <span class="grad-text">full compliance cycle</span>, in one platform</h2>
+      <p class="lead">From field inspections to audit reports — ISO Radar covers every step between finding a problem and closing it.</p>
+    </div>
+    <div class="stds reveal" aria-label="Supported standards" style="margin:0 0 40px">
+      <span class="std"><i class="fas fa-award" style="color:#17796f"></i>ISO 9001 Quality</span>
+      <span class="std"><i class="fas fa-helmet-safety" style="color:#8a6410"></i>ISO 45001 Safety</span>
+      <span class="std"><i class="fas fa-leaf" style="color:#13734f"></i>ISO 14001 Environment</span>
+      <span class="std"><i class="fas fa-lock" style="color:#1d5fa8"></i>ISO 27001 Information security</span>
+      <span class="std"><i class="fas fa-plus" style="color:#5d6b7e"></i>Custom standards</span>
+    </div>
+    <div class="feat-grid reveal">
+      <article class="feat"><span class="ic c1"><i class="fas fa-clipboard-check"></i></span><h3>Inspections & audits</h3><p>Schedule, run and document inspections with smart checklists, instant results and photos from the field.</p><small>ISO 9001 · 45001 · 14001</small></article>
+      <article class="feat"><span class="ic c6"><i class="fas fa-triangle-exclamation"></i></span><h3>Nonconformities (NC)</h3><p>Log and track NCs with automatic links to root cause analysis and deadline reminders.</p><small>RCA AUTO-LINK</small></article>
+      <article class="feat"><span class="ic c3"><i class="fas fa-magnifying-glass-chart"></i></span><h3>Root cause analysis</h3><p>5 Whys, Ishikawa and FMEA in one place, with corrective actions tracked through to closure.</p><small>5 WHYS · ISHIKAWA · FMEA</small></article>
+      <article class="feat"><span class="ic c2"><i class="fas fa-chart-pie"></i></span><h3>Gap analysis</h3><p>100+ questions per standard, with instant scores on the gap chart and a roadmap to compliance.</p><small>GAP ANALYSIS</small></article>
+      <article class="feat"><span class="ic c4"><i class="fas fa-shield-halved"></i></span><h3>Risk management</h3><p>An interactive risk matrix with automatic RPN, a risk register and treatment plans for every risk.</p><small>ISO 31000 · RISK MATRIX</small></article>
+      <article class="feat"><span class="ic c5"><i class="fas fa-recycle"></i></span><h3>Lean Six Sigma</h3><p>Identify and analyse the seven wastes with DMAIC, plus a live Lean index for continuous improvement.</p><small>DMAIC · 7 WASTES</small></article>
+    </div>
+  </div>
+</section>
+
+<!-- AI COUNCIL -->
+<section class="blk" id="ai">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow">✦ Advisory council</span>
+      <h2>Quality experts, <span class="grad-text">around one table</span></h2>
+      <p class="lead">Pick your advisors and ask your question. The council reviews your organisation's data and delivers actionable recommendations in a PDF report.</p>
+    </div>
+    <div class="ai-wrap reveal">
+      <div class="ai-tabs" role="tablist">
+        <button class="ai-tab on" role="tab"><h3><span class="ic c1"><i class="fas fa-users"></i></span>Build your council</h3><p>ISO auditor, safety specialist, risk expert, Lean advisor — up to 4 advisors per session.</p><span class="prog"></span></button>
+        <button class="ai-tab" role="tab"><h3><span class="ic c2"><i class="fas fa-comments"></i></span>Ask your question</h3><p>Each advisor analyses with their own methodology, using your inspection and NC data.</p><span class="prog"></span></button>
+        <button class="ai-tab" role="tab"><h3><span class="ic c3"><i class="fas fa-file-pdf"></i></span>One unified decision</h3><p>The council consolidates its views into one decision with an action plan and a PDF for top management.</p><span class="prog"></span></button>
+      </div>
+      <div class="ai-view">
+        <div class="ai-pane on">
+          <div class="card seats">
+            <div class="seat"><b style="background:#17796f">A</b><div>ISO 9001 auditor<small>Quality management system · internal audit</small></div></div>
+            <div class="seat"><b style="background:#8a6410">S</b><div>Occupational safety specialist<small>ISO 45001 · field risk assessment</small></div></div>
+            <div class="seat"><b style="background:#142D4E">R</b><div>Risk management expert<small>ISO 31000 · risk matrix</small></div></div>
+            <div class="seat"><b style="background:#1d5fa8">L</b><div>Lean Six Sigma advisor<small>DMAIC · waste reduction</small></div></div>
+          </div>
+        </div>
+        <div class="ai-pane">
+          <div class="card chat">
+            <div class="msg me">Why do nonconformities keep recurring in the warehouse?</div>
+            <div class="msg bot"><b>Safety specialist:</b> 3 of the last 5 cases involve PPE at <b>Gate 2</b> — the shared root cause is missing night-shift training.</div>
+            <div class="msg bot"><b>Lean advisor:</b> Add a pre-shift checklist and track the KPI weekly for a month.</div>
+          </div>
+        </div>
+        <div class="ai-pane">
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:14px">✦ Unified council decision</div>
+            <div class="gen-list">
+              <div class="gen"><span class="dd-ic c1"><i class="fas fa-bullseye"></i></span>Mandatory PPE training<span class="tag c1">Corrective action</span></div>
+              <div class="gen"><span class="dd-ic c2"><i class="fas fa-chart-line"></i></span>PPE compliance rate<span class="tag c2">KPI</span></div>
+              <div class="gen"><span class="dd-ic c3"><i class="fas fa-list-check"></i></span>Pre-shift checklist<span class="tag c3">Inspection</span></div>
+              <div class="gen"><span class="dd-ic c5"><i class="fas fa-file-pdf"></i></span>Report for top management<span class="tag c5">PDF</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="blk feat-bg" id="roles">
+  <div class="wrap" style="text-align:center">
+    <div class="head reveal">
+      <span class="eyebrow">Built for every level</span>
+      <h2>From the boardroom to the field, <span class="grad-text">everyone on the same page</span></h2>
+    </div>
+    <div class="role-switch" id="roleSwitch">
+      <button class="on" aria-pressed="true">Leadership</button><button aria-pressed="false">Quality manager</button><button aria-pressed="false">Field inspector</button>
+    </div>
+    <div class="role-cards">
+      <div class="role-card"><span class="ic c1"><i class="fas fa-gauge-high"></i></span><small>Visibility</small><p>One compliance dashboard across every project and standard, instead of scattered reports.</p></div>
+      <div class="role-card"><span class="ic c3"><i class="fas fa-triangle-exclamation"></i></span><small>Risk</small><p>Critical risks and overdue NCs surface before they become problems.</p></div>
+      <div class="role-card"><span class="ic c2"><i class="fas fa-file-lines"></i></span><small>Decisions</small><p>Audit-ready reports and advisory council decisions as PDF.</p></div>
+    </div>
+    <div class="role-cards" hidden>
+      <div class="role-card"><span class="ic c1"><i class="fas fa-chart-pie"></i></span><small>Gap</small><p>Know exactly which clauses need work, with a clear roadmap.</p></div>
+      <div class="role-card"><span class="ic c3"><i class="fas fa-magnifying-glass"></i></span><small>RCA</small><p>Every NC opens a root cause ticket automatically — nothing slips through.</p></div>
+      <div class="role-card"><span class="ic c2"><i class="fas fa-bullseye"></i></span><small>KPIs</small><p>Quality, safety and environmental KPIs update from real data.</p></div>
+    </div>
+    <div class="role-cards" hidden>
+      <div class="role-card"><span class="ic c1"><i class="fas fa-wifi"></i></span><small>Offline</small><p>Fill in checklists anywhere; data syncs when you're back online.</p></div>
+      <div class="role-card"><span class="ic c3"><i class="fas fa-camera"></i></span><small>Photos</small><p>Capture findings with GPS location and attach them to an inspection or NC.</p></div>
+      <div class="role-card"><span class="ic c2"><i class="fas fa-bell"></i></span><small>Tasks</small><p>Your tasks and assigned cases on one screen on your phone.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPLITS -->
+<section class="blk" id="mobile-app">
+  <div class="wrap">
+    <div class="split reveal">
+      <div class="txt">
+        <span class="eyebrow">Field app · PWA</span>
+        <h3>Field inspections in the palm of your hand</h3>
+        <p class="lead">Works even without internet. Photograph incidents, complete checklists and report nonconformities — everything syncs with ISO Radar when you reconnect.</p>
+        <div class="m-feats">
+          <div class="m-feat"><i class="fas fa-wifi"></i><div><b>Works offline</b><span>Offline-first</span></div></div>
+          <div class="m-feat"><i class="fas fa-camera"></i><div><b>Incident photos</b><span>Straight from the camera</span></div></div>
+          <div class="m-feat"><i class="fas fa-location-dot"></i><div><b>Automatic GPS</b><span>Location of every inspection</span></div></div>
+          <div class="m-feat"><i class="fas fa-rotate"></i><div><b>Instant sync</b><span>With the main system</span></div></div>
+        </div>
+        <a class="link" href="/mobile-login">Open the mobile app <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="visual">
+        <div class="phone" aria-hidden="true">
+          <div class="phone-in">
+            <div class="phone-top"><img src="/assets/isoradar-mark.svg" alt=""/><div><b>ISO Radar</b><small>Hi, Mohammed</small></div></div>
+            <div class="phone-body">
+              <div class="p-card"><div class="r"><span>Safety inspection — Unit A</span><span class="badge c3">Ongoing</span></div><div class="bar"><i style="width:65%;background:#17796f"></i></div><small>65% complete · today 14:00</small></div>
+              <div class="p-card"><div class="r"><span>Open NCs</span><span style="font-size:20px;font-weight:800;color:#c2410c">2</span></div></div>
+              <div class="p-actions"><span style="background:#142D4E;color:#fff"><i class="fas fa-plus"></i><br/>New inspection</span><span class="c6"><i class="fas fa-triangle-exclamation"></i><br/>Report NC</span></div>
+              <div class="p-card"><div class="r"><span><i class="fas fa-camera" style="color:#17796f;margin-inline-end:6px"></i>Incident photos</span></div><small>Automatic GPS + instant upload</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split rev reveal">
+      <div class="txt">
+        <span class="eyebrow">Getting started</span>
+        <h3>Ready from day one</h3>
+        <p class="lead">Create your company account, add projects and standards, invite your team — and run your first gap assessment within minutes.</p>
+        <button class="link" style="background:none;border:0;cursor:pointer" onclick="openLogin('register')">Create your account <i class="fas fa-arrow-right"></i></button>
+      </div>
+      <div class="visual"><div class="steps">
+        <div class="step"><span>1</span>Create the company account<em>Done</em></div>
+        <div class="step"><span>2</span>Add projects and standards<em>Done</em></div>
+        <div class="step"><span style="background:#D9A441;color:#142D4E">3</span>Start the gap assessment<em style="color:#8a6410">In progress</em></div>
+        <div class="step"><span style="background:#5d6b7e">4</span>Invite your field team</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="blk feat-bg" id="pricing">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2>An investment that <span class="grad-text">pays for itself</span></h2>
+      <p class="lead">Cut consulting and audit costs compared with traditional approaches. No hidden fees. Cancel any time.</p>
+      <div class="bill" role="group" aria-label="Billing cycle">
+        <button id="bill-monthly" class="on" aria-pressed="true" onclick="setBilling('monthly')">Monthly</button>
+        <button id="bill-yearly" aria-pressed="false" onclick="setBilling('yearly')">Yearly<span class="save">Save 16%</span></button>
+      </div>
+    </div>
+    <div class="price-grid reveal">
+      <div class="plan">
+        <h3>Starter</h3><div class="lim">For startups and small companies</div>
+        <div class="price"><span id="price-starter">299</span><small>SAR / month</small></div>
+        <div class="yr" id="yearly-starter"></div>
+        <ul><li>5 users</li><li>2 projects</li><li>ISO 9001</li><li>Inspections and NCs</li><li>Mobile app</li><li>PDF reports</li></ul>
+        <button class="btn btn-ghost" onclick="openLogin('register')">Start free</button>
+      </div>
+      <div class="plan pop">
+        <span class="tagp">Most popular</span>
+        <h3>Professional</h3><div class="lim">For mid-size and large companies</div>
+        <div class="price"><span id="price-pro">799</span><small>SAR / month</small></div>
+        <div class="yr" id="yearly-pro"></div>
+        <ul><li>25 users</li><li>10 projects</li><li>ISO 9001 + 45001 + 14001</li><li>RCA and Lean Six Sigma</li><li>Advanced gap analysis</li><li>API integration (Odoo, ERPNext)</li><li>AI advisory council</li></ul>
+        <button class="btn btn-grad" onclick="openLogin('register')">Start free trial</button>
+      </div>
+      <div class="plan">
+        <h3>Enterprise</h3><div class="lim">For large organisations</div>
+        <div class="price"><span id="price-ent">1,999</span><small>SAR / month</small></div>
+        <div class="yr" id="yearly-ent"></div>
+        <ul><li>Unlimited users and projects</li><li>All ISO standards + 27001</li><li>SSO / LDAP</li><li>99.9% SLA</li><li>On-premise deployment</li><li>Dedicated account manager</li></ul>
+        <button class="btn btn-primary" onclick="openLogin('register')">Contact us</button>
+      </div>
+    </div>
+    <div class="accel reveal">
+      <div><h3>🛡️ 14-day money-back guarantee</h3><p>If ISO Radar isn't right for you, we refund you in full — no questions asked.</p></div>
+      <a class="btn btn-ghost" href="#compare">Compare plans <i class="fas fa-arrow-down"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="blk" id="compare">
+  <div class="wrap">
+    <div class="head reveal"><span class="eyebrow">Compare</span><h2>Pick what <span class="grad-text">fits your size</span></h2></div>
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead><tr><th>Feature</th><th>Starter</th><th class="hl">Professional</th><th>Enterprise</th></tr></thead>
+        <tbody>
+          <tr><td>Users</td><td>5</td><td class="hl">25</td><td>Unlimited</td></tr>
+          <tr><td>Projects</td><td>2</td><td class="hl">10</td><td>Unlimited</td></tr>
+          <tr><td>ISO standards</td><td>ISO 9001</td><td class="hl">9001 + 45001 + 14001</td><td>All + 27001</td></tr>
+          <tr><td>Gap analysis</td><td>Basic</td><td class="hl">Advanced</td><td>Advanced</td></tr>
+          <tr><td>RCA + Lean</td><td class="n"><i class="fas fa-minus" aria-label="Not included"></i></td><td class="hl y"><i class="fas fa-check" aria-label="Included"></i></td><td class="y"><i class="fas fa-check" aria-label="Included"></i></td></tr>
+          <tr><td>API integration (Odoo, SAP)</td><td class="n"><i class="fas fa-minus" aria-label="Not included"></i></td><td class="hl y"><i class="fas fa-check" aria-label="Included"></i></td><td class="y"><i class="fas fa-check" aria-label="Included"></i></td></tr>
+          <tr><td>Mobile app</td><td class="y"><i class="fas fa-check" aria-label="Included"></i></td><td class="hl y"><i class="fas fa-check" aria-label="Included"></i></td><td class="y"><i class="fas fa-check" aria-label="Included"></i></td></tr>
+          <tr><td>AI advisory council</td><td class="n"><i class="fas fa-minus" aria-label="Not included"></i></td><td class="hl y"><i class="fas fa-check" aria-label="Included"></i></td><td class="y"><i class="fas fa-check" aria-label="Included"></i></td></tr>
+          <tr><td>SSO / LDAP</td><td class="n"><i class="fas fa-minus" aria-label="Not included"></i></td><td class="hl n"><i class="fas fa-minus" aria-label="Not included"></i></td><td class="y"><i class="fas fa-check" aria-label="Included"></i></td></tr>
+          <tr><td>SLA / uptime</td><td>95%</td><td class="hl">99%</td><td>99.9%</td></tr>
+          <tr><td>Support</td><td>Email</td><td class="hl">24-hour priority</td><td>Dedicated account manager</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="blk feat-bg" id="faq">
+  <div class="wrap">
+    <div class="head reveal"><span class="eyebrow">FAQ</span><h2>Questions? <span class="grad-text">Answers.</span></h2></div>
+    <div class="faq reveal">
+      <details open><summary>Can I try before I pay?</summary><p>Yes — the 14-day free trial includes every feature, and no credit card is needed.</p></details>
+      <details><summary>Which ISO standards are supported?</summary><p>ISO 9001, 45001, 14001 and 27001, and you can add custom standards with their own requirements and assessment questions.</p></details>
+      <details><summary>Does the field app work offline?</summary><p>Yes. Inspections and photos are saved on the device and sync automatically when you're back online.</p></details>
+      <details><summary>Is the system available in Arabic and English?</summary><p>Yes, the whole system is fully bilingual, and each user can switch with the language button at the top of the page.</p></details>
+      <details><summary>Can it connect to our existing systems?</summary><p>On Professional and Enterprise you can integrate with Odoo, ERPNext and SAP over API.</p></details>
+      <details><summary>Are there hidden fees?</summary><p>No. The price includes every feature in the plan, and you can cancel any time.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="blk" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Ready to measure your quality?</h2>
+      <p>Join the companies using ISO Radar to achieve ISO standards and keep them — simply and efficiently.</p>
+      <div class="btns">
+        <button class="btn btn-gold btn-lg" onclick="openLogin('register')">Start your free trial <i class="fas fa-arrow-right"></i></button>
+        <button class="btn btn-o btn-lg" onclick="openLogin('login')">Log in</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a href="#top" class="logo"><img src="/assets/isoradar-mark.svg" alt="" width="38" height="38"/><span>ISO Radar<small>ISORADAR.COM</small></span></a>
+        <p>Quality, safety and environmental management to ISO standards — from inspection to report, in one place.</p>
+        <div class="socials"><a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a><a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a></div>
+      </div>
+      <div><h6>Product</h6><ul><li><a href="#features">Features</a></li><li><a href="#ai">Advisory council</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#mobile-app">Mobile app</a></li></ul></div>
+      <div><h6>Company</h6><ul><li><a href="#">About</a></li><li><a href="mailto:support@isoradar.com">Contact</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Terms</a></li></ul></div>
+      <div><h6>Get started</h6><ul><li><a href="#" onclick="openLogin('register');return false">Sign up</a></li><li><a href="#" onclick="openLogin('login');return false">Log in</a></li><li><a href="/mobile-login">Field app</a></li><li><a href="/?lang=ar" hreflang="ar" lang="ar">العربية</a></li></ul></div>
+    </div>
+    <div class="foot-bot"><span>© 2026 ISO Radar. All rights reserved.</span><span>isoradar.com</span></div>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="login-overlay" onclick="if(event.target===this)closeLogin()" role="dialog" aria-modal="true" aria-label="Company portal">
+  <div class="login-modal">
+    <div class="login-header">
+      <div class="top">
+        <img src="/assets/isoradar-mark.svg" alt=""/>
+        <div><div style="font-weight:800;font-size:16px;">ISO Radar</div><div style="font-size:12px;color:var(--muted);">Company portal</div></div>
+        <button class="x" onclick="closeLogin()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="login-tabs" role="tablist">
+        <button class="login-tab active" id="tab-login" role="tab" aria-selected="true" onclick="switchTab('login')">Log in</button>
+        <button class="login-tab" id="tab-register" role="tab" aria-selected="false" onclick="switchTab('register')">New account</button>
+      </div>
+    </div>
+    <div class="login-body">
+      <div id="form-login">
+        <div id="err-login" class="error-msg" role="alert"></div>
+        <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" placeholder="company@example.com" autocomplete="username"/></div>
+        <div class="form-group"><label for="login-pass">Password</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <div class="forgot"><a href="mailto:support@isoradar.com">Forgot your password?</a></div>
+        <button class="btn-login" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i>Sign in</button>
+        <div class="hint">New to ISO Radar? Create your company account from the “New account” tab and get started right away.</div>
+      </div>
+      <div id="form-register" style="display:none;">
+        <div id="err-register" class="error-msg" role="alert"></div>
+        <div id="suc-register" class="success-msg" role="status"></div>
+        <div class="form-group"><label for="reg-company">Company name</label><input type="text" id="reg-company" placeholder="Integrated Compliance Services Co." autocomplete="organization"/></div>
+        <div class="two">
+          <div class="form-group"><label for="reg-name">Full name</label><input type="text" id="reg-name" placeholder="Ahmed Al-Omari" autocomplete="name"/></div>
+          <div class="form-group"><label for="reg-phone">Mobile number</label><input type="tel" id="reg-phone" placeholder="+966 5x xxx xxxx" autocomplete="tel"/></div>
+        </div>
+        <div class="form-group"><label for="reg-email">Email</label><input type="email" id="reg-email" placeholder="admin@company.com" autocomplete="email"/></div>
+        <div class="form-group"><label for="reg-plan">Plan</label>
+          <select id="reg-plan">
+            <option value="trial">14-day free trial</option>
+            <option value="starter">Starter — SAR 299/month</option>
+            <option value="professional">Professional — SAR 799/month</option>
+            <option value="enterprise">Enterprise — SAR 1,999/month</option>
+          </select>
+        </div>
+        <div class="form-group"><label for="reg-pass">Password</label><input type="password" id="reg-pass" placeholder="At least 8 characters" autocomplete="new-password"/></div>
+        <button class="btn-login" onclick="doRegister()"><i class="fas fa-rocket"></i>Create account free</button>
+        <div class="login-footer-txt">By signing up you agree to the <a href="#">Terms</a> and <a href="#">Privacy policy</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/isoradar-landing.js"></script>
+</body>
+</html>
