@@ -179,8 +179,11 @@ section.blk{padding:104px 0}
 .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .feat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;transition:.2s}
 .feat:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm);border-color:#cfd7e2}
-.feat .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:17px;margin-bottom:16px}
-.feat h3{font-size:18px;margin-bottom:8px}
+/* icon sits beside the heading, not stacked above it */
+.feat{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;align-content:start}
+.feat p,.feat small{grid-column:1/-1}
+.feat .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:16px;margin-bottom:12px}
+.feat h3{font-size:18px;margin-bottom:12px}
 .feat p{font-size:15px;color:var(--ink-2)}
 .feat small{display:inline-block;margin-top:14px;font-size:12px;font-weight:700;color:var(--muted);font-family:"Plus Jakarta Sans",sans-serif;letter-spacing:.04em}
 
@@ -190,10 +193,11 @@ section.blk{padding:104px 0}
 .role-switch button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
 .role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;text-align:start}
 .role-cards[hidden]{display:none}
-.role-card{border:1px solid var(--line);border-radius:var(--radius);padding:28px;background:#fff}
+.role-card{border:1px solid var(--line);border-radius:var(--radius);padding:28px;background:#fff;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;align-content:start}
+.role-card p{grid-column:1/-1}
 .role-card small{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-d)}
 .role-card p{font-size:18px;font-weight:600;margin-top:10px;line-height:1.45}
-.role-card .ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:18px;margin-bottom:18px}
+.role-card .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:17px}
 
 /* splits */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:104px}
