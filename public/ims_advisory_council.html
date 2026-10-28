@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="advisory">
 <head>
+<script>/* ISO Radar i18n: load the English dictionary only when English is selected */
+(function () {
+  var q = location.search, en = false;
+  try { en = /[?&]lang=en(&|$)/.test(q) || (!/[?&]lang=ar(&|$)/.test(q) && localStorage.getItem('ir_lang') === 'en'); } catch (e) {}
+  if (en) document.write('<scr' + 'ipt src="/assets/i18n/en.js"></scr' + 'ipt>');
+})();
+</script>
+<script src="/assets/isoradar-i18n.js"></script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>المجلس الاستشاري الافتراضي — آيزو رادار</title>
@@ -184,6 +192,7 @@ body{background:#eef2f6;color:#142D4E;margin:0;min-height:100vh;}
         <div id="active-avatars" style="display:flex;"></div>
         <span id="methodology-badge" style="display:none;" class="badge badge-blue"></span>
         <!-- PDF Export Button -->
+        <button type="button" class="ir-lang" data-lang-toggle data-no-i18n aria-label="Language / اللغة"><i class="fas fa-globe"></i><span class="ir-l-en">English</span><span class="ir-l-ar">العربية</span></button>
         <button class="pdf-btn" id="pdf-export-btn" onclick="generatePDFReport()">
           <i class="fas fa-file-pdf"></i>
           تصدير تقرير PDF

@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="mobile">
 <head>
+<script>/* ISO Radar i18n: load the English dictionary only when English is selected */
+(function () {
+  var q = location.search, en = false;
+  try { en = /[?&]lang=en(&|$)/.test(q) || (!/[?&]lang=ar(&|$)/.test(q) && localStorage.getItem('ir_lang') === 'en'); } catch (e) {}
+  if (en) document.write('<scr' + 'ipt src="/assets/i18n/en.js"></scr' + 'ipt>');
+})();
+</script>
+<script src="/assets/isoradar-i18n.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
   <meta name="mobile-web-app-capable" content="yes"/>
@@ -188,6 +196,7 @@ tailwind.config = { theme: { extend: {
         </div>
       </div>
       <div class="flex items-center gap-2">
+        <button type="button" class="ir-lang on-dark" data-lang-toggle data-no-i18n aria-label="Language / اللغة"><i class="fas fa-globe"></i><span class="ir-l-en">English</span><span class="ir-l-ar">العربية</span></button>
         <div id="m-notif-dot" class="relative">
           <button onclick="mShowPage('m-notifications')" class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white">
             <i class="fas fa-bell text-sm"></i>

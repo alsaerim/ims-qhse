@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-surface="auth">
 <head>
+<script>/* ISO Radar i18n: load the English dictionary only when English is selected */
+(function () {
+  var q = location.search, en = false;
+  try { en = /[?&]lang=en(&|$)/.test(q) || (!/[?&]lang=ar(&|$)/.test(q) && localStorage.getItem('ir_lang') === 'en'); } catch (e) {}
+  if (en) document.write('<scr' + 'ipt src="/assets/i18n/en.js"></scr' + 'ipt>');
+})();
+</script>
+<script src="/assets/isoradar-i18n.js"></script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <meta name="mobile-web-app-capable" content="yes"/>
@@ -147,6 +155,7 @@ body::before{
 </head>
 <body>
 
+<div style="position:fixed;top:14px;inset-inline-end:14px;z-index:5"><button type="button" class="ir-lang on-dark" data-lang-toggle data-no-i18n aria-label="Language / اللغة"><i class="fas fa-globe"></i><span class="ir-l-en">English</span><span class="ir-l-ar">العربية</span></button></div>
 <div class="card">
   <!-- Header -->
   <div class="card-header">
