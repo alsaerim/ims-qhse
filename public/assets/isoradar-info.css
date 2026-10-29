@@ -1,0 +1,42 @@
+/* ==========================================================================
+   ISO Radar — info pages (about, privacy, terms, 404). Builds on
+   isoradar-landing.css for tokens, nav, buttons and type.
+   ========================================================================== */
+.info { background: linear-gradient(180deg, var(--bg-soft) 0, #fff 320px); padding: 56px 0 80px; min-height: 70vh; }
+.info-in { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; }
+.info-side { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 4px; }
+.info-side a {
+  padding: 10px 14px; border-radius: 10px; color: var(--ink-2); font-weight: 600; font-size: 15px;
+  transition: background .2s, color .2s;
+}
+.info-side a:hover { background: var(--teal-t); color: var(--teal-d); }
+.info-side a[aria-current="page"] { background: var(--ink); color: #fff; }
+.info-body { max-width: 760px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 44px 48px; box-shadow: var(--shadow-sm); }
+.info-body h1 { font-size: clamp(32px, 4vw, 44px); font-weight: 800; letter-spacing: -.02em; margin: 0 0 14px; }
+.info-body .lead { margin: 0 0 8px; }
+.info-date { color: var(--muted); font-size: 14px; margin: 0 0 8px; }
+.info-body section { margin-top: 34px; }
+.info-body h2 { font-size: 21px; font-weight: 800; margin: 0 0 12px; color: var(--ink); }
+.info-body p, .info-body li { color: var(--ink-2); font-size: 16px; line-height: 1.85; }
+.info-body ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 8px; }
+.info-body li::marker { color: var(--teal); }
+.info-body a { color: var(--teal-d); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.info-body a.btn { color: #fff; text-decoration: none; }
+.info-cta { margin-top: 36px; }
+.info-foot { border-top: 1px solid var(--line); padding: 24px 0; color: var(--muted); font-size: 14px; text-align: center; }
+.info-foot a { color: var(--teal-d); }
+
+/* 404 */
+.nf { min-height: calc(100vh - 160px); display: grid; place-items: center; text-align: center; padding: 64px 0; background: var(--bg-soft); }
+.nf b { display: block; font: 800 clamp(72px, 12vw, 128px)/1 var(--font-head); background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.nf h1 { font-size: clamp(26px, 3vw, 34px); margin: 18px 0 10px; }
+.nf p { color: var(--ink-2); margin: 0 auto 26px; max-width: 32em; }
+.nf .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 860px) {
+  .info { padding: 28px 0 56px; }
+  .info-in { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .info-side { position: static; flex-direction: row; flex-wrap: wrap; }
+  .info-side a { padding: 8px 12px; font-size: 14px; background: #fff; border: 1px solid var(--line); }
+  .info-body { padding: 26px 20px; border-radius: 16px; }
+}

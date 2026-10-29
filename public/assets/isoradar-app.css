@@ -1,0 +1,268 @@
+/* ==========================================================================
+   ISO Radar — tenant app design layer (ims_qhse_9.html only).
+   Loaded after isoradar.css; it is the last word on the app's look.
+
+   Palette — quality, reliability, modern elegance
+     night     #0B1B30  sidebar, modal headers (depth, trust)
+     ink       #142D4E  headings, primary text
+     teal      #0E7C70  primary action (white text 5.2:1); #22A699 brand fill
+     gold      #C9973A  premium accents only (PRO, certification)
+     canvas    #F3F6F9  page; cards #FFFFFF on a #E3E9F0 hairline
+     text      #142D4E / #4A5B70 / #66768A (all ≥ 4.5:1 on white)
+     status    pass #0F6E4D · watch #8A5000 · nonconformity #B42318 · info #1D5FA8
+   Radius 10 (controls) / 14 (cards) / 18 (dialogs). One easing for everything.
+   ========================================================================== */
+
+html[data-surface="app"] {
+  --ir-night: #0B1B30;
+  --ir-night-2: #12284A;
+  --ir-ink: #142D4E;
+  --ir-text-2: #4A5B70;
+  --ir-text-3: #66768A;
+  --ir-teal: #0E7C70;
+  --ir-teal-h: #0B6A60;
+  --ir-teal-fill: #22A699;
+  --ir-teal-tint: #E6F4F1;
+  --ir-gold: #C9973A;
+  --ir-canvas: #F3F6F9;
+  --ir-line: #E3E9F0;
+  --ir-line-2: #D3DCE6;
+  --ir-focus: 0 0 0 3px rgba(14,124,112,.28);
+  --ir-shadow-1: 0 1px 2px rgba(11,27,48,.05), 0 1px 1px rgba(11,27,48,.03);
+  --ir-shadow-2: 0 10px 28px -14px rgba(11,27,48,.28), 0 2px 6px -2px rgba(11,27,48,.08);
+  --ir-shadow-3: 0 28px 70px -24px rgba(11,27,48,.45);
+  --ir-ease: cubic-bezier(.2,.7,.2,1);
+}
+
+/* ── canvas ─────────────────────────────────────────────────────────── */
+html[data-surface="app"] body {
+  background:
+    radial-gradient(1200px 380px at 70% -120px, rgba(34,166,153,.07), transparent 70%),
+    var(--ir-canvas) !important;
+  color: var(--ir-ink);
+}
+html[data-surface="app"] #app-content { padding: 28px 32px 48px; max-width: 1480px; margin-inline: auto; }
+
+/* ── sidebar: night navy ────────────────────────────────────────────── */
+html[data-surface="app"] .sidebar {
+  background: linear-gradient(180deg, var(--ir-night) 0%, #0E2240 60%, var(--ir-night-2) 100%) !important;
+  border: none !important;
+  box-shadow: -1px 0 0 rgba(255,255,255,.04) inset;
+}
+html[data-surface="app"] .sidebar .border-slate-700,
+html[data-surface="app"] .sidebar > div { border-color: rgba(255,255,255,.07) !important; }
+html[data-surface="app"] .sidebar .text-white,
+html[data-surface="app"] .sidebar .mz-wordmark { color: #fff !important; }
+html[data-surface="app"] .sidebar .mz-wordmark small,
+html[data-surface="app"] .sidebar .text-slate-300,
+html[data-surface="app"] .sidebar .text-slate-400,
+html[data-surface="app"] .sidebar .text-slate-500 { color: #93A3B8 !important; }
+html[data-surface="app"] .sidebar-collapse-btn { color: #93A3B8 !important; background: rgba(255,255,255,.04) !important; border-radius: 9px !important; }
+html[data-surface="app"] .sidebar-collapse-btn:hover { color: #fff !important; background: rgba(255,255,255,.1) !important; }
+html[data-surface="app"] .ir-nav { padding: 6px 10px 14px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.14) transparent; }
+html[data-surface="app"] .sidebar-section-title {
+  margin: 18px 10px 6px !important; padding: 0 !important;
+  font: 700 11px/1.4 var(--mz-font) !important; letter-spacing: .08em; text-transform: uppercase;
+  color: #7F91A8 !important;
+}
+html[data-surface="app"] .ir-nav .sidebar-section-title:first-child { margin-top: 6px !important; }
+html[data-surface="app"] .nav-item {
+  position: relative; margin: 2px 0 !important; padding: 9px 12px !important; gap: 12px;
+  border-radius: 10px !important; border: none !important;
+  color: #C5D0DD !important; font-size: 14px; font-weight: 500; text-decoration: none;
+  transition: background-color .2s var(--ir-ease), color .2s var(--ir-ease), transform .2s var(--ir-ease) !important;
+}
+html[data-surface="app"] .nav-item i { color: #8193AA !important; width: 18px; text-align: center; transition: color .2s, transform .25s var(--ir-ease); }
+html[data-surface="app"] .nav-item:hover { background: rgba(255,255,255,.06) !important; color: #fff !important; }
+html[data-surface="app"] .nav-item:hover i { color: #7FDCCF !important; transform: scale(1.08); }
+html[data-surface="app"] .nav-item.active {
+  background: linear-gradient(90deg, rgba(34,166,153,.10), rgba(34,166,153,.24)) !important;
+  color: #fff !important; font-weight: 700;
+  box-shadow: inset 0 0 0 1px rgba(127,220,207,.18);
+}
+html[data-surface="app"] .nav-item.active i { color: #7FDCCF !important; }
+/* the active marker sits on the content side of the item */
+html[data-surface="app"] .nav-item::before {
+  content: ""; position: absolute; inset-inline-start: -10px; top: 9px; bottom: 9px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--ir-teal-fill);
+  transform: scaleY(0); transition: transform .25s var(--ir-ease);
+}
+html[dir="rtl"][data-surface="app"] .nav-item::before { border-radius: 3px 0 0 3px; }
+html[data-surface="app"] .nav-item.active::before { transform: scaleY(1); }
+html[data-surface="app"] .nav-item:focus-visible { outline: 2px solid #7FDCCF !important; outline-offset: -2px; }
+html[data-surface="app"] .nav-item .badge-red { background: #B42318 !important; color: #fff !important; min-width: 22px; text-align: center; }
+html[data-surface="app"] .ir-pro {
+  margin-inline-start: auto; padding: 2px 8px; border-radius: 999px;
+  background: linear-gradient(135deg, #E6C27A, var(--ir-gold)); color: #3A2A06;
+  font-size: 10px; font-weight: 800; letter-spacing: .06em;
+}
+html[data-surface="app"] .sidebar #sidebar-iso-badges .badge { background: rgba(255,255,255,.08) !important; color: #CFE9E4 !important; }
+html[data-surface="app"] .sidebar > div:last-child { background: rgba(0,0,0,.18) !important; border-color: rgba(255,255,255,.07) !important; }
+html[data-surface="app"] .sidebar > div:last-child .text-white { color: #fff !important; }
+html[data-surface="app"] #user-avatar { background: linear-gradient(135deg, var(--ir-teal-fill), var(--ir-teal)) !important; color: #fff !important; box-shadow: 0 0 0 2px rgba(255,255,255,.12); }
+html[data-surface="app"] .sidebar button[onclick="logout()"] { width: 34px; height: 34px; border-radius: 9px; transition: background .2s, color .2s; }
+html[data-surface="app"] .sidebar button[onclick="logout()"]:hover { background: rgba(180,35,24,.18); color: #FFB4AB !important; }
+
+/* ── top bar ────────────────────────────────────────────────────────── */
+html[data-surface="app"] .main-content > div:first-child {
+  background: rgba(255,255,255,.82) !important;
+  backdrop-filter: saturate(170%) blur(14px);
+  border-bottom: 1px solid var(--ir-line) !important;
+  box-shadow: none !important;
+  padding: 14px 32px !important;
+}
+html[data-surface="app"] #page-title { font: 800 22px/1.25 var(--mz-font-head) !important; color: var(--ir-ink) !important; letter-spacing: -.01em; }
+html[data-surface="app"] #page-subtitle { color: var(--ir-text-3) !important; font-size: 13px !important; margin-top: 2px; }
+html[data-surface="app"] .main-content > div:first-child button { border-radius: 10px; transition: background .2s, color .2s, transform .15s; }
+html[data-surface="app"] .main-content > div:first-child button:hover { background: var(--ir-teal-tint); color: var(--ir-teal) !important; }
+
+/* ── cards ──────────────────────────────────────────────────────────── */
+html[data-surface="app"] #app-content .card,
+html[data-surface="app"] #app-content .stat-card,
+html[data-surface="app"] #app-content .bg-white.rounded-xl,
+html[data-surface="app"] #app-content .bg-white.rounded-2xl {
+  background-color: #fff; border: 1px solid var(--ir-line) !important; border-radius: 14px !important;
+  box-shadow: var(--ir-shadow-1) !important;
+  transition: box-shadow .25s var(--ir-ease), transform .25s var(--ir-ease), border-color .25s;
+}
+html[data-surface="app"] #app-content .card[onclick]:hover,
+html[data-surface="app"] #app-content .stat-card:hover,
+html[data-surface="app"] #app-content .cursor-pointer.rounded-xl:hover {
+  transform: translateY(-2px); box-shadow: var(--ir-shadow-2) !important; border-color: var(--ir-line-2) !important;
+}
+html[data-surface="app"] #app-content h3 { color: var(--ir-ink); }
+/* dashboard banner keeps its dark feature treatment */
+html[data-surface="app"] #app-content .card[style*="linear-gradient(135deg,#0"] {
+  background: radial-gradient(600px 200px at 85% 0%, rgba(34,166,153,.35), transparent 70%), linear-gradient(135deg, var(--ir-night) 0%, #12355A 55%, #0E6B62 100%) !important;
+  border: none !important; box-shadow: var(--ir-shadow-2) !important;
+}
+
+/* ── buttons: one family, clear feedback ────────────────────────────── */
+html[data-surface="app"] .btn,
+html[data-surface="app"] #app-content button,
+html[data-surface="app"] .modal button {
+  position: relative; overflow: hidden;
+  transition: background-color .18s var(--ir-ease), color .18s, border-color .18s, box-shadow .2s var(--ir-ease), transform .12s var(--ir-ease) !important;
+}
+html[data-surface="app"] .btn { min-height: 40px; padding: 9px 18px !important; border-radius: 10px !important; font-weight: 700 !important; font-size: 14px; gap: 8px; }
+html[data-surface="app"] .btn-primary,
+html[data-surface="app"] #app-content button.bg-blue-600,
+html[data-surface="app"] .modal button.bg-blue-600 {
+  background: linear-gradient(180deg, #11907F, var(--ir-teal)) !important; color: #fff !important; border: none !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 6px 16px -8px rgba(14,124,112,.75) !important;
+}
+html[data-surface="app"] .btn-primary:hover,
+html[data-surface="app"] #app-content button.bg-blue-600:hover,
+html[data-surface="app"] .modal button.bg-blue-600:hover {
+  background: linear-gradient(180deg, var(--ir-teal), var(--ir-teal-h)) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 10px 22px -10px rgba(14,124,112,.85) !important;
+  transform: translateY(-1px);
+}
+html[data-surface="app"] .btn-danger { background: #FDECEA !important; color: #B42318 !important; }
+html[data-surface="app"] .btn-danger:hover { background: #B42318 !important; color: #fff !important; transform: translateY(-1px); }
+html[data-surface="app"] .btn-success { background: var(--ir-teal-tint) !important; color: var(--ir-teal) !important; }
+html[data-surface="app"] .btn-success:hover { background: var(--ir-teal) !important; color: #fff !important; transform: translateY(-1px); }
+html[data-surface="app"] .btn:active,
+html[data-surface="app"] #app-content button:active,
+html[data-surface="app"] .modal button:active { transform: translateY(0) scale(.97) !important; }
+html[data-surface="app"] .btn:focus-visible,
+html[data-surface="app"] #app-content button:focus-visible,
+html[data-surface="app"] .modal button:focus-visible { outline: none !important; box-shadow: var(--ir-focus) !important; }
+html[data-surface="app"] .btn:disabled,
+html[data-surface="app"] #app-content button:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+/* outlined / neutral buttons written with utility classes */
+html[data-surface="app"] #app-content button.border:not(.bg-blue-600):hover { border-color: var(--ir-teal-fill) !important; color: var(--ir-teal) !important; }
+/* press ripple (assets/isoradar-motion.js adds the span) */
+.ir-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none; transform: scale(0);
+  background: currentColor; opacity: .18; animation: ir-ripple .55s cubic-bezier(.2,.7,.2,1) forwards;
+}
+@keyframes ir-ripple { to { transform: scale(2.6); opacity: 0; } }
+
+/* ── form controls ──────────────────────────────────────────────────── */
+html[data-surface="app"] #app-content input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]),
+html[data-surface="app"] #app-content select,
+html[data-surface="app"] #app-content textarea,
+html[data-surface="app"] .modal input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]),
+html[data-surface="app"] .modal select,
+html[data-surface="app"] .modal textarea,
+html[data-surface="app"] .form-input {
+  border: 1px solid var(--ir-line-2) !important; border-radius: 10px !important; background-color: #fff;
+  color: var(--ir-ink); transition: border-color .18s, box-shadow .18s, background-color .18s;
+}
+html[data-surface="app"] #app-content input:hover, html[data-surface="app"] #app-content select:hover, html[data-surface="app"] #app-content textarea:hover,
+html[data-surface="app"] .modal input:hover, html[data-surface="app"] .modal select:hover, html[data-surface="app"] .modal textarea:hover { border-color: #B8C4D2 !important; }
+html[data-surface="app"] #app-content input:focus, html[data-surface="app"] #app-content select:focus, html[data-surface="app"] #app-content textarea:focus,
+html[data-surface="app"] .modal input:focus, html[data-surface="app"] .modal select:focus, html[data-surface="app"] .modal textarea:focus,
+html[data-surface="app"] .form-input:focus { outline: none !important; border-color: var(--ir-teal-fill) !important; box-shadow: var(--ir-focus) !important; }
+html[data-surface="app"] input::placeholder, html[data-surface="app"] textarea::placeholder { color: #8A98AA; }
+html[data-surface="app"] input[type=checkbox], html[data-surface="app"] input[type=radio] { accent-color: var(--ir-teal); }
+
+/* ── tables ─────────────────────────────────────────────────────────── */
+html[data-surface="app"] #app-content table { border-collapse: separate; border-spacing: 0; }
+html[data-surface="app"] #app-content thead th {
+  background: #F7F9FB !important; color: var(--ir-text-2) !important;
+  font-size: 12px !important; font-weight: 700 !important; letter-spacing: .02em;
+  border-bottom: 1px solid var(--ir-line) !important;
+}
+html[data-surface="app"] #app-content tbody td { border-bottom: 1px solid #EEF2F6 !important; color: var(--ir-ink); vertical-align: middle; }
+html[data-surface="app"] #app-content tbody tr { transition: background-color .15s; }
+html[data-surface="app"] #app-content tbody tr:hover { background: #F4FAF9 !important; }
+html[data-surface="app"] #app-content tbody tr:last-child td { border-bottom: none !important; }
+
+/* ── badges ─────────────────────────────────────────────────────────── */
+html[data-surface="app"] .badge { border-radius: 999px !important; font-weight: 700 !important; letter-spacing: .01em; padding: 3px 10px !important; }
+html[data-surface="app"] .badge-blue { background: #E8F0FA !important; color: #1D5FA8 !important; }
+
+/* ── tabs ───────────────────────────────────────────────────────────── */
+html[data-surface="app"] .tab { position: relative; color: var(--ir-text-3) !important; font-weight: 600; border-bottom: none !important; transition: color .2s; }
+html[data-surface="app"] .tab::after {
+  content: ""; position: absolute; inset-inline: 10px; bottom: -1px; height: 2px; border-radius: 2px;
+  background: var(--ir-teal-fill); transform: scaleX(0); transition: transform .25s var(--ir-ease);
+}
+html[data-surface="app"] .tab:hover { color: var(--ir-ink) !important; }
+html[data-surface="app"] .tab.active { color: var(--ir-teal) !important; }
+html[data-surface="app"] .tab.active::after { transform: scaleX(1); }
+
+/* ── dialogs ────────────────────────────────────────────────────────── */
+html[data-surface="app"] .modal { background: rgba(11,27,48,.48) !important; backdrop-filter: blur(6px); }
+html[data-surface="app"] .modal-content { border-radius: 18px !important; box-shadow: var(--ir-shadow-3) !important; }
+html[data-surface="app"] .modal-header { background: linear-gradient(135deg, var(--ir-night), #12355A) !important; }
+html[data-surface="app"] .modal-footer { background: #FAFBFD; border-top-color: var(--ir-line) !important; }
+
+/* ── toasts (showToast) ─────────────────────────────────────────────── */
+.ir-toasts { position: fixed; bottom: 22px; inset-inline-end: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: none; }
+.ir-toast {
+  pointer-events: auto; display: flex; align-items: center; gap: 12px; min-width: 260px; max-width: 420px;
+  padding: 12px 14px; border-radius: 12px; background: #fff; color: #142D4E; font: 600 14px/1.45 var(--mz-font);
+  border: 1px solid #E3E9F0; box-shadow: 0 18px 40px -18px rgba(11,27,48,.4);
+  animation: ir-toast-in .35s cubic-bezier(.2,.7,.2,1);
+}
+.ir-toast.out { animation: ir-toast-out .3s ease forwards; }
+.ir-toast-ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0; color: #fff; }
+.ir-toast-x { margin-inline-start: auto; border: 0; background: none; color: #66768A; cursor: pointer; width: 28px; height: 28px; border-radius: 8px; }
+.ir-toast-x:hover { background: #F3F6F9; color: #142D4E; }
+@keyframes ir-toast-in { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+@keyframes ir-toast-out { to { opacity: 0; transform: translateY(8px); } }
+
+/* ── kanban ─────────────────────────────────────────────────────────── */
+html[data-surface="app"] .kanban-drop-zone { background: #EEF2F6 !important; border-radius: 14px !important; }
+html[data-surface="app"] .task-card { border: 1px solid var(--ir-line) !important; box-shadow: var(--ir-shadow-1) !important; }
+html[data-surface="app"] .task-card:hover { transform: translateY(-2px); box-shadow: var(--ir-shadow-2) !important; border-color: var(--ir-line-2) !important; }
+
+/* ── loading and content links ──────────────────────────────────────── */
+html[data-surface="app"] #app-content .fa-spinner { color: var(--ir-teal-fill) !important; }
+html[data-surface="app"] #app-content a:not(.btn) { color: var(--ir-teal); text-underline-offset: 3px; }
+html[data-surface="app"] #app-content a:not(.btn):hover { text-decoration: underline; }
+
+/* ── narrow screens ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  html[data-surface="app"] #app-content { padding: 18px 16px 40px; }
+  html[data-surface="app"] .main-content > div:first-child { padding: 12px 16px !important; }
+  html[data-surface="app"] #page-title { font-size: 18px !important; }
+  html[data-surface="app"] .sidebar.open { box-shadow: var(--ir-shadow-3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ir-ripple, .ir-toast { animation: none !important; }
+}

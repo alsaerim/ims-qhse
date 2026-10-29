@@ -62,4 +62,27 @@
     play(document.getElementById('rpanel-' + tab), 'ir-tab-in');
   });
   wrap('setGanttView', () => play(document.getElementById('gantt-container') || document.querySelector('.gantt-wrap'), 'ir-tab-in'));
+
+  // ── press ripple on buttons (styles: .ir-ripple in isoradar-app.css) ─
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  document.addEventListener('pointerdown', e => {
+    if (reduce.matches || e.button !== 0) return;
+    const btn = e.target.closest('.btn, #app-content button, .modal button');
+    if (!btn || btn.disabled) return;
+    const r = btn.getBoundingClientRect(), size = Math.max(r.width, r.height);
+    const dot = document.createElement('span');
+    dot.className = 'ir-ripple';
+    dot.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+    btn.appendChild(dot);
+    dot.addEventListener('animationend', () => dot.remove());
+  });
+
+  // ── sidebar items are divs: Enter / Space open them like links ───────
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const item = e.target.closest && e.target.closest('div.nav-item[role="link"]');
+    if (!item) return;
+    e.preventDefault();
+    item.click();
+  });
 })();

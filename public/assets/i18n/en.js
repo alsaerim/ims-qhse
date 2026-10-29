@@ -1,5 +1,10 @@
 /* ISO Radar — English dictionary (generated). Keys are the Arabic UI strings exactly as authored. */
-window.IR_EN = {"حسب تحليل الفجوة للمعايير":"From the standards gap analysis",
+window.IR_EN = {"تقييم المخاطر ومصفوفة الاحتمالية والتأثير":"Risk assessment and the likelihood × impact matrix",
+"مبادرات الجودة والسلامة على مدار العام":"Quality and safety initiatives across the year",
+"الامتثال والمخاطر":"Compliance & risk",
+"التحسين المستمر":"Continuous improvement",
+"القائمة الرئيسية":"Main menu",
+"حسب تحليل الفجوة للمعايير":"From the standards gap analysis",
 "الأداء":"Performance",
 "الإدارة البيئية":"Environmental management",
 "؟":"?",

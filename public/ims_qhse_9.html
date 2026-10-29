@@ -235,6 +235,7 @@ window.hydrateGlobalData = async function() {
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
 <link rel="stylesheet" href="/assets/isoradar.css"/>
+<link rel="stylesheet" href="/assets/isoradar-app.css"/>
 </head>
 <body>
 
@@ -267,90 +268,35 @@ window.hydrateGlobalData = async function() {
     </div>
   </div>
 
-  <!-- Nav: scrollable -->
-  <nav class="p-2 mt-2 flex-1 overflow-y-auto" style="scrollbar-width:thin;scrollbar-color:#2a3e5c transparent;">
-    <div class="text-xs text-slate-500 px-3 mb-2 uppercase tracking-wider sidebar-section-title">لوحة التحكم</div>
-    <div class="nav-item active" onclick="navigate('dashboard')">
-      <i class="fas fa-tachometer-alt w-4"></i><span class="sidebar-label">نظرة عامة</span>
-    </div>
-    <div class="nav-item" onclick="navigate('map')">
-      <i class="fas fa-map-marked-alt w-4"></i><span class="sidebar-label">خارطة المشاريع</span>
-    </div>
-    <div class="nav-item" onclick="navigate('kpis')">
-      <i class="fas fa-chart-line w-4"></i><span class="sidebar-label">مؤشرات الأداء KPIs</span>
-    </div>
-
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الإدارة</div>
-    <div class="nav-item" onclick="navigate('projects')">
-      <i class="fas fa-building w-4"></i><span class="sidebar-label">المشاريع</span>
-    </div>
-    <div class="nav-item" onclick="navigate('inspections')">
-      <i class="fas fa-clipboard-check w-4"></i><span class="sidebar-label">التفتيش والمراجعة</span>
-    </div>
-    <div class="nav-item" onclick="navigate('nc')">
-      <i class="fas fa-exclamation-triangle w-4"></i>
-      <span class="sidebar-label">عدم المطابقة</span>
-      <span class="badge badge-red text-xs mr-auto" id="nc-count-badge" style="display:none">0</span>
-    </div>
-
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الامتثال</div>
-    <div class="nav-item" onclick="navigate('incidents')">
-      <i class="fas fa-person-falling-burst w-4"></i><span class="sidebar-label">الحوادث والإصابات</span>
-    </div>
-    <div class="nav-item" onclick="navigate('risks')">
-      <i class="fas fa-shield-halved w-4"></i><span class="sidebar-label">سجل المخاطر</span>
-    </div>
-    <div class="nav-item" onclick="navigate('documents')">
-      <i class="fas fa-folder-tree w-4"></i><span class="sidebar-label">ضبط الوثائق</span>
-    </div>
-    <div class="nav-item" onclick="navigate('training')">
-      <i class="fas fa-user-graduate w-4"></i><span class="sidebar-label">التدريب والكفاءات</span>
-    </div>
-    <div class="nav-item" onclick="navigate('annual')">
-      <i class="fas fa-calendar-check w-4"></i><span class="sidebar-label">الخطة السنوية</span>
-    </div>
-
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">Lean Six Sigma</div>
-    <div class="nav-item" onclick="navigate('rca')">
-      <i class="fas fa-search w-4"></i><span class="sidebar-label">تحليل الأسباب RCA</span>
-    </div>
-    <div class="nav-item" onclick="navigate('lean')">
-      <i class="fas fa-recycle w-4"></i><span class="sidebar-label">تحليل الهدر Muda</span>
-    </div>
-
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">التقارير</div>
-    <div class="nav-item" onclick="navigate('reports')">
-      <i class="fas fa-file-pdf w-4"></i><span class="sidebar-label">التقارير Audit-Ready</span>
-    </div>
-
-    <div class="text-xs text-slate-500 px-3 mb-2 mt-4 uppercase tracking-wider sidebar-section-title">الإعدادات</div>
-    <div class="nav-item" onclick="navigate('org')">
-      <i class="fas fa-sitemap w-4"></i><span class="sidebar-label">المنظمة</span>
-    </div>
-    <div class="nav-item" onclick="navigate('profile')">
-      <i class="fas fa-id-badge w-4"></i><span class="sidebar-label">ملفي الشخصي</span>
-    </div>
-    <div class="nav-item" onclick="navigate('users')">
-      <i class="fas fa-users-cog w-4"></i><span class="sidebar-label">إدارة المستخدمين</span>
-    </div>
-    <div class="nav-item" onclick="navigate('tasks')">
-      <i class="fas fa-th-large w-4"></i><span class="sidebar-label">لوحة المهام</span>
-    </div>
-    <div class="nav-item" onclick="navigate('integrations')">
-      <i class="fas fa-plug w-4"></i><span class="sidebar-label">الأدوات والربط</span>
-    </div>
-    <div class="nav-item" onclick="navigate('advisory')" style="position:relative;">
-      <i class="fas fa-chess-king w-4"></i>
-      <span class="sidebar-label">المجلس الاستشاري AI</span>
-      <span class="sidebar-label" style="margin-right:auto;background:linear-gradient(135deg,#1d5fa8,#a855f7);color:white;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:800;">👑</span>
-    </div>
-    <div class="nav-item" onclick="navigate('subscription')">
-      <i class="fas fa-crown w-4"></i><span class="sidebar-label">الاشتراكات والفواتير</span>
-    </div>
-    <div class="nav-item" onclick="location.href='/mobile'" title="فتح تطبيق الجوال">
-      <i class="fas fa-mobile-alt w-4"></i><span class="sidebar-label">تطبيق الجوال</span>
-      <i class="fas fa-external-link-alt text-xs mr-auto opacity-50 sidebar-label"></i>
-    </div>
+  <!-- Nav: grouped by how quality work flows -->
+  <nav class="ir-nav flex-1 overflow-y-auto" aria-label="القائمة الرئيسية">
+    <div class="sidebar-section-title">الرئيسية</div>
+    <div class="nav-item active" role="link" tabindex="0" onclick="navigate('dashboard')"><i class="fas fa-gauge-high w-4" aria-hidden="true"></i><span class="sidebar-label">نظرة عامة</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('tasks')"><i class="fas fa-table-columns w-4" aria-hidden="true"></i><span class="sidebar-label">لوحة المهام</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('kpis')"><i class="fas fa-chart-line w-4" aria-hidden="true"></i><span class="sidebar-label">مؤشرات الأداء KPIs</span></div>
+    <div class="sidebar-section-title">العمليات</div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('projects')"><i class="fas fa-building w-4" aria-hidden="true"></i><span class="sidebar-label">المشاريع</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('map')"><i class="fas fa-map-location-dot w-4" aria-hidden="true"></i><span class="sidebar-label">خارطة المشاريع</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('inspections')"><i class="fas fa-clipboard-check w-4" aria-hidden="true"></i><span class="sidebar-label">التفتيش والمراجعة</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('nc')"><i class="fas fa-triangle-exclamation w-4" aria-hidden="true"></i><span class="sidebar-label">عدم المطابقة</span><span class="badge badge-red text-xs mr-auto" id="nc-count-badge" style="display:none">0</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('incidents')"><i class="fas fa-person-falling-burst w-4" aria-hidden="true"></i><span class="sidebar-label">الحوادث والإصابات</span></div>
+    <div class="sidebar-section-title">الامتثال والمخاطر</div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('risks')"><i class="fas fa-shield-halved w-4" aria-hidden="true"></i><span class="sidebar-label">سجل المخاطر</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('documents')"><i class="fas fa-folder-tree w-4" aria-hidden="true"></i><span class="sidebar-label">ضبط الوثائق</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('training')"><i class="fas fa-user-graduate w-4" aria-hidden="true"></i><span class="sidebar-label">التدريب والكفاءات</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('annual')"><i class="fas fa-calendar-check w-4" aria-hidden="true"></i><span class="sidebar-label">الخطة السنوية</span></div>
+    <div class="sidebar-section-title">التحسين المستمر</div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('rca')"><i class="fas fa-magnifying-glass-chart w-4" aria-hidden="true"></i><span class="sidebar-label">تحليل الأسباب RCA</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('lean')"><i class="fas fa-recycle w-4" aria-hidden="true"></i><span class="sidebar-label">تحليل الهدر Muda</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('advisory')"><i class="fas fa-chess-king w-4" aria-hidden="true"></i><span class="sidebar-label">المجلس الاستشاري AI</span><span class="sidebar-label ir-pro">PRO</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('reports')"><i class="fas fa-file-pdf w-4" aria-hidden="true"></i><span class="sidebar-label">التقارير Audit-Ready</span></div>
+    <div class="sidebar-section-title">الإعدادات</div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('org')"><i class="fas fa-sitemap w-4" aria-hidden="true"></i><span class="sidebar-label">المنظمة</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('users')"><i class="fas fa-users-gear w-4" aria-hidden="true"></i><span class="sidebar-label">إدارة المستخدمين</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('integrations')"><i class="fas fa-plug w-4" aria-hidden="true"></i><span class="sidebar-label">الأدوات والربط</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('subscription')"><i class="fas fa-crown w-4" aria-hidden="true"></i><span class="sidebar-label">الاشتراكات والفواتير</span></div>
+    <div class="nav-item" role="link" tabindex="0" onclick="navigate('profile')"><i class="fas fa-id-badge w-4" aria-hidden="true"></i><span class="sidebar-label">ملفي الشخصي</span></div>
+    <a class="nav-item" href="/mobile" title="فتح تطبيق الجوال"><i class="fas fa-mobile-screen w-4" aria-hidden="true"></i><span class="sidebar-label">تطبيق الجوال</span><i class="fas fa-arrow-up-right-from-square text-xs mr-auto opacity-60 sidebar-label" aria-hidden="true"></i></a>
   </nav>
 
   <!-- User Info: sticky footer -->
@@ -536,9 +482,9 @@ window.hydrateGlobalData = async function() {
             <label class="text-sm font-medium text-slate-700 block mb-1">النوع</label>
             <select class="form-input" name="type">
               <option value="critical">حرجة</option>
-              <option value="major" selected>🟠 رئيسية</option>
+              <option value="major" selected>رئيسية</option>
               <option value="minor">ثانوية</option>
-              <option value="observation">🔵 ملاحظة</option>
+              <option value="observation">ملاحظة</option>
             </select>
           </div>
           <div>
@@ -1794,7 +1740,7 @@ async function openInspDetail(id) {
   };
   if (!i) return;
 
-  const resultMap  = {pass:'✅ ناجح', fail:'❌ فاشل', partial:'⚠️ جزئي'};
+  const resultMap  = {pass:'ناجح', fail:'فاشل', partial:'جزئي'};
   const statusClr  = {completed:'#17796f', in_progress:'#9a6700', pending:'#22A699', overdue:'#b42318', cancelled:'#5d6b7e'};
   const headerClr  = statusClr[i.status] || '#22A699';
   const isOverdue  = i.status === 'overdue';
@@ -1926,7 +1872,7 @@ async function openInspEdit(id) {
   ].map(([v,l]) => `<option value="${v}" ${v===i.status?'selected':''}>${l}</option>`).join('');
 
   const resultOpts = [
-    ['','-- لم يُحدد --'], ['pass','✅ ناجح'], ['fail','❌ فاشل'], ['partial','⚠️ جزئي']
+    ['','-- لم يُحدد --'], ['pass','ناجح'], ['fail','فاشل'], ['partial','جزئي']
   ].map(([v,l]) => `<option value="${v}" ${v===(i.result||'')?'selected':''}>${l}</option>`).join('');
 
   const typeOpts = [
@@ -2550,10 +2496,10 @@ async function openNewRCAModal() {
   });
 
   var methOpts = [
-    ['5_whys','🔍 5 Whys — لماذا × 5'],
-    ['ishikawa','🐟 Ishikawa — مخطط العظمة'],
-    ['pareto','📊 Pareto — قاعدة 80/20'],
-    ['fmea','⚙️ FMEA — تحليل أنماط الفشل']
+    ['5_whys','5 Whys — لماذا × 5'],
+    ['ishikawa','Ishikawa — مخطط العظمة'],
+    ['pareto','Pareto — قاعدة 80/20'],
+    ['fmea','FMEA — تحليل أنماط الفشل']
   ].map(function(m){
     return '<option value="'+m[0]+'">'+m[1]+'</option>';
   }).join('');
@@ -2585,7 +2531,7 @@ async function openNewRCAModal() {
         '<div>' +
           '<label class="text-sm font-bold text-slate-700 block mb-2">منهجية التحليل *</label>' +
           '<div class="grid grid-cols-2 gap-2" id="rca-meth-pills">' +
-            [['5_whys','🔍 5 Whys','#1d5fa8'],['ishikawa','🐟 Ishikawa','#17796f'],['pareto','📊 Pareto','#9a6700'],['fmea','⚙️ FMEA','#17796f']].map(function(m){
+            [['5_whys','5 Whys','#1d5fa8'],['ishikawa','Ishikawa','#17796f'],['pareto','Pareto','#9a6700'],['fmea','FMEA','#17796f']].map(function(m){
               return '<button type="button" onclick="selectRCAMeth(\''+m[0]+'\')" id="rca-meth-'+m[0]+'" '+
                 'class="py-2.5 px-3 rounded-xl text-sm font-bold border-2 transition-all text-right" '+
                 'style="border-color:'+(m[0]==='5_whys'?m[2]:'#e3e8ef')+';background:'+(m[0]==='5_whys'?m[2]:'white')+';color:'+(m[0]==='5_whys'?'white':m[2])+'">'+
@@ -4803,11 +4749,11 @@ async function loadOrganization() {
       {aspect:'الهدف الجوهري',vals:{ISO_9001:'رضا العميل وجودة المنتج',ISO_45001:'السلامة والصحة المهنية للعمال',ISO_14001:'تحسين الأداء البيئي',ISO_27001:'حماية المعلومات وأمنها'}},
       {aspect:'المستفيد الأساسي',vals:{ISO_9001:'العميل',ISO_45001:'العامل / الموظف',ISO_14001:'المجتمع والبيئة',ISO_27001:'أصحاب المعلومات والبيانات'}},
       {aspect:'تحليل المخاطر',vals:{ISO_9001:'مخاطر الجودة والعمليات',ISO_45001:'أخطار ومخاطر السلامة المهنية',ISO_14001:'جوانب وتأثيرات بيئية',ISO_27001:'مخاطر أمن المعلومات وضوابط Annex A'}},
-      {aspect:'المشاركة والتشاور',vals:{ISO_9001:'❌ غير مطلوب صراحةً',ISO_45001:'✅ مشاركة العمال والتشاور معهم إلزامي',ISO_14001:'⚠️ تواصل مع الأطراف الخارجية',ISO_27001:'⚠️ الوعي الأمني للموظفين'}},
-      {aspect:'التحقيق في الحوادث',vals:{ISO_9001:'❌ ليس متطلباً محدداً',ISO_45001:'✅ التحقيق في الحوادث وعدم المطابقة OH&S',ISO_14001:'⚠️ الطوارئ البيئية',ISO_27001:'✅ إدارة الحوادث الأمنية'}},
-      {aspect:'التواصل الخارجي',vals:{ISO_9001:'⚠️ مع العملاء والموردين',ISO_45001:'⚠️ مع الجهات التنظيمية',ISO_14001:'✅ إلزامي مع الجهات البيئية والمجتمع',ISO_27001:'⚠️ عند الحوادث الأمنية'}},
+      {aspect:'المشاركة والتشاور',vals:{ISO_9001:'غير مطلوب صراحةً',ISO_45001:'مشاركة العمال والتشاور معهم إلزامي',ISO_14001:'تواصل مع الأطراف الخارجية',ISO_27001:'الوعي الأمني للموظفين'}},
+      {aspect:'التحقيق في الحوادث',vals:{ISO_9001:'ليس متطلباً محدداً',ISO_45001:'التحقيق في الحوادث وعدم المطابقة OH&S',ISO_14001:'الطوارئ البيئية',ISO_27001:'إدارة الحوادث الأمنية'}},
+      {aspect:'التواصل الخارجي',vals:{ISO_9001:'مع العملاء والموردين',ISO_45001:'مع الجهات التنظيمية',ISO_14001:'إلزامي مع الجهات البيئية والمجتمع',ISO_27001:'عند الحوادث الأمنية'}},
       {aspect:'متطلبات التوثيق الخاصة',vals:{ISO_9001:'ضبط الجودة، مراجعة العميل، التصميم',ISO_45001:'تقييم المخاطر، إذن العمل، التحقيق',ISO_14001:'الجوانب البيئية، الامتثال القانوني',ISO_27001:'SOA، سياسة ISMS، سجل الأصول'}},
-      {aspect:'الهيكل العالي Level (HLS)',vals:{ISO_9001:'✅ البنى المشتركة للبنود 4-10',ISO_45001:'✅ البنى المشتركة للبنود 4-10',ISO_14001:'✅ البنى المشتركة للبنود 4-10',ISO_27001:'✅ البنى المشتركة للبنود 4-10'}},
+      {aspect:'الهيكل العالي Level (HLS)',vals:{ISO_9001:'البنى المشتركة للبنود 4-10',ISO_45001:'البنى المشتركة للبنود 4-10',ISO_14001:'البنى المشتركة للبنود 4-10',ISO_27001:'البنى المشتركة للبنود 4-10'}},
     ];
   }
   const comparisonRows = window.MOCK_DB.comparisonRows;
@@ -4985,7 +4931,7 @@ async function loadOrganization() {
                     class="badge text-xs cursor-pointer transition-all hover:opacity-80"
                     style="background:${(org.certified_standards||[]).includes(std.code)?'#e3f5f2':'#eef2f6'};color:${(org.certified_standards||[]).includes(std.code)?'#17796f':'#5d6b7e'};border:none"
                     title="انقر لتغيير حالة الاعتماد">
-                    ${(org.certified_standards||[]).includes(std.code) ? '✅ معتمد' : '⏳ غير معتمد'}
+                    ${(org.certified_standards||[]).includes(std.code) ? 'معتمد' : 'غير معتمد'}
                   </button>
                   <button onclick="openGapAssessment('${std.id}','${std.code}','${std.name}','${color}')"
                     class="p-1.5 rounded-lg transition-all"
@@ -5377,7 +5323,7 @@ function openProcedureModal(stdId, color, proc) {
   var isEdit = !!proc;
 
   var statusOpts = ['active','review','draft','retired'].map(function(s){
-    var labels = {active:'✅ نشط', review:'⚠️ مراجعة', draft:'📝 مسودة', retired:'🚫 متقاعد'};
+    var labels = {active:'نشط', review:'مراجعة', draft:'مسودة', retired:'متقاعد'};
     return '<option value="'+s+'"'+(proc&&proc.status===s?' selected':(!proc&&s==='active'?' selected':''))+'>'+labels[s]+'</option>';
   }).join('');
 
@@ -5549,13 +5495,13 @@ function openAddStandardModal() {
           '<div>' +
             '<label class="text-sm font-medium text-slate-700 block mb-1">أيقونة</label>' +
             '<select class="form-input" id="std-icon">' +
-              '<option value="certificate">🏅 شهادة</option>' +
-              '<option value="award">🏆 جائزة</option>' +
-              '<option value="hard-hat">⛑️ سلامة</option>' +
-              '<option value="leaf">🌿 بيئة</option>' +
-              '<option value="shield-alt">🛡️ أمن</option>' +
-              '<option value="cogs">⚙️ عمليات</option>' +
-              '<option value="chart-line">📈 أداء</option>' +
+              '<option value="certificate">شهادة</option>' +
+              '<option value="award">جائزة</option>' +
+              '<option value="hard-hat">سلامة</option>' +
+              '<option value="leaf">بيئة</option>' +
+              '<option value="shield-alt">أمن</option>' +
+              '<option value="cogs">عمليات</option>' +
+              '<option value="chart-line">أداء</option>' +
             '</select>' +
           '</div>' +
         '</div>' +
@@ -5926,11 +5872,11 @@ function toggleStdCertified(code) {
   var btn = document.getElementById('std-cert-btn-' + code);
   if (btn) {
     if (!isCert) {
-      btn.textContent = '✅ معتمد';
+      btn.textContent = 'معتمد';
       btn.style.background = '#e3f5f2';
       btn.style.color = '#17796f';
     } else {
-      btn.textContent = '⏳ غير معتمد';
+      btn.textContent = 'غير معتمد';
       btn.style.background = '#eef2f6';
       btn.style.color = '#5d6b7e';
     }
@@ -7066,7 +7012,7 @@ function openRiskView(id) {
 
       <!-- Badges -->
       <div class="flex flex-wrap gap-2">
-        <span class="badge" style="background:${lvClr}18;color:${lvClr}">⚠ ${lvAr}</span>
+        <span class="badge" style="background:${lvClr}18;color:${lvClr}">${lvAr}</span>
         <span class="badge ${risk.status==='open'?'badge-red':risk.status==='mitigated'?'badge-green':'badge-yellow'}">${stAr}</span>
         <span class="badge badge-gray">${catAr}</span>
         ${risk.iso&&risk.iso!=='MULTI'?`<span class="badge badge-blue">${risk.iso.replace('_',' ')}</span>`:''}
@@ -7613,7 +7559,7 @@ async function loadMap() {
     window._leafletMap = map;
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom:18, attribution:'© OpenStreetMap'
+      maxZoom:18, attribution:'OpenStreetMap'
     }).addTo(map);
 
     const leafletMarkers = {};
@@ -8701,7 +8647,7 @@ function buildReportHTML(type, preview=false) {
             <td style="${tdStyle}">${i.project_name}</td>
             <td style="${tdStyle}">${isoLabel(i.iso_standard)||'—'}</td>
             <td style="${tdStyle};font-weight:bold;color:${i.compliance_score>=90?'#17796f':i.compliance_score>=75?'#9a6700':'#b42318'}">${i.compliance_score||0}%</td>
-            <td style="${tdStyle}">${i.result==='pass'?'✅ ناجح':i.result==='fail'?'❌ فاشل':'—'}</td>
+            <td style="${tdStyle}">${i.result==='pass'?'ناجح':i.result==='fail'?'فاشل':'—'}</td>
           </tr>`).join('')}
         </tbody>
       </table>`);
@@ -8947,7 +8893,7 @@ function buildReportHTML(type, preview=false) {
             <td style="${tdStyle}">${mudaAr[w.muda_type]||w.muda_type}</td>
             <td style="${tdStyle};font-weight:bold;color:${w.priority==='critical'?'#b42318':w.priority==='high'?'#9a6700':'#22A699'}">${w.priority==='critical'?'حرجة':w.priority==='high'?'عالية':'متوسطة'}</td>
             <td style="${tdStyle};font-weight:bold;color:${w.impact_score>=8?'#b42318':w.impact_score>=5?'#9a6700':'#17796f'}">${w.impact_score}/10</td>
-            <td style="${tdStyle}">${w.status==='closed'?'✅ مُعالج':w.status==='in_progress'?'🔄 جارٍ':'⭕ مفتوح'}</td>
+            <td style="${tdStyle}">${w.status==='closed'?'مُعالج':w.status==='in_progress'?'جارٍ':'مفتوح'}</td>
             <td style="${tdStyle};color:#17796f;font-weight:bold">${(w.estimated_saving||0).toLocaleString('ar-SA')}</td>
           </tr>`).join('')}
         </tbody>
@@ -8998,7 +8944,7 @@ function downloadReport(type) {
   </style>
 </head>
 <body>
-  <button class="print-btn" onclick="window.print()">🖨️ طباعة / PDF</button>
+  <button class="print-btn" onclick="window.print()">طباعة / PDF</button>
   <div class="wrapper">
     ${buildReportHTML(type, false)}
   </div>
@@ -9326,13 +9272,29 @@ function ncStatusAr(s) { s=(s||'').toLowerCase(); return {open:'مفتوحة',un
 function ncStatusBadge(s) { s=(s||'').toLowerCase(); return {open:'badge-red',under_investigation:'badge-yellow',in_progress:'badge-yellow',pending_verification:'badge-blue',closed:'badge-green',cancelled:'badge-gray',overdue:'badge-red'}[s] || 'badge-gray'; }
 function inspStatusAr(s) { return {pending:'قيد الانتظار',in_progress:'جارٍ',completed:'مكتمل',cancelled:'ملغى',overdue:'متأخر'}[s] || s; }
 
+// Toasts stack in one live region, carry an icon for their type and can be dismissed
 function showToast(msg, type = 'info') {
-  const div = document.createElement('div');
-  const colors = { success: '#17796f', error: '#b42318', info: '#22A699', warning: '#9a6700' };
-  div.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;background:${colors[type]};color:white;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeIn 0.3s ease`;
-  div.textContent = msg;
-  document.body.appendChild(div);
-  setTimeout(() => div.remove(), 4000);
+  const kinds = {
+    success: ['#0F6E4D', 'circle-check'], error: ['#B42318', 'circle-exclamation'],
+    warning: ['#8A5000', 'triangle-exclamation'], info: ['#0E7C70', 'circle-info'],
+  };
+  const [clr, icon] = kinds[type] || kinds.info;
+  let host = document.querySelector('.ir-toasts');
+  if (!host) {
+    host = document.createElement('div');
+    host.className = 'ir-toasts';
+    host.setAttribute('role', 'status');
+    host.setAttribute('aria-live', 'polite');
+    document.body.appendChild(host);
+  }
+  const t = document.createElement('div');
+  t.className = 'ir-toast';
+  t.innerHTML = `<span class="ir-toast-ic" style="background:${clr}"><i class="fas fa-${icon}"></i></span><span></span><button class="ir-toast-x" type="button" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>`;
+  t.children[1].textContent = String(msg).replace(/^[☀-➿\u{1F300}-\u{1FAFF}]️?\s*/u, '');
+  const close = () => { t.classList.add('out'); setTimeout(() => t.remove(), 300); };
+  t.querySelector('.ir-toast-x').onclick = close;
+  host.appendChild(t);
+  setTimeout(close, type === 'error' ? 6000 : 4000);
 }
 
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
@@ -10756,8 +10718,8 @@ function openTaskEdit(id) {
 
   var statusOpts = [
     ['todo','قيد الانتظار'],
-    ['inprogress','⚡ قيد التنفيذ'],
-    ['review','👁 مراجعة'],
+    ['inprogress','قيد التنفيذ'],
+    ['review','مراجعة'],
     ['done','مكتملة']
   ].map(function(s){
     return '<option value="'+s[0]+'"'+(s[0]===task.status?' selected':'')+'>'+s[1]+'</option>';
@@ -11630,27 +11592,27 @@ function advGenPDF() {
 
         // شركاء رئيسيون
         + '<td style="'+bodyStyle+'width:18%;background:#fef9ff;" rowspan="2">'
-        + '<div style="font-weight:800;font-size:10px;color:#1d5fa8;border-bottom:1px solid #1d5fa830;padding-bottom:4px;margin-bottom:6px;">🤝 الشركاء الرئيسيون</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#1d5fa8;border-bottom:1px solid #1d5fa830;padding-bottom:4px;margin-bottom:6px;">الشركاء الرئيسيون</div>'
         + cell(partners,'#1d5fa8','#fef9ff')+'</td>'
 
         // أنشطة رئيسية
         + '<td style="'+bodyStyle+'width:16%;background:#f1faf8;">'
-        + '<div style="font-weight:800;font-size:10px;color:#125f57;border-bottom:1px solid #125f5730;padding-bottom:4px;margin-bottom:6px;">⚡ الأنشطة الرئيسية</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#125f57;border-bottom:1px solid #125f5730;padding-bottom:4px;margin-bottom:6px;">الأنشطة الرئيسية</div>'
         + cell(activities,'#125f57','#f1faf8')+'</td>'
 
         // القيمة المقدمة — أكبر خلية
         + '<td style="'+bodyStyle+'width:22%;background:#f0fdf4;border:2px solid #17796f;" rowspan="2">'
-        + '<div style="font-weight:800;font-size:11px;color:#17796f;border-bottom:2px solid #17796f;padding-bottom:5px;margin-bottom:8px;text-align:center;">💎 القيمة المقدمة</div>'
+        + '<div style="font-weight:800;font-size:11px;color:#17796f;border-bottom:2px solid #17796f;padding-bottom:5px;margin-bottom:8px;text-align:center;">القيمة المقدمة</div>'
         + cell(value,'#17796f','#f0fdf4')+'</td>'
 
         // العلاقات مع العملاء
         + '<td style="'+bodyStyle+'width:16%;background:#fffbeb;">'
-        + '<div style="font-weight:800;font-size:10px;color:#9a6700;border-bottom:1px solid #9a6700 30;padding-bottom:4px;margin-bottom:6px;">❤️ علاقات العملاء</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#9a6700;border-bottom:1px solid #9a6700 30;padding-bottom:4px;margin-bottom:6px;">علاقات العملاء</div>'
         + cell(relations,'#9a6700','#fffbeb')+'</td>'
 
         // شرائح العملاء
         + '<td style="'+bodyStyle+'width:28%;background:#fff5f5;" rowspan="2">'
-        + '<div style="font-weight:800;font-size:10px;color:#b42318;border-bottom:1px solid #b4231830;padding-bottom:4px;margin-bottom:6px;">👥 شرائح العملاء</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#b42318;border-bottom:1px solid #b4231830;padding-bottom:4px;margin-bottom:6px;">شرائح العملاء</div>'
         + cell(segments,'#b42318','#fff5f5')+'</td>'
 
       + '</tr>'
@@ -11659,11 +11621,11 @@ function advGenPDF() {
       + '<tr style="height:120px;">'
 
         + '<td style="'+bodyStyle+'background:#f1faf8;">'
-        + '<div style="font-weight:800;font-size:10px;color:#125f57;border-bottom:1px solid #125f5730;padding-bottom:4px;margin-bottom:6px;">🏗️ الموارد الرئيسية</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#125f57;border-bottom:1px solid #125f5730;padding-bottom:4px;margin-bottom:6px;">الموارد الرئيسية</div>'
         + cell(resources,'#125f57','#f1faf8')+'</td>'
 
         + '<td style="'+bodyStyle+'background:#fffbeb;">'
-        + '<div style="font-weight:800;font-size:10px;color:#9a6700;border-bottom:1px solid #9a6700 30;padding-bottom:4px;margin-bottom:6px;">📡 القنوات</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#9a6700;border-bottom:1px solid #9a6700 30;padding-bottom:4px;margin-bottom:6px;">القنوات</div>'
         + cell(channels,'#9a6700','#fffbeb')+'</td>'
 
       + '</tr>'
@@ -11671,13 +11633,13 @@ function advGenPDF() {
       // ── الصف الأخير: هيكل التكاليف + مصادر الإيرادات ──
       + '<tr style="height:100px;background:#F4F7FA;">'
         + '<td colspan="2" style="'+bodyStyle+'background:#fef2f2;">'
-        + '<div style="font-weight:800;font-size:10px;color:#b42318;border-bottom:1px solid #b4231830;padding-bottom:4px;margin-bottom:6px;">💸 هيكل التكاليف</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#b42318;border-bottom:1px solid #b4231830;padding-bottom:4px;margin-bottom:6px;">هيكل التكاليف</div>'
         + cell(costs,'#b42318','#fef2f2')+'</td>'
 
         + '<td style="'+bodyStyle+'background:white;border:none;"></td>' // خلية فاصلة
 
         + '<td colspan="2" style="'+bodyStyle+'background:#f0fdf4;">'
-        + '<div style="font-weight:800;font-size:10px;color:#17796f;border-bottom:1px solid #17796f30;padding-bottom:4px;margin-bottom:6px;">💰 مصادر الإيرادات</div>'
+        + '<div style="font-weight:800;font-size:10px;color:#17796f;border-bottom:1px solid #17796f30;padding-bottom:4px;margin-bottom:6px;">مصادر الإيرادات</div>'
         + cell(revenues,'#17796f','#f0fdf4')+'</td>'
       + '</tr>'
 
@@ -11859,7 +11821,7 @@ function advGenPDF() {
     +'table{width:100%;border-collapse:collapse;}'
   +'</style></head><body>'
 
-  +'<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>'
+  +'<button class="print-btn" onclick="window.print()">طباعة / حفظ PDF</button>'
 
   // ══ غلاف ══════════════════════════════════════════════════
   +'<div class="a4 cover">'
@@ -12316,7 +12278,7 @@ function subDownloadInvoice(id, file) {
 </style></head>
 <body>
 <div class="header">
-  <div class="logo">🛡 آيزو رادار</div>
+  <div class="logo">آيزو رادار</div>
   <div style="opacity:.75;font-size:12px;">نظام إدارة الامتثال المتكامل · Integrated Compliance Management System</div>
   <div class="inv-num">فاتورة ضريبية ${id}</div>
 </div>
@@ -12869,7 +12831,7 @@ async function intOpenConfig(tool) {
       : `<input class="form-input" style="padding:7px 10px;font-size:13px;" type="${f.t}" placeholder="${f.p}" value="${val}" dir="ltr"/>`;
     return `<div><label class="text-xs font-semibold text-slate-600 block mb-1">${f.l}</label>${inp}</div>`;
   }).join('') + `
-    ${existing ? `<div class="text-xs text-green-600 font-semibold py-1">✅ متصل — آخر مزامنة: ${existing.last_sync_at ? new Date(existing.last_sync_at).toLocaleString('ar-SA') : 'لم تتم بعد'}</div>` : ''}
+    ${existing ? `<div class="text-xs text-green-600 font-semibold py-1">متصل — آخر مزامنة: ${existing.last_sync_at ? new Date(existing.last_sync_at).toLocaleString('ar-SA') : 'لم تتم بعد'}</div>` : ''}
     <div class="flex gap-2 pt-2 border-t border-slate-100">
       <button class="btn text-xs" style="background:#eef2f6;color:#125f57;padding:7px 12px;" onclick="intTestConn('${tool}')"><i class="fas fa-vial ml-1"></i>اختبار</button>
       <button class="btn btn-primary flex-1 text-xs" style="padding:7px 12px;" onclick="intSaveConfig('${tool}')"><i class="fas fa-save ml-1"></i>حفظ</button>

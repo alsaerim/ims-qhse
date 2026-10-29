@@ -34,12 +34,21 @@ const pages = {
   '/mobile':           'ims_mobile.html',
   '/mobile-login':     'ims_mobile_login.html',
   '/advisory-council': 'ims_advisory_council.html',
+  '/about':            'about.html',
+  '/privacy':          'privacy.html',
+  '/terms':            'terms.html',
+  '/en/about':         'about_en.html',
+  '/en/privacy':       'privacy_en.html',
+  '/en/terms':         'terms_en.html',
 };
 
 app.get('{*path}', (req, res) => {
-  const page = pages[req.path];
+  // "/app/" and "/app" are the same page
+  const p = req.path.length > 1 ? req.path.replace(/\/+$/, '') : req.path;
+  const page = pages[p];
   if (page) return res.sendFile(path.join(__dirname, 'public', page));
-  res.sendFile(path.join(__dirname, 'public', 'ims_landing.html'));
+  // anything else is a real 404, not a silent copy of the home page
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
 const PORT = process.env.PORT || 3000;

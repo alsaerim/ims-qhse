@@ -368,13 +368,25 @@
     training: () => loadRegister('training'),
     profile: loadProfile,
     // shortcuts into existing Organization tabs
-    risks: () => { baseNavigate('org'); setTimeout(() => window.switchOrgTab && switchOrgTab('risks'), 400); },
-    annual: () => { baseNavigate('org'); setTimeout(() => window.switchOrgTab && switchOrgTab('annual'), 400); },
+    risks: () => openOrgTab('risks'),
+    annual: () => openOrgTab('annual'),
   };
   const TITLES = {
     incidents: REGISTERS.incidents.title, documents: REGISTERS.documents.title, training: REGISTERS.training.title,
     profile: ['ملفي الشخصي', 'بياناتك وكلمة المرور'],
+    risks: ['سجل المخاطر', 'تقييم المخاطر ومصفوفة الاحتمالية والتأثير'],
+    annual: ['الخطة السنوية', 'مبادرات الجودة والسلامة على مدار العام'],
   };
+  // these two live as tabs of the Organization page; the header names the tab, not the page
+  function openOrgTab(tab) {
+    baseNavigate('org');
+    setTimeout(() => {
+      if (window.switchOrgTab) switchOrgTab(tab);
+      const [t, s] = TITLES[tab];
+      document.getElementById('page-title').textContent = t;
+      document.getElementById('page-subtitle').textContent = s;
+    }, 400);
+  }
 
   const baseNavigate = window.navigate;
   window.navigate = function (page) {

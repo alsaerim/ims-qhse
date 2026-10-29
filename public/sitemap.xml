@@ -12,4 +12,34 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://isoradar.com/"/>
   </url>
+  <url>
+    <loc>https://isoradar.com/about</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://isoradar.com/about"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en/about"/>
+  </url>
+  <url>
+    <loc>https://isoradar.com/en/about</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://isoradar.com/about"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en/about"/>
+  </url>
+  <url>
+    <loc>https://isoradar.com/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://isoradar.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en/privacy"/>
+  </url>
+  <url>
+    <loc>https://isoradar.com/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://isoradar.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en/privacy"/>
+  </url>
+  <url>
+    <loc>https://isoradar.com/terms</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://isoradar.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en/terms"/>
+  </url>
+  <url>
+    <loc>https://isoradar.com/en/terms</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://isoradar.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://isoradar.com/en/terms"/>
+  </url>
 </urlset>
