@@ -535,9 +535,9 @@ window.hydrateGlobalData = async function() {
           <div>
             <label class="text-sm font-medium text-slate-700 block mb-1">النوع</label>
             <select class="form-input" name="type">
-              <option value="critical">🔴 حرجة</option>
+              <option value="critical">حرجة</option>
               <option value="major" selected>🟠 رئيسية</option>
-              <option value="minor">🟡 ثانوية</option>
+              <option value="minor">ثانوية</option>
               <option value="observation">🔵 ملاحظة</option>
             </select>
           </div>
@@ -721,42 +721,32 @@ async function loadDashboard() {
           <h2 class="text-xl font-black text-white">${org.name || 'نظام آيزو رادار'}</h2>
           <p class="text-blue-200 text-sm mt-1">${[org.industry, org.city, ...(org.certified_standards||[]).map(s=>s.replace('_',' '))].filter(Boolean).join(' · ') || 'أكمل ملف المنظمة من الإعدادات'}</p>
         </div>
-        <div class="flex gap-3 flex-wrap">
-          <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
-            <div class="text-2xl font-black text-white">${s.inspections?.avg_score||0}%</div>
-            <div class="text-blue-200 text-xs">معدل الامتثال</div>
-          </div>
-          <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
-            <div class="text-2xl font-black text-white">${s.gap?.overall||0}%</div>
-            <div class="text-blue-200 text-xs">متوسط الفجوة</div>
-          </div>
-          <div class="text-center px-4 py-2 rounded-xl" style="background:rgba(255,255,255,0.15)">
-            <div class="text-2xl font-black text-white">${s.rca?.closure_rate||0}%</div>
-            <div class="text-blue-200 text-xs">إغلاق RCA</div>
-          </div>
+        <div class="ir-hero-metric">
+          <div class="ir-hero-value">${s.inspections?.avg_score||0}%</div>
+          <div class="ir-hero-label"><span>معدل الامتثال</span> · <span>${s.inspections?.completed||0} تفتيش مكتمل</span></div>
         </div>
       </div>
     </div>
 
-    <!-- Row 1: Core KPIs (8 cards) -->
+    <!-- Row 1: Core KPIs (8 cards); colour only flags what needs attention -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      ${statCard('المشاريع النشطة',    s.projects?.active||0,           'building',           '#22A699', 'من ' + (s.projects?.total||0) + ' إجمالي')}
-      ${statCard('معدل الامتثال',      (s.inspections?.avg_score||0)+'%','check-circle',       s.inspections?.avg_score>=90?'#17796f':'#9a6700', (s.inspections?.completed||0) + ' تفتيش مكتمل')}
-      ${statCard('NC مفتوحة',          s.nonconformances?.open||0,       'exclamation-triangle','#b42318', (s.nonconformances?.critical||0) + ' حرجة · ' + (s.nonconformances?.overdue||0) + ' متأخرة')}
-      ${statCard('إغلاق RCA',          (s.rca?.closure_rate||0)+'%',     'search',             '#1d5fa8', (s.rca?.open||0) + ' مفتوحة · ' + (s.rca?.closed||0) + ' مغلقة')}
+      ${statCard('المشاريع النشطة',    s.projects?.active||0,           'building',           '', 'من ' + (s.projects?.total||0) + ' إجمالي')}
+      ${statCard('متوسط الفجوة',       (s.gap?.overall||0)+'%',          'balance-scale',      '', 'حسب تحليل الفجوة للمعايير')}
+      ${statCard('NC مفتوحة',          s.nonconformances?.open||0,       'exclamation-triangle', (s.nonconformances?.critical||0) ? 'alert' : (s.nonconformances?.overdue||0) ? 'warn' : '', (s.nonconformances?.critical||0) + ' حرجة · ' + (s.nonconformances?.overdue||0) + ' متأخرة')}
+      ${statCard('إغلاق RCA',          (s.rca?.closure_rate||0)+'%',     'search',             '', (s.rca?.open||0) + ' مفتوحة · ' + (s.rca?.closed||0) + ' مغلقة')}
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      ${statCard('المخاطر الحرجة',     s.risks?.critical||0,             'shield-alt',         '#b42318', 'من ' + (s.risks?.total||0) + ' إجمالي · RPN متوسط: ' + (s.risks?.avg_rpn||0))}
-      ${statCard('الخطة السنوية',      (s.plans?.avg_progress||0)+'%',   'calendar-alt',       '#17796f', (s.plans?.completed||0) + ' مكتملة · ' + (s.plans?.in_progress||0) + ' جارية')}
-      ${statCard('مؤشر Lean',          (s.lean?.score||0)+'%',           'recycle',            '#0891b2', (s.lean?.closed||0) + ' هدر معالج من ' + (s.lean?.total||0))}
-      ${statCard('مؤشرات الأداء',      (s.kpis?.good||0)+'/' +(s.kpis?.total||0),'chart-line', '#17796f', (s.kpis?.critical||0) + ' بحاجة تدخل')}
+      ${statCard('المخاطر الحرجة',     s.risks?.critical||0,             'shield-alt',         (s.risks?.critical||0) ? 'alert' : '', 'من ' + (s.risks?.total||0) + ' إجمالي · RPN متوسط: ' + (s.risks?.avg_rpn||0))}
+      ${statCard('الخطة السنوية',      (s.plans?.avg_progress||0)+'%',   'calendar-alt',       '', (s.plans?.completed||0) + ' مكتملة · ' + (s.plans?.in_progress||0) + ' جارية')}
+      ${statCard('مؤشر Lean',          (s.lean?.score||0)+'%',           'recycle',            '', (s.lean?.closed||0) + ' هدر معالج من ' + (s.lean?.total||0))}
+      ${statCard('مؤشرات الأداء',      (s.kpis?.good||0)+'/' +(s.kpis?.total||0),'chart-line', (s.kpis?.critical||0) ? 'warn' : '', (s.kpis?.critical||0) + ' بحاجة تدخل')}
     </div>
 
     <!-- Row 2: Chart + ISO Gap -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <div class="card p-5 lg:col-span-2">
         <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-          <h3 class="font-bold text-slate-800"><i class="fas fa-chart-line text-blue-500 ml-2"></i>اتجاه الامتثال</h3>
+          <h3 class="font-bold text-slate-800"><i class="fas fa-chart-line ir-h-icon ml-2"></i>اتجاه الامتثال</h3>
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
             <!-- Period buttons -->
             <div style="display:flex;background:#eef2f6;border-radius:9px;padding:3px;gap:2px;">
@@ -778,7 +768,7 @@ async function loadDashboard() {
       </div>
       <div class="card p-5">
         <div class="flex justify-between items-center mb-3">
-          <h3 class="font-bold text-slate-800"><i class="fas fa-certificate text-purple-500 ml-2"></i>توزيع المعايير</h3>
+          <h3 class="font-bold text-slate-800"><i class="fas fa-certificate ir-h-icon ml-2"></i>توزيع المعايير</h3>
           <select id="iso-chart-metric" onchange="updateISOChart()" style="font-size:11px;padding:3px 8px;border:1px solid #e3e8ef;border-radius:8px;color:#4f5f75;">
             <option value="compliance">معدل الامتثال</option>
             <option value="inspections">عدد التفتيشات</option>
@@ -792,7 +782,9 @@ async function loadDashboard() {
     <!-- Row 3: ISO Cards (dynamic from standards) -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       ${((window.MOCK_DB?.iso_standards||[]).filter(function(s){var c=window.MOCK_DB?.org_profile?.certified_standards||[];return !c.length||c.includes(s.code);})).map(std => {
-        const clr   = std.color || {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'}[std.code] || '#5d6b7e';
+        // brand colour per standard; the colour stored on the standard row predates the brand palette
+        const clr   = {ISO_9001:'#17796f',ISO_45001:'#142D4E',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8'}[std.code] || '#5d6b7e';
+        const stdAr = {ISO_9001:'إدارة الجودة',ISO_45001:'الصحة والسلامة المهنية',ISO_14001:'الإدارة البيئية',ISO_27001:'أمن المعلومات'}[std.code] || std.name;
         const isoD  = (data.charts?.iso_breakdown||[]).find(b=>b.iso_standard===std.code);
         const score = isoD?.avg_compliance || 0;
         const gap   = window.MOCK_DB?.gap_analysis?.[std.code];
@@ -806,9 +798,9 @@ async function loadDashboard() {
             </div>
             <div class="min-w-0 flex-1">
               <div class="font-bold text-sm text-slate-800 truncate">${std.code.replace('_',' ')}</div>
-              <div class="text-xs" style="color:${clr}">${std.name}</div>
+              <div class="text-xs text-slate-500 truncate">${stdAr}</div>
             </div>
-            ${isCert ? '<span class="badge badge-green text-xs flex-shrink-0">✅</span>' : '<span class="badge badge-gray text-xs flex-shrink-0">⏳</span>'}
+            ${isCert ? '<span class="badge badge-green text-xs flex-shrink-0">معتمد</span>' : '<span class="badge badge-gray text-xs flex-shrink-0">قيد التطبيق</span>'}
           </div>
           ${score > 0 ? `
           <div class="flex justify-between text-xs text-slate-500 mb-1">
@@ -831,7 +823,7 @@ async function loadDashboard() {
       <!-- Pareto -->
       <div class="card p-5">
         <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
-          <h3 class="font-bold text-slate-800"><i class="fas fa-chart-bar text-orange-500 ml-2"></i>Pareto — NC حسب الفئة</h3>
+          <h3 class="font-bold text-slate-800"><i class="fas fa-chart-bar ir-h-icon ml-2"></i>Pareto — NC حسب الفئة</h3>
           <div style="display:flex;gap:5px;">
             <select id="pareto-filter-iso" onchange="updateParetoChart()" style="font-size:11px;padding:3px 7px;border:1px solid #e3e8ef;border-radius:7px;color:#4f5f75;">
               <option value="">كل المعايير</option>
@@ -856,7 +848,7 @@ async function loadDashboard() {
       <!-- Top Risks -->
       <div class="card p-5">
         <div class="flex justify-between items-center mb-3">
-          <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-triangle text-red-500 ml-2"></i>أعلى المخاطر</h3>
+          <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-triangle ir-h-icon ml-2"></i>أعلى المخاطر</h3>
           <button onclick="navigate('org'); setTimeout(()=>switchOrgTab('risks'),300)" class="text-xs text-blue-600 hover:underline">عرض الكل</button>
         </div>
         <div class="space-y-2">
@@ -878,7 +870,7 @@ async function loadDashboard() {
       <!-- Active Plans -->
       <div class="card p-5">
         <div class="flex justify-between items-center mb-3">
-          <h3 class="font-bold text-slate-800"><i class="fas fa-calendar-alt text-blue-500 ml-2"></i>المبادرات الجارية</h3>
+          <h3 class="font-bold text-slate-800"><i class="fas fa-calendar-alt ir-h-icon ml-2"></i>المبادرات الجارية</h3>
           <button onclick="navigate('org'); setTimeout(()=>switchOrgTab('annual'),300)" class="text-xs text-blue-600 hover:underline">عرض الكل</button>
         </div>
         <div class="space-y-2">
@@ -901,7 +893,7 @@ async function loadDashboard() {
     <!-- Row 5: Recent NCs -->
     <div class="card p-5">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-circle text-red-400 ml-2"></i>أحدث حالات عدم المطابقة</h3>
+        <h3 class="font-bold text-slate-800"><i class="fas fa-exclamation-circle ir-h-icon ml-2"></i>أحدث حالات عدم المطابقة</h3>
         <button onclick="navigate('nc')" class="text-blue-600 text-sm hover:underline">عرض الكل</button>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -932,17 +924,16 @@ function isoLabel(v) {
   return code ? String(code).replace('_', ' ') : '';
 }
 
-function statCard(title, value, icon, color, sub) {
-  return `<div class="stat-card">
+// tone: '' (neutral), 'warn' or 'alert' — colour is kept for figures that need attention
+function statCard(title, value, icon, tone, sub) {
+  return `<div class="stat-card ir-stat ${tone ? 'ir-stat--' + tone : ''}">
     <div class="flex justify-between items-start">
       <div>
         <p class="text-sm text-slate-500 mb-1">${title}</p>
-        <p class="text-3xl font-bold" style="color:${color}">${value}</p>
-        <p class="text-xs text-slate-400 mt-1">${sub}</p>
+        <p class="ir-stat-value">${value}</p>
+        <p class="text-xs text-slate-500 mt-1">${sub}</p>
       </div>
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:${color}20">
-        <i class="fas fa-${icon} text-xl" style="color:${color}"></i>
-      </div>
+      <div class="ir-stat-icon"><i class="fas fa-${icon}"></i></div>
     </div>
   </div>`;
 }
@@ -2164,7 +2155,7 @@ async function loadNonConformances() {
             <td class="p-3"><span class="badge ${(n.type||'').toLowerCase()==='critical'?'badge-red':(n.type||'').toLowerCase()==='major'?'badge-yellow':'badge-blue'}">${ncTypeAr(n.type)}</span></td>
             <td class="p-3 text-slate-600 text-xs">${n.project_name||n.project?.name||'-'}</td>
             <td class="p-3">
-              ${n.rca_ref ? `<span class="text-xs font-mono text-purple-600">${n.rca_ref}</span><br><span class="badge badge-${n.rca_status==='closed'?'green':n.rca_status==='in_progress'?'yellow':'red'}" style="font-size:9px">${n.rca_status||'open'}</span>` : '<span class="text-xs text-red-500">⚠ مطلوب</span>'}
+              ${n.rca_ref ? `<span class="text-xs font-mono text-purple-600">${n.rca_ref}</span><br><span class="badge badge-${n.rca_status==='closed'?'green':n.rca_status==='in_progress'?'yellow':'red'}" style="font-size:9px">${n.rca_status||'open'}</span>` : '<span class="text-xs font-semibold text-red-700"><i class="fas fa-circle-exclamation ml-1"></i>مطلوب</span>'}
             </td>
             <td class="p-3"><span class="badge ${ncStatusBadge(n.status)}">${ncStatusAr(n.status)}</span></td>
             <td class="p-3 text-xs ${n.due_date && new Date(n.due_date) < new Date() && n.status !== 'closed' ? 'text-red-600 font-bold' : 'text-slate-500'}">${n.due_date ? new Date(n.due_date).toLocaleDateString('ar-SA') : '-'}</td>
@@ -2185,8 +2176,10 @@ async function loadNonConformances() {
   </div>`;
 }
 
+// the count is the headline; its colour (from the badge tone) only shows when there is something to count
 function ncSumCard(label, count, badge) {
-  return `<div class="card p-4 text-center"><div class="text-2xl font-bold mb-1"><span class="badge ${badge}">${count}</span></div><div class="text-xs text-slate-500">${label}</div></div>`;
+  const tone = { 'badge-red': 'alert', 'badge-yellow': 'warn', 'badge-green': 'ok' }[badge] || '';
+  return `<div class="card ir-sum ${count && tone ? 'ir-sum--' + tone : ''}"><div class="ir-sum-value">${count}</div><div class="ir-sum-label">${label}</div></div>`;
 }
 
 // ── NC Detail (عرض التفاصيل) ─────────────────
@@ -2330,8 +2323,8 @@ async function openNCEdit(id) {
   ].map(([v,l]) => `<option value="${v}" ${v === n.status ? 'selected' : ''}>${l}</option>`).join('');
 
   const typeOpts = [
-    ['critical','🔴 حرجة'],['major','🟠 رئيسية'],
-    ['minor','🟡 ثانوية'],['observation','🔵 ملاحظة']
+    ['critical','حرجة'],['major','رئيسية'],
+    ['minor','ثانوية'],['observation','ملاحظة']
   ].map(([v,l]) => `<option value="${v}" ${v === n.type ? 'selected' : ''}>${l}</option>`).join('');
 
   const categoryOpts = [
@@ -3542,7 +3535,7 @@ async function loadKPIs() {
     status_level: (k.latest_value ?? 0) >= (k.target_value ?? 0) ? 'good' : (k.latest_value ?? 0) >= (k.warning_threshold ?? 0) ? 'warning' : 'critical',
   }));
   window._kpisList = kpis;
-  const catAr    = {quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'};
+  const catAr    = {quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل',performance:'الأداء'};
   const catColors = {quality:'#22A699',safety:'#17796f',environmental:'#9a6700',compliance:'#1d5fa8',operational:'#5d6b7e'};
   const catIcons  = {quality:'award',safety:'hard-hat',environmental:'leaf',compliance:'check-double',operational:'cogs'};
   const isoColors = {ISO_9001:'#22A699',ISO_45001:'#17796f',ISO_14001:'#9a6700',ISO_27001:'#1d5fa8',MULTI:'#5d6b7e'};
@@ -3608,9 +3601,9 @@ async function loadKPIs() {
       </select>
       <select id="kpi-filter-status" class="form-input text-xs" style="width:140px" onchange="filterKPICards()">
         <option value="">كل الحالات</option>
-        <option value="good">✅ جيد</option>
-        <option value="warning">⚠️ تحذير</option>
-        <option value="critical">🔴 حرج</option>
+        <option value="good">جيد</option>
+        <option value="warning">تحذير</option>
+        <option value="critical">حرج</option>
       </select>
       <button onclick="resetKPIFilters()" class="text-xs text-slate-400 hover:text-slate-600 underline">إعادة تعيين</button>
     </div>
@@ -3934,7 +3927,7 @@ async function openKPIDetail(id) {
       <div class="grid grid-cols-2 gap-3 text-xs">
         <div class="p-3 bg-slate-50 rounded-xl">
           <div class="text-slate-500 mb-1">الفئة</div>
-          <div class="font-bold text-slate-800">${{quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل'}[kpi.category]||kpi.category}</div>
+          <div class="font-bold text-slate-800">${{quality:'الجودة',safety:'السلامة',environmental:'البيئة',compliance:'الامتثال',operational:'التشغيل',performance:'الأداء'}[kpi.category]||kpi.category}</div>
         </div>
         <div class="p-3 rounded-xl" style="background:${isoC}12">
           <div class="text-slate-500 mb-1">معيار ISO</div>
@@ -10062,7 +10055,7 @@ function renderGantt() {
   Object.values(weekGroups).forEach(function(g){
     groupHeader += '<div style="position:absolute;right:'+(nameW+g.start*colW)+'px;width:'+(g.count*colW)+'px;'
       +'height:18px;display:flex;align-items:center;justify-content:center;'
-      +'border-left:1px solid #e3e8ef;font-size:9px;color:#5d6b7e;font-weight:600;overflow:hidden;">'
+      +'border-left:1px solid #e3e8ef;font-size:11px;color:#5d6b7e;font-weight:600;overflow:hidden;">'
       +g.label+'</div>';
   });
 
@@ -10076,7 +10069,7 @@ function renderGantt() {
     var color    = isToday ? '#125f57' : '#5d6b7e';
     dayLabels += '<div style="position:absolute;right:'+(nameW+i*colW)+'px;width:'+colW+'px;'
       +'height:20px;background:'+bg+';display:flex;align-items:center;justify-content:center;'
-      +'border-left:1px solid #eef2f6;font-size:8px;color:'+color+';font-weight:'+fw+';top:18px;">'
+      +'border-left:1px solid #eef2f6;font-size:10.5px;color:'+color+';font-weight:'+fw+';top:18px;">'
       + (view==='week' ? d.getDate() : (i%3===0?d.getDate():''))
       + '</div>';
   });
@@ -10105,7 +10098,8 @@ function renderGantt() {
     var aInitials = assignee ? assignee.full_name.split(' ').map(function(w){return w[0];}).join('').substring(0,2) : '؟';
     var aClr      = assignee ? ({admin:'#1d5fa8',manager:'#17796f',engineer:'#17796f',auditor:'#9a6700'}[assignee.role]||'#5d6b7e') : '#5d6b7e';
 
-    var prioBadge = {high:'🔴',medium:'🟡',low:'🟢'}[t.priority]||'';
+    var prioClr   = {urgent:'#b42318',high:'#b42318',medium:'#b7861f',low:'#17796f'}[t.priority];
+    var prioBadge = prioClr ? '<span class="ir-dot" style="background:'+prioClr+'" title="'+t.priority+'"></span>' : '';
     var rowBg     = ri%2===0 ? 'white' : '#fafbfc';
 
     // Today marker
@@ -10116,12 +10110,12 @@ function renderGantt() {
 
       // Name cell
       '<div style="width:'+nameW+'px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;gap:6px;z-index:2;background:'+rowBg+';">' +
-        '<span style="font-size:9px;">' + prioBadge + '</span>' +
+        '<span style="font-size:11px;">' + prioBadge + '</span>' +
         '<div style="flex:1;min-width:0;">' +
           '<div style="font-size:11px;font-weight:700;color:#142D4E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" title="'+t.title+'" onclick="openTaskDetail(\''+t.id+'\')">' + t.title + '</div>' +
-          '<div style="font-size:9px;color:#5d6b7e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(t.project_name||'')+'</div>' +
+          '<div style="font-size:11px;color:#5d6b7e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(t.project_name||'')+'</div>' +
         '</div>' +
-        '<div style="width:22px;height:22px;border-radius:50%;background:'+aClr+';color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;">'+aInitials+'</div>' +
+        '<div style="width:22px;height:22px;border-radius:50%;background:'+aClr+';color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;">'+aInitials+'</div>' +
       '</div>' +
 
       // Grid background columns
@@ -10140,7 +10134,7 @@ function renderGantt() {
           +' onclick="openTaskDetail(\''+t.id+'\')"'
           +' onmouseover="this.style.opacity=\'1\'"'
           +' onmouseout="this.style.opacity=\''+barOpacity+'\'">' +
-          (barW > 40 ? '<span style="font-size:9px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+due.toLocaleDateString('ar-SA',{month:'short',day:'numeric'})+'</span>' : '') +
+          (barW > 40 ? '<span style="font-size:11px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+due.toLocaleDateString('ar-SA',{month:'short',day:'numeric'})+'</span>' : '') +
         '</div>' +
 
         // Today vertical line
@@ -10761,18 +10755,18 @@ function openTaskEdit(id) {
   });
 
   var statusOpts = [
-    ['todo','⏳ قيد الانتظار'],
+    ['todo','قيد الانتظار'],
     ['inprogress','⚡ قيد التنفيذ'],
     ['review','👁 مراجعة'],
-    ['done','✅ مكتملة']
+    ['done','مكتملة']
   ].map(function(s){
     return '<option value="'+s[0]+'"'+(s[0]===task.status?' selected':'')+'>'+s[1]+'</option>';
   }).join('');
 
   var prioOpts = [
-    ['high','🔴 عالية'],
-    ['medium','🟡 متوسطة'],
-    ['low','🟢 منخفضة']
+    ['high','عالية'],
+    ['medium','متوسطة'],
+    ['low','منخفضة']
   ].map(function(p){
     return '<option value="'+p[0]+'"'+(p[0]===task.priority?' selected':'')+'>'+p[1]+'</option>';
   }).join('');
@@ -10816,7 +10810,7 @@ function openTaskEdit(id) {
         '<div>' +
           '<label class="text-sm font-bold text-slate-700 block mb-2"><i class="fas fa-exchange-alt text-slate-400 ml-1"></i>الحالة</label>' +
           '<div class="flex flex-wrap gap-2" id="te-status-pills">' +
-            [['todo','⏳ قيد الانتظار','#5d6b7e'],['inprogress','⚡ قيد التنفيذ','#9a6700'],['review','👁 مراجعة','#1d5fa8'],['done','✅ مكتملة','#17796f']].map(function(s){
+            [['todo','قيد الانتظار','#5d6b7e'],['inprogress','قيد التنفيذ','#9a6700'],['review','مراجعة','#1d5fa8'],['done','مكتملة','#17796f']].map(function(s){
               var active = s[0] === task.status;
               return '<button type="button" onclick="selectTaskStatus(\''+s[0]+'\')" id="te-pill-'+s[0]+'" '+
                 'class="flex-1 py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all" '+

@@ -1,5 +1,8 @@
 /* ISO Radar — English dictionary (generated). Keys are the Arabic UI strings exactly as authored. */
-window.IR_EN = {"؟":"?",
+window.IR_EN = {"حسب تحليل الفجوة للمعايير":"From the standards gap analysis",
+"الأداء":"Performance",
+"الإدارة البيئية":"Environmental management",
+"؟":"?",
 "\\n\\n[محتوى الملف":"\\n\\n[File content",
 "\\n\\nآراء المستشارين:\\n":"\\n\\nAdvisors' opinions:\\n",
 "\\n\\nسياق سابق:\\n":"\\n\\nPrevious context:\\n",

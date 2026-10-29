@@ -42,9 +42,10 @@
   --mz-gold-d: #8a6410;
   --mz-gold-tint: #fbf2df;
 
-  --mz-pass: #12805a;     --mz-pass-bg: #e1f6ee;
-  --mz-obs: #9a5b00;      --mz-obs-bg: #fff4dc;
-  --mz-nc: #c43c3c;       --mz-nc-bg: #ffe8e8;
+  /* status text on its tint stays above 4.5:1 (WCAG AA) */
+  --mz-pass: #0f6e4d;     --mz-pass-bg: #e1f6ee;
+  --mz-obs: #8a5000;      --mz-obs-bg: #fff4dc;
+  --mz-nc: #b42318;       --mz-nc-bg: #ffe8e8;
   --mz-info: #142D4E;     --mz-info-bg: #e8eef6;
 
   --mz-font: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -461,3 +462,42 @@ html[data-surface="app"] .task-card:hover { transform: translateY(-2px); box-sha
   color: var(--mz-slate); font-size: 13px; text-align: center; background: #fafbfd;
 }
 .ir-chart-empty i { font-size: 22px; color: var(--mz-fog); }
+
+/* ===== Tenant app — figures and hierarchy ===== */
+
+/* dashboard banner: the one headline figure */
+html[data-surface="app"] .ir-hero-metric { text-align: end; }
+html[data-surface="app"] .ir-hero-value { font-size: clamp(36px, 4vw, 48px); font-weight: 800; line-height: 1; color: #fff; letter-spacing: -.02em; }
+html[data-surface="app"] .ir-hero-label { margin-top: 6px; font-size: 13px; color: rgba(255,255,255,.82); }
+
+/* stat cards: ink figures, quiet icon; colour only for warn / alert */
+html[data-surface="app"] .ir-stat-value { font-size: 30px; font-weight: 700; line-height: 1.15; color: var(--mz-ink); }
+html[data-surface="app"] .ir-stat-icon {
+  width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: #eef3f6; color: var(--mz-slate); font-size: 18px; flex-shrink: 0;
+}
+html[data-surface="app"] .ir-stat--warn .ir-stat-value { color: var(--mz-obs); }
+html[data-surface="app"] .ir-stat--warn .ir-stat-icon  { background: var(--mz-obs-bg); color: var(--mz-obs); }
+html[data-surface="app"] .ir-stat--alert .ir-stat-value { color: var(--mz-nc); }
+html[data-surface="app"] .ir-stat--alert .ir-stat-icon  { background: var(--mz-nc-bg); color: var(--mz-nc); }
+
+/* section headings share one icon colour */
+html[data-surface="app"] .ir-h-icon { color: #17796f; }
+
+/* NC summary: the count leads, the label follows */
+html[data-surface="app"] .ir-sum { padding: 16px 18px; }
+html[data-surface="app"] .ir-sum-value { font-size: 28px; font-weight: 700; line-height: 1.1; color: var(--mz-ink); }
+html[data-surface="app"] .ir-sum-label { margin-top: 4px; font-size: 13px; color: var(--mz-slate); }
+html[data-surface="app"] .ir-sum--alert .ir-sum-value { color: var(--mz-nc); }
+html[data-surface="app"] .ir-sum--warn  .ir-sum-value { color: var(--mz-obs); }
+html[data-surface="app"] .ir-sum--ok    .ir-sum-value { color: var(--mz-pass); }
+
+/* priority marker (task Gantt) */
+.ir-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+/* row actions: a comfortable target for touch */
+html[data-surface="app"] #app-content td button { min-width: 36px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* charts shrink with their card instead of spilling out */
+html[data-surface="app"] #app-content .card { min-width: 0; }
+html[data-surface="app"] #app-content .card > canvas { max-width: 100%; }
