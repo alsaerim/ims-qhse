@@ -1,0 +1,155 @@
+/* ==========================================================================
+   ISO Radar — isometric scroll world (landing hero). Pairs with
+   assets/isoradar-isoworld.js; tokens come from isoradar-landing.css.
+
+   Style bible
+   Mood       precise · calm · assured
+   World      one compliance campus seen isometrically, a radar tower at its centre
+   Palette    mist field #F4F7FA, ink #142D4E, teal #22A699/#17796f, gold #D9A441,
+              fog #A7B0BC; red #c2410c only for findings
+   Type       Cairo (display) · IBM Plex Sans Arabic (reading); Plus Jakarta Sans in English
+   Material   matte blocks, three-face shading, hairline edges
+   Motion     staged reveal with a slow crane of the camera; native scroll only
+   Avoid      neon on dark, purple gradients, invented numbers
+   ========================================================================== */
+
+.iso-world {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(900px 520px at 20% 30%, rgba(34,166,153,.10), transparent 70%),
+    radial-gradient(800px 500px at 85% 70%, rgba(20,45,78,.07), transparent 70%),
+    var(--bg-soft);
+}
+.iso-grid {
+  max-width: 1240px; margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px;
+}
+
+/* ── the story (reads as a normal page without JS) ─────────────────── */
+.iso-track { padding: 6vh 0 14vh; }
+.iso-beat { padding: 48px 0; }
+.iso-ready .iso-beat {
+  min-height: 88vh; display: flex; flex-direction: column; justify-content: center;
+  opacity: .28; transition: opacity .5s ease;
+}
+.iso-ready .iso-beat.on { opacity: 1; }
+.iso-beat:first-child { padding-top: 0; }
+.iso-ready .iso-beat:first-child { min-height: calc(100vh - 120px); }
+
+.iso-step {
+  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  font-size: 14px; font-weight: 700; color: var(--teal-d);
+}
+.iso-step b {
+  display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 9px;
+  background: #fff; border: 1px solid var(--line); color: var(--ink); font-size: 13px;
+  font-family: "Plus Jakarta Sans", var(--font); font-variant-numeric: tabular-nums;
+}
+.iso-beat h1 {
+  font-size: clamp(38px, 5vw, 64px); font-weight: 800; letter-spacing: -.035em; line-height: 1.12;
+  margin: 0 0 20px; text-wrap: balance;
+}
+.iso-beat h2 {
+  font-size: clamp(28px, 3.3vw, 42px); font-weight: 800; letter-spacing: -.02em; line-height: 1.2;
+  margin: 0 0 14px; text-wrap: balance;
+}
+.iso-beat p { max-width: 34em; text-wrap: pretty; }
+.iso-beat .hero-cta { justify-content: flex-start; margin-top: 28px; }
+.iso-beat .hero-note { justify-content: flex-start; }
+.iso-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; padding: 0; list-style: none; }
+.iso-facts li {
+  background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px;
+  font-size: 14px; font-weight: 600; color: var(--ink);
+}
+.iso-facts li b { color: var(--teal-d); }
+
+/* ── the stage ─────────────────────────────────────────────────────── */
+.iso-stage { display: none; }
+.iso-ready .iso-stage {
+  display: flex; align-items: center; justify-content: center;
+  position: sticky; top: 72px; height: calc(100vh - 72px); align-self: start;
+}
+.iso-canvas { width: 100%; }
+.iso-canvas svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 150px); overflow: visible; }
+.iso-std-code { font: 800 15px "Plus Jakarta Sans", sans-serif; letter-spacing: .02em; }
+
+.iso-dots { position: absolute; bottom: 22px; inset-inline: 0; display: flex; justify-content: center; gap: 4px; }
+.iso-dots button {
+  width: 28px; height: 28px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; border-radius: 8px;
+}
+.iso-dots button::after {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--fog); transition: background .3s, width .3s;
+}
+.iso-dots button[aria-current="step"]::after { width: 22px; border-radius: 6px; background: var(--teal-d); }
+.iso-dots button:focus-visible { outline: 2px solid var(--teal-d); outline-offset: 2px; }
+
+/* ── scene states (classes is-b1…is-b6 accumulate on .iso-stage) ───── */
+.iso-cam {
+  transform: translate(var(--cx, 0px), var(--cy, 0px)) scale(var(--cs, 1));
+  transform-origin: 0 0;
+  transition: transform 1.3s cubic-bezier(.22,.7,.2,1);
+}
+.iso-el {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .6s ease var(--d, 0s), transform .9s cubic-bezier(.2,.7,.2,1) var(--d, 0s);
+}
+.is-b1 .b1, .is-b2 .b2, .is-b3 .b3, .is-b4 .b4, .is-b5 .b5, .is-b6 .b6 { opacity: 1; transform: none; }
+
+/* findings: red → gold (RCA) → teal (closed) */
+.iso-pin-body { fill: #c2410c; transition: fill .6s ease; }
+.is-b4 .iso-pin-body { fill: #D9A441; }
+.is-b6 .iso-pin-body { fill: #17796f; }
+.iso-pin-check { opacity: 0; transition: opacity .4s ease; }
+.is-b6 .iso-pin-check { opacity: 1; }
+.is-b6 .iso-pin-mark { opacity: 0; }
+
+/* scattered sheets: only during the "old way" and the field beat */
+.iso-paper { opacity: 0; transform: translateY(-26px); transition: opacity .6s ease var(--d, 0s), transform .9s ease var(--d, 0s); }
+.is-b2:not(.is-b4) .iso-paper { opacity: 1; transform: none; animation: iso-bob 5s ease-in-out calc(var(--b) * -1.6s) infinite; }
+@keyframes iso-bob { 50% { transform: translateY(-6px); } }
+
+/* links draw toward the tower */
+.iso-link { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.is-b4 .iso-link { stroke-dashoffset: 0; transition: opacity .4s ease var(--d, 0s), stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1) var(--d, 0s); }
+
+/* field: GPS pulse */
+.iso-pulse { transform-box: fill-box; transform-origin: center; opacity: 0; }
+.is-b3 .iso-pulse { animation: iso-pulse 1.8s ease-out infinite; }
+@keyframes iso-pulse { from { transform: scale(.3); opacity: .9; } to { transform: scale(1.4); opacity: 0; } }
+
+/* payoff: roofs settle to teal, the radar sweeps */
+.iso-ok { fill: #22A699; opacity: 0; transition: opacity .8s ease; }
+.is-b6 .iso-ok { opacity: .5; }
+.iso-sweep { transform-box: fill-box; transform-origin: 0% 100%; opacity: 0; transition: opacity .5s; }
+.is-b6 .iso-sweep { opacity: 1; animation: iso-spin 3.4s linear infinite; }
+@keyframes iso-spin { to { transform: rotate(360deg); } }
+.iso-rings circle { transform-box: fill-box; transform-origin: center; opacity: .5; }
+.is-b6 .iso-rings circle { animation: iso-ring 3.4s ease-out calc(var(--k) * .6s) infinite; }
+@keyframes iso-ring { 0% { opacity: .55; } 70%, 100% { opacity: .08; } }
+
+/* ── narrow screens: the stage pins on top, the story scrolls beneath ─ */
+@media (max-width: 900px) {
+  .iso-grid { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 16px; }
+  .iso-ready .iso-stage {
+    order: -1; top: 60px; height: 40vh; z-index: 3; margin: 0 -16px; padding: 0 16px;
+    background: linear-gradient(180deg, var(--bg-soft) 88%, rgba(244,247,250,0));
+  }
+  .iso-canvas svg { max-height: 35vh; }
+  .iso-dots { bottom: 6px; }
+  .iso-track { padding: 2vh 0 10vh; }
+  /* text centres in the space left under the stage (≈ 77% down the screen) */
+  .iso-ready .iso-beat { min-height: 62vh; justify-content: center; padding: 0; }
+  .iso-ready .iso-beat:first-child { min-height: 0; justify-content: flex-start; padding: 12px 0 18vh; }
+  .iso-beat .hero-cta { margin-top: 20px; }
+  .iso-beat h1 { font-size: clamp(30px, 8.4vw, 40px); margin-bottom: 14px; }
+  .iso-beat:first-child .iso-step { display: none; }
+  .iso-beat h2 { font-size: clamp(24px, 7vw, 32px); }
+}
+
+/* reduced motion: states still change, nothing interpolates or loops */
+@media (prefers-reduced-motion: reduce) {
+  .iso-cam, .iso-el, .iso-paper, .iso-link, .iso-ok, .iso-pin-body, .iso-sweep, .iso-beat { transition: none !important; }
+  .iso-pulse, .iso-sweep, .iso-rings circle, .iso-paper { animation: none !important; }
+  .is-b3 .iso-pulse { opacity: .6; }
+}

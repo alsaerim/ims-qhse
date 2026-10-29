@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@600&display=swap"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
 <link rel="stylesheet" href="/assets/isoradar-landing.css"/>
+<link rel="stylesheet" href="/assets/isoradar-isoworld.css"/>
 </head>
 <body>
 
@@ -43,70 +44,59 @@
   </div>
 </nav>
 
-<header class="hero" id="top">
-  <div class="wrap">
-    <a class="pill" href="#ai"><span>AI</span> Compliance management, now AI-assisted →</a>
-    <h1>Measure your <span class="grad-text">quality</span>.<br/>Prove your <span class="grad-text">compliance</span>.</h1>
-    <p class="lead">Stop juggling spreadsheets. ISO Radar brings inspections, nonconformities, root cause analysis, risk and KPIs into one platform — so you always know where you stand against ISO standards.</p>
-    <div class="hero-cta">
-      <button class="btn btn-primary btn-lg" onclick="openLogin('register')">Start your free trial <i class="fas fa-arrow-right"></i></button>
-      <a class="btn btn-ghost btn-lg" href="#features">See how it works</a>
-    </div>
-    <div class="hero-note"><span>14-day free trial</span><span>No credit card</span><span>Cancel any time</span></div>
-
-    <div class="mock-stage" aria-hidden="true">
-      <div class="mock">
-        <div class="mock-bar"><i></i><i></i><i></i><div class="url">isoradar.com/app</div></div>
-        <div class="mock-body">
-          <aside class="side">
-            <div class="ws"><img src="/assets/isoradar-mark.svg" alt=""/>Compliance Co.</div>
-            <a class="on"><span class="dot" style="background:#17796f"></span>Overview</a>
-            <a><span class="dot" style="background:#142D4E"></span>Inspections</a>
-            <a><span class="dot" style="background:#c2410c"></span>Nonconformities</a>
-            <a><span class="dot" style="background:#D9A441"></span>RCA</a>
-            <a><span class="dot" style="background:#1d5fa8"></span>Risks</a>
-            <h6>Standards</h6>
-            <a>ISO 9001</a><a>ISO 45001</a><a>ISO 14001</a><a>ISO 27001</a>
-          </aside>
-          <div class="main">
-            <div class="main-h"><h4>Compliance 2026</h4><div class="tabs-mini"><span class="on">Overview</span><span>Gap</span><span>Risks</span></div></div>
-            <div class="kpis">
-              <div class="kpi"><small>Compliance rate</small><b>87%</b><div class="bar"><i style="width:87%;background:#17796f"></i></div></div>
-              <div class="kpi"><small>Open NCs</small><b>5</b><div class="bar"><i style="width:36%;background:#c2410c"></i></div></div>
-              <div class="kpi"><small>Inspections done</small><b>42/48</b><div class="bar"><i style="width:88%;background:#142D4E"></i></div></div>
-              <div class="kpi"><small>RCA closed</small><b>71%</b><div class="bar"><i style="width:71%;background:#D9A441"></i></div></div>
-            </div>
-            <div class="grid2">
-              <div class="panel"><h5>Compliance by month <span>All projects</span></h5>
-                <div class="chart"><div style="height:45%"></div><div style="height:58%"></div><div style="height:52%"></div><div style="height:70%"></div><div style="height:66%"></div><div style="height:80%"></div><div style="height:78%"></div><div style="height:92%"></div></div>
-              </div>
-              <div class="panel"><h5>Gap analysis <span>This month</span></h5>
-                <div class="rows">
-                  <div class="row"><b>ISO 9001 Quality</b><div class="bar"><i style="width:91%;background:#17796f"></i></div><span class="badge c1">91</span></div>
-                  <div class="row"><b>ISO 45001 Safety</b><div class="bar"><i style="width:84%;background:#142D4E"></i></div><span class="badge c2">84</span></div>
-                  <div class="row"><b>ISO 14001 Environment</b><div class="bar"><i style="width:76%;background:#D9A441"></i></div><span class="badge c3">76</span></div>
-                  <div class="row"><b>ISO 27001 Security</b><div class="bar"><i style="width:62%;background:#1d5fa8"></i></div><span class="badge c4">62</span></div>
-                  <div class="row"><b>Custom standard</b><div class="bar"><i style="width:44%;background:#c2410c"></i></div><span class="badge c6">44</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
+<header class="iso-world" id="top" data-iso-world>
+  <div class="iso-grid">
+    <div class="iso-track">
+      <section class="iso-beat" data-beat="1">
+        <span class="iso-step"><b>01</b>ISO Radar</span>
+        <h1>Measure your <span class="grad-text">quality</span>.<br/>Prove your <span class="grad-text">compliance</span>.</h1>
+        <p class="lead">ISO Radar brings inspections, nonconformities, root cause analysis, risk and KPIs into one platform — so you always know where you stand against ISO standards.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openLogin('register')">Start your free trial <i class="fas fa-arrow-right"></i></button>
+          <a class="btn btn-ghost btn-lg" href="#features">See how it works</a>
         </div>
-      </div>
-      <div class="float ai"><div class="who"><i>✦</i>Advisory council</div><p>3 warehouse nonconformities share one root cause: missing PPE training. We suggest a corrective plan within two weeks.</p></div>
-      <div class="float mail"><b>📍 Field inspection complete</b><span style="color:var(--muted)">Unit A · 12 items · with photos and GPS</span></div>
+        <div class="hero-note"><span>14-day free trial</span><span>No credit card</span><span>Cancel any time</span></div>
+      </section>
+      <section class="iso-beat" data-beat="2">
+        <span class="iso-step"><b>02</b>The problem</span>
+        <h2>Your compliance lives in scattered spreadsheets</h2>
+        <p class="lead">Excel files, paper checklists and notes with no single home — so nobody sees where the organisation stands until the audit is due.</p>
+      </section>
+      <section class="iso-beat" data-beat="3">
+        <span class="iso-step"><b>03</b>In the field</span>
+        <h2>Inspection starts on site</h2>
+        <p class="lead">Mobile checklists that work offline, with photos and GPS location on every finding, synced the moment you are back online.</p>
+      </section>
+      <section class="iso-beat" data-beat="4">
+        <span class="iso-step"><b>04</b>The loop</span>
+        <h2>Every finding is followed to closure</h2>
+        <p class="lead">Each nonconformity opens a root cause analysis automatically — 5 Whys, Ishikawa and FMEA — with corrective actions and due dates tracked until it closes.</p>
+      </section>
+      <section class="iso-beat" data-beat="5">
+        <span class="iso-step"><b>05</b>Standards</span>
+        <h2>Four standards, one platform</h2>
+        <p class="lead">ISO 9001, 45001, 14001 and 27001, each with an assessment questionnaire and a gap chart built from your answers — plus custom standards when you need them.</p>
+        <ul class="iso-facts">
+          <li><b>4</b> ISO standards supported</li>
+          <li><b>100+</b> assessment questions per standard</li>
+          <li><b>Offline</b> field app</li>
+        </ul>
+      </section>
+      <section class="iso-beat" data-beat="6">
+        <span class="iso-step"><b>06</b>Visibility</span>
+        <h2>One compliance view across every project</h2>
+        <p class="lead">Management sees compliance, critical risks and overdue nonconformities in one place — before they become a problem.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openLogin('register')">Start your 14-day free trial <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </section>
+    </div>
+    <div class="iso-stage">
+      <div class="iso-canvas" data-iso-canvas></div>
+      <div class="iso-dots" data-iso-dots role="group" aria-label="Story steps"></div>
     </div>
   </div>
 </header>
-
-<div class="stats">
-  <div class="wrap stats-in">
-    <div class="stat"><b class="grad-text">4</b><span>ISO standards supported</span></div>
-    <div class="stat"><b class="grad-text">100+</b><span>assessment questions per standard</span></div>
-    <div class="stat"><b class="grad-text">14 days</b><span>full free trial</span></div>
-    <div class="stat"><b class="grad-text">Offline</b><span>field app works without internet</span></div>
-  </div>
-</div>
 
 <!-- FEATURES -->
 <section class="blk feat-bg" id="features">
@@ -417,5 +407,6 @@
 </div>
 
 <script src="/assets/isoradar-landing.js"></script>
+<script src="/assets/isoradar-isoworld.js"></script>
 </body>
 </html>

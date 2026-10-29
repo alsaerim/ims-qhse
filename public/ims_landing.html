@@ -22,6 +22,7 @@ try {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
 <link rel="stylesheet" href="/assets/isoradar-landing.css"/>
+<link rel="stylesheet" href="/assets/isoradar-isoworld.css"/>
 </head>
 <body>
 
@@ -49,70 +50,59 @@ try {
   </div>
 </nav>
 
-<header class="hero" id="top">
-  <div class="wrap">
-    <a class="pill" href="#ai"><span>AI</span> إدارة الامتثال، الآن بمساعدة الذكاء الاصطناعي ←</a>
-    <h1>قِس <span class="grad-text">جودتك</span>.<br/>أثبت <span class="grad-text">امتثالك</span>.</h1>
-    <p class="lead">كفى جداول إكسل متفرقة. آيزو رادار يجمع التفتيش وعدم المطابقة وتحليل الأسباب الجذرية والمخاطر والمؤشرات في منصة واحدة — لتعرف دائماً أين تقف من معايير ISO.</p>
-    <div class="hero-cta">
-      <button class="btn btn-primary btn-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية <i class="fas fa-arrow-left"></i></button>
-      <a class="btn btn-ghost btn-lg" href="#features">شاهد كيف يعمل</a>
-    </div>
-    <div class="hero-note"><span>تجربة مجانية 14 يوماً</span><span>بدون بطاقة ائتمانية</span><span>إلغاء في أي وقت</span></div>
-
-    <div class="mock-stage" aria-hidden="true">
-      <div class="mock">
-        <div class="mock-bar"><i></i><i></i><i></i><div class="url">isoradar.com/app</div></div>
-        <div class="mock-body">
-          <aside class="side">
-            <div class="ws"><img src="/assets/isoradar-mark.svg" alt=""/>شركة الامتثال</div>
-            <a class="on"><span class="dot" style="background:#17796f"></span>نظرة عامة</a>
-            <a><span class="dot" style="background:#142D4E"></span>التفتيش</a>
-            <a><span class="dot" style="background:#c2410c"></span>عدم المطابقة</a>
-            <a><span class="dot" style="background:#D9A441"></span>تحليل RCA</a>
-            <a><span class="dot" style="background:#1d5fa8"></span>المخاطر</a>
-            <h6>المعايير</h6>
-            <a>ISO 9001</a><a>ISO 45001</a><a>ISO 14001</a><a>ISO 27001</a>
-          </aside>
-          <div class="main">
-            <div class="main-h"><h4>الامتثال 2026</h4><div class="tabs-mini"><span class="on">نظرة عامة</span><span>الفجوة</span><span>المخاطر</span></div></div>
-            <div class="kpis">
-              <div class="kpi"><small>معدل الامتثال</small><b>87%</b><div class="bar"><i style="width:87%;background:#17796f"></i></div></div>
-              <div class="kpi"><small>NC مفتوحة</small><b>5</b><div class="bar"><i style="width:36%;background:#c2410c"></i></div></div>
-              <div class="kpi"><small>تفتيش مكتمل</small><b>42/48</b><div class="bar"><i style="width:88%;background:#142D4E"></i></div></div>
-              <div class="kpi"><small>إغلاق RCA</small><b>71%</b><div class="bar"><i style="width:71%;background:#D9A441"></i></div></div>
-            </div>
-            <div class="grid2">
-              <div class="panel"><h5>الامتثال حسب الشهر <span>كل المشاريع</span></h5>
-                <div class="chart"><div style="height:45%"></div><div style="height:58%"></div><div style="height:52%"></div><div style="height:70%"></div><div style="height:66%"></div><div style="height:80%"></div><div style="height:78%"></div><div style="height:92%"></div></div>
-              </div>
-              <div class="panel"><h5>تحليل الفجوة <span>هذا الشهر</span></h5>
-                <div class="rows">
-                  <div class="row"><b>ISO 9001 الجودة</b><div class="bar"><i style="width:91%;background:#17796f"></i></div><span class="badge c1">91</span></div>
-                  <div class="row"><b>ISO 45001 السلامة</b><div class="bar"><i style="width:84%;background:#142D4E"></i></div><span class="badge c2">84</span></div>
-                  <div class="row"><b>ISO 14001 البيئة</b><div class="bar"><i style="width:76%;background:#D9A441"></i></div><span class="badge c3">76</span></div>
-                  <div class="row"><b>ISO 27001 الأمن</b><div class="bar"><i style="width:62%;background:#1d5fa8"></i></div><span class="badge c4">62</span></div>
-                  <div class="row"><b>معيار مخصص</b><div class="bar"><i style="width:44%;background:#c2410c"></i></div><span class="badge c6">44</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
+<header class="iso-world" id="top" data-iso-world>
+  <div class="iso-grid">
+    <div class="iso-track">
+      <section class="iso-beat" data-beat="1">
+        <span class="iso-step"><b>01</b>آيزو رادار</span>
+        <h1>قِس <span class="grad-text">جودتك</span>.<br/>أثبت <span class="grad-text">امتثالك</span>.</h1>
+        <p class="lead">آيزو رادار يجمع التفتيش وعدم المطابقة وتحليل الأسباب الجذرية والمخاطر والمؤشرات في منصة واحدة — لتعرف دائماً أين تقف من معايير ISO.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية <i class="fas fa-arrow-left"></i></button>
+          <a class="btn btn-ghost btn-lg" href="#features">شاهد كيف يعمل</a>
         </div>
-      </div>
-      <div class="float ai"><div class="who"><i>✦</i>المجلس الاستشاري</div><p>3 حالات عدم مطابقة في المستودع مصدرها واحد: غياب التدريب على معدات الوقاية. نقترح خطة تصحيحية خلال أسبوعين.</p></div>
-      <div class="float mail"><b>📍 تفتيش ميداني مكتمل</b><span style="color:var(--muted)">الوحدة A · 12 بنداً · مع الصور وموقع GPS</span></div>
+        <div class="hero-note"><span>تجربة مجانية 14 يوماً</span><span>بدون بطاقة ائتمانية</span><span>إلغاء في أي وقت</span></div>
+      </section>
+      <section class="iso-beat" data-beat="2">
+        <span class="iso-step"><b>02</b>المشكلة</span>
+        <h2>امتثالك موزّع على جداول متفرقة</h2>
+        <p class="lead">ملفات إكسل وأوراق تفتيش وملاحظات لا يجمعها مكان واحد — فلا يظهر أين تقف المنظمة من المعيار إلا قبل المراجعة.</p>
+      </section>
+      <section class="iso-beat" data-beat="3">
+        <span class="iso-step"><b>03</b>الميدان</span>
+        <h2>التفتيش يبدأ من الموقع</h2>
+        <p class="lead">قوائم تحقق على الجوال تعمل بدون إنترنت، مع الصور وموقع GPS لكل ملاحظة، وتُزامَن مع النظام عند عودة الاتصال.</p>
+      </section>
+      <section class="iso-beat" data-beat="4">
+        <span class="iso-step"><b>04</b>الدورة</span>
+        <h2>كل ملاحظة تُتابَع حتى الإغلاق</h2>
+        <p class="lead">كل عدم مطابقة تفتح تحليل أسباب جذرية تلقائياً — 5 Whys وإيشيكاوا وFMEA — بإجراءات تصحيحية ومواعيد تُتابَع حتى تُغلق.</p>
+      </section>
+      <section class="iso-beat" data-beat="5">
+        <span class="iso-step"><b>05</b>المعايير</span>
+        <h2>أربعة معايير في منصة واحدة</h2>
+        <p class="lead">ISO 9001 و45001 و14001 و27001، مع استبيان تقييم لكل معيار ومخطط فجوة يُبنى من إجاباتك، ومعايير مخصصة عند الحاجة.</p>
+        <ul class="iso-facts">
+          <li><b>4</b> معايير ISO مدعومة</li>
+          <li><b>+100</b> سؤال تقييم لكل معيار</li>
+          <li>تطبيق ميداني <b>Offline</b></li>
+        </ul>
+      </section>
+      <section class="iso-beat" data-beat="6">
+        <span class="iso-step"><b>06</b>الرؤية</span>
+        <h2>لوحة امتثال واحدة لكل المشاريع</h2>
+        <p class="lead">الإدارة ترى الامتثال والمخاطر الحرجة وحالات عدم المطابقة المتأخرة في مكان واحد، قبل أن تصبح مشكلة.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openLogin('register')">ابدأ تجربتك المجانية 14 يوماً <i class="fas fa-arrow-left"></i></button>
+        </div>
+      </section>
+    </div>
+    <div class="iso-stage">
+      <div class="iso-canvas" data-iso-canvas></div>
+      <div class="iso-dots" data-iso-dots role="group" aria-label="مراحل القصة"></div>
     </div>
   </div>
 </header>
-
-<div class="stats">
-  <div class="wrap stats-in">
-    <div class="stat"><b class="grad-text">4</b><span>معايير ISO مدعومة</span></div>
-    <div class="stat"><b class="grad-text">+100</b><span>سؤال تقييم لكل معيار</span></div>
-    <div class="stat"><b class="grad-text">14 يوماً</b><span>تجربة مجانية كاملة</span></div>
-    <div class="stat"><b class="grad-text">Offline</b><span>تطبيق ميداني بدون إنترنت</span></div>
-  </div>
-</div>
 
 <!-- FEATURES -->
 <section class="blk feat-bg" id="features">
@@ -423,5 +413,6 @@ try {
 </div>
 
 <script src="/assets/isoradar-landing.js"></script>
+<script src="/assets/isoradar-isoworld.js"></script>
 </body>
 </html>
