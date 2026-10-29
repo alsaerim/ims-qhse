@@ -177,7 +177,7 @@ body::before{
       <div class="alert alert-error" id="err-login"></div>
 
       <div class="form-group">
-        <label>البريد الإلكتروني أو اسم المستخدم</label>
+        <label for="login-email">البريد الإلكتروني أو اسم المستخدم</label>
         <div class="input-wrap">
           <i class="fas fa-envelope"></i>
           <input class="form-input" type="email" id="login-email" placeholder="engineer@company.com"
@@ -186,9 +186,9 @@ body::before{
       </div>
 
       <div class="form-group">
-        <label>كلمة المرور</label>
+        <label for="login-pass">كلمة المرور</label>
         <div class="input-wrap">
-          <i class="fas fa-lock" id="pass-icon" style="cursor:pointer;" onclick="togglePass()"></i>
+          <i class="fas fa-lock" id="pass-icon" style="cursor:pointer;" onclick="togglePass()" role="button" tabindex="0" aria-label="إظهار كلمة المرور" aria-pressed="false" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePass()}"></i>
           <input class="form-input" type="password" id="login-pass" placeholder="••••••••"
             autocomplete="current-password"
             onkeydown="if(event.key==='Enter')doMobileLogin()"/>
@@ -217,7 +217,7 @@ body::before{
       <div class="alert alert-success" id="suc-register"></div>
 
       <div class="form-group">
-        <label>الاسم الكامل</label>
+        <label for="reg-name">الاسم الكامل</label>
         <div class="input-wrap">
           <i class="fas fa-user"></i>
           <input class="form-input" type="text" id="reg-name" placeholder="محمد الزهراني"/>
@@ -225,7 +225,7 @@ body::before{
       </div>
 
       <div class="form-group">
-        <label>البريد الإلكتروني</label>
+        <label for="reg-email">البريد الإلكتروني</label>
         <div class="input-wrap">
           <i class="fas fa-envelope"></i>
           <input class="form-input" type="email" id="reg-email" placeholder="mohammed@company.com" inputmode="email"/>
@@ -234,16 +234,16 @@ body::before{
 
       <div class="form-group">
         <label>الدور الوظيفي</label>
-        <div class="role-grid" id="role-grid">
-          <div class="role-chip selected" data-role="engineer" onclick="selectRole(this)"><i class="fas fa-hard-hat"></i>مهندس</div>
-          <div class="role-chip" data-role="auditor"  onclick="selectRole(this)"><i class="fas fa-search"></i>مدقق</div>
-          <div class="role-chip" data-role="manager"  onclick="selectRole(this)"><i class="fas fa-user-tie"></i>مدير</div>
-          <div class="role-chip" data-role="inspector" onclick="selectRole(this)"><i class="fas fa-clipboard-check"></i>مفتش</div>
+        <div class="role-grid" id="role-grid" role="radiogroup" aria-label="الدور الوظيفي">
+          <div class="role-chip selected" data-role="engineer" onclick="selectRole(this)" role="radio" aria-checked="true" tabindex="0"><i class="fas fa-hard-hat"></i>مهندس</div>
+          <div class="role-chip" data-role="auditor"  onclick="selectRole(this)" role="radio" aria-checked="false" tabindex="-1"><i class="fas fa-search"></i>مدقق</div>
+          <div class="role-chip" data-role="manager"  onclick="selectRole(this)" role="radio" aria-checked="false" tabindex="-1"><i class="fas fa-user-tie"></i>مدير</div>
+          <div class="role-chip" data-role="inspector" onclick="selectRole(this)" role="radio" aria-checked="false" tabindex="-1"><i class="fas fa-clipboard-check"></i>مفتش</div>
         </div>
       </div>
 
       <div class="form-group">
-        <label>رمز الشركة</label>
+        <label for="reg-code">رمز الشركة</label>
         <div class="input-wrap">
           <i class="fas fa-building"></i>
           <input class="form-input" type="text" id="reg-code" placeholder="IMS-2026-XXX (احصل عليه من مدير النظام)"/>
@@ -251,7 +251,7 @@ body::before{
       </div>
 
       <div class="form-group">
-        <label>كلمة المرور</label>
+        <label for="reg-pass">كلمة المرور</label>
         <div class="input-wrap">
           <i class="fas fa-lock"></i>
           <input class="form-input" type="password" id="reg-pass" placeholder="8 أحرف على الأقل"/>
@@ -288,9 +288,25 @@ function switchTab(tab) {
 
 // ── Role select ──
 function selectRole(el) {
-  document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.role-chip').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-checked', 'false'); c.tabIndex = -1; });
   el.classList.add('selected');
+  el.setAttribute('aria-checked', 'true');
+  el.tabIndex = 0;
 }
+// role chips behave as a radio group: arrows move the choice, Enter/Space picks
+document.addEventListener('keydown', e => {
+  const chip = e.target.closest && e.target.closest('.role-chip');
+  if (!chip) return;
+  const chips = [...document.querySelectorAll('.role-chip')], i = chips.indexOf(chip);
+  let next = null;
+  if (e.key === 'Enter' || e.key === ' ') next = chip;
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = chips[(i + 1) % chips.length];
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = chips[(i - 1 + chips.length) % chips.length];
+  if (!next) return;
+  e.preventDefault();
+  selectRole(next);
+  next.focus();
+});
 
 // ── Toggle password ──
 let passVisible = false;
@@ -300,6 +316,8 @@ function togglePass() {
   const icon = document.getElementById('pass-icon');
   inp.type   = passVisible ? 'text' : 'password';
   icon.className = passVisible ? 'fas fa-eye-slash' : 'fas fa-lock';
+  icon.setAttribute('aria-pressed', String(passVisible));
+  icon.setAttribute('aria-label', passVisible ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
 }
 
 const API = window.IR_API_ORIGIN + '/api/v1';

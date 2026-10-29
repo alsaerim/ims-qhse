@@ -255,6 +255,19 @@ html[data-surface="app"] #app-content .fa-spinner { color: var(--ir-teal-fill) !
 html[data-surface="app"] #app-content a:not(.btn) { color: var(--ir-teal); text-underline-offset: 3px; }
 html[data-surface="app"] #app-content a:not(.btn):hover { text-decoration: underline; }
 
+/* ── accessibility (assets/isoradar-a11y.js) ────────────────────────── */
+.ir-skip {
+  position: fixed; top: 10px; inset-inline-start: 10px; z-index: 10000;
+  padding: 10px 16px; border-radius: 10px; background: #0B1B30; color: #fff; font-weight: 700;
+  transform: translateY(-160%); transition: transform .2s;
+}
+.ir-skip:focus { transform: none; outline: 3px solid #7FDCCF; outline-offset: 2px; }
+html[data-surface="app"] [data-ir-click]:focus-visible { outline: 2px solid var(--ir-teal-fill) !important; outline-offset: 2px; border-radius: 10px; }
+/* WCAG 2.5.8: every pointer target at least 24 × 24 */
+html[data-surface="app"] #app-content button,
+html[data-surface="app"] .modal button,
+html[data-surface="app"] .main-content > div:first-child button { min-width: 24px; min-height: 24px; }
+
 /* ── narrow screens ─────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   html[data-surface="app"] #app-content { padding: 18px 16px 40px; }
